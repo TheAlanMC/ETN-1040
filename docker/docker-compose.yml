@@ -1,0 +1,7 @@
+version: "3.8"
+networks:
+  network-umsa:
+    name: network-umsa
+    driver: bridge
+
+# services:
