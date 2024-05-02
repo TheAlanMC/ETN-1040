@@ -14,7 +14,7 @@ class EtnExceptionHandler {
     }
 
     @ExceptionHandler(EtnException::class)
-    fun handleUasException(ex: EtnException): ResponseEntity<ResponseDto<Nothing>> {
+    fun handleEtnException(ex: EtnException): ResponseEntity<ResponseDto<Nothing>> {
         logger.error(ex.logMessage)
         return ResponseEntity(ResponseDto(false, ex.errorMessage,null), ex.httpStatus)
     }

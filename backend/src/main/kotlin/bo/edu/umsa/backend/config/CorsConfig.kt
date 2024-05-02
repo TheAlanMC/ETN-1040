@@ -15,6 +15,9 @@ class CorsConfig {
         corsConfiguration.allowCredentials = false
         corsConfiguration.allowedOrigins = listOf(
             "http://localhost:4200",
+            "http://localhost",
+            "http://167.172.144.172:4200",
+            "http://167.172.144.172",
         )
         corsConfiguration.allowedHeaders=listOf(
             "Origin",

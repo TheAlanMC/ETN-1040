@@ -4,7 +4,6 @@
 #
 #######################################
 
-version: "3.8"
 networks:
   network-etn:
     name: network-etn
@@ -23,7 +22,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_URL: ${POSTGRES_URL}
-      TZ: America/New_York
+      TZ: ${TZ}
     volumes:
       - ~/Desktop/etn/postgres/data:/var/lib/postgresql/data
       - ./create.sql:/docker-entrypoint-initdb.d/create.sql
@@ -32,3 +31,47 @@ services:
     networks:
       - network-etn
     
+
+  etn-backend:
+    container_name: etn-backend
+    image: thealanmc/etn-backend:0.0.1
+    # image: etn-backend:0.0.1
+    restart: always
+    user: root
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: ${BACKEND_PORT}
+      POSTGRES_USERNAME: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_URL: ${POSTGRES_URL}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
+      EMAIL_USERNAME: ${EMAIL_USERNAME}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      TZ: ${TZ}
+    volumes:
+      - ~/Desktop/etn/backend/logs:/opt/etn/logs/backend
+    depends_on:
+      - etn-postgres
+    networks:
+      - network-etn
+      
+      
+  etn-frontend:
+    container_name: etn-frontend
+    image: thealanmc/etn-frontend:0.0.1
+    # image: etn-frontend:0.0.1
+    user: root
+    restart: always
+    ports:
+      - "80:80"
+    environment:
+      TZ: ${TZ}
+    # volumes:
+      # - ~/Desktop/etn/angular/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - etn-backend
+    networks:
+      - network-etn

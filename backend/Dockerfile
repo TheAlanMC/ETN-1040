@@ -1,0 +1,30 @@
+FROM --platform=linux/x86_64 eclipse-temurin:17-jdk
+#FROM arm64v8/eclipse-temurin:17-jdk
+
+EXPOSE 8080
+
+RUN mkdir -p /opt/etn/logs/backend
+VOLUME /opt/etn/logs/backend
+
+VOLUME /tmp
+
+# Server
+ENV PORT="PORT"
+# Postgres
+ENV POSTGRES_USERNAME="POSTGRES_USERNAME"
+ENV POSTGRES_PASSWORD="POSTGRES_PASSWORD"
+ENV POSTGRES_URL="POSTGRES_URL"
+# JWT
+ENV JWT_ISSUER="JWT_ISSUER"
+ENV JWT_SECRET="JWT_SECRET"
+ENV JWT_EXPIRATION="JWT_EXPIRATION"
+# Email
+ENV EMAIL_USERNAME="EMAIL_USERNAME"
+ENV EMAIL_PASSWORD="EMAIL_PASSWORD"
+
+ARG DEPENDENCY=target/dependency
+COPY ${DEPENDENCY}/BOOT-INF/lib /app/lib
+COPY ${DEPENDENCY}/META-INF /app/META-INF
+COPY ${DEPENDENCY}/BOOT-INF/classes /app
+
+ENTRYPOINT ["java","-cp","app:app/lib/*","bo.edu.umsa.backend.BackendApplicationKt"]
