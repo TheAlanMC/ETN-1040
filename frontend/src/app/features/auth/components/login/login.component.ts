@@ -2,32 +2,42 @@ import {Component} from '@angular/core';
 import {AuthService} from "../../../../core/services/auth.service";
 import {Router} from "@angular/router";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {LayoutService} from "../../../../layout/service/app.layout.service";
+import {ConfirmationService, MessageService} from "primeng/api";
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrl: './login.component.scss',
+  providers: [MessageService, ConfirmationService]
 })
 export class LoginComponent {
-  loginForm: FormGroup;
+  emailControl = new FormControl('', [Validators.required, Validators.email]);
+  passwordControl = new FormControl('', [Validators.required]);
+  // rememberMe: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router) {
-    this.loginForm = new FormGroup({
-      email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', Validators.required)
-    });
+  constructor(private layoutService: LayoutService, private authService: AuthService, private router: Router, private messageService: MessageService) {
+    if (localStorage.getItem('token')) {
+      this.router.navigate(['/home']).then(r => console.log('Already logged in'));
+    }
   }
 
   login() {
-    this.authService.login(this.loginForm.value.email, this.loginForm.value.password).subscribe({
+    this.authService.login(this.emailControl.value!!, this.passwordControl.value!!).subscribe({
       next: (data) => {
-        console.log(data.data);
+        // Save token
+        localStorage.setItem('token', data.data!!.token);
         this.router.navigate(['/home']).then(r => console.log('Successful login'));
       },
       error: (error) => {
+        this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
         console.log(error);
       }
     });
+  }
+
+  get dark(): boolean {
+    return this.layoutService.config().colorScheme !== 'light';
   }
 }
 

@@ -10,11 +10,11 @@ const routes: Routes = [
   { path: '', loadChildren: () => import('./features/home/home.module').then(m => m.HomeModule) },
 
   // 404 Not Found page
-  { path: '404', component: NotFoundComponent },
+  { path: 'not-found', component: NotFoundComponent },
   // 403 Forbidden page
-  { path: '403', component: ForbiddenComponent },
+  { path: 'forbidden', component: ForbiddenComponent },
   // Redirect to 404 for any unknown paths
-  { path: '**', redirectTo: '404' }
+  { path: '**', redirectTo: 'not-found' }
 ];
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

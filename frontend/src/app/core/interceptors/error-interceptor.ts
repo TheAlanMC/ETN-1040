@@ -13,10 +13,10 @@ export class ErrorInterceptor implements HttpInterceptor {
       catchError((error: HttpErrorResponse) => {
         //this.showMessage(`Error: ${error.status} - ${error.error.message}`);
         if (error.status === 404) {
-          this.router.navigate(['/404']).then(r => console.log('Not Found, redirect to 404 page'));
+          this.router.navigate(['/not-found']).then(r => console.log('Not Found, redirect to not found page'));
         }
         else if (error.status === 403) {
-          this.router.navigate(['/403']).then(r => console.log('Forbidden, redirect to 403 page'));
+          this.router.navigate(['/forbidden']).then(r => console.log('Forbidden, redirect to forbidden page'));
         }
         return throwError(error);
       })

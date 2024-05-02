@@ -27,9 +27,9 @@ class AuthService @Autowired constructor(
     }
 
     fun authenticate(credentials: AuthReqDto): AuthResDto {
-        logger.info("User ${credentials.username} is trying to authenticate")
+        logger.info("User ${credentials.email} is trying to authenticate")
         // Verify if the user exists
-        val userEntity: User = userRepository.findByUsernameAndStatusIsTrue(credentials.username)
+        val userEntity: User = userRepository.findByUsernameAndStatusIsTrue(credentials.email)
             ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: User not found","Usuario no encontrado")
         val currentPasswordInBCrypt = userEntity.password
 
@@ -43,11 +43,11 @@ class AuthService @Autowired constructor(
         }
 
         // Get the user roles
-        val roleEntities = roleRepository.findAllByUsername(credentials.username)
+        val roleEntities = roleRepository.findAllByUsername(credentials.email)
         val roles = roleEntities.map { role -> role.roleName }.toTypedArray()
 
         // Get the user groups
-        val groupEntities = groupRepository.findAllByUsername(credentials.username)
+        val groupEntities = groupRepository.findAllByUsername(credentials.email)
         val groups = groupEntities.map { group -> group.groupName }.toTypedArray()
 
         return AuthUtil.generateAuthAndRefreshToken(userEntity, roles, groups)
