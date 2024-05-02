@@ -1,7 +1,34 @@
+#######################################
+#
+#       ETN-1040 - v1.0
+#
+#######################################
+
 version: "3.8"
 networks:
-  network-umsa:
-    name: network-umsa
+  network-etn:
+    name: network-etn
     driver: bridge
 
-# services:
+services:
+  etn-postgres:
+    container_name: etn-postgres
+    image: postgres:16
+    restart: always
+    ports:
+     - "5432:5432"
+    environment:
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USERNAME: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_URL: ${POSTGRES_URL}
+      TZ: America/New_York
+    volumes:
+      - ~/Desktop/etn/postgres/data:/var/lib/postgresql/data
+      - ./create.sql:/docker-entrypoint-initdb.d/create.sql
+      - ./trigger.sql:/docker-entrypoint-initdb.d/trigger.sql
+      - ./insert.sql:/docker-entrypoint-initdb.d/insert.sql
+    networks:
+      - network-etn
+    
