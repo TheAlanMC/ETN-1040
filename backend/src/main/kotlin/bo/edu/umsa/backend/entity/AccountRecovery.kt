@@ -6,18 +6,21 @@ import jakarta.persistence.*
 import java.sql.Timestamp
 
 @Entity
-@Table(name = "role", schema = "public")
-class Role {
+@Table(name = "account_recovery", schema = "public")
+class AccountRecovery {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "role_id")
-    var roleId: Int = 0
+    @Column(name = "account_recovery_id")
+    var accountRecoveryId: Int = 0
 
-    @Column(name = "role_name")
-    var roleName: String = ""
+    @Column(name = "user_id")
+    var userId: Int = 0
 
-    @Column(name = "role_description")
-    var roleDescription: String = ""
+    @Column(name = "hash_code")
+    var hashCode: String = ""
+
+    @Column(name = "expiration_date")
+    var expirationDate: Timestamp = Timestamp(System.currentTimeMillis())
 
     @Column(name = "status")
     var status: Boolean = true
@@ -31,8 +34,8 @@ class Role {
     @Column(name = "tx_host")
     var txHost: String = HttpUtil.getRequestHost() ?: "localhost"
 
-    @OneToMany(mappedBy = "role")
-
-    var groupRoles: List<GroupRole>? = null
-
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
+    var user: User? = null
 }
+

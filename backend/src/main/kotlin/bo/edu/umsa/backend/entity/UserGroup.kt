@@ -9,6 +9,7 @@ import java.sql.Timestamp
 @Table(name = "user_group", schema = "public")
 class UserGroup {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_group_id")
     var userGroupId: Int = 0
 

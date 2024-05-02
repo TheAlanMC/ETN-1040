@@ -32,11 +32,15 @@ class AuthUtil (@Autowired jwtConfig: JwtConfig) {
         var jwtExpirationTime: Int = 0
 
         private fun getAuthToken(): String? {
-            val requestAttributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes
-            val request = requestAttributes.request
-            val authHeader = request.getHeader("Authorization")
-            val token = authHeader?.split(" ")?.get(1)
-            return token
+            try {
+                val requestAttributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes
+                val request = requestAttributes.request
+                val authHeader = request.getHeader("Authorization")
+                val token = authHeader?.split(" ")?.get(1)
+                return token
+            } catch (e: Exception) {
+                return null
+            }
         }
 
         private fun verifyIsAuthToken(jwtToken: String?): Boolean {

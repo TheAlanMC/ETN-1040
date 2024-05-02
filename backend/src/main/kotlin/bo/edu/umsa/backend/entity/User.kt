@@ -9,6 +9,7 @@ import java.sql.Timestamp
 @Table(name = "user", schema = "public")
 class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     var userId: Int = 0
 
@@ -44,5 +45,8 @@ class User {
 
     @OneToMany(mappedBy = "user")
     var userGroups: List<UserGroup>? = null
+
+    @OneToMany(mappedBy = "user")
+    var accountRecoveries: List<AccountRecovery>? = null
 }
 

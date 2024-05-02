@@ -14,6 +14,7 @@ import {InputTextModule} from "primeng/inputtext";
 import {ButtonModule} from "primeng/button";
 import {RippleModule} from "primeng/ripple";
 import {ToastModule} from "primeng/toast";
+import {PasswordModule} from "primeng/password";
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import {ToastModule} from "primeng/toast";
     InputTextModule,
     ButtonModule,
     RippleModule,
-    ToastModule
+    ToastModule,
+    PasswordModule
   ]
 })
 export class AuthModule { }

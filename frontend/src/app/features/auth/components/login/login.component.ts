@@ -27,7 +27,10 @@ export class LoginComponent {
       next: (data) => {
         // Save token
         localStorage.setItem('token', data.data!!.token);
-        this.router.navigate(['/home']).then(r => console.log('Successful login'));
+        this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Inicio de sesión exitoso'});
+        setTimeout(() => {
+          this.router.navigate(['/home']).then(r => console.log('Navigated to home'));
+        }, 1000);
       },
       error: (error) => {
         this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});

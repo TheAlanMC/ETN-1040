@@ -24,4 +24,20 @@ export class AuthService {
     return this.http.post<ResponseDto<AuthDto>>(`${this.baseUrl}/refresh-token`, {refreshToken});
   }
 
+  //Forgot password
+  public forgotPassword(email: string): Observable<ResponseDto<String>> {
+    return this.http.post<ResponseDto<any>>(`${this.baseUrl}/forgot-password`, {email});
+  }
+
+  //Verification
+  public verification(email: string, code: string): Observable<ResponseDto<String>> {
+    return this.http.post<ResponseDto<any>>(`${this.baseUrl}/verification`, {email, code});
+  }
+
+  //Reset password
+  public resetPassword(email: string, code: string, password: string, confirmPassword: string): Observable<ResponseDto<String>> {
+    return this.http.post<ResponseDto<any>>(`${this.baseUrl}/reset-password`, {email, code, password, confirmPassword});
+  }
+
+
 }
