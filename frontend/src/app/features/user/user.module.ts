@@ -6,6 +6,12 @@ import { EditUserComponent } from './components/edit-user/edit-user.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { GroupAndRoleComponent } from './components/group-and-role/group-and-role.component';
 import {UserRoutingModule} from "./user-routing.module";
+import {FileUploadModule} from "primeng/fileupload";
+import {InputTextareaModule} from "primeng/inputtextarea";
+import {ChipsModule} from "primeng/chips";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {ToastModule} from "primeng/toast";
 
 
 
@@ -19,7 +25,15 @@ import {UserRoutingModule} from "./user-routing.module";
   ],
   imports: [
     CommonModule,
-    UserRoutingModule
+    UserRoutingModule,
+    FileUploadModule,
+    InputTextareaModule,
+    ChipsModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ProgressSpinnerModule,
+    ToastModule,
+
   ]
 })
 export class UserModule { }

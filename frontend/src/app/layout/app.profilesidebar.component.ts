@@ -3,6 +3,7 @@ import { LayoutService } from './service/app.layout.service';
 import {Router} from "@angular/router";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../core/models/jwt-payload.dto";
+import {ConfirmationService} from "primeng/api";
 
 interface Notification {
   icon: string;
@@ -11,7 +12,8 @@ interface Notification {
 }
 @Component({
     selector: 'app-profilemenu',
-    templateUrl: './app.profilesidebar.component.html'
+    templateUrl: './app.profilesidebar.component.html',
+    providers: [ConfirmationService]
 })
 export class AppProfileSidebarComponent {
 
@@ -23,7 +25,7 @@ export class AppProfileSidebarComponent {
     {icon: 'pi pi-comment text-xl text-primary', message: 'Nuevo comentario en una publicación', time: new Date('2024-04-30 12:00:00')},
   ]
 
-  constructor(private layoutService: LayoutService, private router: Router) {
+  constructor(private layoutService: LayoutService, private confirmationService: ConfirmationService,private router: Router) {
     // Get token from local storage
     const token = localStorage.getItem('token');
     // Check if token exists
@@ -42,5 +44,31 @@ export class AppProfileSidebarComponent {
 
   set visible(_val: boolean) {
     this.layoutService.state.profileSidebarVisible = _val;
+  }
+
+  onProfile() {
+    this.visible = false;
+    this.router.navigate(['/users/profile']).then(r => console.log('Redirect to profile'))
+  }
+
+  onLogout() {
+    this.confirmationService.confirm({
+      key: 'confirmLogout',
+      message: '¿Estás seguro de cerrar sesión?',
+      acceptLabel: 'Sí',
+      rejectLabel: 'No',
+      accept: () => {
+        this.visible = false;
+        this.logout();
+      },
+      reject: () => {
+        this.visible = false;
+      }
+    });
+  }
+
+  public logout(): void {
+    localStorage.removeItem('token');
+    this.router.navigate(['/auth/login']).then(r => console.log('Redirect to login'))
   }
 }

@@ -35,7 +35,7 @@ class AuthController @Autowired constructor(
         return ResponseEntity(ResponseDto(true,"Las credenciales son correctas", authResDto), HttpStatus.OK)
     }
 
-    @PostMapping("/refresh")
+    @PostMapping("/refresh-token")
     fun refreshToken(
         @RequestBody refreshToken: Map<String, String>
     ): ResponseEntity<ResponseDto<AuthResDto>> {
@@ -49,34 +49,34 @@ class AuthController @Autowired constructor(
     @PostMapping("/forgot-password")
     fun forgotPassword(
         @RequestBody accountRecoveryDto: AccountRecoveryDto
-    ): ResponseEntity<ResponseDto<String>> {
+    ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to send an email to reset the password")
         logger.info("POST /api/v1/auth/forgot-password")
         authService.forgotPassword(accountRecoveryDto.email)
         logger.info("Success: Email sent")
-        return ResponseEntity(ResponseDto(true,"El correo ha sido enviado", ""), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true,"El correo ha sido enviado", null), HttpStatus.OK)
     }
 
     @PostMapping("/verification")
     fun verification(
         @RequestBody accountRecoveryDto: AccountRecoveryDto
-    ): ResponseEntity<ResponseDto<String>> {
+    ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to verify the hash code")
         logger.info("POST /api/v1/auth/verification")
         authService.verification(accountRecoveryDto.email, accountRecoveryDto.code)
         logger.info("Success: Hash code verified")
-        return ResponseEntity(ResponseDto(true,"El código ha sido verificado", ""), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true,"El código ha sido verificado", null), HttpStatus.OK)
     }
 
     @PostMapping("/reset-password")
     fun resetPassword(
         @RequestBody accountRecoveryDto: AccountRecoveryDto
-    ): ResponseEntity<ResponseDto<String>> {
+    ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to reset the password")
         logger.info("POST /api/v1/auth/reset-password")
         authService.resetPassword(accountRecoveryDto.email, accountRecoveryDto.code, accountRecoveryDto.password, accountRecoveryDto.confirmPassword)
         logger.info("Success: Password reset")
-        return ResponseEntity(ResponseDto(true,"La contraseña ha sido cambiada", ""), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true,"La contraseña ha sido cambiada", null), HttpStatus.OK)
     }
 
 }

@@ -36,6 +36,7 @@ export class LoginComponent {
       next: (data) => {
         // Save token
         localStorage.setItem('token', data.data!!.token);
+        localStorage.setItem('refreshToken', data.data!!.refreshToken);
         this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Inicio de sesión exitoso'});
         setTimeout(() => {
           this.router.navigate(['/']).then(r => console.log('Navigated to home'));

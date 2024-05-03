@@ -2,6 +2,7 @@ package bo.edu.umsa.backend.controller
 
 import bo.edu.umsa.backend.dto.FileDto
 import bo.edu.umsa.backend.dto.ResponseDto
+import bo.edu.umsa.backend.dto.UserDto
 import bo.edu.umsa.backend.service.UserService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -31,7 +32,6 @@ class UserController @Autowired constructor(
         return ResponseEntity(profilePicture.fileData, headers, HttpStatus.OK)
     }
 
-    // upload profile picture, as multipart form data
     @PostMapping("/profile-picture")
     fun uploadProfilePicture(
         @RequestParam("file") file: MultipartFile
@@ -43,4 +43,23 @@ class UserController @Autowired constructor(
         return ResponseEntity(ResponseDto(true,"La foto de perfil se ha subido", null), HttpStatus.OK)
     }
 
+    @GetMapping("/profile")
+    fun getProfile(): ResponseEntity<ResponseDto<UserDto>> {
+        logger.info("Starting the API call to get the profile")
+        logger.info("GET /api/v1/auth/users/profile")
+        val userDto: UserDto = userService.getProfile()
+        logger.info("Success: Profile retrieved")
+        return ResponseEntity(ResponseDto(true,"Perfil recuperado", userDto), HttpStatus.OK)
+    }
+
+    @PutMapping("/profile")
+    fun updateProfile(
+        @RequestBody userDto: UserDto,
+    ): ResponseEntity<ResponseDto<Nothing>> {
+        logger.info("Starting the API call to update the profile")
+        logger.info("PUT /api/v1/auth/users/profile")
+        userService.updateProfile(userDto)
+        logger.info("Success: Profile updated")
+        return ResponseEntity(ResponseDto(true,"El perfil se ha actualizado", null), HttpStatus.OK)
+    }
 }

@@ -31,6 +31,12 @@ class User {
     @Column(name = "password")
     var password: String = ""
 
+    @Column(name = "phone")
+    var phone: String = ""
+
+    @Column(name = "description")
+    var description: String = ""
+
     @Column(name = "status")
     var status: Boolean = true
 
