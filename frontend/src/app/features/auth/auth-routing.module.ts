@@ -12,6 +12,7 @@ const routes: Routes = [
       {path: 'forgot-password', component: ForgotPasswordComponent},
       {path: 'verification', component: VerificationComponent},
       {path: 'new-password', component: NewPasswordComponent},
+      {path: '', redirectTo: 'login', pathMatch: 'full'}
     ]
   }
 ];

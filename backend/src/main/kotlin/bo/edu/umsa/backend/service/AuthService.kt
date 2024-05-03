@@ -31,6 +31,10 @@ class AuthService @Autowired constructor(
     }
 
     fun authenticate(credentials: AuthReqDto): AuthResDto {
+        // Validate the fields
+        if (credentials.email.isBlank() || credentials.password.isBlank()) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Empty fields","Al menos un campo está vacío")
+        }
         logger.info("User ${credentials.email} is trying to authenticate")
         // Verify if the user exists
         val userEntity: User = userRepository.findByUsernameAndStatusIsTrue(credentials.email)
@@ -55,6 +59,10 @@ class AuthService @Autowired constructor(
     }
 
     fun refreshToken(token: String): AuthResDto {
+        // Validate the fields
+        if (token.isBlank()) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Empty fields","Al menos un campo está vacío")
+        }
         AuthUtil.verifyIsRefreshToken(token)
         val username = AuthUtil.getUsernameFromAuthToken(token)
         logger.info("User $username is trying to refresh the token")
@@ -71,6 +79,10 @@ class AuthService @Autowired constructor(
     }
 
     fun forgotPassword(email: String) {
+        // Validate the fields
+        if (email.isBlank()) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Empty fields","Al menos un campo está vacío")
+        }
         logger.info("User $email is trying to reset the password")
         // Verify if the user exists
         val userEntity: User = userRepository.findByUsernameAndStatusIsTrue(email)
@@ -104,6 +116,10 @@ class AuthService @Autowired constructor(
     }
 
     fun verification(email: String, code: String) {
+        // Validate the fields
+        if (email.isBlank() || code.isBlank()) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Empty fields","Al menos un campo está vacío")
+        }
         logger.info("User is trying to verify the hash code")
         // Verify if the account recovery exists
         val accountRecoveryEntity = accountRecoveryRepository.findAllByUser_UsernameAndStatusIsTrueAndStatusIsTrue(email)
@@ -123,6 +139,14 @@ class AuthService @Autowired constructor(
     }
 
     fun resetPassword(email: String, code: String, password: String, confirmPassword: String) {
+        // Validate the fields
+        if (email.isBlank() || code.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Empty fields","Al menos un campo está vacío")
+        }
+        // Validate the password is at least 8 characters long
+        if (password.length < 8) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Password must be at least 8 characters long","La contraseña debe tener al menos 8 caracteres")
+        }
         logger.info("User $email is trying to reset the password")
         // Verify if the user exists
         val userEntity: User = userRepository.findByUsernameAndStatusIsTrue(email)

@@ -16,6 +16,7 @@ export class AuthGuard implements CanActivate {
     // Check if token exists
     if (!token) {
       this.router.navigate(['/auth/login']).then(r => console.log('Redirect to login'));
+      return false;
     }
     const decoded = jwtDecode<JwtPayload>(token!!);
     // Check if token is expired

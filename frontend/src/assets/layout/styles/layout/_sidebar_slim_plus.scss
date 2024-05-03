@@ -13,14 +13,14 @@
                     .app-logo-normal {
                         display: none;
                     }
-            
+
                     .app-logo-small {
                         display: inline;
                         align-items: center;
                     }
-                }    
+                }
             }
-           
+
             .layout-sidebar {
                 width: 7rem;
                 overflow: visible;
@@ -43,7 +43,7 @@
                 ul {
                     display: none;
                 }
-                
+
                 li.active-menuitem {
                     > ul {
                         display: block;
@@ -124,27 +124,27 @@
                             a {
                                 padding-left: 0.5rem;
                             }
-            
+
                             li {
                                 a {
                                     padding-left: 1rem;
                                 }
-            
+
                                 li {
                                     a {
                                         padding-left: 1.5rem;
                                     }
-            
+
                                     li {
                                         a {
                                             padding-left: 2rem;
                                         }
-            
+
                                         li {
                                             a {
                                                 padding-left: 2.5rem;
                                             }
-            
+
                                             li {
                                                 a {
                                                     padding-left: 3rem;

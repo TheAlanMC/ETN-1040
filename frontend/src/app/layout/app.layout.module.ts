@@ -20,6 +20,9 @@ import { AppMenuComponent } from './app.menu.component';
 import { AppMenuitemComponent } from './app.menuitem.component';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
+import {NgOptimizedImage} from "@angular/common";
+import {AppModule} from "../app.module";
+import {TimeAgoPipe} from "../core/pipes/time-ago.pipe";
 
 @NgModule({
     declarations: [
@@ -29,8 +32,10 @@ import { ButtonModule } from 'primeng/button';
         AppTopbarComponent,
         AppProfileSidebarComponent,
         AppMenuComponent,
-        AppMenuitemComponent
+        AppMenuitemComponent,
+        TimeAgoPipe
     ],
+  exports: [],
     imports: [
         BrowserModule,
         FormsModule,
@@ -45,7 +50,8 @@ import { ButtonModule } from 'primeng/button';
         TooltipModule,
         RippleModule,
         RouterModule,
-        AppConfigModule
+        AppConfigModule,
+        NgOptimizedImage,
     ]
 })
 export class AppLayoutModule { }

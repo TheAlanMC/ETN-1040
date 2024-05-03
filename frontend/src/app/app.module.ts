@@ -5,6 +5,7 @@ import { AppComponent } from './app.component';
 import {ErrorInterceptor} from "./core/interceptors/error-interceptor";
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {AppLayoutModule} from "./layout/app.layout.module";
+import {TimeAgoPipe} from "./core/pipes/time-ago.pipe";
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import {AppLayoutModule} from "./layout/app.layout.module";
       multi: true,
     },
   ],
+  exports: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

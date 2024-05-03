@@ -9,8 +9,6 @@ import {NotFoundComponent} from "./components/not-found/not-found.component";
 import {ButtonModule} from "primeng/button";
 import {RouterLink} from "@angular/router";
 
-
-
 @NgModule({
   declarations: [
     ForbiddenComponent,

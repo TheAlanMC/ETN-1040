@@ -8,11 +8,12 @@ import {RoleGuard} from "../../core/guards/role.guard";
 const routes: Routes = [
   { path: '',
     children: [
-      { path: 'home', component: HomePageComponent, canActivate: [AuthGuard] },
-      { path: 'dashboard', component: DashboardComponent, canActivate: [RoleGuard], data: { roles: ['GESTIONAR USUARIOS'] } }
+      { path: '', component: HomePageComponent, canActivate: [AuthGuard] },
+      { path: 'dashboard', component: DashboardComponent, canActivate: [RoleGuard], data: { roles: ['VER DASHBOARD'], breadcrumb: 'Dashboard' }}
     ]
-  },
+  }
 ];
+
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

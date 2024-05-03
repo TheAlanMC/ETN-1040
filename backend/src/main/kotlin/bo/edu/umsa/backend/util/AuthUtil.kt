@@ -130,5 +130,18 @@ class AuthUtil (@Autowired jwtConfig: JwtConfig) {
                 null
             }
         }
+
+        fun getUserIdFromAuthToken(token: String? = null): Long? {
+            val jwtToken = token ?: getAuthToken()
+            return try {
+                JWT.require(Algorithm.HMAC256(jwtSecret))
+                    .build()
+                    .verify(jwtToken)
+                    .getClaim("userId")
+                    .asLong()
+            } catch (e: Exception) {
+                null
+            }
+        }
     }
 }
