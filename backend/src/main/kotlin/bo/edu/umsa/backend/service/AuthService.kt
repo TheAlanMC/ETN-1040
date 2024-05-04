@@ -4,6 +4,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt
 import bo.edu.umsa.backend.controller.AuthController
 import bo.edu.umsa.backend.dto.AuthReqDto
 import bo.edu.umsa.backend.dto.AuthResDto
+import bo.edu.umsa.backend.dto.PasswordChangeDto
 import bo.edu.umsa.backend.entity.AccountRecovery
 import bo.edu.umsa.backend.entity.User
 import bo.edu.umsa.backend.exception.EtnException
@@ -78,7 +79,8 @@ class AuthService @Autowired constructor(
         return AuthUtil.generateAuthAndRefreshToken(userEntity, roles, groups)
     }
 
-    fun forgotPassword(email: String) {
+    fun forgotPassword(passwordChangeDto: PasswordChangeDto) {
+        val email = passwordChangeDto.email
         // Validate the fields
         if (email.isBlank()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Empty fields","Al menos un campo está vacío")
@@ -115,7 +117,9 @@ class AuthService @Autowired constructor(
         )
     }
 
-    fun verification(email: String, code: String) {
+    fun verification(passwordChangeDto: PasswordChangeDto) {
+        val email = passwordChangeDto.email
+        val code = passwordChangeDto.code
         // Validate the fields
         if (email.isBlank() || code.isBlank()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Empty fields","Al menos un campo está vacío")
@@ -138,7 +142,11 @@ class AuthService @Autowired constructor(
         }
     }
 
-    fun resetPassword(email: String, code: String, password: String, confirmPassword: String) {
+    fun resetPassword(passwordChangeDto: PasswordChangeDto) {
+        val email = passwordChangeDto.email
+        val code = passwordChangeDto.code
+        val password = passwordChangeDto.password
+        val confirmPassword = passwordChangeDto.confirmPassword
         // Validate the fields
         if (email.isBlank() || code.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Empty fields","Al menos un campo está vacío")
@@ -158,10 +166,6 @@ class AuthService @Autowired constructor(
         // Verify if the account recovery exists
         val accountRecoveryEntity = accountRecoveryRepository.findAllByUser_UsernameAndStatusIsTrueAndStatusIsTrue(email)
             .firstOrNull() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Account recovery not found","Recuperación de cuenta no encontrada")
-        // Verify if the password and confirm password are the same
-        if (password != confirmPassword) {
-            throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Passwords do not match","Las contraseñas no coinciden")
-        }
         // Verify if the hash code is correct
         val verifyResult = BCrypt.verifyer().verify(
             code.toCharArray(),

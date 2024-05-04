@@ -1,5 +1,6 @@
 package bo.edu.umsa.backend.controller
 
+import bo.edu.umsa.backend.controller.GroupController.Companion
 import bo.edu.umsa.backend.dto.*
 import bo.edu.umsa.backend.service.UserService
 import bo.edu.umsa.backend.util.AuthUtil
@@ -20,7 +21,7 @@ class UserController @Autowired constructor(
         val logger: Logger = LoggerFactory.getLogger(UserController::class.java)
     }
 
-    @GetMapping()
+    @GetMapping
     fun getUsers(
         @RequestParam(defaultValue = "userId") sortBy: String,
         @RequestParam(defaultValue = "asc") sortType: String,
@@ -36,7 +37,7 @@ class UserController @Autowired constructor(
         return ResponseEntity(ResponseDto(true,"Usuarios recuperados", users), HttpStatus.OK)
     }
 
-    @PostMapping()
+    @PostMapping
     fun createUser(
         @RequestBody newUserDto: NewUserDto
     ): ResponseEntity<ResponseDto<Nothing>> {
@@ -99,6 +100,31 @@ class UserController @Autowired constructor(
         userService.uploadProfilePicture(userId, file)
         logger.info("Success: Profile picture updated")
         return ResponseEntity(ResponseDto(true,"Foto de perfil actualizada", null), HttpStatus.OK)
+    }
+
+    @GetMapping("/{userId}/groups")
+    fun getGroupsByUserId(
+        @PathVariable userId: Long
+    ): ResponseEntity<ResponseDto<List<GroupDto>>> {
+        logger.info("Starting the API call to get the groups by user id")
+        logger.info("GET /api/v1/users/{userId}/groups")
+        AuthUtil.verifyAuthTokenHasRole("GESTIONAR ROLES Y PERMISOS")
+        val groups: List<GroupDto> = userService.getGroupsByUserId(userId)
+        logger.info("Success: Groups retrieved")
+        return ResponseEntity(ResponseDto(true, "Grupos recuperados", groups), HttpStatus.OK)
+    }
+
+    @PostMapping("/{userId}/groups")
+    fun addGroupsToUser(
+        @PathVariable userId: Long,
+        @RequestBody groupIds: Map<String, List<Long>>
+    ): ResponseEntity<ResponseDto<Nothing>> {
+        logger.info("Starting the API call to add groups to user")
+        logger.info("POST /api/v1/users/{userId}/groups")
+        AuthUtil.verifyAuthTokenHasRole("GESTIONAR ROLES Y PERMISOS")
+        userService.addGroupsToUser(userId, groupIds["groupIds"]!!)
+        logger.info("Success: Groups added to user")
+        return ResponseEntity(ResponseDto(true, "Grupos agregados al usuario", null), HttpStatus.CREATED)
     }
 
 }

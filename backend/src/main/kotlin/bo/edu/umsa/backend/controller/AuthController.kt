@@ -52,7 +52,7 @@ class AuthController @Autowired constructor(
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to send an email to reset the password")
         logger.info("POST /api/v1/auth/forgot-password")
-        authService.forgotPassword(passwordChangeDto.email)
+        authService.forgotPassword(passwordChangeDto)
         logger.info("Success: Email sent")
         return ResponseEntity(ResponseDto(true,"El correo ha sido enviado", null), HttpStatus.OK)
     }
@@ -63,7 +63,7 @@ class AuthController @Autowired constructor(
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to verify the hash code")
         logger.info("POST /api/v1/auth/verification")
-        authService.verification(passwordChangeDto.email, passwordChangeDto.code)
+        authService.verification(passwordChangeDto)
         logger.info("Success: Hash code verified")
         return ResponseEntity(ResponseDto(true,"El código ha sido verificado", null), HttpStatus.OK)
     }
@@ -74,7 +74,7 @@ class AuthController @Autowired constructor(
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to reset the password")
         logger.info("POST /api/v1/auth/reset-password")
-        authService.resetPassword(passwordChangeDto.email, passwordChangeDto.code, passwordChangeDto.password, passwordChangeDto.confirmPassword)
+        authService.resetPassword(passwordChangeDto)
         logger.info("Success: Password reset")
         return ResponseEntity(ResponseDto(true,"La contraseña ha sido cambiada", null), HttpStatus.OK)
     }

@@ -9,6 +9,4 @@ interface AccountRecoveryRepository: JpaRepository<AccountRecovery, Long> {
 
     fun findAllByUser_UsernameAndStatusIsTrueAndStatusIsTrue (username: String): List<AccountRecovery>
 
-    fun findByHashCodeAndStatusIsTrue(hashCode: String): AccountRecovery?
-
 }

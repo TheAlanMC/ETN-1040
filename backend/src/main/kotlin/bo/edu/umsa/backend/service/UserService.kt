@@ -1,16 +1,16 @@
 package bo.edu.umsa.backend.service
 
 import at.favre.lib.crypto.bcrypt.BCrypt
-import bo.edu.umsa.backend.dto.FileDto
-import bo.edu.umsa.backend.dto.NewUserDto
-import bo.edu.umsa.backend.dto.ProfileDto
-import bo.edu.umsa.backend.dto.UserDto
+import bo.edu.umsa.backend.dto.*
 import bo.edu.umsa.backend.entity.File
 import bo.edu.umsa.backend.entity.User
 import bo.edu.umsa.backend.entity.UserGroup
 import bo.edu.umsa.backend.exception.EtnException
+import bo.edu.umsa.backend.mapper.GroupMapper
+import bo.edu.umsa.backend.mapper.RoleMapper
 import bo.edu.umsa.backend.mapper.UserMapper
 import bo.edu.umsa.backend.repository.*
+import bo.edu.umsa.backend.service.GroupService.Companion
 import bo.edu.umsa.backend.specification.UserSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -57,7 +57,7 @@ class UserService @Autowired constructor(
     }
 
     fun createUser(newUserDto: NewUserDto) {
-        // Validate that at least this fields are not blank:
+        // Validate that at least these fields are not blank:
         if (newUserDto.email.isBlank() || newUserDto.firstName.isBlank() || newUserDto.lastName.isBlank()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one required field is blank","Al menos un campo requerido está en blanco")
         }
@@ -85,7 +85,7 @@ class UserService @Autowired constructor(
         val passwordHash = BCrypt.withDefaults().hashToString(12, password.toCharArray())
 
         // Create the user
-        val userEntity: User = User()
+        val userEntity = User()
         userEntity.filePhotoId = savedFile.fileId
         userEntity.email = newUserDto.email
         userEntity.firstName = newUserDto.firstName
@@ -160,4 +160,37 @@ class UserService @Autowired constructor(
         fileService.overwriteFile(file, userEntity.filePhotoId.toLong())
     }
 
+    fun getGroupsByUserId(userId: Long): List<GroupDto> {
+        logger.info("Getting groups for user with id $userId")
+        // Validate that the user exists
+        userRepository.findByUserIdAndStatusIsTrue(userId)
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
+        // Get the groups
+        val groupEntities = groupRepository.findAllByUserId(userId)
+        return groupEntities.map { GroupMapper.entityToDto(it) }
+    }
+
+    fun addGroupsToUser(userId: Long, groupIds: List<Long>) {
+        logger.info("Adding groups to the user with id $userId")
+        // Get the user
+        userRepository.findByUserIdAndStatusIsTrue(userId) ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
+        // Validate that the groups exist
+        val groupEntities = groupRepository.findAllByGroupIds(groupIds)
+        if (groupEntities.size != groupIds.size) throw EtnException(HttpStatus.NOT_FOUND, "Error: Group not found","Al menos un grupo no fue encontrado")
+        // Delete previous roles changing the status to false
+        logger.info("Deleting previous groups")
+        val userGroupEntities = userGroupRepository.findAllByUserIdAndStatusIsTrue(userId)
+        userGroupEntities.forEach {
+            it.status = false
+            userGroupRepository.save(it)
+        }
+        // Add the new groups
+        logger.info("Adding new groups")
+        groupEntities.forEach {
+            val userGroupEntity = UserGroup()
+            userGroupEntity.userId = userId.toInt()
+            userGroupEntity.groupId = it.groupId
+            userGroupRepository.save(userGroupEntity)
+        }
+    }
 }

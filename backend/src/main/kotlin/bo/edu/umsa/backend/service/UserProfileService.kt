@@ -44,7 +44,7 @@ class UserProfileService @Autowired constructor(
         }
         // Validate that the profileId is the same as the user's id
         val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized","No autorizado")
-        logger.info("Updating the profile with id ${userId}")
+        logger.info("Updating the profile with id $userId")
         // Get the user
         val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")

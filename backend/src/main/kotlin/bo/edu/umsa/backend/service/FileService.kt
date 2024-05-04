@@ -29,7 +29,7 @@ class FileService @Autowired constructor(
     fun uploadFile(file: MultipartFile): Int {
         logger.info("Uploading the file ${file.originalFilename}")
         // Upload the file
-        val fileEntity: File = File()
+        val fileEntity = File()
         fileEntity.filename = file.originalFilename!!
         fileEntity.contentType = file.contentType!!
         fileEntity.fileData = file.bytes

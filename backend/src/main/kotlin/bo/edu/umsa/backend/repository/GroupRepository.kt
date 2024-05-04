@@ -1,7 +1,6 @@
 package bo.edu.umsa.backend.repository
 
 import bo.edu.umsa.backend.entity.Group
-import bo.edu.umsa.backend.entity.Role
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
@@ -25,4 +24,27 @@ interface GroupRepository: JpaRepository<Group, Long> {
 
     fun findByGroupIdAndStatusIsTrue (groupId: Long): Group?
 
+    fun findAllByStatusIsTrue (): List<Group>
+
+    @Query(
+        """
+            SELECT g.* FROM "group" g
+            WHERE g.group_id IN :groupIds
+            AND g.status = true
+        """,
+        nativeQuery = true
+    )
+    fun findAllByGroupIds (groupIds: List<Long>): List<Group>
+
+    @Query(
+        """
+            SELECT g.* FROM "group" g
+            JOIN user_group ug ON g.group_id = ug.group_id
+            WHERE ug.user_id = :userId
+            AND g.status = true
+            AND ug.status = true
+        """,
+        nativeQuery = true
+    )
+    fun findAllByUserId (userId: Long): List<Group>
 }

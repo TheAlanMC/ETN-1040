@@ -21,7 +21,7 @@ class UserProfileController @Autowired constructor(
         val logger: Logger = LoggerFactory.getLogger(UserProfileController::class.java)
     }
 
-    @GetMapping()
+    @GetMapping
     fun getProfile(): ResponseEntity<ResponseDto<ProfileDto>> {
         logger.info("Starting the API call to get the profile")
         logger.info("GET /api/v1/auth/users/profile")
@@ -30,7 +30,7 @@ class UserProfileController @Autowired constructor(
         return ResponseEntity(ResponseDto(true,"Perfil recuperado", profileDto), HttpStatus.OK)
     }
 
-    @PutMapping()
+    @PutMapping
     fun updateProfile(
         @RequestBody profileDto: ProfileDto,
     ): ResponseEntity<ResponseDto<Nothing>> {
