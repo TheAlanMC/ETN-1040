@@ -1,11 +1,10 @@
 package bo.edu.umsa.backend.dto
 
-data class UserDto (
-    val userId: Int,
+data class NewUserDto (
+    val groupId: Int,
     val email: String,
     val firstName: String,
     val lastName: String,
     val phone: String,
     val description: String,
-    val txUser: String,
 )

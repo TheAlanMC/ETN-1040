@@ -23,4 +23,6 @@ interface GroupRepository: JpaRepository<Group, Long> {
     )
     fun findAllByUsername(username: String): List<Group>
 
+    fun findByGroupIdAndStatusIsTrue (groupId: Long): Group?
+
 }

@@ -1,6 +1,6 @@
 package bo.edu.umsa.backend.controller
 
-import bo.edu.umsa.backend.dto.AccountRecoveryDto
+import bo.edu.umsa.backend.dto.PasswordChangeDto
 import bo.edu.umsa.backend.dto.AuthReqDto
 import bo.edu.umsa.backend.dto.AuthResDto
 import bo.edu.umsa.backend.dto.ResponseDto
@@ -48,33 +48,33 @@ class AuthController @Autowired constructor(
 
     @PostMapping("/forgot-password")
     fun forgotPassword(
-        @RequestBody accountRecoveryDto: AccountRecoveryDto
+        @RequestBody passwordChangeDto: PasswordChangeDto
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to send an email to reset the password")
         logger.info("POST /api/v1/auth/forgot-password")
-        authService.forgotPassword(accountRecoveryDto.email)
+        authService.forgotPassword(passwordChangeDto.email)
         logger.info("Success: Email sent")
         return ResponseEntity(ResponseDto(true,"El correo ha sido enviado", null), HttpStatus.OK)
     }
 
     @PostMapping("/verification")
     fun verification(
-        @RequestBody accountRecoveryDto: AccountRecoveryDto
+        @RequestBody passwordChangeDto: PasswordChangeDto
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to verify the hash code")
         logger.info("POST /api/v1/auth/verification")
-        authService.verification(accountRecoveryDto.email, accountRecoveryDto.code)
+        authService.verification(passwordChangeDto.email, passwordChangeDto.code)
         logger.info("Success: Hash code verified")
         return ResponseEntity(ResponseDto(true,"El código ha sido verificado", null), HttpStatus.OK)
     }
 
     @PostMapping("/reset-password")
     fun resetPassword(
-        @RequestBody accountRecoveryDto: AccountRecoveryDto
+        @RequestBody passwordChangeDto: PasswordChangeDto
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to reset the password")
         logger.info("POST /api/v1/auth/reset-password")
-        authService.resetPassword(accountRecoveryDto.email, accountRecoveryDto.code, accountRecoveryDto.password, accountRecoveryDto.confirmPassword)
+        authService.resetPassword(passwordChangeDto.email, passwordChangeDto.code, passwordChangeDto.password, passwordChangeDto.confirmPassword)
         logger.info("Success: Password reset")
         return ResponseEntity(ResponseDto(true,"La contraseña ha sido cambiada", null), HttpStatus.OK)
     }

@@ -50,7 +50,7 @@ class AuthService @Autowired constructor(
         }
         // Get the user roles
         val roleEntities = roleRepository.findAllByUsername(credentials.email)
-        val roles = roleEntities.map { role -> role.roleName }.toTypedArray()
+        val roles = roleEntities.map { role -> role.roleName }.toSet().toTypedArray()
         // Get the user groups
         val groupEntities = groupRepository.findAllByUsername(credentials.email)
         val groups = groupEntities.map { group -> group.groupName }.toTypedArray()
@@ -146,6 +146,10 @@ class AuthService @Autowired constructor(
         // Validate the password is at least 8 characters long
         if (password.length < 8) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Password must be at least 8 characters long","La contraseña debe tener al menos 8 caracteres")
+        }
+        // Validate that the password and confirm password are the same
+        if (password != confirmPassword) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Passwords do not match","Las contraseñas no coinciden")
         }
         logger.info("User $email is trying to reset the password")
         // Verify if the user exists
