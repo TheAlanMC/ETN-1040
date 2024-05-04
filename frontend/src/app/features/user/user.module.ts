@@ -12,6 +12,10 @@ import {ChipsModule} from "primeng/chips";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ToastModule} from "primeng/toast";
+import {RippleModule} from "primeng/ripple";
+import {SidebarModule} from "primeng/sidebar";
+import {PasswordModule} from "primeng/password";
+import {DialogModule} from "primeng/dialog";
 
 
 
@@ -33,6 +37,10 @@ import {ToastModule} from "primeng/toast";
     ReactiveFormsModule,
     ProgressSpinnerModule,
     ToastModule,
+    RippleModule,
+    SidebarModule,
+    PasswordModule,
+    DialogModule,
 
   ]
 })

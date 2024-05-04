@@ -1,6 +1,6 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
 import {LayoutService} from './service/app.layout.service';
-import {UserService} from "../core/services/user.service";
+import {ProfileService} from "../core/services/profile.service";
 
 @Component({
     selector: 'app-topbar',
@@ -11,7 +11,7 @@ export class AppTopbarComponent {
 
   @ViewChild('menubutton') menuButton!: ElementRef;
 
-    constructor(public layoutService: LayoutService, private userService: UserService) {
+    constructor(public layoutService: LayoutService, private profileService: ProfileService) {
       this.getProfilePictureUrl();
     }
 
@@ -27,7 +27,7 @@ export class AppTopbarComponent {
     }
 
   public getProfilePictureUrl(){
-      this.userService.getProfilePicture().subscribe({
+      this.profileService.getProfilePicture().subscribe({
         next: (data) => {
           this.profilePictureUrl = URL.createObjectURL(data);
         },

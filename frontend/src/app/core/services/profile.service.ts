@@ -9,8 +9,8 @@ import {UserDto} from "../../features/user/models/user.dto";
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
-  baseUrl: string = `${environment.API_URL}/api/v1/users`;
+export class ProfileService {
+  baseUrl: string = `${environment.API_URL}/api/v1/profile`;
   token: string = localStorage.getItem('token') || '';
 
   constructor(private http: HttpClient) {}
@@ -22,7 +22,7 @@ export class UserService {
       }),
       responseType: 'blob'
     };
-    return this.http.get<Blob>(`${this.baseUrl}/profile-picture`, httpOptions);
+    return this.http.get<Blob>(`${this.baseUrl}/picture`, httpOptions);
   }
 
   public uploadProfilePicture(file: File): Observable<ResponseDto<Nullable>> {
@@ -33,7 +33,7 @@ export class UserService {
         'Authorization': `Bearer ${this.token}`
       })
     };
-    return this.http.post<ResponseDto<Nullable>>(`${this.baseUrl}/profile-picture`, formData, httpOptions);
+    return this.http.post<ResponseDto<Nullable>>(`${this.baseUrl}/picture`, formData, httpOptions);
   }
 
   public getProfile(): Observable<ResponseDto<UserDto>> {
@@ -42,7 +42,7 @@ export class UserService {
         'Authorization': `Bearer ${this.token}`
       })
     };
-    return this.http.get<ResponseDto<UserDto>>(`${this.baseUrl}/profile`, httpOptions);
+    return this.http.get<ResponseDto<UserDto>>(`${this.baseUrl}`, httpOptions);
   }
 
   public updateProfile(firstName: string, lastName: string, phone: string, description: string): Observable<ResponseDto<Nullable>> {
@@ -51,7 +51,15 @@ export class UserService {
         'Authorization': `Bearer ${this.token}`
       })
     };
-    return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/profile`, {firstName, lastName, phone, description}, httpOptions);
+    return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}`, {firstName, lastName, phone, description}, httpOptions);
   }
 
+  public changePassword(oldPassword: string, password: string, confirmPassword: string): Observable<ResponseDto<Nullable>> {
+    const httpOptions : Object = {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${this.token}`
+      })
+    };
+    return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/password`, {oldPassword, password, confirmPassword}, httpOptions);
+  }
 }

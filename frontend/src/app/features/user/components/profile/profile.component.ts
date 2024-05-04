@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {UserService} from "../../../../core/services/user.service";
+import {ProfileService} from "../../../../core/services/profile.service";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {jwtDecode} from "jwt-decode";
 import {Router} from "@angular/router";
@@ -16,7 +16,13 @@ import {MessageService} from "primeng/api";
   providers: [MessageService]
 })
 export class ProfileComponent implements OnInit {
-  userId = 0;
+
+  visibleChangePassword = false
+
+  oldPasswordControl = new FormControl('', [Validators.required, Validators.minLength(8)]);
+  passwordControl = new FormControl('', [Validators.required, Validators.minLength(8)]);
+  confirmPasswordControl = new FormControl('', [Validators.required, Validators.minLength(8)]);
+
 
   profilePictureUrl: string = 'assets/layout/images/avatar.png';
   backupProfilePictureUrl: string = 'assets/layout/images/avatar.png';
@@ -39,7 +45,7 @@ export class ProfileComponent implements OnInit {
 
   @ViewChild('fileUpload') fileUpload!: FileUpload;
 
-  constructor(private userService: UserService, private authService:AuthService, private router: Router, private messageService: MessageService) {
+  constructor(private profileService: ProfileService, private authService:AuthService, private router: Router, private messageService: MessageService) {
     // Get token from local storage
     const token = localStorage.getItem('token');
     // Check if token exists
@@ -61,7 +67,7 @@ export class ProfileComponent implements OnInit {
   }
 
   public getProfilePictureUrl(){
-    this.userService.getProfilePicture().subscribe({
+    this.profileService.getProfilePicture().subscribe({
       next: (data) => {
         this.profilePictureUrl = URL.createObjectURL(data);
         this.backupProfilePictureUrl = URL.createObjectURL(data);
@@ -73,7 +79,7 @@ export class ProfileComponent implements OnInit {
   }
 
   public getProfileInfo(){
-    this.userService.getProfile().subscribe({
+    this.profileService.getProfile().subscribe({
       next: (data) => {
         this.user = data.data;
         this.firstNameControl.setValue(this.user?.firstName ?? '');
@@ -100,7 +106,7 @@ export class ProfileComponent implements OnInit {
 
   public onSave(){
     if(this.user){
-      this.userService.updateProfile(
+      this.profileService.updateProfile(
         this.firstNameControl.value!,
         this.lastNameControl.value!,
         this.phoneControl.value!,
@@ -124,7 +130,7 @@ export class ProfileComponent implements OnInit {
 
   public onUpload(){
     if(this.changeProfilePicture){
-      this.userService.uploadProfilePicture(this.fileUpload.files[0]).subscribe({
+      this.profileService.uploadProfilePicture(this.fileUpload.files[0]).subscribe({
         next: (data) => {
           this.backupProfilePictureUrl = this.profilePictureUrl;
           this.onCancelSelect();
@@ -148,4 +154,18 @@ export class ProfileComponent implements OnInit {
       }
     });
   }
+
+  onSubmit() {
+    this.profileService.changePassword(this.oldPasswordControl.value!!, this.passwordControl.value!!, this.confirmPasswordControl.value!!).subscribe({
+      next: (data) => {
+        this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Contraseña actualizada'});
+        this.visibleChangePassword = false;
+      },
+      error: (error) => {
+        this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
+        console.log(error);
+      }
+    });
+  }
+
 }
