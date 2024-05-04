@@ -5,7 +5,7 @@ import {jwtDecode} from "jwt-decode";
 import {Router} from "@angular/router";
 import {FormControl, Validators} from "@angular/forms";
 import {FileUpload} from "primeng/fileupload";
-import {UserDto} from "../../models/user.dto";
+import {ProfileDto} from "../../models/profile.dto";
 import {AuthService} from "../../../../core/services/auth.service";
 import {MessageService} from "primeng/api";
 
@@ -41,7 +41,7 @@ export class ProfileComponent implements OnInit {
 
   changeProfilePicture = false;
 
-  user: UserDto | null = null;
+  profile: ProfileDto | null = null;
 
   @ViewChild('fileUpload') fileUpload!: FileUpload;
 
@@ -81,11 +81,11 @@ export class ProfileComponent implements OnInit {
   public getProfileInfo(){
     this.profileService.getProfile().subscribe({
       next: (data) => {
-        this.user = data.data;
-        this.firstNameControl.setValue(this.user?.firstName ?? '');
-        this.lastNameControl.setValue(this.user?.lastName ?? '');
-        this.phoneControl.setValue(this.user?.phone ?? '');
-        this.descriptionControl.setValue(this.user?.description ?? '');
+        this.profile = data.data;
+        this.firstNameControl.setValue(this.profile?.firstName ?? '');
+        this.lastNameControl.setValue(this.profile?.lastName ?? '');
+        this.phoneControl.setValue(this.profile?.phone ?? '');
+        this.descriptionControl.setValue(this.profile?.description ?? '');
       },
       error: (error) => {
         console.log(error);
@@ -104,28 +104,26 @@ export class ProfileComponent implements OnInit {
     this.profilePictureUrl = this.backupProfilePictureUrl;
   }
 
-  public onSave(){
-    if(this.user){
-      this.profileService.updateProfile(
-        this.firstNameControl.value!,
-        this.lastNameControl.value!,
-        this.phoneControl.value!,
-        this.descriptionControl.value!
-      ).subscribe({
-        next: (data) => {
-          this.refreshToken();
-          this.onUpload();
-          this.messageService.add({severity:'success', summary:'Éxito', detail:'Perfil actualizado'});
-          setTimeout(() => {
-            this.router.navigate(['/']).then(r => window.location.reload());
-          }, 1000);
-        },
-        error: (error) => {
-          console.log(error);
-          this.messageService.add({severity:'error', summary:'Error', detail:error.error.message});
-        }
-      })
-    }
+  public onSave() {
+    this.profileService.updateProfile(
+      this.firstNameControl.value!,
+      this.lastNameControl.value!,
+      this.phoneControl.value!,
+      this.descriptionControl.value!
+    ).subscribe({
+      next: (data) => {
+        this.refreshToken();
+        this.onUpload();
+        this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Perfil actualizado'});
+        setTimeout(() => {
+          this.router.navigate(['/']).then(r => window.location.reload());
+        }, 1000);
+      },
+      error: (error) => {
+        console.log(error);
+        this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
+      }
+    })
   }
 
   public onUpload(){

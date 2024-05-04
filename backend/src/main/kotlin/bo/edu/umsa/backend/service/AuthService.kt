@@ -54,7 +54,7 @@ class AuthService @Autowired constructor(
         val roles = roleEntities.map { role -> role.roleName }.toSet().toTypedArray()
         // Get the user groups
         val groupEntities = groupRepository.findAllByUsername(credentials.email)
-        val groups = groupEntities.map { group -> group.groupName }.toTypedArray()
+        val groups = groupEntities.map { group -> group.groupName }.toSet().toTypedArray()
 
         return AuthUtil.generateAuthAndRefreshToken(userEntity, roles, groups)
     }

@@ -55,6 +55,8 @@ export class AppProfileSidebarComponent {
     this.confirmationService.confirm({
       key: 'confirmLogout',
       message: '¿Estás seguro de cerrar sesión?',
+      header: 'Confirmar',
+      icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Sí',
       rejectLabel: 'No',
       accept: () => {

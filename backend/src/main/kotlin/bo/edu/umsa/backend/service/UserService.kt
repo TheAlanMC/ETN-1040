@@ -30,7 +30,8 @@ class UserService @Autowired constructor(
     private val fileRepository: FileRepository,
     private val userGroupRepository: UserGroupRepository,
     private val fileService: FileService,
-    private val emailService: EmailService
+    private val emailService: EmailService,
+    private val roleRepository: RoleRepository
 ){
     companion object {
         private val logger = org.slf4j.LoggerFactory.getLogger(UserService::class.java)
@@ -61,12 +62,20 @@ class UserService @Autowired constructor(
         if (newUserDto.email.isBlank() || newUserDto.firstName.isBlank() || newUserDto.lastName.isBlank()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one required field is blank","Al menos un campo requerido está en blanco")
         }
+        // Validate that the group id is greater than 0
+        if (newUserDto.groupId <= 0) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Group was not selected","Rol no seleccionado")
+        }
+        // Validate the email format
+        if (!newUserDto.email.matches(Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}\$"))) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Invalid email format","Formato de correo inválido")
+        }
         // Validate that the group exists
         val groupEntity =groupRepository.findByGroupIdAndStatusIsTrue(newUserDto.groupId.toLong())
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Group not found","Grupo no encontrado")
         // Validate that the email is unique
         if (userRepository.existsByEmailAndStatusIsTrue(newUserDto.email)) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Email already exists","El correo ya existe")
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Email already exists","El correo ya existe, por favor elija otro")
         }
         logger.info("Creating the user ${newUserDto.email}")
         // Read file from assets
@@ -118,7 +127,11 @@ class UserService @Autowired constructor(
         // Get the user
         val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
-        return UserMapper.entityToDto(userEntity)
+        // Get the user roles
+        val roleEntities = roleRepository.findAllByUsername(userEntity.username)
+        val roles = roleEntities.map { role -> role.roleName }.toSet().toTypedArray()
+        val groups = groupRepository.findAllByUserId(userId).map { it.groupName }.toSet().toTypedArray()
+        return UserMapper.entityToDto(userEntity, roles.toList(), groups.toList())
     }
 
     fun updateUser(userId: Long, profileDto: ProfileDto) {
@@ -139,6 +152,16 @@ class UserService @Autowired constructor(
         userEntity.lastName = profileDto.lastName
         userEntity.phone = profileDto.phone
         userEntity.description = profileDto.description
+        userRepository.save(userEntity)
+    }
+
+    fun deleteUser(userId: Long) {
+        logger.info("Deleting the user with id $userId")
+        // Get the user
+        val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
+        // Change the status to false
+        userEntity.status = false
         userRepository.save(userEntity)
     }
 

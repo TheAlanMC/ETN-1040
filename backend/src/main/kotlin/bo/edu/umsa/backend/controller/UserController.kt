@@ -74,6 +74,18 @@ class UserController @Autowired constructor(
         return ResponseEntity(ResponseDto(true,"El usuario se ha actualizado", null), HttpStatus.OK)
     }
 
+    @DeleteMapping("/{userId}")
+    fun deleteUser(
+        @PathVariable userId: Long
+    ): ResponseEntity<ResponseDto<Nothing>> {
+        logger.info("Starting the API call to delete the user")
+        logger.info("DELETE /api/v1/auth/users/{userId}")
+        AuthUtil.verifyAuthTokenHasRole("EDITAR USUARIOS")
+        userService.deleteUser(userId)
+        logger.info("Success: User deleted")
+        return ResponseEntity(ResponseDto(true,"El usuario se ha eliminado", null), HttpStatus.OK)
+    }
+
     @GetMapping("/{userId}/profile-picture")
     fun getProfilePicture(
         @PathVariable userId: Long
@@ -101,6 +113,7 @@ class UserController @Autowired constructor(
         logger.info("Success: Profile picture updated")
         return ResponseEntity(ResponseDto(true,"Foto de perfil actualizada", null), HttpStatus.OK)
     }
+
 
     @GetMapping("/{userId}/groups")
     fun getGroupsByUserId(

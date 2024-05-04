@@ -4,7 +4,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {ResponseDto} from "../models/response.dto";
 import {Nullable} from "primeng/ts-helpers";
-import {UserDto} from "../../features/user/models/user.dto";
+import {ProfileDto} from "../../features/user/models/profile.dto";
 
 @Injectable({
   providedIn: 'root'
@@ -13,53 +13,36 @@ export class ProfileService {
   baseUrl: string = `${environment.API_URL}/api/v1/profile`;
   token: string = localStorage.getItem('token') || '';
 
-  constructor(private http: HttpClient) {}
-
-  public getProfilePicture(): Observable<Blob> {
-    const httpOptions : Object = {
+  private getHttpOptions(responseType: 'json' | 'blob' = 'json'): Object {
+    return {
       headers: new HttpHeaders({
         'Authorization': `Bearer ${this.token}`
       }),
-      responseType: 'blob'
+      responseType
     };
-    return this.http.get<Blob>(`${this.baseUrl}/picture`, httpOptions);
+  }
+
+  constructor(private http: HttpClient) {}
+
+  public getProfilePicture(): Observable<Blob> {
+    return this.http.get<Blob>(`${this.baseUrl}/picture`, this.getHttpOptions('blob'));
   }
 
   public uploadProfilePicture(file: File): Observable<ResponseDto<Nullable>> {
     const formData = new FormData();
     formData.append('file', file);
-    const httpOptions : Object = {
-      headers: new HttpHeaders({
-        'Authorization': `Bearer ${this.token}`
-      })
-    };
-    return this.http.post<ResponseDto<Nullable>>(`${this.baseUrl}/picture`, formData, httpOptions);
+    return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/picture`, formData, this.getHttpOptions());
   }
 
-  public getProfile(): Observable<ResponseDto<UserDto>> {
-    const httpOptions : Object = {
-      headers: new HttpHeaders({
-        'Authorization': `Bearer ${this.token}`
-      })
-    };
-    return this.http.get<ResponseDto<UserDto>>(`${this.baseUrl}`, httpOptions);
+  public getProfile(): Observable<ResponseDto<ProfileDto>> {
+    return this.http.get<ResponseDto<ProfileDto>>(`${this.baseUrl}`, this.getHttpOptions());
   }
 
   public updateProfile(firstName: string, lastName: string, phone: string, description: string): Observable<ResponseDto<Nullable>> {
-    const httpOptions : Object = {
-      headers: new HttpHeaders({
-        'Authorization': `Bearer ${this.token}`
-      })
-    };
-    return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}`, {firstName, lastName, phone, description}, httpOptions);
+    return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}`, {firstName, lastName, phone, description}, this.getHttpOptions());
   }
 
   public changePassword(oldPassword: string, password: string, confirmPassword: string): Observable<ResponseDto<Nullable>> {
-    const httpOptions : Object = {
-      headers: new HttpHeaders({
-        'Authorization': `Bearer ${this.token}`
-      })
-    };
-    return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/password`, {oldPassword, password, confirmPassword}, httpOptions);
+    return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/password`, {oldPassword, password, confirmPassword}, this.getHttpOptions());
   }
 }

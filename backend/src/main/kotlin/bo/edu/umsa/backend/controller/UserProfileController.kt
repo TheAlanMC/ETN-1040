@@ -53,7 +53,7 @@ class UserProfileController @Autowired constructor(
         return ResponseEntity(profilePicture.fileData, headers, HttpStatus.OK)
     }
 
-    @PostMapping("/picture")
+    @PutMapping("/picture")
     fun uploadProfilePicture(
         @RequestParam("file") file: MultipartFile
     ): ResponseEntity<ResponseDto<Nothing>> {

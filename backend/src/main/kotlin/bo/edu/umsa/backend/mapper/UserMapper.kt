@@ -6,7 +6,7 @@ import bo.edu.umsa.backend.entity.User
 
 class UserMapper {
     companion object{
-        fun entityToDto(user: User): UserDto {
+        fun entityToDto(user: User, roles: List<String> = emptyList(), groups: List<String> = emptyList()): UserDto {
             return UserDto(
                 userId = user.userId,
                 email = user.email,
@@ -14,7 +14,10 @@ class UserMapper {
                 lastName = user.lastName,
                 phone = user.phone,
                 description = user.description,
-                txUser = user.txUser
+                txUser = user.txUser,
+                txDate = user.txDate,
+                roles = roles,
+                groups = groups
             )
         }
     }

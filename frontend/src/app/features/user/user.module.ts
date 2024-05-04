@@ -16,6 +16,9 @@ import {RippleModule} from "primeng/ripple";
 import {SidebarModule} from "primeng/sidebar";
 import {PasswordModule} from "primeng/password";
 import {DialogModule} from "primeng/dialog";
+import {TableModule} from "primeng/table";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {DropdownModule} from "primeng/dropdown";
 
 
 
@@ -27,21 +30,24 @@ import {DialogModule} from "primeng/dialog";
     ProfileComponent,
     GroupAndRoleComponent
   ],
-  imports: [
-    CommonModule,
-    UserRoutingModule,
-    FileUploadModule,
-    InputTextareaModule,
-    ChipsModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ProgressSpinnerModule,
-    ToastModule,
-    RippleModule,
-    SidebarModule,
-    PasswordModule,
-    DialogModule,
+    imports: [
+        CommonModule,
+        UserRoutingModule,
+        FileUploadModule,
+        InputTextareaModule,
+        ChipsModule,
+        FormsModule,
+        ReactiveFormsModule,
+        ProgressSpinnerModule,
+        ToastModule,
+        RippleModule,
+        SidebarModule,
+        PasswordModule,
+        DialogModule,
+        TableModule,
+        ConfirmDialogModule,
+        DropdownModule,
 
-  ]
+    ]
 })
 export class UserModule { }
