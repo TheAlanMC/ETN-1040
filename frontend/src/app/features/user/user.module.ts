@@ -19,6 +19,8 @@ import {DialogModule} from "primeng/dialog";
 import {TableModule} from "primeng/table";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {DropdownModule} from "primeng/dropdown";
+import {TabViewModule} from "primeng/tabview";
+import {PickListModule} from "primeng/picklist";
 
 
 
@@ -30,24 +32,25 @@ import {DropdownModule} from "primeng/dropdown";
     ProfileComponent,
     GroupAndRoleComponent
   ],
-    imports: [
-        CommonModule,
-        UserRoutingModule,
-        FileUploadModule,
-        InputTextareaModule,
-        ChipsModule,
-        FormsModule,
-        ReactiveFormsModule,
-        ProgressSpinnerModule,
-        ToastModule,
-        RippleModule,
-        SidebarModule,
-        PasswordModule,
-        DialogModule,
-        TableModule,
-        ConfirmDialogModule,
-        DropdownModule,
-
-    ]
+  imports: [
+    CommonModule,
+    UserRoutingModule,
+    FileUploadModule,
+    InputTextareaModule,
+    ChipsModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ProgressSpinnerModule,
+    ToastModule,
+    RippleModule,
+    SidebarModule,
+    PasswordModule,
+    DialogModule,
+    TableModule,
+    ConfirmDialogModule,
+    DropdownModule,
+    TabViewModule,
+    PickListModule,
+  ]
 })
 export class UserModule { }

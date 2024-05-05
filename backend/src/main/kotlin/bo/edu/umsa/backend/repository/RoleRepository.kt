@@ -35,6 +35,7 @@ interface RoleRepository: JpaRepository<Role, Long> {
             AND r.status = true
             AND gr.status = true
             AND g.status = true
+            ORDER BY r.role_id
         """,
         nativeQuery = true
     )
@@ -45,11 +46,12 @@ interface RoleRepository: JpaRepository<Role, Long> {
             SELECT r.* FROM role r
             WHERE r.role_id IN :roleIds
             AND r.status = true
+            ORDER BY r.role_id
         """,
         nativeQuery = true
     )
     fun findAllByRoleIds (roleIds: List<Long>): List<Role>
 
-    fun findAllByStatusIsTrue (): List<Role>
+    fun findAllByStatusIsTrueOrderByRoleId (): List<Role>
 
 }

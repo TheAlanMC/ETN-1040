@@ -9,6 +9,7 @@ import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.GroupMapper
 import bo.edu.umsa.backend.mapper.RoleMapper
 import bo.edu.umsa.backend.mapper.UserMapper
+import bo.edu.umsa.backend.mapper.UserPartialMapper
 import bo.edu.umsa.backend.repository.*
 import bo.edu.umsa.backend.service.GroupService.Companion
 import bo.edu.umsa.backend.specification.UserSpecification
@@ -35,6 +36,12 @@ class UserService @Autowired constructor(
 ){
     companion object {
         private val logger = org.slf4j.LoggerFactory.getLogger(UserService::class.java)
+    }
+
+    fun getAllUsers(): List<UserPartialDto> {
+        logger.info("Getting all users")
+        val userEntities = userRepository.findAll()
+        return userEntities.map { UserPartialMapper.entityToDto(it) }
     }
 
     fun getUsers(

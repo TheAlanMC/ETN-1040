@@ -29,7 +29,7 @@ class GroupService @Autowired constructor(
 
     fun getGroups() : List<GroupDto> {
         logger.info("Getting groups")
-        val groupEntities = groupRepository.findAllByStatusIsTrue()
+        val groupEntities = groupRepository.findAllByStatusIsTrueOrderByGroupId()
         return groupEntities.map { GroupMapper.entityToDto(it) }
     }
 

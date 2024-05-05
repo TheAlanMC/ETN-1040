@@ -17,6 +17,7 @@ interface GroupRepository: JpaRepository<Group, Long> {
             AND g.status = true
             AND ug.status = true
             AND u.status = true
+            ORDER BY g.group_id
         """,
         nativeQuery = true
     )
@@ -24,13 +25,14 @@ interface GroupRepository: JpaRepository<Group, Long> {
 
     fun findByGroupIdAndStatusIsTrue (groupId: Long): Group?
 
-    fun findAllByStatusIsTrue (): List<Group>
+    fun findAllByStatusIsTrueOrderByGroupId (): List<Group>
 
     @Query(
         """
             SELECT g.* FROM "group" g
             WHERE g.group_id IN :groupIds
             AND g.status = true
+            ORDER BY g.group_id
         """,
         nativeQuery = true
     )
@@ -43,6 +45,7 @@ interface GroupRepository: JpaRepository<Group, Long> {
             WHERE ug.user_id = :userId
             AND g.status = true
             AND ug.status = true
+            ORDER BY g.group_id
         """,
         nativeQuery = true
     )

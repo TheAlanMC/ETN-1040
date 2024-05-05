@@ -36,10 +36,10 @@
         <td>{{user.txDate | date: 'MM/dd/yyyy HH:mm'}}</td>
         <td>{{user.txUser}}</td>
         <td *ngIf="canEditUser">
-          <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-outlined" (click)="navigateToEditUser(user.userId)"></button>
+          <button pButton icon="pi pi-user-edit" class="p-button-rounded p-button-outlined" (click)="navigateToEditUser(user.userId)"></button>
         </td>
         <td *ngIf="canEditUser">
-          <button pButton icon="pi pi-trash" class="p-button-rounded p-button-outlined" (click)="onDeleteUser(user.userId)"></button>
+          <button pButton icon="pi pi-user-minus" class="p-button-rounded p-button-outlined" (click)="onDeleteUser(user.userId)"></button>
         </td>
       </tr>
     </ng-template>

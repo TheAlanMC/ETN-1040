@@ -6,6 +6,7 @@ import {ActivatedRoute, Params, Router} from "@angular/router";
 import {MessageService} from "primeng/api";
 import {UserService} from "../../../../core/services/user.service";
 import {GroupService} from "../../../../core/services/group.service";
+import {Location} from "@angular/common";
 
 @Component({
   selector: 'app-edit-user',
@@ -36,7 +37,8 @@ export class EditUserComponent implements OnInit {
 
   @ViewChild('fileUpload') fileUpload!: FileUpload;
 
-  constructor(private activatedRoute: ActivatedRoute, private userService: UserService, private groupService: GroupService, private router: Router, private messageService: MessageService) {}
+  constructor(private activatedRoute: ActivatedRoute, private userService: UserService, private groupService: GroupService, private router: Router, private messageService: MessageService, private location: Location) {
+  }
 
   ngOnInit() {
     this.userId = this.activatedRoute.snapshot.params['id'];
@@ -119,5 +121,9 @@ export class EditUserComponent implements OnInit {
         }
       });
     }
+  }
+
+  public onCancel() {
+    this.location.back();
   }
 }

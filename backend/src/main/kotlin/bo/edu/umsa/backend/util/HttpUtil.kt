@@ -12,14 +12,8 @@ class HttpUtil {
             return requestAttributes?.request
         }
 
-//        fun getRequestHost(): String? {
-//            return getRequestContext()?.remoteHost
-//        }
-
         fun getRequestHost(): String? {
-            val request = getRequestContext()
-            val xForwardedFor = request?.getHeader("X-Forwarded-For")
-            return xForwardedFor?.split(",")?.firstOrNull() ?: request?.remoteHost
+            return getRequestContext()?.remoteHost
         }
 
     }

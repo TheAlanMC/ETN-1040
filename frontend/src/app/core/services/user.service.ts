@@ -27,6 +27,10 @@ export class UserService {
   constructor(private http: HttpClient) {
   }
 
+  public getAllUsers(): Observable<ResponseDto<UserDto[]>> {
+    return this.http.get<ResponseDto<UserDto[]>>(`${this.baseUrl}/all`, this.getHttpOptions());
+  }
+
   public getUsers(sortBy: string, sortType: string, page: number, size: number, keyword: string = ''): Observable<ResponseDto<PageDto<UserDto>>> {
     return this.http.get<ResponseDto<PageDto<UserDto>>>(`${this.baseUrl}?sortBy=${sortBy}&sortType=${sortType}&page=${page}&size=${size}&keyword=${keyword}`, this.getHttpOptions());
   }

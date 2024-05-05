@@ -1,0 +1,16 @@
+package bo.edu.umsa.backend.mapper
+
+import bo.edu.umsa.backend.dto.UserPartialDto
+import bo.edu.umsa.backend.entity.User
+
+
+class UserPartialMapper {
+    companion object{
+        fun entityToDto(user: User): UserPartialDto {
+            return UserPartialDto(
+                userId = user.userId,
+                email = user.email,
+            )
+        }
+    }
+}

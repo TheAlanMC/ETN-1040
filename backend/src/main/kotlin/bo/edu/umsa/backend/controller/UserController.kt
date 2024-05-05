@@ -21,6 +21,17 @@ class UserController @Autowired constructor(
         val logger: Logger = LoggerFactory.getLogger(UserController::class.java)
     }
 
+    @GetMapping("/all")
+    fun getAllUsers(): ResponseEntity<ResponseDto<List<UserPartialDto>>>
+    {
+        logger.info("Starting the API call to get all users")
+        logger.info("GET /api/v1/auth/users/all")
+        AuthUtil.verifyAuthTokenHasRole("GESTIONAR ROLES Y PERMISOS")
+        val users: List<UserPartialDto> = userService.getAllUsers()
+        logger.info("Success: Users retrieved")
+        return ResponseEntity(ResponseDto(true,"Usuarios recuperados", users), HttpStatus.OK)
+    }
+
     @GetMapping
     fun getUsers(
         @RequestParam(defaultValue = "userId") sortBy: String,

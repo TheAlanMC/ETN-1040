@@ -16,7 +16,7 @@ class RoleService @Autowired constructor(
 
     fun getRoles() : List<RoleDto> {
         logger.info("Getting roles")
-        val roleEntities = roleRepository.findAllByStatusIsTrue()
+        val roleEntities = roleRepository.findAllByStatusIsTrueOrderByRoleId()
         return roleEntities.map { RoleMapper.entityToDto(it) }
     }
 

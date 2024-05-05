@@ -6,6 +6,7 @@ import {Router} from "@angular/router";
 import {UserService} from "../../../../core/services/user.service";
 import {GroupService} from "../../../../core/services/group.service";
 import {MessageService, SelectItem} from "primeng/api";
+import {Location} from '@angular/common';
 
 @Component({
   selector: 'app-new-user',
@@ -14,10 +15,10 @@ import {MessageService, SelectItem} from "primeng/api";
   providers: [MessageService]
 })
 export class NewUserComponent implements OnInit {
-  selectedGroup: SelectItem = { value: '' };
   selectedGroupId: number = 0;
 
   roles: string[] = [];
+  selectedGroup: SelectItem = { value: '' };
   groups: SelectItem[] = [];
 
   loadingRoles = false;
@@ -32,7 +33,7 @@ export class NewUserComponent implements OnInit {
 
   @ViewChild('fileUpload') fileUpload!: FileUpload;
 
-  constructor(private userService: UserService, private groupService: GroupService, private router: Router, private messageService: MessageService) {
+  constructor(private userService: UserService, private groupService: GroupService, private router: Router, private messageService: MessageService, private location: Location) {
   }
 
   ngOnInit() {
@@ -86,7 +87,6 @@ export class NewUserComponent implements OnInit {
       next: (data) => {
         this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Usuario creado'});
         setTimeout(() => {
-          // redirect to users page
           this.router.navigate(['/users']).then(r => console.log('Redirect to users page'));
         }, 1000);
       },
@@ -95,5 +95,9 @@ export class NewUserComponent implements OnInit {
         this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
       }
     })
+  }
+
+  public onCancel() {
+    this.location.back();
   }
 }

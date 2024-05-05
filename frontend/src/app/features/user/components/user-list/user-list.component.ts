@@ -107,7 +107,6 @@ export class UserListComponent implements OnInit {
 
 
   onDeleteUser(userId: number) {
-    console.log('Delete user with id: ', userId);
     this.confirmationService.confirm({
       key: 'confirmDeleteUser',
       message: '¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.',

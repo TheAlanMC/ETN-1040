@@ -47,8 +47,8 @@
           <textarea id="bio" type="text" pInputTextarea rows="5" [autoResize]="true" [formControl]="descriptionControl"></textarea>
         </div>
         <div class="col-12 d-flex justify-content-between">
-          <button pButton pRipple label="Guardar" class="w-auto mt-3 mr-3" (click)="onSave()"></button>
-          <button pButton pRipple label="Cancelar" class="w-auto mt-3 p-button-outlined" [routerLink]="['/users']"></button>
+          <button pButton pRipple label="Guardar" icon="pi pi-save" class="w-auto mt-3 mr-3" (click)="onSave()"></button>
+          <button pButton pRipple label="Cancelar" icon="pi pi-times" class="w-auto mt-3 p-button-outlined" (click)="onCancel()"></button>
         </div>
       </div>
     </div>
