@@ -105,6 +105,7 @@ export class ProfileComponent implements OnInit {
   }
 
   public onSave() {
+    this.onUpload();
     this.profileService.updateProfile(
       this.firstNameControl.value!,
       this.lastNameControl.value!,
@@ -113,7 +114,6 @@ export class ProfileComponent implements OnInit {
     ).subscribe({
       next: (data) => {
         this.refreshToken();
-        this.onUpload();
         this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Perfil actualizado'});
         setTimeout(() => {
           this.router.navigate(['/']).then(r => window.location.reload());

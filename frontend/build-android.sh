@@ -15,6 +15,7 @@ npx cap sync android
 cd android
 ./gradlew assembleRelease -PversionCode=1 -PversionName=$version_name
 cd ..
+cp android/app/build/outputs/apk/release/app-release.apk android/app/build/outputs/apk/release/app-release-$version_name.apk
 cp android/app/build/outputs/apk/release/app-release.apk laboratorio_multimedia.apk
 
 echo "APK built successfully!"

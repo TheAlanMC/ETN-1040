@@ -5,17 +5,18 @@ import {Observable, of} from "rxjs";
 import {ResponseDto} from "../models/response.dto";
 import { AuthDto } from '../../features/auth/models/auth.dto';
 import {Nullable} from "primeng/ts-helpers";
+import {UtilService} from "./util.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   baseUrl: string = `${environment.API_URL}/api/v1/auth`;
-  //check if is mobile or web app to change the redirect url
 
-
-  constructor(private http: HttpClient) {
-    if
+  constructor(private http: HttpClient, private device: UtilService) {
+    if (this.device.checkIfMobile()) {
+      this.baseUrl = this.baseUrl.replace('/backend', ':8080');
+    }
   }
 
   public login(email: string, password: string): Observable<ResponseDto<AuthDto>> {

@@ -58,7 +58,7 @@ class UserProfileController @Autowired constructor(
         @RequestParam("file") file: MultipartFile
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to upload the profile picture")
-        logger.info("POST /api/v1/auth/profile/picture")
+        logger.info("PUT /api/v1/auth/profile/picture")
         userProfileService.uploadProfilePicture(file)
         logger.info("Success: Profile picture uploaded")
         return ResponseEntity(ResponseDto(true,"La foto de perfil se ha subido", null), HttpStatus.OK)

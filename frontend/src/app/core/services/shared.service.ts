@@ -6,7 +6,6 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class SharedService {
   private dataMapSource = new BehaviorSubject<Map<string, any>>(new Map());
-  currentDataMap = this.dataMapSource.asObservable();
 
   constructor() { }
 

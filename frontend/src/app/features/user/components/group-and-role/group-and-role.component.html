@@ -10,10 +10,10 @@
         <div class="col-12 lg:col-6 md:col-6">
           <p-dropdown [options]="userItems" [(ngModel)]="selectedUser" placeholder="Seleccione un usuario" [showClear]="true" (onChange)="onSelectUser($event)" (onClear)="onClearUser()" [filter]="true"></p-dropdown>
         </div>
-        <div class="mb-3 col-12 lg:col-6">
-          <button pButton pRipple label="Crear Usuario" class="w-auto p-button-outlined mr-3" icon="pi pi-user-plus" [routerLink]="['/users/create']" *ngIf="selectedUserId==0"></button>
-          <button pButton pRipple label="Editar Usuario" class="w-auto p-button-outlined mr-3 p-button-secondary" icon="pi pi-user-plus" [routerLink]="['/users/edit/', selectedUserId]" *ngIf="selectedUserId!=0"></button>
-          <button pButton pRipple label="Eliminar Usuario" class="w-auto p-button-outlined p-button-secondary" icon="pi pi-user-minus" (click)="onDeleteUser()" *ngIf="selectedUserId!=0"></button>
+        <div class="col-12 lg:col-6">
+          <button pButton pRipple label="Crear Usuario" class="w-auto p-button-outlined mr-3 mb-3" icon="pi pi-user-plus" [routerLink]="['/users/create']" *ngIf="selectedUserId==0"></button>
+          <button pButton pRipple label="Editar Usuario" class="w-auto p-button-outlined mr-3 mb-3 p-button-secondary" icon="pi pi-user-plus" [routerLink]="['/users/edit/', selectedUserId]" *ngIf="selectedUserId!=0"></button>
+          <button pButton pRipple label="Eliminar Usuario" class="w-auto p-button-outlined mb-3 p-button-secondary" icon="pi pi-user-minus" (click)="onDeleteUser()" *ngIf="selectedUserId!=0"></button>
         </div>
       </div>
 
@@ -34,10 +34,10 @@
         <div class="col-12 lg:col-6 md:col-6">
           <p-dropdown [options]="groupItems" [(ngModel)]="selectedGroup" placeholder="Seleccione un rol" [showClear]="true" (onChange)="onSelectRole($event)" (onClear)="onClearGroup()" [filter]="true"></p-dropdown>
         </div>
-        <div class="mb-3 col-12 lg:col-6">
-          <button pButton pRipple label="Crear Rol" class="w-auto p-button-outlined mr-3" icon="pi pi-plus" (click)="onAddGroup()" *ngIf="selectedGroupId==0"></button>
-          <button pButton pRipple label="Editar Rol" class="w-auto p-button-outlined mr-3 p-button-secondary" icon="pi pi-user-plus" (click)="onEditGroup()" *ngIf="selectedGroupId!=0"></button>
-          <button pButton pRipple label="Eliminar Rol" class="w-auto p-button-outlined p-button-secondary" icon="pi pi-minus" (click)="onDeleteGroup()" *ngIf="selectedGroupId!=0"></button>
+        <div class="col-12 lg:col-6">
+          <button pButton pRipple label="Crear Rol" class="w-auto p-button-outlined mr-3 mb-3" icon="pi pi-plus" (click)="onAddGroup()" *ngIf="selectedGroupId==0"></button>
+          <button pButton pRipple label="Editar Rol" class="w-auto p-button-outlined mr-3 mb-3 p-button-secondary" icon="pi pi-user-plus" (click)="onEditGroup()" *ngIf="selectedGroupId!=0"></button>
+          <button pButton pRipple label="Eliminar Rol" class="w-auto p-button-outlined mb-3 p-button-secondary" icon="pi pi-minus" (click)="onDeleteGroup()" *ngIf="selectedGroupId!=0"></button>
         </div>
       </div>
 
@@ -85,7 +85,7 @@
     </div>
 
     <div class="flex flex-wrap gap-2 justify-content-between">
-      <button pButton pRipple label="Cancelar" class="flex-auto p-button-outlined" (click)="visibleAddGroup = false"></button>
+      <button pButton pRipple label="Cancelar" class="flex-auto p-button-outlined" (click)="visibleEditGroup = false"></button>
       <button pButton pRipple label="Guardar" class="flex-auto" (click)="onUpdateGroup()"></button>
     </div>
   </div>

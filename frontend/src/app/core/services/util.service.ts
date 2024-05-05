@@ -5,7 +5,7 @@ import {HttpHeaders} from "@angular/common/http";
 @Injectable({
   providedIn: 'root'
 })
-export class UtilsService {
+export class UtilService {
 
   constructor() {}
 

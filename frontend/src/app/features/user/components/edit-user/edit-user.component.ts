@@ -88,7 +88,8 @@ export class EditUserComponent implements OnInit {
   }
 
   public onSave(){
-      this.userService.updateUser(
+    this.onUpload();
+    this.userService.updateUser(
         this.userId,
         this.firstNameControl.value!,
         this.lastNameControl.value!,
@@ -96,7 +97,6 @@ export class EditUserComponent implements OnInit {
         this.descriptionControl.value!
       ).subscribe({
         next: (data) => {
-          this.onUpload();
           this.messageService.add({severity:'success', summary:'Éxito', detail:'Usuario actualizado'});
           setTimeout(() => {
             this.router.navigate(['/users']).then(r => console.log('Redirect to users page'));

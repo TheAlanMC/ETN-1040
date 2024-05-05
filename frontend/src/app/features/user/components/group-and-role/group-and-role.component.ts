@@ -104,6 +104,9 @@ export class GroupAndRoleComponent implements OnInit{
   }
 
   public onSelectUser(event: any) {
+    if (event.value == null){
+      return
+    }
     this.userService.getUserGroups(event.value).subscribe({
       next: (data) => {
         this.selectedUserId = event.value;
@@ -199,6 +202,9 @@ export class GroupAndRoleComponent implements OnInit{
   }
 
   public onSelectRole(event: any) {
+    if (event.value == null){
+      return
+    }
     this.groupsService.getGroupRoles(event.value).subscribe({
       next: (data) => {
         this.selectedGroupId = event.value;

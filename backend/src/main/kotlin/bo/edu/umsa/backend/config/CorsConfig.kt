@@ -18,6 +18,7 @@ class CorsConfig {
             "http://localhost",
             "http://167.172.144.172:4200",
             "http://167.172.144.172",
+            "capacitor://localhost"
         )
         corsConfiguration.allowedHeaders=listOf(
             "Origin",
