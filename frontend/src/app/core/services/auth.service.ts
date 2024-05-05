@@ -11,8 +11,11 @@ import {Nullable} from "primeng/ts-helpers";
 })
 export class AuthService {
   baseUrl: string = `${environment.API_URL}/api/v1/auth`;
+  //check if is mobile or web app to change the redirect url
+
 
   constructor(private http: HttpClient) {
+    if
   }
 
   public login(email: string, password: string): Observable<ResponseDto<AuthDto>> {
