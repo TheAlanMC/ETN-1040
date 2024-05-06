@@ -300,8 +300,8 @@ export class GroupAndRoleComponent implements OnInit{
 
   public onAddGroup(){
     this.visibleAddGroup = true;
-    this.groupNameControl.reset();
-    this.groupDescriptionControl.reset();
+    this.groupNameControl.setValue('');
+    this.groupDescriptionControl.setValue('');
   }
 
   public onEditGroup(){
@@ -311,7 +311,7 @@ export class GroupAndRoleComponent implements OnInit{
   }
 
   onSaveGroup(){
-    this.groupsService.createGroup(this.groupNameControl.value!!, this.groupDescriptionControl.value!!).subscribe({
+    this.groupsService.createGroup(this.groupNameControl.value!, this.groupDescriptionControl.value!).subscribe({
       next: (data) => {
         this.messageService.add({
           severity: 'success',

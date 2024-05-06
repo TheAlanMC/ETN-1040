@@ -8,6 +8,8 @@ import {debounceTime, Subject} from "rxjs";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {jwtDecode} from "jwt-decode";
 import {ConfirmationService, MessageService} from "primeng/api";
+import {environment} from "../../../../../environments/environment";
+import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
   selector: 'app-user-list',
@@ -35,11 +37,18 @@ export class UserListComponent implements OnInit {
 
   isLoading: boolean = true;
 
+  baseUrl: string = `${environment.API_URL}/api/v1/users`;
+
+  imgLoaded: { [key: string]: boolean } = {};
 
   private searchSubject = new Subject<string>();
 
 
-  constructor(private userService: UserService, private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService) {
+  constructor(private userService: UserService, private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private utilService: UtilService) {
+    if (this.utilService.checkIfMobile()) {
+      this.baseUrl = this.baseUrl.replace('/backend', ':8080');
+    }
+
     // Get token from local storage
     const token = localStorage.getItem('token');
     if (token) {

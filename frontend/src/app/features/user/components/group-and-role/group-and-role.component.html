@@ -17,7 +17,7 @@
         </div>
       </div>
 
-      <p-pickList [source]="sourceGroups" [target]="targetGroups" sourceHeader="Grupos Disponibles" targetHeader="Grupos Asignados"
+      <p-pickList [source]="sourceGroups" [target]="targetGroups" sourceHeader="Roles Disponibles" targetHeader="Roles Asignados"
                   [responsive]="true" [sourceStyle]="{'height':'250px'}" [targetStyle]="{'height':'250px'}" [showSourceControls]="false" [showTargetControls]="false" [disabled]="isPickListDisabled"
                   (onMoveAllToSource)="sortSourceGroups()" (onMoveAllToTarget)="sortTargetGroups()" (onMoveToSource)="sortSourceGroups()" (onMoveToTarget)="sortTargetGroups()">
             <ng-template let-groups pTemplate="item">

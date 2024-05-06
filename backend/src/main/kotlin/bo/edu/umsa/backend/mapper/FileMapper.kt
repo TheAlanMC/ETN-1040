@@ -9,7 +9,8 @@ class FileMapper {
             return FileDto(
                 filename = file.filename,
                 contentType = file.contentType,
-                fileData = file.fileData
+                fileData = file.fileData,
+                thumbnail = file.thumbnail
             )
         }
     }

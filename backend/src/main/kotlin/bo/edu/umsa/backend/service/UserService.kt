@@ -87,11 +87,13 @@ class UserService @Autowired constructor(
         logger.info("Creating the user ${newUserDto.email}")
         // Read file from assets
         val avatarByteArray = assetService.readPhotoToByteArray("avatar.png")
+        val avatarThumbnailByteArray = assetService.readPhotoToByteArray("avatar_thumbnail.png")
         // Create the file
         val fileEntity = File()
         fileEntity.filename = "avatar.png"
         fileEntity.contentType = "image/png"
         fileEntity.fileData = avatarByteArray
+        fileEntity.thumbnail = avatarThumbnailByteArray
         val savedFile: File = fileRepository.save(fileEntity)
         logger.info("File created with id ${savedFile.fileId}")
 
@@ -188,6 +190,8 @@ class UserService @Autowired constructor(
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
         // Update the same file
         fileService.overwriteFile(file, userEntity.filePhotoId.toLong())
+        // Update the thumbnail
+        fileService.overwriteThumbnail(file, userEntity.filePhotoId.toLong())
     }
 
     fun getGroupsByUserId(userId: Long): List<GroupDto> {
@@ -222,5 +226,13 @@ class UserService @Autowired constructor(
             userGroupEntity.groupId = it.groupId
             userGroupRepository.save(userGroupEntity)
         }
+    }
+
+    fun getProfilePictureThumbnail(userId: Long): FileDto {
+        logger.info("Getting the profile picture thumbnail of $userId")
+        // Get the user
+        val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
+        return  fileService.getThumbnail(userEntity.filePhotoId.toLong())
     }
 }

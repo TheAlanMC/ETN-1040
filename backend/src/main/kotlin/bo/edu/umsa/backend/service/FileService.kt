@@ -12,7 +12,8 @@ import org.springframework.web.multipart.MultipartFile
 
 @Service
 class FileService @Autowired constructor(
-    private val fileRepository: FileRepository
+    private val fileRepository: FileRepository,
+    private val thumbnailService: ThumbnailService
 ){
     companion object {
         private val logger = org.slf4j.LoggerFactory.getLogger(FileService::class.java)
@@ -20,6 +21,14 @@ class FileService @Autowired constructor(
 
     fun getFile(fileId: Long): FileDto {
         logger.info("Getting the file with id $fileId")
+        // Get the file
+        val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId)
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found","Archivo no encontrado")
+        return FileMapper.entityToDto(fileEntity)
+    }
+
+    fun getThumbnail(fileId: Long): FileDto {
+        logger.info("Getting the thumbnail with id $fileId")
         // Get the file
         val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found","Archivo no encontrado")
@@ -46,6 +55,17 @@ class FileService @Autowired constructor(
         fileEntity.filename = file.originalFilename!!
         fileEntity.contentType = file.contentType!!
         fileEntity.fileData = file.bytes
+        fileRepository.save(fileEntity)
+    }
+
+    fun overwriteThumbnail(thumbnail: MultipartFile, fileId: Long) {
+        logger.info("Overwriting the thumbnail with id $fileId")
+        // Generate the thumbnail
+        val thumbnailBytes = thumbnailService.createThumbnail(thumbnail)
+        // Overwrite the thumbnail
+        val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId)
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found","Archivo no encontrado")
+        fileEntity.thumbnail = thumbnailBytes
         fileRepository.save(fileEntity)
     }
 

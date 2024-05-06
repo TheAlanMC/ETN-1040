@@ -22,6 +22,9 @@ class File {
     @Column(name = "file_data")
     var fileData: ByteArray = byteArrayOf()
 
+    @Column(name = "thumbnail")
+    var thumbnail: ByteArray = byteArrayOf()
+
     @Column(name = "status")
     var status: Boolean = true
 

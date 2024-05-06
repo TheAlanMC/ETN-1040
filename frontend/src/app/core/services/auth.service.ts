@@ -13,8 +13,8 @@ import {UtilService} from "./util.service";
 export class AuthService {
   baseUrl: string = `${environment.API_URL}/api/v1/auth`;
 
-  constructor(private http: HttpClient, private device: UtilService) {
-    if (this.device.checkIfMobile()) {
+  constructor(private http: HttpClient, private utilService: UtilService) {
+    if (this.utilService.checkIfMobile()) {
       this.baseUrl = this.baseUrl.replace('/backend', ':8080');
     }
   }

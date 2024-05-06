@@ -74,7 +74,8 @@ class UserProfileService @Autowired constructor(
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
         // Update the same file
         fileService.overwriteFile(file, userEntity.filePhotoId.toLong())
-
+        // Create the thumbnail
+        fileService.overwriteThumbnail(file, userEntity.filePhotoId.toLong())
     }
 
     fun updatePassword(passwordChangeDto: PasswordChangeDto) {

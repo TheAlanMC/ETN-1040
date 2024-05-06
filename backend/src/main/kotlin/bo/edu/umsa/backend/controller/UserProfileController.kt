@@ -24,7 +24,7 @@ class UserProfileController @Autowired constructor(
     @GetMapping
     fun getProfile(): ResponseEntity<ResponseDto<ProfileDto>> {
         logger.info("Starting the API call to get the profile")
-        logger.info("GET /api/v1/auth/users/profile")
+        logger.info("GET /api/v1/users/profile")
         val profileDto: ProfileDto = userProfileService.getProfile()
         logger.info("Success: Profile retrieved")
         return ResponseEntity(ResponseDto(true,"Perfil recuperado", profileDto), HttpStatus.OK)
@@ -35,7 +35,7 @@ class UserProfileController @Autowired constructor(
         @RequestBody profileDto: ProfileDto,
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the profile")
-        logger.info("PUT /api/v1/auth/profile")
+        logger.info("PUT /api/v1/profile")
         userProfileService.updateProfile(profileDto)
         logger.info("Success: Profile updated")
         return ResponseEntity(ResponseDto(true,"El perfil se ha actualizado", null), HttpStatus.OK)
@@ -44,7 +44,7 @@ class UserProfileController @Autowired constructor(
     @GetMapping("/picture")
     fun getProfilePicture(): ResponseEntity<ByteArray> {
         logger.info("Starting the API call to get the profile picture")
-        logger.info("GET /api/v1/auth/profile/picture")
+        logger.info("GET /api/v1/profile/picture")
         val profilePicture: FileDto = userProfileService.getProfilePicture()
         val headers = HttpHeaders()
         headers.contentType = MediaType.parseMediaType(profilePicture.contentType)
@@ -58,7 +58,7 @@ class UserProfileController @Autowired constructor(
         @RequestParam("file") file: MultipartFile
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to upload the profile picture")
-        logger.info("PUT /api/v1/auth/profile/picture")
+        logger.info("PUT /api/v1/profile/picture")
         userProfileService.uploadProfilePicture(file)
         logger.info("Success: Profile picture uploaded")
         return ResponseEntity(ResponseDto(true,"La foto de perfil se ha subido", null), HttpStatus.OK)
@@ -69,7 +69,7 @@ class UserProfileController @Autowired constructor(
         @RequestBody passwordChangeDto: PasswordChangeDto
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the password")
-        logger.info("POST /api/v1/auth/profile/password")
+        logger.info("POST /api/v1/profile/password")
         userProfileService.updatePassword(passwordChangeDto)
         logger.info("Success: Password updated")
         return ResponseEntity(ResponseDto(true,"La contraseña se ha actualizado", null), HttpStatus.OK)

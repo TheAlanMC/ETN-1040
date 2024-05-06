@@ -31,7 +31,19 @@
       <tr>
         <td>{{user.firstName}}</td>
         <td>{{user.lastName}}</td>
-        <td>{{user.email}}</td>
+        <td>
+          <div class="inline-flex align-items-center">
+<!--          <img alt="{{user.usedId}}" src="{{baseUrl}}/{{user.userId}}/profile-picture/thumbnail" class="mr-2" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">-->
+<!--          <span>{{user.email}}</span>-->
+            <img [src]="imgLoaded[user.userId] ? (baseUrl + '/' + user.userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                 (load)="imgLoaded[user.userId] = true"
+                 (error)="imgLoaded[user.userId] = false"
+                 alt="{{user.userId}}"
+                 class="mr-2"
+                 style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+            <span>{{user.email}}</span>
+          </div>
+        </td>
         <td>{{user.phone}}</td>
         <td>{{user.txDate | date: 'MM/dd/yyyy HH:mm'}}</td>
         <td>{{user.txUser}}</td>

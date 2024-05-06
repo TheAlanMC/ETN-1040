@@ -25,7 +25,7 @@ class UserController @Autowired constructor(
     fun getAllUsers(): ResponseEntity<ResponseDto<List<UserPartialDto>>>
     {
         logger.info("Starting the API call to get all users")
-        logger.info("GET /api/v1/auth/users/all")
+        logger.info("GET /api/v1/users/all")
         AuthUtil.verifyAuthTokenHasRole("GESTIONAR ROLES Y PERMISOS")
         val users: List<UserPartialDto> = userService.getAllUsers()
         logger.info("Success: Users retrieved")
@@ -41,7 +41,7 @@ class UserController @Autowired constructor(
         @RequestParam(required = false) keyword: String?
     ): ResponseEntity<ResponseDto<Page<UserDto>>> {
         logger.info("Starting the API call to get the users")
-        logger.info("GET /api/v1/auth/users")
+        logger.info("GET /api/v1/users")
         AuthUtil.verifyAuthTokenHasRole("VER USUARIOS")
         val users: Page<UserDto> = userService.getUsers(sortBy, sortType, page, size, keyword)
         logger.info("Success: Users retrieved")
@@ -53,7 +53,7 @@ class UserController @Autowired constructor(
         @RequestBody newUserDto: NewUserDto
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to create the user")
-        logger.info("POST /api/v1/auth/users")
+        logger.info("POST /api/v1/users")
         AuthUtil.verifyAuthTokenHasRole("CREAR USUARIOS")
         userService.createUser(newUserDto)
         logger.info("Success: User created")
@@ -65,7 +65,7 @@ class UserController @Autowired constructor(
         @PathVariable userId: Long
     ): ResponseEntity<ResponseDto<UserDto>> {
         logger.info("Starting the API call to get the user")
-        logger.info("GET /api/v1/auth/users/{userId}")
+        logger.info("GET /api/v1/users/{userId}")
         AuthUtil.verifyAuthTokenHasRole("EDITAR USUARIOS")
         val user: UserDto = userService.getUserById(userId)
         logger.info("Success: User retrieved")
@@ -78,7 +78,7 @@ class UserController @Autowired constructor(
         @RequestBody profileDto: ProfileDto
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the user")
-        logger.info("PUT /api/v1/auth/users/{userId}")
+        logger.info("PUT /api/v1/users/{userId}")
         AuthUtil.verifyAuthTokenHasRole("EDITAR USUARIOS")
         userService.updateUser(userId, profileDto)
         logger.info("Success: User updated")
@@ -90,7 +90,7 @@ class UserController @Autowired constructor(
         @PathVariable userId: Long
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to delete the user")
-        logger.info("DELETE /api/v1/auth/users/{userId}")
+        logger.info("DELETE /api/v1/users/{userId}")
         AuthUtil.verifyAuthTokenHasRole("EDITAR USUARIOS")
         userService.deleteUser(userId)
         logger.info("Success: User deleted")
@@ -102,7 +102,7 @@ class UserController @Autowired constructor(
         @PathVariable userId: Long
     ): ResponseEntity<ByteArray> {
         logger.info("Starting the API call to get the profile picture")
-        logger.info("GET /api/v1/auth/users/{userId}/profile-picture")
+        logger.info("GET /api/v1/users/{userId}/profile-picture")
         AuthUtil.verifyAuthTokenHasRole("EDITAR USUARIOS")
         val profilePicture: FileDto = userService.getProfilePicture(userId)
         val headers = HttpHeaders()
@@ -112,13 +112,27 @@ class UserController @Autowired constructor(
         return ResponseEntity(profilePicture.fileData, headers, HttpStatus.OK)
     }
 
+    @GetMapping("/{userId}/profile-picture/thumbnail")
+    fun getProfilePictureThumbnail(
+        @PathVariable userId: Long
+    ): ResponseEntity<ByteArray> {
+        logger.info("Starting the API call to get the profile picture thumbnail")
+        logger.info("GET /api/v1/users/{userId}/profile-picture/thumbnail")
+        val profilePicture: FileDto = userService.getProfilePictureThumbnail(userId)
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.parseMediaType(profilePicture.contentType)
+        headers.contentDisposition = ContentDisposition.parse("inline; filename=${profilePicture.filename}")
+        logger.info("Success: Profile picture thumbnail retrieved")
+        return ResponseEntity(profilePicture.thumbnail, headers, HttpStatus.OK)
+    }
+
     @PutMapping("/{userId}/profile-picture")
     fun updateProfilePicture(
         @PathVariable userId: Long,
         @RequestParam("file") file: MultipartFile
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the profile picture")
-        logger.info("PUT /api/v1/auth/users/{userId}/profile-picture")
+        logger.info("PUT /api/v1/users/{userId}/profile-picture")
         AuthUtil.verifyAuthTokenHasRole("EDITAR USUARIOS")
         userService.uploadProfilePicture(userId, file)
         logger.info("Success: Profile picture updated")
