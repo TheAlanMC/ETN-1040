@@ -48,7 +48,6 @@ export class UserListComponent implements OnInit {
     if (this.utilService.checkIfMobile()) {
       this.baseUrl = this.baseUrl.replace('/backend', ':8080');
     }
-
     // Get token from local storage
     const token = localStorage.getItem('token');
     if (token) {
@@ -91,6 +90,7 @@ export class UserListComponent implements OnInit {
     this.sortBy = event.field;
     this.sortType = (event.order == 1) ? 'asc' : 'desc';
     this.getData();
+    console.log(event);
   }
 
   getData() {

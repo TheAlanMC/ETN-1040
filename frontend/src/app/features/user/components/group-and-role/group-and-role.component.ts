@@ -6,6 +6,9 @@ import {GroupDto} from "../../models/group.dto";
 import {RoleService} from "../../../../core/services/role.service";
 import { RoleDto } from '../../models/role.dto';
 import {FormControl, Validators} from "@angular/forms";
+import {UtilService} from "../../../../core/services/util.service";
+import {environment} from "../../../../../environments/environment";
+import {UserDto} from "../../models/user.dto";
 
 @Component({
   selector: 'app-group-and-role',
@@ -50,7 +53,16 @@ export class GroupAndRoleComponent implements OnInit{
   groupNameControl = new FormControl('', [Validators.required]);
   groupDescriptionControl = new FormControl('', [Validators.required]);
 
-  constructor(private userService: UserService, private confirmationService: ConfirmationService, private groupsService: GroupService, private rolseService: RoleService, private messageService: MessageService) {
+  baseUrl: string = `${environment.API_URL}/api/v1/users`;
+
+  imgLoaded: { [key: string]: boolean } = {};
+
+  users: UserDto[] = [];
+
+  constructor(private userService: UserService, private confirmationService: ConfirmationService, private groupsService: GroupService, private rolseService: RoleService, private messageService: MessageService, private utilService: UtilService) {
+    if (this.utilService.checkIfMobile()) {
+      this.baseUrl = this.baseUrl.replace('/backend', ':8080');
+    }
   }
 
   ngOnInit() {
@@ -62,10 +74,11 @@ export class GroupAndRoleComponent implements OnInit{
   public getAllUsers() {
     this.userService.getAllUsers().subscribe({
       next: (data) => {
+        this.users = data.data!!;
         this.userItems = data.data!!.map(user => {
           return {
             label: user.email,
-            value: user.userId,
+            value: user.userId
           }
         });
       },
