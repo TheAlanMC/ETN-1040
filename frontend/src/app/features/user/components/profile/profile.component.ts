@@ -51,10 +51,6 @@ export class ProfileComponent implements OnInit {
     // Check if token exists
     if (token) {
       this.decoded = jwtDecode<JwtPayload>(token!!);
-      // Check if token is expired
-      if (this.decoded.exp < Date.now() / 1000) {
-        this.router.navigate(['/']).then(r => console.log('Redirect to login'))
-      }
     }
     this.roles = this.decoded?.roles || [];
     this.groups = this.decoded?.groups || [];

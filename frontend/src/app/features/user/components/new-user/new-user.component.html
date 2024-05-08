@@ -46,10 +46,14 @@
           <label for="bio" class="font-medium text-900">Acerca de mi</label>
           <textarea id="bio" type="text" pInputTextarea rows="5" [autoResize]="true" [formControl]="descriptionControl"></textarea>
         </div>
-        <div class="col-12 d-flex justify-content-between">
-          <button pButton pRipple label="Guardar" icon="pi pi-save" class="w-auto mt-3 mr-3" (click)="onSave()"></button>
-          <button pButton pRipple label="Cancelar" icon="pi pi-times" class="w-auto mt-3 p-button-outlined" (click)="onCancel()"></button>
-        </div>
+
+          <div class="col-12 lg:col-3 md:col-4 field">
+            <button pButton pRipple label="Guardar" icon="pi pi-save" class="flex-auto" (click)="onSave()"></button>
+          </div>
+          <div class="col-12 lg:col-3 md:col-4 field">
+            <button pButton pRipple label="Cancelar" icon="pi pi-times" class="flex-auto p-button-outlined" (click)="onCancel()"></button>
+          </div>
+
       </div>
     </div>
   </div>

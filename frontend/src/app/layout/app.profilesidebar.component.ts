@@ -31,10 +31,6 @@ export class AppProfileSidebarComponent {
     // Check if token exists
     if (token) {
       this.decoded = jwtDecode<JwtPayload>(token!!);
-      // Check if token is not expired
-      if (this.decoded.exp < Date.now() / 1000) {
-        this.router.navigate(['/']).then(r => console.log('Redirect to login'))
-      }
     }
   }
 

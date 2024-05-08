@@ -9,6 +9,8 @@ import {FormControl, Validators} from "@angular/forms";
 import {UtilService} from "../../../../core/services/util.service";
 import {environment} from "../../../../../environments/environment";
 import {UserDto} from "../../models/user.dto";
+import {jwtDecode} from "jwt-decode";
+import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 
 @Component({
   selector: 'app-group-and-role',
@@ -56,12 +58,18 @@ export class GroupAndRoleComponent implements OnInit{
   baseUrl: string = `${environment.API_URL}/api/v1/users`;
 
   imgLoaded: { [key: string]: boolean } = {};
-
+  userId: number = 0;
   users: UserDto[] = [];
 
   constructor(private userService: UserService, private confirmationService: ConfirmationService, private groupsService: GroupService, private rolseService: RoleService, private messageService: MessageService, private utilService: UtilService) {
     if (this.utilService.checkIfMobile()) {
       this.baseUrl = this.baseUrl.replace('/backend', ':8080');
+    }
+    const token = localStorage.getItem('token');
+    // Check if token exists
+    if (token) {
+      const decoded = jwtDecode<JwtPayload>(token!!);
+      this.userId = decoded.userId;
     }
   }
 
@@ -78,7 +86,8 @@ export class GroupAndRoleComponent implements OnInit{
         this.userItems = data.data!!.map(user => {
           return {
             label: user.email,
-            value: user.userId
+            value: user.userId,
+            disabled: (user.userId === this.userId)
           }
         });
       },
@@ -147,6 +156,7 @@ export class GroupAndRoleComponent implements OnInit{
 
   public onClearUser() {
     this.selectedUserId = 0;
+    this.selectedUser = { value: '' };
     this.sourceGroups = [
       { name: 'Seleccione un usuario', code: '' }
     ];

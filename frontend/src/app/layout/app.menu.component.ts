@@ -138,10 +138,6 @@ export class AppMenuComponent {
       // Check if token exists
       if (token) {
         const decoded = jwtDecode<JwtPayload>(token!!);
-        // Check if token is not expired
-        if (decoded.exp < Date.now() / 1000) {
-          this.router.navigate(['/']).then(r => console.log('Redirect to login'))
-        }
         // Extract roles from token
         const roles = decoded.roles;
         // Filter menu items based on roles

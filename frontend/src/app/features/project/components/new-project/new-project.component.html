@@ -1,1 +1,87 @@
-<p>new-project works!</p>
+<div class="card">
+  <span class="block text-900 font-bold text-xl mb-4">Crear Proyecto</span>
+  <div class="grid p-fluid">
+    <div class="col-12 lg:col-8">
+      <div class="grid formgrid">
+        <div class="col-12 field">
+          <input label="Nombre del Proyecto" pInputText placeholder="Nombre del Proyecto" type="text" [formControl]="projectNameControl">
+        </div>
+        <div class="col-12 lg:col-6 field">
+          <p-calendar [showIcon]="true" placeholder="Fecha de inicio" dateFormat="dd/mm/yy" [formControl]="dateFromControl"></p-calendar>        </div>
+        <div class="col-12 lg:col-6 field">
+          <p-calendar [showIcon]="true" placeholder="Fecha de finalización" dateFormat="dd/mm/yy" [formControl]="dateToControl"></p-calendar>
+        </div>
+        <div class="col-12 field">
+          <p-editor [style]="{'height':'250px'}" [modules]="editorModules" [formControl]="projectDescriptionControl" placeholder="Ingrese la descripción del proyecto">
+            <ng-template pTemplate="header">
+            </ng-template>
+          </p-editor>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 lg:col-4">
+<!--      <div class="border-1 surface-border border-round field">-->
+<!--        <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Agregar líderes de proyecto</span>-->
+<!--        <div class="p-3">-->
+<!--          <p-multiSelect [options]="userItems" [(ngModel)]="selectedProjectManagers" placeholder="Seleccione colaboradores"-->
+<!--                         optionLabel="label" class="multiselect-custom" display="chip" >-->
+<!--            <ng-template let-item pTemplate="item">-->
+<!--              <div class="inline-flex align-items-center">-->
+<!--                <img [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"-->
+<!--                     (load)="imgLoaded[item.value] = true"-->
+<!--                     (error)="imgLoaded[item.value] = false"-->
+<!--                     alt="{{item.value}}"-->
+<!--                     class="mr-2"-->
+<!--                     style="width: 25px; height: 25px; border-radius: 50%; object-fit: cover;">-->
+<!--                <span class="ml-2">{{item.label}}</span>-->
+<!--              </div>-->
+<!--            </ng-template>-->
+<!--          </p-multiSelect>-->
+<!--        </div>-->
+<!--      </div>-->
+      <div class="border-1 surface-border border-round field">
+        <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Agregar colaboradores</span>
+        <div class="p-3">
+          <p-multiSelect [options]="userItems" [(ngModel)]="selectedCollaborators" placeholder="Seleccione colaboradores"
+                         optionLabel="label" class="multiselect-custom" display="chip" >
+            <ng-template let-item pTemplate="item">
+              <div class="inline-flex align-items-center">
+                <img [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                     (load)="imgLoaded[item.value] = true"
+                     (error)="imgLoaded[item.value] = false"
+                     alt="{{item.value}}"
+                     class="mr-2"
+                     style="width: 25px; height: 25px; border-radius: 50%; object-fit: cover;">
+                <span class="ml-2">{{item.label}}</span>
+              </div>
+            </ng-template>
+          </p-multiSelect>
+        </div>
+      </div>
+        <div class="border-1 surface-border border-round field">
+          <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Agregar miembros del equipo</span>
+          <div class="p-3">
+            <p-multiSelect [options]="userItems" [(ngModel)]="selectedTeamMembers" placeholder="Seleccione miembros del equipo"
+                           optionLabel="label" class="multiselect-custom" display="chip">
+              <ng-template let-item pTemplate="item">
+                <div class="inline-flex align-items-center">
+                  <img [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                       (load)="imgLoaded[item.value] = true"
+                       (error)="imgLoaded[item.value] = false"
+                       alt="{{item.value}}"
+                       class="mr-2"
+                       style="width: 25px; height: 25px; border-radius: 50%; object-fit: cover;">
+                  <span class="ml-2">{{item.label}}</span>
+                </div>
+              </ng-template>
+            </p-multiSelect>
+          </div>
+        </div>
+      <div class="flex flex-column sm:flex-row justify-content-between align-items-center gap-3 py-2">
+        <button pButton pRipple class="p-button-primary flex-1 border-round" label="Guardar" icon="pi pi-fw pi-save"></button>
+        <button pButton pRipple class="p-button-primary flex-1 p-button-outlined" label="Cancelar" icon="pi pi-fw pi-times" (click)="onCancel()"></button>
+      </div>
+    </div>
+  </div>
+</div>

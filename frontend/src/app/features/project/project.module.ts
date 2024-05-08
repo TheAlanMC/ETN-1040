@@ -6,11 +6,17 @@ import { EditProjectComponent } from './components/edit-project/edit-project.com
 import {ProjectRoutingModule} from "./project-routing.module";
 import {DialogModule} from "primeng/dialog";
 import {FullCalendarModule} from "@fullcalendar/angular";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CalendarModule} from "primeng/calendar";
 import {DropdownModule} from "primeng/dropdown";
 import {ChipsModule} from "primeng/chips";
 import {InputTextareaModule} from "primeng/inputtextarea";
+import {EditorModule} from "primeng/editor";
+import {FileUploadModule} from "primeng/fileupload";
+import {ChipModule} from "primeng/chip";
+import {InputSwitchModule} from "primeng/inputswitch";
+import {RippleModule} from "primeng/ripple";
+import {MultiSelectModule} from "primeng/multiselect";
 
 
 
@@ -29,7 +35,14 @@ import {InputTextareaModule} from "primeng/inputtextarea";
     CalendarModule,
     DropdownModule,
     ChipsModule,
-    InputTextareaModule
+    InputTextareaModule,
+    EditorModule,
+    FileUploadModule,
+    ChipModule,
+    InputSwitchModule,
+    RippleModule,
+    ReactiveFormsModule,
+    MultiSelectModule
   ]
 })
 export class ProjectModule { }
