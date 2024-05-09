@@ -84,8 +84,13 @@ export class GroupAndRoleComponent implements OnInit{
       next: (data) => {
         this.users = data.data!!;
         this.userItems = data.data!!.map(user => {
+          // Pre-fetch the image
+          const img = new Image();
+          img.src = this.baseUrl + '/' + user.userId + '/profile-picture/thumbnail';
+          img.onload = () => this.imgLoaded[user.userId] = true;
+          img.onerror = () => this.imgLoaded[user.userId] = false;
           return {
-            label: user.email,
+            label: `${user.firstName} ${user.lastName}`,
             value: user.userId,
             disabled: (user.userId === this.userId)
           }

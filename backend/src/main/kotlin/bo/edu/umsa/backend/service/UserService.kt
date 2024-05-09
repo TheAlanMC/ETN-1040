@@ -40,7 +40,7 @@ class UserService @Autowired constructor(
 
     fun getAllUsers(): List<UserPartialDto> {
         logger.info("Getting all users")
-        val userEntities = userRepository.findAll()
+        val userEntities = userRepository.findAllByStatusIsTrueOrderByUserIdAsc()
         return userEntities.map { UserPartialMapper.entityToDto(it) }
     }
 

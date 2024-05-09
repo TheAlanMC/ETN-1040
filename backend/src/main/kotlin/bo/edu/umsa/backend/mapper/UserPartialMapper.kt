@@ -10,6 +10,8 @@ class UserPartialMapper {
             return UserPartialDto(
                 userId = user.userId,
                 email = user.email,
+                firstName = user.firstName,
+                lastName = user.lastName
             )
         }
     }

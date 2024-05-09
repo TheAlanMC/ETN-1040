@@ -21,30 +21,28 @@
     </div>
 
     <div class="col-12 lg:col-4">
-<!--      <div class="border-1 surface-border border-round field">-->
-<!--        <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Agregar líderes de proyecto</span>-->
-<!--        <div class="p-3">-->
-<!--          <p-multiSelect [options]="userItems" [(ngModel)]="selectedProjectManagers" placeholder="Seleccione colaboradores"-->
-<!--                         optionLabel="label" class="multiselect-custom" display="chip" >-->
-<!--            <ng-template let-item pTemplate="item">-->
-<!--              <div class="inline-flex align-items-center">-->
-<!--                <img [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"-->
-<!--                     (load)="imgLoaded[item.value] = true"-->
-<!--                     (error)="imgLoaded[item.value] = false"-->
-<!--                     alt="{{item.value}}"-->
-<!--                     class="mr-2"-->
-<!--                     style="width: 25px; height: 25px; border-radius: 50%; object-fit: cover;">-->
-<!--                <span class="ml-2">{{item.label}}</span>-->
-<!--              </div>-->
-<!--            </ng-template>-->
-<!--          </p-multiSelect>-->
-<!--        </div>-->
-<!--      </div>-->
       <div class="border-1 surface-border border-round field">
         <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Agregar colaboradores</span>
         <div class="p-3">
-          <p-multiSelect [options]="userItems" [(ngModel)]="selectedCollaborators" placeholder="Seleccione colaboradores"
-                         optionLabel="label" class="multiselect-custom" display="chip" >
+          <div class="auto-flex align-items-center field" *ngIf="selectedCollaborators.length > 0">
+            <p-chips [(ngModel)]="selectedCollaborators" class="chips-custom" >
+              <ng-template let-item pTemplate="item">
+                <img [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                     (load)="imgLoaded[item.value] = true"
+                     (error)="imgLoaded[item.value] = false"
+                     alt="{{item.value}}"
+                     class="mr-1"
+                     style="width: 25px; height: 25px; border-radius: 50%; object-fit: cover;">
+                <span class="ml-1">{{item.label}}</span>
+              </ng-template>
+            </p-chips>
+          </div>
+          <p-multiSelect [options]="userItems" variant="filled"
+                         [(ngModel)]="selectedCollaborators" placeholder="Seleccione colaboradores"
+                         optionLabel="label" class="multiselect-custom" display="chip" showClear="true">
+            <ng-template let-value pTemplate="selectedItems">
+              <div>Seleccione colaboradores</div>
+            </ng-template>
             <ng-template let-item pTemplate="item">
               <div class="inline-flex align-items-center">
                 <img [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
@@ -62,8 +60,24 @@
         <div class="border-1 surface-border border-round field">
           <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Agregar miembros del equipo</span>
           <div class="p-3">
+            <div class="auto-flex align-items-center field" *ngIf="selectedTeamMembers.length > 0">
+              <p-chips [(ngModel)]="selectedTeamMembers" class="chips-custom" >
+                <ng-template let-item pTemplate="item">
+                  <img [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                       (load)="imgLoaded[item.value] = true"
+                       (error)="imgLoaded[item.value] = false"
+                       alt="{{item.value}}"
+                       class="mr-1"
+                       style="width: 25px; height: 25px; border-radius: 50%; object-fit: cover;">
+                  <span class="ml-1">{{item.label}}</span>
+                </ng-template>
+              </p-chips>
+            </div>
             <p-multiSelect [options]="userItems" [(ngModel)]="selectedTeamMembers" placeholder="Seleccione miembros del equipo"
-                           optionLabel="label" class="multiselect-custom" display="chip">
+                           optionLabel="label" class="multiselect-custom" display="chip" showClear="true">
+              <ng-template let-value pTemplate="selectedItems">
+                <div>Seleccione miembros del equipo</div>
+              </ng-template>
               <ng-template let-item pTemplate="item">
                 <div class="inline-flex align-items-center">
                   <img [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"

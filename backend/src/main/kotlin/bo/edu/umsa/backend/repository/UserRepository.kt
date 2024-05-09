@@ -18,4 +18,6 @@ interface UserRepository: PagingAndSortingRepository<User, Long>, JpaRepository<
     fun findAll(specification: Specification<User>, pageable: Pageable): Page<User>
 
     fun existsByEmailAndStatusIsTrue(email: String): Boolean
+
+    fun findAllByStatusIsTrueOrderByUserIdAsc(): List<User>
 }
