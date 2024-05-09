@@ -8,6 +8,8 @@ import {UtilService} from "../../../../core/services/util.service";
 import {Location} from '@angular/common';
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
+import {ProjectService} from "../../../../core/services/project.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-new-project',
@@ -37,14 +39,12 @@ export class NewProjectComponent implements OnInit {
   users: UserDto[] = [];
   userItems: SelectItem[] = [];
   // selectedProjectManagers: any[] = [];
-  selectedCollaborators: any[] = [];
-  selectedTeamMembers: any[] = [];
+  selectedModerators: any[] = [];
+  selectedMembers: any[] = [];
 
 
-  constructor(private userService: UserService, private messageService: MessageService, private utilService: UtilService, private location: Location) {
-    if (this.utilService.checkIfMobile()) {
-      this.baseUrl = this.baseUrl.replace('/backend', ':8080');
-    }
+  constructor(private userService: UserService, private messageService: MessageService, private utilService: UtilService, private location: Location, private projectService: ProjectService, private router: Router) {
+       this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     const token = localStorage.getItem('token');
     // Check if token exists
     if (token) {
@@ -82,5 +82,28 @@ export class NewProjectComponent implements OnInit {
 
   public onCancel() {
     this.location.back();
+  }
+
+  public onSave() {
+    // Convert the date to ISO format
+    this.projectService.createProject(
+      this.projectNameControl.value!,
+      this.projectDescriptionControl.value!,
+      this.dateFromControl.value!,
+      this.dateToControl.value!,
+      this.selectedMembers.map(member => member.value),
+      this.selectedModerators.map(moderator => moderator.value)
+    ).subscribe({
+      next: (data) => {
+        this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Proyecto creado'});
+        setTimeout(() => {
+          this.router.navigate(['/projects']).then(r => console.log('Redirect to projects page'));
+        }, 1000);
+      },
+      error: (error) => {
+        console.log(error);
+        this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
+      }
+    });
   }
 }

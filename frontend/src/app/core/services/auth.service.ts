@@ -14,9 +14,7 @@ export class AuthService {
   baseUrl: string = `${environment.API_URL}/api/v1/auth`;
 
   constructor(private http: HttpClient, private utilService: UtilService) {
-    if (this.utilService.checkIfMobile()) {
-      this.baseUrl = this.baseUrl.replace('/backend', ':8080');
-    }
+       this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
   }
 
   public login(email: string, password: string): Observable<ResponseDto<AuthDto>> {

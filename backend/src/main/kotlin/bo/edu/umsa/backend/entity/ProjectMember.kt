@@ -6,12 +6,12 @@ import jakarta.persistence.*
 import java.sql.Timestamp
 
 @Entity
-@Table(name = "project_team", schema = "public")
-class ProjectTeam {
+@Table(name = "project_member", schema = "public")
+class ProjectMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "project_team_id")
-    var projectTeamId: Int = 0
+    @Column(name = "project_member_id")
+    var projectMemberId: Int = 0
 
     @Column(name = "project_id")
     var projectId: Int = 0

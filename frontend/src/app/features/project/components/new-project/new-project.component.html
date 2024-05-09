@@ -1,3 +1,4 @@
+<p-toast></p-toast>
 <div class="card">
   <span class="block text-900 font-bold text-xl mb-4">Crear Proyecto</span>
   <div class="grid p-fluid">
@@ -22,10 +23,10 @@
 
     <div class="col-12 lg:col-4">
       <div class="border-1 surface-border border-round field">
-        <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Agregar colaboradores</span>
+        <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Agregar moderadores</span>
         <div class="p-3">
-          <div class="auto-flex align-items-center field" *ngIf="selectedCollaborators.length > 0">
-            <p-chips [(ngModel)]="selectedCollaborators" class="chips-custom" >
+          <div class="auto-flex align-items-center field" *ngIf="selectedModerators.length > 0">
+            <p-chips [(ngModel)]="selectedModerators" class="chips-custom" >
               <ng-template let-item pTemplate="item">
                 <img [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
                      (load)="imgLoaded[item.value] = true"
@@ -38,10 +39,10 @@
             </p-chips>
           </div>
           <p-multiSelect [options]="userItems" variant="filled"
-                         [(ngModel)]="selectedCollaborators" placeholder="Seleccione colaboradores"
+                         [(ngModel)]="selectedModerators" placeholder="Seleccione moderadores"
                          optionLabel="label" class="multiselect-custom" display="chip" showClear="true">
             <ng-template let-value pTemplate="selectedItems">
-              <div>Seleccione colaboradores</div>
+              <div>Seleccione moderadores</div>
             </ng-template>
             <ng-template let-item pTemplate="item">
               <div class="inline-flex align-items-center">
@@ -60,20 +61,21 @@
         <div class="border-1 surface-border border-round field">
           <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Agregar miembros del equipo</span>
           <div class="p-3">
-            <div class="auto-flex align-items-center field" *ngIf="selectedTeamMembers.length > 0">
-              <p-chips [(ngModel)]="selectedTeamMembers" class="chips-custom" >
+            <div class="auto-flex align-items-center field" *ngIf="selectedMembers.length > 0">
+              <p-chips [(ngModel)]="selectedMembers" class="chips-custom" >
                 <ng-template let-item pTemplate="item">
                   <img [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
                        (load)="imgLoaded[item.value] = true"
                        (error)="imgLoaded[item.value] = false"
                        alt="{{item.value}}"
                        class="mr-1"
+                       class="mr-1"
                        style="width: 25px; height: 25px; border-radius: 50%; object-fit: cover;">
                   <span class="ml-1">{{item.label}}</span>
                 </ng-template>
               </p-chips>
             </div>
-            <p-multiSelect [options]="userItems" [(ngModel)]="selectedTeamMembers" placeholder="Seleccione miembros del equipo"
+            <p-multiSelect [options]="userItems" [(ngModel)]="selectedMembers" placeholder="Seleccione miembros del equipo"
                            optionLabel="label" class="multiselect-custom" display="chip" showClear="true">
               <ng-template let-value pTemplate="selectedItems">
                 <div>Seleccione miembros del equipo</div>
@@ -93,7 +95,7 @@
           </div>
         </div>
       <div class="flex flex-column sm:flex-row justify-content-between align-items-center gap-3 py-2">
-        <button pButton pRipple class="p-button-primary flex-1 border-round" label="Guardar" icon="pi pi-fw pi-save"></button>
+        <button pButton pRipple class="p-button-primary flex-1 border-round" label="Guardar" icon="pi pi-fw pi-save" (click)="onSave()"></button>
         <button pButton pRipple class="p-button-primary flex-1 p-button-outlined" label="Cancelar" icon="pi pi-fw pi-times" (click)="onCancel()"></button>
       </div>
     </div>

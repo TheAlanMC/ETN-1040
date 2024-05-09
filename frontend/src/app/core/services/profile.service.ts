@@ -14,9 +14,7 @@ export class ProfileService {
   baseUrl: string = `${environment.API_URL}/api/v1/profile`;
 
   constructor(private http: HttpClient, private utilService: UtilService) {
-    if (this.utilService.checkIfMobile()) {
-      this.baseUrl = this.baseUrl.replace('/backend', ':8080');
-    }
+       this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
   }
 
   public getProfilePicture(): Observable<Blob> {

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.stereotype.Repository
 
@@ -20,4 +21,14 @@ interface UserRepository: PagingAndSortingRepository<User, Long>, JpaRepository<
     fun existsByEmailAndStatusIsTrue(email: String): Boolean
 
     fun findAllByStatusIsTrueOrderByUserIdAsc(): List<User>
+
+    @Query(
+    """
+        SELECT u.* FROM "user" u
+        WHERE u.user_id IN :userIds
+        AND u.status = true
+    """,
+        nativeQuery = true
+    )
+    fun findAllInUserIdAndStatusIsTrue(userIds: List<Long>): List<User>
 }

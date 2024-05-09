@@ -17,6 +17,7 @@ import {ChipModule} from "primeng/chip";
 import {InputSwitchModule} from "primeng/inputswitch";
 import {RippleModule} from "primeng/ripple";
 import {MultiSelectModule} from "primeng/multiselect";
+import {ToastModule} from "primeng/toast";
 
 
 
@@ -26,23 +27,24 @@ import {MultiSelectModule} from "primeng/multiselect";
     NewProjectComponent,
     EditProjectComponent,
   ],
-  imports: [
-    CommonModule,
-    ProjectRoutingModule,
-    DialogModule,
-    FullCalendarModule,
-    FormsModule,
-    CalendarModule,
-    DropdownModule,
-    ChipsModule,
-    InputTextareaModule,
-    EditorModule,
-    FileUploadModule,
-    ChipModule,
-    InputSwitchModule,
-    RippleModule,
-    ReactiveFormsModule,
-    MultiSelectModule
-  ]
+    imports: [
+        CommonModule,
+        ProjectRoutingModule,
+        DialogModule,
+        FullCalendarModule,
+        FormsModule,
+        CalendarModule,
+        DropdownModule,
+        ChipsModule,
+        InputTextareaModule,
+        EditorModule,
+        FileUploadModule,
+        ChipModule,
+        InputSwitchModule,
+        RippleModule,
+        ReactiveFormsModule,
+        MultiSelectModule,
+        ToastModule
+    ]
 })
 export class ProjectModule { }

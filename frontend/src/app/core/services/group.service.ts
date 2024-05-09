@@ -15,9 +15,7 @@ export class GroupService {
   baseUrl: string = `${environment.API_URL}/api/v1/groups`;
 
   constructor(private http: HttpClient, private utilService: UtilService) {
-    if (this.utilService.checkIfMobile()) {
-      this.baseUrl = this.baseUrl.replace('/backend', ':8080');
-    }
+       this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
   }
 
   getGroups(): Observable<ResponseDto<GroupDto[]>> {

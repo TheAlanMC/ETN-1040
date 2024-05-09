@@ -62,9 +62,7 @@ export class GroupAndRoleComponent implements OnInit{
   users: UserDto[] = [];
 
   constructor(private userService: UserService, private confirmationService: ConfirmationService, private groupsService: GroupService, private rolseService: RoleService, private messageService: MessageService, private utilService: UtilService) {
-    if (this.utilService.checkIfMobile()) {
-      this.baseUrl = this.baseUrl.replace('/backend', ':8080');
-    }
+       this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     const token = localStorage.getItem('token');
     // Check if token exists
     if (token) {
