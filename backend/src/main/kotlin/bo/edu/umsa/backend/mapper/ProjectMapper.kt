@@ -12,9 +12,9 @@ class ProjectMapper {
                 projectDescription = project.projectDescription,
                 dateFrom = project.dateFrom,
                 dateTo = project.dateTo,
-                projectOwnerIds = project.projectOwners?.mapNotNull { it.user?.userId } ?: emptyList(),
-                projectModeratorIds = project.projectModerators?.mapNotNull { it.user?.userId } ?: emptyList(),
-                projectMemberIds = project.projectMembers?.mapNotNull { it.user?.userId } ?: emptyList()
+                projectOwnerIds = project.projectOwners?.filter { it.status }?.mapNotNull { it.user?.userId } ?: emptyList(),
+                projectModeratorIds = project.projectModerators?.filter { it.status }?.mapNotNull { it.user?.userId } ?: emptyList(),
+                projectMemberIds = project.projectMembers?.filter { it.status }?.mapNotNull { it.user?.userId } ?: emptyList()
             )
         }
     }

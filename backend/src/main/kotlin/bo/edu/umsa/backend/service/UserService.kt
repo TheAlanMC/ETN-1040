@@ -61,6 +61,15 @@ class UserService @Autowired constructor(
         return userEntities.map { UserMapper.entityToDto(it) }
     }
 
+    fun getUserById(userId: Long): UserDto {
+        logger.info("Getting the user with id $userId")
+        // Get the user
+        val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
+        // Get the user roles
+        return UserMapper.entityToDto(userEntity)
+    }
+
     fun createUser(newUserDto: NewUserDto) {
         // Validate that at least these fields are not blank:
         if (newUserDto.email.isBlank() || newUserDto.firstName.isBlank() || newUserDto.lastName.isBlank()) {
@@ -126,15 +135,6 @@ class UserService @Autowired constructor(
                     "Su contraseña es: $password\n" +
                     "Por favor, cambie su contraseña en su primer inicio de sesión."
         )
-    }
-
-    fun getUserById(userId: Long): UserDto {
-        logger.info("Getting the user with id $userId")
-        // Get the user
-        val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
-            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
-        // Get the user roles
-        return UserMapper.entityToDto(userEntity)
     }
 
     fun updateUser(userId: Long, profileDto: ProfileDto) {

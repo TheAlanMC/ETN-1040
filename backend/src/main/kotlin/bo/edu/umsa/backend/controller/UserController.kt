@@ -47,18 +47,6 @@ class UserController @Autowired constructor(
         return ResponseEntity(ResponseDto(true,"Usuarios recuperados", users), HttpStatus.OK)
     }
 
-    @PostMapping
-    fun createUser(
-        @RequestBody newUserDto: NewUserDto
-    ): ResponseEntity<ResponseDto<Nothing>> {
-        logger.info("Starting the API call to create the user")
-        logger.info("POST /api/v1/users")
-        AuthUtil.verifyAuthTokenHasRole("CREAR USUARIOS")
-        userService.createUser(newUserDto)
-        logger.info("Success: User created")
-        return ResponseEntity(ResponseDto(true,"El usuario se ha creado", null), HttpStatus.CREATED)
-    }
-
     @GetMapping("/{userId}")
     fun getUserById(
         @PathVariable userId: Long
@@ -69,6 +57,19 @@ class UserController @Autowired constructor(
         val user: UserDto = userService.getUserById(userId)
         logger.info("Success: User retrieved")
         return ResponseEntity(ResponseDto(true,"Usuario recuperado", user), HttpStatus.OK)
+    }
+
+
+    @PostMapping
+    fun createUser(
+        @RequestBody newUserDto: NewUserDto
+    ): ResponseEntity<ResponseDto<Nothing>> {
+        logger.info("Starting the API call to create the user")
+        logger.info("POST /api/v1/users")
+        AuthUtil.verifyAuthTokenHasRole("CREAR USUARIOS")
+        userService.createUser(newUserDto)
+        logger.info("Success: User created")
+        return ResponseEntity(ResponseDto(true,"El usuario se ha creado", null), HttpStatus.CREATED)
     }
 
     @PutMapping("/{userId}")

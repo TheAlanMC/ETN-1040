@@ -1,109 +1,146 @@
 import {Component, OnInit} from '@angular/core';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import timeGridPlugin from '@fullcalendar/timegrid';
+import {ProjectDto} from "../../models/project.dto";
+import {environment} from "../../../../../environments/environment";
+import {Router} from "@angular/router";
+import {ConfirmationService, MessageService} from "primeng/api";
+import {UtilService} from "../../../../core/services/util.service";
+import {jwtDecode} from "jwt-decode";
+import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
+import {ResponseDto} from "../../../../core/models/response.dto";
+import {PageDto} from "../../../../core/models/page.dto";
+import { ProjectService } from '../../../../core/services/project.service';
 
 @Component({
   selector: 'app-project-list',
   templateUrl: './project-list.component.html',
-  styleUrl: './project-list.component.scss'
+  styleUrl: './project-list.component.scss',
+  providers: [ConfirmationService, MessageService]
 })
-export class ProjectListComponent  implements OnInit {
+export class ProjectListComponent implements OnInit {
 
-  events: any[] = [];
+  projects: ProjectDto[] = [];
 
-  today: string = '';
+  // Pagination variables
+  sortBy: string = 'projectId';
+  sortType: string = 'asc';
+  page: number = 0;
+  size: number = 10;
 
-  calendarOptions: any = {
-    initialView: 'dayGridMonth'
-  };
+  totalElements: number = 0;
 
-  showDialog: boolean = false;
+  canAddProject: boolean = false;
+  canEditProject: boolean = false;
 
-  clickedEvent: any = null;
+  isLoading: boolean = true;
 
-  dateClicked: boolean = false;
+  baseUrl: string = `${environment.API_URL}/api/v1/users`;
 
-  edit: boolean = false;
+  imgLoaded: { [key: string]: boolean } = {};
 
-  tags: any[] = [];
-
-  view: string = '';
-
-  changedEvent: any;
-
-  constructor() { }
-
-  ngOnInit(): void {
-    this.today = '2022-05-11';
-
-    this.calendarOptions = {
-      plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
-      height: 720,
-      initialDate: this.today,
-      headerToolbar: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-      },
-      editable: true,
-      selectable: true,
-      selectMirror: true,
-      dayMaxEvents: true,
-      eventClick: (e: MouseEvent) => this.onEventClick(e),
-      select: (e: MouseEvent) => this.onDateSelect(e)
-    };
-  }
-
-  onEventClick(e: any) {
-    this.clickedEvent = e.event;
-    let plainEvent = e.event.toPlainObject({ collapseExtendedProps: true, collapseColor: true });
-    this.view = 'display';
-    this.showDialog = true;
-
-    this.changedEvent = { ...plainEvent, ...this.clickedEvent };
-    this.changedEvent.start = this.clickedEvent.start;
-    this.changedEvent.end = this.clickedEvent.end ? this.clickedEvent.end : this.clickedEvent.start;
-  }
-
-  onDateSelect(e: any) {
-    this.view = 'new'
-    this.showDialog = true;
-    this.changedEvent = { ...e, title: null, description: null, location: null, backgroundColor: null, borderColor: null, textColor: null, tag: { color: null, name: null } };
-  }
-
-  handleSave() {
-    if (!this.validate()) {
-      return;
-    }
-    else {
-      this.showDialog = false;
-      this.clickedEvent = { ...this.changedEvent, backgroundColor: this.changedEvent.tag.color, borderColor: this.changedEvent.tag.color, textColor: '#212121' };
-
-      if (this.clickedEvent.hasOwnProperty('id')) {
-        this.events = this.events.map(i => i.id.toString() === this.clickedEvent.id.toString() ? i = this.clickedEvent : i);
-      } else {
-        this.events = [...this.events, { ...this.clickedEvent, id: Math.floor(Math.random() * 10000) }];
+  constructor(private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private utilService: UtilService, private projectService: ProjectService) {
+    this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
+    // Get token from local storage
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decoded = jwtDecode<JwtPayload>(token!!);
+      if (decoded.roles.includes('CREAR PROYECTOS')) {
+        this.canAddProject = true;
       }
-      this.calendarOptions = { ...this.calendarOptions, ...{ events: this.events } };
-      this.clickedEvent = null;
+      if (decoded.roles.includes('EDITAR PROYECTOS')) {
+        this.canEditProject = true;
+      }
+    }
+  }
+
+  ngOnInit() {
+    this.getData();
+  }
+
+  public navigateToCreateProject() {
+    this.router.navigate(['/projects/create']).then(r => console.log('Navigate to create project'));
+  }
+
+  public navigateToEditProject(projectId: number) {
+    this.router.navigate(['/projects/edit/' + projectId]).then(r => console.log('Navigate to edit project'));
+  }
+
+  public onPageChange(event: any) {
+    const first = event.first;
+    const rows = event.rows;
+    this.page = Math.floor(first / rows);
+    this.size = rows;
+    this.getData();
+  }
+
+  public onSortChange(event: any) {
+    this.sortBy = event.field;
+    this.sortType = (event.order == 1) ? 'asc' : 'desc';
+    this.getData();
+    console.log(event);
+  }
+
+  public getData() {
+    this.isLoading = true;
+    this.projectService.getProjects(this.sortBy, this.sortType, this.page, this.size).subscribe({
+      next: (data: ResponseDto<PageDto<ProjectDto>>) => {
+        this.projects = data.data!.content;
+        this.totalElements = data.data!.page.totalElements;
+        this.projects.forEach(project => {
+            project.projectOwnerIds.forEach(userId => this.fetchUserImage(userId));
+            project.projectModeratorIds.forEach(userId => this.fetchUserImage(userId));
+            project.projectMemberIds.forEach(userId => this.fetchUserImage(userId));
+          }
+        );
+        console.log(this.imgLoaded);
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
     }
 
+
+  public fetchUserImage(userId: number) {
+    const img = new Image();
+    img.src = this.baseUrl + '/' + userId + '/profile-picture/thumbnail';
+    img.onload = () => this.imgLoaded[userId] = true;
+    img.onerror = () => this.imgLoaded[userId] = false;
   }
 
-  onEditClick() {
-    this.view = 'edit';
+  public onDeleteProject(projectId: number) {
+    this.confirmationService.confirm({
+      key: 'confirmDeleteProject',
+      message: '¿Estás seguro de que deseas eliminar este proyecto? Esta acción no se puede deshacer.',
+      header: 'Confirmar',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sí',
+      rejectLabel: 'No',
+      accept: () => {
+        this.deleteProject(projectId);
+      },
+    });
   }
 
-  delete() {
-    this.events = this.events.filter(i => i.id.toString() !== this.clickedEvent.id.toString());
-    this.calendarOptions = { ...this.calendarOptions, ...{ events: this.events } };
-    this.showDialog = false;
+  public deleteProject(projectId: number): void {
+    this.projectService.deleteProject(projectId).subscribe({
+      next: (data) => {
+        this.getData();
+        this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Proyecto eliminado correctamente'});
+      },
+      error: (error) => {
+        console.error(error);
+        this.messageService.add({severity: 'error', summary: 'Error', detail: 'No se pudo eliminar el proyecto'});
+      }
+    });
   }
 
-  validate() {
-    let { start, end } = this.changedEvent;
-    return start && end;
+  public getImageLoaded(userId: any): boolean {
+    return this.imgLoaded[userId] ?? false;
+  }
+
+  public setImageLoaded(userId: any, value: boolean) {
+   this.imgLoaded[userId] = value;
   }
 
 }

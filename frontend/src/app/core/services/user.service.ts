@@ -16,7 +16,7 @@ export class UserService {
   baseUrl: string = `${environment.API_URL}/api/v1/users`;
 
   constructor(private http: HttpClient, private utilService: UtilService) {
-       this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
+    this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
   }
 
   public getAllUsers(): Observable<ResponseDto<UserDto[]>> {
@@ -32,11 +32,23 @@ export class UserService {
   }
 
   public createUser(groupId: number, email: string, firstName: string, lastName: string, phone: string, description: string): Observable<ResponseDto<Nullable>> {
-    return this.http.post<ResponseDto<Nullable>>(`${this.baseUrl}`, {groupId, email, firstName, lastName, phone, description}, this.utilService.getHttpOptions());
+    return this.http.post<ResponseDto<Nullable>>(`${this.baseUrl}`, {
+      groupId,
+      email,
+      firstName,
+      lastName,
+      phone,
+      description
+    }, this.utilService.getHttpOptions());
   }
 
   public updateUser(userId: number, firstName: string, lastName: string, phone: string, description: string): Observable<ResponseDto<Nullable>> {
-    return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/${userId}`, {firstName, lastName, phone, description}, this.utilService.getHttpOptions());
+    return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/${userId}`, {
+      firstName,
+      lastName,
+      phone,
+      description
+    }, this.utilService.getHttpOptions());
   }
 
   public deleteUser(userId: number): Observable<ResponseDto<Nullable>> {
@@ -61,4 +73,3 @@ export class UserService {
     return this.http.post<ResponseDto<Nullable>>(`${this.baseUrl}/${userId}/groups`, {groupIds}, this.utilService.getHttpOptions());
   }
 }
-

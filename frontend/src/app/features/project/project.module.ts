@@ -18,6 +18,10 @@ import {InputSwitchModule} from "primeng/inputswitch";
 import {RippleModule} from "primeng/ripple";
 import {MultiSelectModule} from "primeng/multiselect";
 import {ToastModule} from "primeng/toast";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {TableModule} from "primeng/table";
+import {AvatarGroupModule} from "primeng/avatargroup";
+import {AvatarModule} from "primeng/avatar";
 
 
 
@@ -27,24 +31,28 @@ import {ToastModule} from "primeng/toast";
     NewProjectComponent,
     EditProjectComponent,
   ],
-    imports: [
-        CommonModule,
-        ProjectRoutingModule,
-        DialogModule,
-        FullCalendarModule,
-        FormsModule,
-        CalendarModule,
-        DropdownModule,
-        ChipsModule,
-        InputTextareaModule,
-        EditorModule,
-        FileUploadModule,
-        ChipModule,
-        InputSwitchModule,
-        RippleModule,
-        ReactiveFormsModule,
-        MultiSelectModule,
-        ToastModule
-    ]
+  imports: [
+    CommonModule,
+    ProjectRoutingModule,
+    DialogModule,
+    FullCalendarModule,
+    FormsModule,
+    CalendarModule,
+    DropdownModule,
+    ChipsModule,
+    InputTextareaModule,
+    EditorModule,
+    FileUploadModule,
+    ChipModule,
+    InputSwitchModule,
+    RippleModule,
+    ReactiveFormsModule,
+    MultiSelectModule,
+    ToastModule,
+    ConfirmDialogModule,
+    TableModule,
+    AvatarGroupModule,
+    AvatarModule
+  ]
 })
 export class ProjectModule { }

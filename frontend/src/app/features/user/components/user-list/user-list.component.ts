@@ -68,15 +68,15 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  navigateToCreateUser() {
+  public navigateToCreateUser() {
     this.router.navigate(['/users/create']).then(r => console.log('Navigate to create user'));
   }
 
-  navigateToEditUser(userId: number) {
+  public navigateToEditUser(userId: number) {
     this.router.navigate(['/users/edit/' + userId]).then(r => console.log('Navigate to edit user'));
   }
 
-  onPageChange(event: any) {
+  public onPageChange(event: any) {
     const first = event.first;
     const rows = event.rows;
     this.page = Math.floor(first / rows);
@@ -84,14 +84,14 @@ export class UserListComponent implements OnInit {
     this.getData();
   }
 
-  onSortChange(event: any) {
+  public onSortChange(event: any) {
     this.sortBy = event.field;
     this.sortType = (event.order == 1) ? 'asc' : 'desc';
     this.getData();
     console.log(event);
   }
 
-  getData() {
+  public getData() {
     this.isLoading = true;
     this.userService.getUsers(this.sortBy, this.sortType, this.page, this.size, this.keyword).subscribe({
       next: (data: ResponseDto<PageDto<UserDto>>) => {
@@ -99,7 +99,7 @@ export class UserListComponent implements OnInit {
         this.totalElements = data.data!.page.totalElements;
         this.isLoading = false
         // Filter the users to remove the current user
-        this.users = this.users.filter(user => user.userId !== this.userId);
+        // this.users = this.users.filter(user => user.userId !== this.userId);
       },
       error: (error) => {
         console.error(error);
@@ -107,13 +107,13 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  onSearch(event: any) {
+  public onSearch(event: any) {
     this.keyword = event.target.value;
     this.searchSubject.next(this.keyword);
   }
 
 
-  onDeleteUser(userId: number) {
+  public onDeleteUser(userId: number) {
     this.confirmationService.confirm({
       key: 'confirmDeleteUser',
       message: '¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.',

@@ -12,4 +12,6 @@ interface ProjectRepository: JpaRepository<Project, Long> {
 
     fun findAll(specification: Specification<Project>, pageable: Pageable): Page<Project>
 
+    fun findByProjectIdAndStatusIsTrue(projectId: Long): Project?
+
 }

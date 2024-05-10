@@ -47,6 +47,18 @@ class ProjectController @Autowired constructor(
         return ResponseEntity(ResponseDto(true,"El proyecto se ha creado", null), HttpStatus.CREATED)
     }
 
+    @GetMapping("/{projectId}")
+    fun getProjectById(
+        @PathVariable projectId: Long,
+    ): ResponseEntity<ResponseDto<ProjectDto>> {
+        logger.info("Starting the API call to get the project by id")
+        logger.info("GET /api/v1/projects/$projectId")
+        AuthUtil.verifyAuthTokenHasRole("VER PROYECTOS")
+        val project: ProjectDto = projectService.getProjectById(projectId)
+        logger.info("Success: Project retrieved")
+        return ResponseEntity(ResponseDto(true,"Proyecto recuperado", project), HttpStatus.OK)
+    }
+
     @PutMapping("/{projectId}")
     fun updateProject(
         @PathVariable projectId: Long,
@@ -66,7 +78,7 @@ class ProjectController @Autowired constructor(
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to delete the project")
         logger.info("DELETE /api/v1/projects/$projectId")
-        AuthUtil.verifyAuthTokenHasRole("ELIMINAR PROYECTOS")
+        AuthUtil.verifyAuthTokenHasRole("EDITAR PROYECTOS")
         projectService.deleteProject(projectId)
         logger.info("Success: Project deleted")
         return ResponseEntity(ResponseDto(true,"El proyecto se ha eliminado", null), HttpStatus.OK)

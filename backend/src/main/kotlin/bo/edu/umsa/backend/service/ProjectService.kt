@@ -46,6 +46,15 @@ class ProjectService @Autowired constructor(
         return projectEntities.map { ProjectMapper.entityToDto(it) }
     }
 
+    fun getProjectById(projectId: Long): ProjectDto {
+        logger.info("Getting the project by id $projectId")
+        // Validate the project exists
+        val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(projectId) ?: throw EtnException(
+            HttpStatus.NOT_FOUND, "Error: Project not found","Proyecto no encontrado"
+        )
+        return ProjectMapper.entityToDto(projectEntity)
+    }
+
 
     fun createProject(newProjectDto: NewProjectDto) {
         // Validate the name is not empty
@@ -122,9 +131,9 @@ class ProjectService @Autowired constructor(
 
     fun updateProject(projectId: Long, projectDto: NewProjectDto) {
         // Validate the project exists
-        val projectEntity = projectRepository.findById(projectId).orElseThrow {
-            EtnException(HttpStatus.NOT_FOUND, "Error: Project not found","Proyecto no encontrado")
-        }
+        val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(projectId) ?: throw EtnException(
+            HttpStatus.NOT_FOUND, "Error: Project not found","Proyecto no encontrado"
+        )
         // Validate the project name is not empty
         if (projectDto.projectName.isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project name is required","Se requiere el nombre del proyecto")
@@ -194,9 +203,9 @@ class ProjectService @Autowired constructor(
 
     fun deleteProject(projectId: Long) {
         // Validate the project exists
-        val projectEntity = projectRepository.findById(projectId).orElseThrow {
-            EtnException(HttpStatus.NOT_FOUND, "Error: Project not found","Proyecto no encontrado")
-        }
+        val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(projectId) ?: throw EtnException(
+            HttpStatus.NOT_FOUND, "Error: Project not found","Proyecto no encontrado"
+        )
         // Delete the project changing its status to false
         projectEntity.status = false
         projectRepository.save(projectEntity)

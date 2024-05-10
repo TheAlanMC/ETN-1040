@@ -36,7 +36,7 @@
                  (error)="imgLoaded[user.userId] = false"
                  alt="{{user.userId}}"
                  class="mr-2"
-                 style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                 style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
             <span>{{user.email}}</span>
           </div>
         </td>
@@ -45,7 +45,7 @@
         <td>{{user.phone}}</td>
         <td>{{user.txDate | date: 'MM/dd/yyyy-HH:mm'}}</td>
         <td>{{user.txUser}}</td>
-        <td  *ngIf="canEditUser">
+        <td  *ngIf="canEditUser&&user.userId!==userId">
           <div class="inline-flex align-items-center">
           <button pButton icon="pi pi-user-edit" class="p-button-rounded p-button p-button-secondary mr-3" (click)="navigateToEditUser(user.userId)"></button>
           <button pButton icon="pi pi-user-minus" class="p-button-rounded p-button p-button-secondary" (click)="onDeleteUser(user.userId)"></button>

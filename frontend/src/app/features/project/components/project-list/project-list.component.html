@@ -1,99 +1,63 @@
+<p-toast></p-toast>
 <div class="card">
-  <full-calendar [options]="calendarOptions"></full-calendar>
+  <p-confirmDialog header="Confirmation" key="confirmDeleteProject" icon="pi pi-exclamation-triangle" message="'¿Estás seguro de que deseas eliminar este proyecto? Esta acción no se puede deshacer.'"
+                   [style]="{width: '350px'}" acceptButtonStyleClass="p-button-primary" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
-  <p-dialog #dd [(visible)]="showDialog" [breakpoints]="{'960px': '75vw', '640px': '90vw'}" [style]="{width: '36rem'}" [modal]="true" [closable]="true" (onHide)="view = ''">
+  <p-table [value]="projects" (onSort)="onSortChange($event)" [customSort]="true" [rows]="10" [showCurrentPageReport]="true"
+           [rowsPerPageOptions]="[5, 10, 25]" [paginator]="true" [totalRecords]="totalElements" [loading]="isLoading"
+           (onPage)="onPageChange($event)" [lazy]="true"
+           currentPageReportTemplate="Mostrando registros {first}-{last} de {totalRecords}">
+    <ng-template pTemplate="caption">
+      <div class="flex flex-wrap gap-2 align-items-center justify-content-end">
+        <button (click)="navigateToCreateProject()" pButton class="p-button-outlined w-full sm:w-auto flex-order-0 sm:flex-order-1" icon="pi pi-plus-circle" label="Crear Proyecto" *ngIf="canAddProject"></button>
+      </div>
+    </ng-template>
     <ng-template pTemplate="header">
-      <span class="text-900 font-semibold text-xl">{{view === 'display' ? changedEvent.title : view === 'new' ? 'New Event' : 'Edit Event'}}</span>
+      <tr>
+        <th pSortableColumn="projectName" class="white-space-nowrap" style="width:10%"> Nombre <p-sortIcon field="projectName"></p-sortIcon></th>
+        <th pSortableColumn="dateFrom" class="white-space-nowrap" style="width:10%"> Fecha de Inicio <p-sortIcon field="dateFrom"></p-sortIcon></th>
+        <th pSortableColumn="dateTo" class="white-space-nowrap" style="width:10%"> Fecha de Fin <p-sortIcon field="dateTo"></p-sortIcon></th>
+        <th class="white-space-nowrap" style="width:10%">Colaboradores</th>
+        <th class="white-space-nowrap" style="width:10%">Miembros</th>
+        <th *ngIf="canEditProject" class="white-space-nowrap" style="width:10%">Acciones</th>
+      </tr>
     </ng-template>
-    <ng-template pTemplate="content">
-      <div *ngIf="view === 'display'">
-        <span class="text-900 font-semibold block mb-2">Description</span>
-        <span class="block mb-3">{{changedEvent.description}}</span>
+    <ng-template pTemplate="body" let-project>
+      <tr>
+        <td>{{project.projectName}}</td>
+        <td>{{project.dateFrom | date: 'MM/dd/yyyy'}}</td>
+        <td>{{project.dateTo | date: 'MM/dd/yyyy'}}</td>
+        <td>
+          <p-avatarGroup styleClass="mb-3">
+            <p-avatar *ngFor="let userId of project.projectModeratorIds | slice : 0 : 3"
+                      [image]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                      (load)="setImageLoaded(userId, true)"
+                      (error)="setImageLoaded(userId, false)"
+                      size="large"
+                      shape="circle">
+            </p-avatar>
+            <p-avatar label="+{{project.projectModeratorIds.length - 3}}" shape="circle" size="large" [style]="{'background-color':'#D7D7D7', 'color': '#ffffff'}" *ngIf="project.projectModeratorIds.length > 3"></p-avatar>
+          </p-avatarGroup>
+        </td>
+        <td>
+          <p-avatarGroup styleClass="mb-3">
+            <p-avatar *ngFor="let userId of project.projectMemberIds | slice : 0 : 3"
+                      [image]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                      (load)="setImageLoaded(userId, true)"
+                      (error)="setImageLoaded(userId, false)"
+                      size="large"
+                      shape="circle">
+            </p-avatar>
+            <p-avatar label="+{{project.projectMemberIds.length - 3}}" shape="circle" size="large" [style]="{'background-color':'#D7D7D7', 'color': '#ffffff'}" *ngIf="project.projectMemberIds.length > 3"></p-avatar>
+          </p-avatarGroup>
 
-        <div class="grid">
-          <div class="col-6">
-            <div class="text-900 font-semibold mb-2">Start</div>
-            <p class="flex align-items-center m-0">
-              <i class="pi pi-fw pi-clock text-700 mr-2"></i>
-              <span>{{changedEvent.start.toISOString().slice(0,10)}}</span>
-            </p>
+        <td  *ngIf="canEditProject">
+          <div class="inline-flex align-items-center">
+            <button pButton icon="pi pi-pencil" class="p-button-rounded p-button p-button-secondary mr-3" (click)="navigateToEditProject(project.projectId)"></button>
+            <button pButton icon="pi pi-trash" class="p-button-rounded p-button p-button-secondary" (click)="onDeleteProject(project.projectId)"></button>
           </div>
-          <div class="col-6">
-            <div class="text-900 font-semibold mb-2">End</div>
-            <p class="flex align-items-center m-0">
-              <i class="pi pi-fw pi-clock text-700 mr-2"></i>
-              <span>{{changedEvent.end.toISOString().slice(0,10)}}</span>
-            </p>
-          </div>
-          <div class="col-12">
-            <div class="text-900 font-semibold mb-2">Location</div>
-            <p class="flex align-items-center m-0">
-              <i class="pi pi-fw pi-clock text-700 mr-2"></i>
-              <span>{{changedEvent.location}}</span>
-            </p>
-          </div>
-          <div class="col-12">
-            <div class="text-900 font-semibold mb-2">Color</div>
-            <p class="flex align-items-center m-0">
-              <span class="inline-flex flex-shrink-0 w-1rem h-1rem mr-2 border-circle" [style.backgroundColor]="changedEvent.tag.color"></span>
-              <span>{{changedEvent.tag.name}}</span>
-            </p>
-          </div>
-        </div>
-      </div>
-      <div *ngIf="view !== 'display'">
-        <div class="grid p-fluid formgrid">
-          <div class="col-12 md:col-6 field">
-            <label for="title" class="text-900 font-semibold">Title</label>
-            <span class="p-input-icon-left">
-                            <i class="pi pi-pencil"></i>
-                            <input id="title" type="text" pInputText placeholder="Title" [(ngModel)]="changedEvent.title" />
-                        </span>
-          </div>
-          <div class="col-12 md:col-6 field">
-            <label for="location" class="text-900 font-semibold">Location</label>
-            <span class="p-input-icon-left">
-                            <i class="pi pi-map-marker"></i>
-                            <input id="location" type="text" pInputText placeholder="Location" [(ngModel)]="changedEvent.location" />
-                        </span>
-          </div>
-          <div class="col-12 field">
-            <label for="description" class="text-900 font-semibold">Event Description</label>
-            <textarea id="description" type="text" pInputTextarea [rows]="5" [(ngModel)]="changedEvent.description" style="resize: none"></textarea>
-          </div>
-
-          <div class="col-12 md:col-6 field">
-            <label for="start" class="text-900 font-semibold">Start Date</label>
-            <p-calendar [appendTo]="dd" dateFormat="mm-dd-yy" [maxDate]="changedEvent.end" [showTime]="true" [required]="true" inputId="start" [(ngModel)]="changedEvent.start"></p-calendar>
-          </div>
-          <div class="col-12 md:col-6 field">
-            <label for="start" class="text-900 font-semibold">End Date</label>
-            <p-calendar [appendTo]="dd" dateFormat="mm-dd-yy" [minDate]="changedEvent.start" [showTime]="true" [required]="true" inputId="end" [(ngModel)]="changedEvent.end"></p-calendar>
-          </div>
-          <div class="col-12 field">
-            <label for="company-color" class="text-900 font-semibold">Color</label>
-            <p-dropdown inputId="company-color" [appendTo]="dd" [options]="tags" [(ngModel)]="changedEvent.tag" optionLabel="name">
-              <ng-template pTemplate="selectedItem">
-                <div *ngIf="changedEvent.tag" class="flex align-items-center">
-                  <div class="flex-shrink-0 w-1rem h-1rem mr-2 border-circle" [style.backgroundColor]="changedEvent.tag.color"></div>
-                  <div>{{changedEvent.tag.name}}</div>
-                </div>
-              </ng-template>
-              <ng-template let-tag pTemplate="item">
-                <div class="flex align-items-center">
-                  <div class="flex-shrink-0 w-1rem h-1rem mr-2 border-circle" [style.backgroundColor]="tag.color"></div>
-                  <div>{{tag.name}}</div>
-                </div>
-              </ng-template>
-            </p-dropdown>
-          </div>
-        </div>
-      </div>
+        </td>
+      </tr>
     </ng-template>
-
-    <ng-template pTemplate="footer">
-      <button pButton *ngIf="view === 'display'" label="Edit" icon="pi pi-pencil" (click)="onEditClick()"></button>
-      <button pButton *ngIf="view === 'new' || view === 'edit'" label="Save" icon="pi pi-check" (click)="handleSave()" [disabled]="!changedEvent.start || !changedEvent.end"></button>
-    </ng-template>
-  </p-dialog>
+  </p-table>
 </div>
