@@ -43,13 +43,12 @@ class AuthUtil (@Autowired jwtConfig: JwtConfig) {
             }
         }
 
-        private fun verifyIsAuthToken(jwtToken: String?): Boolean {
+        private fun verifyIsAuthToken(jwtToken: String?) {
             if (jwtToken == null ) throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Missing authentication token","Token de autenticación faltante")
             try {
                 JWT.require(Algorithm.HMAC256(jwtSecret))
                     .build()
                     .verify(jwtToken)
-                return true
             } catch (e: JWTVerificationException) {
                 throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Invalid authentication token","Token de autenticación inválido")
             } catch (e: SignatureVerificationException){
@@ -59,7 +58,7 @@ class AuthUtil (@Autowired jwtConfig: JwtConfig) {
             }
         }
 
-       fun verifyIsRefreshToken(jwtToken: String?): Boolean {
+       fun verifyIsRefreshToken(jwtToken: String?) {
             if (jwtToken == null ) throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Missing refresh token","Token de refresco faltante")
             try {
                 val isRefresh = JWT.require(Algorithm.HMAC256(jwtSecret))
@@ -68,7 +67,6 @@ class AuthUtil (@Autowired jwtConfig: JwtConfig) {
                     .getClaim("refresh")
                     .asBoolean()
                 if (!isRefresh) throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Invalid refresh token","Token de refresco inválido")
-                return true
             } catch (e: JWTVerificationException) {
                 throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Invalid refresh token","Token de refresco inválido")
             } catch (e: SignatureVerificationException){

@@ -7,7 +7,7 @@ import org.springframework.data.jpa.domain.Specification
 class UserSpecification {
     companion object {
 
-        fun kcUserKeyword(keyword: String): Specification<User> {
+        fun userKeyword(keyword: String): Specification<User> {
             return Specification { root, _, cb ->
                 cb.or(
                     cb.like(cb.lower(root.get("email")), "%${keyword.lowercase()}%"),

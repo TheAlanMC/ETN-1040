@@ -1,6 +1,5 @@
 package bo.edu.umsa.backend.controller
 
-import bo.edu.umsa.backend.controller.GroupController.Companion
 import bo.edu.umsa.backend.dto.*
 import bo.edu.umsa.backend.service.UserService
 import bo.edu.umsa.backend.util.AuthUtil

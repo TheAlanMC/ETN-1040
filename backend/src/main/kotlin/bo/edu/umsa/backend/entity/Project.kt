@@ -36,4 +36,13 @@ class Project {
 
     @Column(name = "tx_host")
     var txHost: String = HttpUtil.getRequestHost() ?: "localhost"
+
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+    var projectOwners: List<ProjectOwner>? = null
+
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+    var projectModerators: List<ProjectModerator>? = null
+
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+    var projectMembers: List<ProjectMember>? = null
 }

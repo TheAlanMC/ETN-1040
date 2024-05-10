@@ -7,11 +7,9 @@ import bo.edu.umsa.backend.entity.User
 import bo.edu.umsa.backend.entity.UserGroup
 import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.GroupMapper
-import bo.edu.umsa.backend.mapper.RoleMapper
 import bo.edu.umsa.backend.mapper.UserMapper
 import bo.edu.umsa.backend.mapper.UserPartialMapper
 import bo.edu.umsa.backend.repository.*
-import bo.edu.umsa.backend.service.GroupService.Companion
 import bo.edu.umsa.backend.specification.UserSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -31,8 +29,7 @@ class UserService @Autowired constructor(
     private val fileRepository: FileRepository,
     private val userGroupRepository: UserGroupRepository,
     private val fileService: FileService,
-    private val emailService: EmailService,
-    private val roleRepository: RoleRepository
+    private val emailService: EmailService
 ){
     companion object {
         private val logger = org.slf4j.LoggerFactory.getLogger(UserService::class.java)
@@ -58,7 +55,7 @@ class UserService @Autowired constructor(
         specification = specification.and(specification.and(UserSpecification.statusIsTrue()))
         // Search by keyword
         if (!keyword.isNullOrEmpty() && keyword.isNotBlank()) {
-            specification = specification.and(specification.and(UserSpecification.kcUserKeyword(keyword)))
+            specification = specification.and(specification.and(UserSpecification.userKeyword(keyword)))
         }
         val userEntities: Page<User> = userRepository.findAll(specification, pageable)
         return userEntities.map { UserMapper.entityToDto(it) }
@@ -137,10 +134,7 @@ class UserService @Autowired constructor(
         val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
         // Get the user roles
-        val roleEntities = roleRepository.findAllByUsername(userEntity.username)
-        val roles = roleEntities.map { role -> role.roleName }.toSet().toTypedArray()
-        val groups = groupRepository.findAllByUserId(userId).map { it.groupName }.toSet().toTypedArray()
-        return UserMapper.entityToDto(userEntity, roles.toList(), groups.toList())
+        return UserMapper.entityToDto(userEntity)
     }
 
     fun updateUser(userId: Long, profileDto: ProfileDto) {
@@ -180,7 +174,7 @@ class UserService @Autowired constructor(
         // Get the user
         val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
-        return  fileService.getFile(userEntity.filePhotoId.toLong())
+        return  fileService.getFile(userEntity.filePhotoId)
     }
 
     fun uploadProfilePicture(userId: Long, file: MultipartFile) {
@@ -189,9 +183,9 @@ class UserService @Autowired constructor(
         val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
         // Update the same file
-        fileService.overwriteFile(file, userEntity.filePhotoId.toLong())
+        fileService.overwriteFile(file, userEntity.filePhotoId)
         // Update the thumbnail
-        fileService.overwriteThumbnail(file, userEntity.filePhotoId.toLong())
+        fileService.overwriteThumbnail(file, userEntity.filePhotoId)
     }
 
     fun getGroupsByUserId(userId: Long): List<GroupDto> {
@@ -233,6 +227,6 @@ class UserService @Autowired constructor(
         // Get the user
         val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
-        return  fileService.getThumbnail(userEntity.filePhotoId.toLong())
+        return  fileService.getThumbnail(userEntity.filePhotoId)
     }
 }

@@ -19,18 +19,18 @@ class FileService @Autowired constructor(
         private val logger = org.slf4j.LoggerFactory.getLogger(FileService::class.java)
     }
 
-    fun getFile(fileId: Long): FileDto {
+    fun getFile(fileId: Int): FileDto {
         logger.info("Getting the file with id $fileId")
         // Get the file
-        val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId)
+        val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId.toLong())
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found","Archivo no encontrado")
         return FileMapper.entityToDto(fileEntity)
     }
 
-    fun getThumbnail(fileId: Long): FileDto {
+    fun getThumbnail(fileId: Int): FileDto {
         logger.info("Getting the thumbnail with id $fileId")
         // Get the file
-        val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId)
+        val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId.toLong())
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found","Archivo no encontrado")
         return FileMapper.entityToDto(fileEntity)
     }
@@ -47,10 +47,10 @@ class FileService @Autowired constructor(
         return savedFile.fileId
     }
 
-    fun overwriteFile(file: MultipartFile, fileId: Long) {
+    fun overwriteFile(file: MultipartFile, fileId: Int) {
         logger.info("Overwriting the file with id $fileId")
         // Overwrite the file
-        val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId)
+        val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId.toLong())
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found","Archivo no encontrado")
         fileEntity.filename = file.originalFilename!!
         fileEntity.contentType = file.contentType!!
@@ -58,12 +58,12 @@ class FileService @Autowired constructor(
         fileRepository.save(fileEntity)
     }
 
-    fun overwriteThumbnail(thumbnail: MultipartFile, fileId: Long) {
+    fun overwriteThumbnail(thumbnail: MultipartFile, fileId: Int) {
         logger.info("Overwriting the thumbnail with id $fileId")
         // Generate the thumbnail
         val thumbnailBytes = thumbnailService.createThumbnail(thumbnail)
         // Overwrite the thumbnail
-        val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId)
+        val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId.toLong())
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found","Archivo no encontrado")
         fileEntity.thumbnail = thumbnailBytes
         fileRepository.save(fileEntity)

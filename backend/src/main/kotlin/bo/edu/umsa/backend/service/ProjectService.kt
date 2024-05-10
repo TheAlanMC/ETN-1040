@@ -1,20 +1,23 @@
 package bo.edu.umsa.backend.service
 
 import bo.edu.umsa.backend.dto.NewProjectDto
-import bo.edu.umsa.backend.entity.Project
-import bo.edu.umsa.backend.entity.ProjectModerator
-import bo.edu.umsa.backend.entity.ProjectOwner
-import bo.edu.umsa.backend.entity.ProjectMember
+import bo.edu.umsa.backend.dto.ProjectDto
+import bo.edu.umsa.backend.entity.*
 import bo.edu.umsa.backend.exception.EtnException
+import bo.edu.umsa.backend.mapper.ProjectMapper
 import bo.edu.umsa.backend.repository.*
+import bo.edu.umsa.backend.specification.ProjectSpecification
 import bo.edu.umsa.backend.util.AuthUtil
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
 import java.time.Instant
-import java.time.ZoneId
-import java.time.ZonedDateTime
 
 @Service
 class ProjectService @Autowired constructor(
@@ -27,6 +30,22 @@ class ProjectService @Autowired constructor(
     companion object {
         private val logger = org.slf4j.LoggerFactory.getLogger(ProjectService::class.java)
     }
+
+    fun getProjects(
+        sortBy: String,
+        sortType: String,
+        page: Int,
+        size: Int
+    ): Page<ProjectDto> {
+        logger.info("Getting the projects")
+        // Pagination and sorting
+        val pageable: Pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortType), sortBy))
+        var specification: Specification<Project> = Specification.where(null)
+        specification = specification.and(specification.and(ProjectSpecification.statusIsTrue()))
+        val projectEntities: Page<Project> = projectRepository.findAll(specification, pageable)
+        return projectEntities.map { ProjectMapper.entityToDto(it) }
+    }
+
 
     fun createProject(newProjectDto: NewProjectDto) {
         // Validate the name is not empty
@@ -100,4 +119,90 @@ class ProjectService @Autowired constructor(
         }
         logger.info("Project members created for project ${projectEntity.projectId}")
     }
+
+    fun updateProject(projectId: Long, projectDto: NewProjectDto) {
+        // Validate the project exists
+        val projectEntity = projectRepository.findById(projectId).orElseThrow {
+            EtnException(HttpStatus.NOT_FOUND, "Error: Project not found","Proyecto no encontrado")
+        }
+        // Validate the project name is not empty
+        if (projectDto.projectName.isEmpty()) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project name is required","Se requiere el nombre del proyecto")
+        }
+        // Validate the project moderators are not empty and valid
+        if (projectDto.projectModeratorIds.isEmpty()) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one moderator is required","Se requiere al menos un moderador")
+        }
+        // Validate the project members are not empty
+        if (projectDto.projectMemberIds.isEmpty()) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one member is required","Se requiere al menos un miembro del equipo")
+        }
+        // Validate the project moderators exist
+        if (userRepository.findAllInUserIdAndStatusIsTrue(projectDto.projectModeratorIds.map { it.toLong() }).size != projectDto.projectModeratorIds.size) {
+            throw EtnException(
+                HttpStatus.BAD_REQUEST, "Error: At least one moderator is invalid", "Al menos un moderador es inválido"
+            )
+        }
+        // Validate the project members exist
+        if (userRepository.findAllInUserIdAndStatusIsTrue(projectDto.projectMemberIds.map { it.toLong() }).size != projectDto.projectMemberIds.size) {
+            throw EtnException(
+                HttpStatus.BAD_REQUEST, "Error: At least one member is invalid", "Al menos un miembro es inválido"
+            )
+        }
+
+        // Update the project
+        projectEntity.projectName = projectDto.projectName
+        projectEntity.projectDescription = projectDto.projectDescription
+        projectRepository.save(projectEntity)
+        logger.info("Project updated with id $projectId")
+
+        // Delete previous project moderators changing their status to false if they are different
+        val projectModeratorEntities = projectModeratorRepository.findAllByProjectIdAndStatusIsTrue(projectId)
+        // If they are different, update the project moderators
+        if (projectModeratorEntities.map { it.userId }.toSet() != projectDto.projectModeratorIds.map { it }.toSet()) {
+            projectModeratorEntities.forEach {
+                it.status = false
+                projectModeratorRepository.save(it)
+            }
+            // Create the new project moderators
+            projectDto.projectModeratorIds.forEach { moderatorId ->
+                val projectModeratorEntity = ProjectModerator()
+                projectModeratorEntity.projectId = projectEntity.projectId
+                projectModeratorEntity.userId = moderatorId
+                projectModeratorRepository.save(projectModeratorEntity)
+            }
+        }
+
+        // Delete previous project members changing their status to false
+        val projectMemberEntities = projectMemberRepository.findAllByProjectIdAndStatusIsTrue(projectId)
+        // If they are different, update the project members
+        if (projectMemberEntities.map { it.userId }.toSet() != projectDto.projectMemberIds.map { it }.toSet()) {
+            projectMemberEntities.forEach {
+                it.status = false
+                projectMemberRepository.save(it)
+            }
+            // Create the new project members
+            projectDto.projectMemberIds.forEach { memberId ->
+                val projectMemberEntity = ProjectMember()
+                projectMemberEntity.projectId = projectEntity.projectId
+                projectMemberEntity.userId = memberId
+                projectMemberRepository.save(projectMemberEntity)
+            }
+        }
+        logger.info("Project moderators and members updated for project $projectId")
+    }
+
+    fun deleteProject(projectId: Long) {
+        // Validate the project exists
+        val projectEntity = projectRepository.findById(projectId).orElseThrow {
+            EtnException(HttpStatus.NOT_FOUND, "Error: Project not found","Proyecto no encontrado")
+        }
+        // Delete the project changing its status to false
+        projectEntity.status = false
+        projectRepository.save(projectEntity)
+        logger.info("Project deleted with id $projectId")
+    }
+
+
+
 }

@@ -63,7 +63,7 @@ class UserProfileService @Autowired constructor(
         // Get the user
         val userEntity: User = userRepository.findByUsernameAndStatusIsTrue(username)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
-        return  fileService.getFile(userEntity.filePhotoId.toLong())
+        return  fileService.getFile(userEntity.filePhotoId)
     }
 
     fun uploadProfilePicture(file: MultipartFile) {
@@ -73,9 +73,9 @@ class UserProfileService @Autowired constructor(
         val userEntity: User = userRepository.findByUsernameAndStatusIsTrue(username)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
         // Update the same file
-        fileService.overwriteFile(file, userEntity.filePhotoId.toLong())
+        fileService.overwriteFile(file, userEntity.filePhotoId)
         // Create the thumbnail
-        fileService.overwriteThumbnail(file, userEntity.filePhotoId.toLong())
+        fileService.overwriteThumbnail(file, userEntity.filePhotoId)
     }
 
     fun updatePassword(passwordChangeDto: PasswordChangeDto) {

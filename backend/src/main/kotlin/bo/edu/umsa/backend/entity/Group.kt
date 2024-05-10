@@ -34,5 +34,9 @@ class Group {
     @OneToMany(mappedBy = "group")
     var userGroups: List<UserGroup>? = null
 
+    @OneToMany(mappedBy = "group")
+    var groupRoles: List<GroupRole>? = null
+
+
 }
 
