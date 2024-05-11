@@ -25,6 +25,7 @@ export class NewProjectComponent implements OnInit {
       ['bold', 'italic', 'underline'],
       [{'color': []}, {'background': []}],
       [{'list': 'ordered'}, {'list': 'bullet'}, {'align': []}],
+      [{indent: '-1'}, {indent: '+1'}],
     ]
   };
 
@@ -69,6 +70,7 @@ export class NewProjectComponent implements OnInit {
           img.onerror = () => this.imgLoaded[user.userId] = false;
           return {
             label: `${user.firstName} ${user.lastName}`,
+            labelSecondary: user.email,
             value: user.userId,
             disabled: (user.userId === this.userId)
           }

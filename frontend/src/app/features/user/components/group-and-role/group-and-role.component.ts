@@ -89,6 +89,7 @@ export class GroupAndRoleComponent implements OnInit{
           img.onerror = () => this.imgLoaded[user.userId] = false;
           return {
             label: `${user.firstName} ${user.lastName}`,
+            labelSecondary: user.email,
             value: user.userId,
             disabled: (user.userId === this.userId)
           }

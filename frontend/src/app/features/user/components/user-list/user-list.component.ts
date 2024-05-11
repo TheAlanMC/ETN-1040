@@ -72,6 +72,10 @@ export class UserListComponent implements OnInit {
     this.router.navigate(['/users/create']).then(r => console.log('Navigate to create user'));
   }
 
+  public navigateToViewUser(userId: number) {
+    this.router.navigate(['/users/view/' + userId]).then(r => console.log('Navigate to view user'));
+  }
+
   public navigateToEditUser(userId: number) {
     this.router.navigate(['/users/edit/' + userId]).then(r => console.log('Navigate to edit user'));
   }

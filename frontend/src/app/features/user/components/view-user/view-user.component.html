@@ -1,0 +1,54 @@
+<p-toast></p-toast>
+<div class="card">
+  <span class="text-900 text-xl font-bold mb-4 block">Perfil de Usuario</span>
+  <div class="grid"  *ngIf="user else loading">
+    <div class="col-12 lg:col-2">
+      <div class="flex justify-center items-center mb-4 justify-content-center">
+        <img [src]="profilePictureUrl" alt="Profile" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover" />
+      </div>
+      <div class="text-900 font-medium text-xl mb-3">Roles</div>
+      <div *ngFor="let group of user.groups">
+        <p class="m-0 p-0 text-600 line-height-3 mr-3">-{{ group }}</p>
+      </div>
+      <div class="text-900 font-medium text-xl mt-4 mb-3">Permisos</div>
+      <div *ngFor="let rol of user.roles">
+        <p class="m-0 p-0 text-600 line-height-3 mr-3">-{{ rol }}</p>
+      </div>
+    </div>
+    <div class="col-12 lg:col-10">
+      <div class="grid formgrid p-fluid">
+        <div class="field mb-4 col-12 md:col-6">
+          <label for="firstName" class="font-medium text-900">Nombre</label>
+          <input id="firstName" type="text" pInputText [ngModel]="user.firstName" readonly>
+        </div>
+        <div class="field mb-4 col-12 md:col-6">
+          <label for="lastName" class="font-medium text-900">Apellidos</label>
+          <input id="lastName" type="text" pInputText [ngModel]="user.lastName" readonly>
+        </div>
+        <div class="field mb-4 col-12 md:col-6">
+          <label for="email" class="font-medium text-900">Correo Electrónico</label>
+          <input id="email" type="text" pInputText [(ngModel)]="user.email" readonly>
+        </div>
+        <div class="field mb-4 col-12 md:col-6">
+          <label for="phone" class="font-medium text-900">Teléfono</label>
+          <input id="phone" type="text" pInputText [(ngModel)]="user.phone" readonly>
+        </div>
+
+        <div class="field mb-4 col-12">
+          <label for="bio" class="font-medium text-900">Acerca de mi</label>
+          <textarea id="bio" type="text" pInputTextarea rows="5" [autoResize]="true" [(ngModel)]="user.description" readonly></textarea>
+        </div>
+
+        <div class="col-12 lg:col-3 md:col-4 field">
+          <button pButton pRipple label="Volver" icon="pi pi-arrow-left" class="flex-auto mt-3 p-button-outlined" (click)="onBack()"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="col-12 lg:col-12" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+    <p-progressSpinner ariaLabel="Cargando..."></p-progressSpinner>
+  </div>
+</ng-template>

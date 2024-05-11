@@ -24,7 +24,7 @@
         <th pSortableColumn="phone" class="white-space-nowrap" style="width:10%">Teléfono <p-sortIcon field="phone"></p-sortIcon></th>
         <th pSortableColumn="txDate" class="white-space-nowrap" style="width:10%">Creación <p-sortIcon field="txDate"></p-sortIcon></th>
         <th pSortableColumn="txUser" class="white-space-nowrap" style="width:10%">Creado por <p-sortIcon field="txUser"></p-sortIcon></th>
-        <th *ngIf="canEditUser" class="white-space-nowrap" style="width:10%">Acciones</th>
+        <th class="white-space-nowrap" style="width:10%">Acciones</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-user>
@@ -45,12 +45,16 @@
         <td>{{user.phone}}</td>
         <td>{{user.txDate | date: 'MM/dd/yyyy-HH:mm'}}</td>
         <td>{{user.txUser}}</td>
-        <td  *ngIf="canEditUser&&user.userId!==userId">
-          <div class="inline-flex align-items-center">
-          <button pButton icon="pi pi-user-edit" class="p-button-rounded p-button p-button-secondary mr-3" (click)="navigateToEditUser(user.userId)"></button>
-          <button pButton icon="pi pi-user-minus" class="p-button-rounded p-button p-button-secondary" (click)="onDeleteUser(user.userId)"></button>
+        <td  *ngIf="user.userId!==userId else elseBlock">
+          <div class="flex justify-content-center">
+            <button pButton icon="pi pi-eye" class="p-button-rounded p-button p-button-secondary mr-1" (click)="navigateToViewUser(user.userId)"></button>
+            <button pButton icon="pi pi-user-edit" class="p-button-rounded p-button p-button-secondary mr-1" (click)="navigateToEditUser(user.userId)" *ngIf="canEditUser"></button>
+            <button pButton icon="pi pi-user-minus" class="p-button-rounded p-button p-button-secondary" (click)="onDeleteUser(user.userId)" *ngIf="canEditUser"></button>
           </div>
         </td>
+        <ng-template #elseBlock>
+          <td></td>
+        </ng-template>
       </tr>
     </ng-template>
   </p-table>

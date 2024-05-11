@@ -19,7 +19,7 @@
         <th pSortableColumn="dateTo" class="white-space-nowrap" style="width:10%"> Fecha de Fin <p-sortIcon field="dateTo"></p-sortIcon></th>
         <th class="white-space-nowrap" style="width:10%">Colaboradores</th>
         <th class="white-space-nowrap" style="width:10%">Miembros</th>
-        <th *ngIf="canEditProject" class="white-space-nowrap" style="width:10%">Acciones</th>
+        <th class="white-space-nowrap" style="width:10%">Acciones</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-project>
@@ -29,32 +29,68 @@
         <td>{{project.dateTo | date: 'MM/dd/yyyy'}}</td>
         <td>
           <p-avatarGroup styleClass="mb-3">
-            <p-avatar *ngFor="let userId of project.projectModeratorIds | slice : 0 : 3"
+            <p-avatar *ngFor="let userId of project.projectModeratorIds | slice : 0 : 5"
                       [image]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
                       (load)="setImageLoaded(userId, true)"
                       (error)="setImageLoaded(userId, false)"
                       size="large"
-                      shape="circle">
+                      shape="circle"
+                      pTooltip="{{getFullName(userId)}}" tooltipPosition="top"
+            >
             </p-avatar>
-            <p-avatar label="+{{project.projectModeratorIds.length - 3}}" shape="circle" size="large" [style]="{'background-color':'#D7D7D7', 'color': '#ffffff'}" *ngIf="project.projectModeratorIds.length > 3"></p-avatar>
+            <p-avatar label="+{{project.projectModeratorIds.length - 5}}" shape="circle" size="large" [style]="{'background-color':'#D7D7D7', 'color': '#ffffff'}" *ngIf="project.projectModeratorIds.length > 5" (click)="collaborator.toggle($event)"></p-avatar>
           </p-avatarGroup>
+          <p-overlayPanel #collaborator>
+            <span class="font-medium text-900 block mb-2">Colaboradores</span>
+            <ul class="list-none p-0 m-0 flex flex-column gap-3">
+              <li *ngFor="let userId of project.projectModeratorIds" class="flex align-items-center gap-2">
+                <img [src]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                     (load)="setImageLoaded(userId, true)"
+                     (error)="setImageLoaded(userId, false)"
+                     alt="{{userId}}"
+                     class="mr-2"
+                     style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">                    <div>
+                <span class="font-medium">{{ getFullName(userId) }}</span>
+                <div class="text-sm text-color-secondary">{{ getEmail(userId) }}</div>
+              </div>
+              </li>
+            </ul>
+          </p-overlayPanel>
         </td>
         <td>
           <p-avatarGroup styleClass="mb-3">
-            <p-avatar *ngFor="let userId of project.projectMemberIds | slice : 0 : 3"
+            <p-avatar *ngFor="let userId of project.projectMemberIds | slice : 0 : 5"
                       [image]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
                       (load)="setImageLoaded(userId, true)"
                       (error)="setImageLoaded(userId, false)"
                       size="large"
-                      shape="circle">
+                      shape="circle"
+                      pTooltip="{{getFullName(userId)}}" tooltipPosition="top"
+            >
             </p-avatar>
-            <p-avatar label="+{{project.projectMemberIds.length - 3}}" shape="circle" size="large" [style]="{'background-color':'#D7D7D7', 'color': '#ffffff'}" *ngIf="project.projectMemberIds.length > 3"></p-avatar>
+            <p-avatar label="+{{project.projectMemberIds.length - 5}}" shape="circle" size="large" [style]="{'background-color':'#D7D7D7', 'color': '#ffffff'}" *ngIf="project.projectMemberIds.length > 5" (click)="member.toggle($event)"></p-avatar>
           </p-avatarGroup>
-
-        <td  *ngIf="canEditProject">
+          <p-overlayPanel #member>
+                <span class="font-medium text-900 block mb-2">Miembros</span>
+                <ul class="list-none p-0 m-0 flex flex-column gap-3">
+                  <li *ngFor="let userId of project.projectMemberIds" class="flex align-items-center gap-2">
+                    <img [src]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                         (load)="setImageLoaded(userId, true)"
+                         (error)="setImageLoaded(userId, false)"
+                         alt="{{userId}}"
+                         class="mr-2"
+                         style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">                    <div>
+                      <span class="font-medium">{{ getFullName(userId) }}</span>
+                      <div class="text-sm text-color-secondary">{{ getEmail(userId) }}</div>
+                    </div>
+                  </li>
+                </ul>
+          </p-overlayPanel>
+        <td>
           <div class="inline-flex align-items-center">
-            <button pButton icon="pi pi-pencil" class="p-button-rounded p-button p-button-secondary mr-3" (click)="navigateToEditProject(project.projectId)"></button>
-            <button pButton icon="pi pi-trash" class="p-button-rounded p-button p-button-secondary" (click)="onDeleteProject(project.projectId)"></button>
+            <button pButton icon="pi pi-eye" class="p-button-rounded p-button p-button-secondary mr-1" (click)="navigateToViewProject(project.projectId)"></button>
+            <button pButton icon="pi pi-pencil" class="p-button-rounded p-button p-button-secondary mr-1" (click)="navigateToEditProject(project.projectId)" *ngIf="canEditProject"></button>
+            <button pButton icon="pi pi-trash" class="p-button-rounded p-button p-button-secondary" (click)="onDeleteProject(project.projectId)" *ngIf="canEditProject"></button>
           </div>
         </td>
       </tr>

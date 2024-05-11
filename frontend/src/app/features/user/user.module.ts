@@ -21,8 +21,7 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {DropdownModule} from "primeng/dropdown";
 import {TabViewModule} from "primeng/tabview";
 import {PickListModule} from "primeng/picklist";
-
-
+import { ViewUserComponent } from './components/view-user/view-user.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +29,8 @@ import {PickListModule} from "primeng/picklist";
     NewUserComponent,
     EditUserComponent,
     ProfileComponent,
-    GroupAndRoleComponent
+    GroupAndRoleComponent,
+    ViewUserComponent
   ],
   imports: [
     CommonModule,

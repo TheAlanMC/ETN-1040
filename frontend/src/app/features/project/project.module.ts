@@ -22,6 +22,10 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {TableModule} from "primeng/table";
 import {AvatarGroupModule} from "primeng/avatargroup";
 import {AvatarModule} from "primeng/avatar";
+import { ViewProjectComponent } from './components/view-project/view-project.component';
+import {DockModule} from "primeng/dock";
+import {OverlayPanelModule} from "primeng/overlaypanel";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
 
 
 
@@ -30,6 +34,7 @@ import {AvatarModule} from "primeng/avatar";
     ProjectListComponent,
     NewProjectComponent,
     EditProjectComponent,
+    ViewProjectComponent,
   ],
   imports: [
     CommonModule,
@@ -52,7 +57,10 @@ import {AvatarModule} from "primeng/avatar";
     ConfirmDialogModule,
     TableModule,
     AvatarGroupModule,
-    AvatarModule
+    AvatarModule,
+    DockModule,
+    OverlayPanelModule,
+    ProgressSpinnerModule
   ]
 })
 export class ProjectModule { }

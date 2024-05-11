@@ -53,7 +53,7 @@ class UserController @Autowired constructor(
     ): ResponseEntity<ResponseDto<UserDto>> {
         logger.info("Starting the API call to get the user")
         logger.info("GET /api/v1/users/{userId}")
-        AuthUtil.verifyAuthTokenHasRole("EDITAR USUARIOS")
+        AuthUtil.verifyAuthTokenHasRole("VER USUARIOS")
         val user: UserDto = userService.getUserById(userId)
         logger.info("Success: User retrieved")
         return ResponseEntity(ResponseDto(true,"Usuario recuperado", user), HttpStatus.OK)
@@ -103,7 +103,7 @@ class UserController @Autowired constructor(
     ): ResponseEntity<ByteArray> {
         logger.info("Starting the API call to get the profile picture")
         logger.info("GET /api/v1/users/{userId}/profile-picture")
-        AuthUtil.verifyAuthTokenHasRole("EDITAR USUARIOS")
+        AuthUtil.verifyAuthTokenHasRole("VER USUARIOS")
         val profilePicture: FileDto = userService.getProfilePicture(userId)
         val headers = HttpHeaders()
         headers.contentType = MediaType.parseMediaType(profilePicture.contentType)

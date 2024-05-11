@@ -9,6 +9,8 @@ import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {ResponseDto} from "../../../../core/models/response.dto";
 import {PageDto} from "../../../../core/models/page.dto";
 import { ProjectService } from '../../../../core/services/project.service';
+import {UserService} from "../../../../core/services/user.service";
+import {UserDto} from "../../../user/models/user.dto";
 
 @Component({
   selector: 'app-project-list',
@@ -37,7 +39,9 @@ export class ProjectListComponent implements OnInit {
 
   imgLoaded: { [key: string]: boolean } = {};
 
-  constructor(private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private utilService: UtilService, private projectService: ProjectService) {
+  users: UserDto[] = [];
+
+  constructor(private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private utilService: UtilService, private projectService: ProjectService, private userService: UserService) {
     this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     // Get token from local storage
     const token = localStorage.getItem('token');
@@ -54,10 +58,15 @@ export class ProjectListComponent implements OnInit {
 
   ngOnInit() {
     this.getData();
+    this.getAllUsers();
   }
 
   public navigateToCreateProject() {
     this.router.navigate(['/projects/create']).then(r => console.log('Navigate to create project'));
+  }
+
+  public navigateToViewProject(projectId: number) {
+    this.router.navigate(['/projects/view/' + projectId]).then(r => console.log('Navigate to view project'));
   }
 
   public navigateToEditProject(projectId: number) {
@@ -135,12 +144,33 @@ export class ProjectListComponent implements OnInit {
     });
   }
 
+  public getAllUsers() {
+    this.userService.getAllUsers().subscribe({
+      next: (data) => {
+        this.users = data.data!!;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
   public getImageLoaded(userId: any): boolean {
     return this.imgLoaded[userId] ?? false;
   }
 
   public setImageLoaded(userId: any, value: boolean) {
    this.imgLoaded[userId] = value;
+  }
+
+  public getFullName(userId: any): string {
+    const user = this.users.find(user => user.userId === userId);
+    return `${user?.firstName} ${user?.lastName}`;
+  }
+
+  public getEmail(userId: any): string {
+    const user = this.users.find(user => user.userId === userId);
+    return user?.email ?? '';
   }
 
 }

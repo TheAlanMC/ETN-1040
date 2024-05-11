@@ -16,8 +16,11 @@
                      (error)="imgLoaded[item.value] = false"
                      alt="{{item.value}}"
                      class="mr-2"
-                     style="width: 25px; height: 25px; border-radius: 50%; object-fit: cover;">
-                <span class="ml-2">{{item.label}}</span>
+                     style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
+                <div class="flex-col">
+                  <div class="font-medium">{{ item.label }}</div>
+                  <div class="text-sm text-color-secondary">{{ item.labelSecondary }}</div>
+                </div>
               </div>
             </ng-template>
           </p-dropdown>
