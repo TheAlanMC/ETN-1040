@@ -1,4 +1,3 @@
-<p-toast></p-toast>
 <div class="card">
   <span class="text-900 text-xl font-bold mb-4 block">Perfil de Usuario</span>
   <div class="grid"  *ngIf="user else loading">
@@ -19,24 +18,24 @@
       <div class="grid formgrid p-fluid">
         <div class="field mb-4 col-12 md:col-6">
           <label for="firstName" class="font-medium text-900">Nombre</label>
-          <input id="firstName" type="text" pInputText [ngModel]="user.firstName" readonly>
+          <input id="firstName" type="text" pInputText [ngModel]="user.firstName" [readonly]="true">
         </div>
         <div class="field mb-4 col-12 md:col-6">
           <label for="lastName" class="font-medium text-900">Apellidos</label>
-          <input id="lastName" type="text" pInputText [ngModel]="user.lastName" readonly>
+          <input id="lastName" type="text" pInputText [ngModel]="user.lastName" [readonly]="true">
         </div>
         <div class="field mb-4 col-12 md:col-6">
           <label for="email" class="font-medium text-900">Correo Electrónico</label>
-          <input id="email" type="text" pInputText [(ngModel)]="user.email" readonly>
+          <input id="email" type="text" pInputText [(ngModel)]="user.email" [readonly]="true">
         </div>
         <div class="field mb-4 col-12 md:col-6">
           <label for="phone" class="font-medium text-900">Teléfono</label>
-          <input id="phone" type="text" pInputText [(ngModel)]="user.phone" readonly>
+          <input id="phone" type="text" pInputText [(ngModel)]="user.phone" [readonly]="true">
         </div>
 
         <div class="field mb-4 col-12">
           <label for="bio" class="font-medium text-900">Acerca de mi</label>
-          <textarea id="bio" type="text" pInputTextarea rows="5" [autoResize]="true" [(ngModel)]="user.description" readonly></textarea>
+          <textarea id="bio" type="text" pInputTextarea rows="5" [autoResize]="true" [(ngModel)]="user.description" [readonly]="true"></textarea>
         </div>
 
         <div class="col-12 lg:col-3 md:col-4 field">

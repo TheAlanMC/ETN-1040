@@ -100,7 +100,6 @@ export class ProjectListComponent implements OnInit {
             project.projectMemberIds.forEach(userId => this.fetchUserImage(userId));
           }
         );
-        console.log(this.imgLoaded);
         this.isLoading = false;
       },
       error: (error) => {

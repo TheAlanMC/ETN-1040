@@ -10,15 +10,15 @@
         </div>
         <div class="col-12 lg:col-6 field">
           <label for="dateFrom" class="font-bold text-900">Fecha de inicio</label>
-          <p-calendar id="dateFrom" [showIcon]="true" placeholder="Fecha de inicio" dateFormat="dd/mm/yy" [ngModel]="dateFrom" disabled></p-calendar>
+          <p-calendar id="dateFrom" [showIcon]="true" placeholder="Fecha de inicio" dateFormat="dd/mm/yy" [ngModel]="dateFrom" [disabled]="true"></p-calendar>
         </div>
         <div class="col-12 lg:col-6 field">
           <label for="dateTo" class="font-bold text-900">Fecha de finalización</label>
-          <p-calendar id="dateTo" [showIcon]="true" placeholder="Fecha de finalización" dateFormat="dd/mm/yy" [ngModel]="dateTo" disabled></p-calendar>
+          <p-calendar id="dateTo" [showIcon]="true" placeholder="Fecha de finalización" dateFormat="dd/mm/yy" [ngModel]="dateTo" [disabled]="true"></p-calendar>
         </div>
         <div class="col-12 field">
           <label for="projectDescription" class="font-bold text-900">Descripción del Proyecto</label>
-          <p-editor id="projectDescription" [style]="{'height':'250px'}" [modules]="editorModules" [(ngModel)]="project.projectDescription" placeholder="Ingrese la descripción del proyecto">
+          <p-editor id="projectDescription" [style]="{'height':'250px'}" [modules]="editorModules" [(ngModel)]="project.projectDescription" placeholder="Ingrese la descripción del proyecto" [readonly]="true">
             <ng-template pTemplate="header">
             </ng-template>
           </p-editor>
@@ -28,10 +28,10 @@
 
     <div class="col-12 lg:col-4">
       <div class="border-1 surface-border border-round field">
-        <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Agregar moderadores</span>
+        <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Collaboradores</span>
         <div class="p-3">
           <div class="auto-flex align-items-center field" *ngIf="selectedModerators.length > 0">
-            <p-chips [(ngModel)]="selectedModerators" class="chips-custom" >
+            <p-chips [(ngModel)]="selectedModerators" class="chips-custom" [disabled]="true">
               <ng-template let-item pTemplate="item">
                 <img [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
                      (load)="imgLoaded[item.value] = true"
@@ -43,34 +43,34 @@
               </ng-template>
             </p-chips>
           </div>
-          <p-multiSelect [options]="userItems" variant="filled"
-                         [(ngModel)]="selectedModerators" placeholder="Seleccione moderadores"
-                         optionLabel="label" class="multiselect-custom" display="chip" showClear="true">
-            <ng-template let-value pTemplate="selectedItems">
-              <div>Seleccione moderadores</div>
-            </ng-template>
-            <ng-template let-item pTemplate="item">
-              <div class="inline-flex align-items-center">
-                <img [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
-                     (load)="imgLoaded[item.value] = true"
-                     (error)="imgLoaded[item.value] = false"
-                     alt="{{item.value}}"
-                     class="mr-2"
-                     style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
-                <div class="flex-col">
-                  <div class="font-medium">{{ item.label }}</div>
-                  <div class="text-sm text-color-secondary">{{ item.labelSecondary }}</div>
-                </div>
-              </div>
-            </ng-template>
-          </p-multiSelect>
+<!--          <p-multiSelect [options]="userItems" variant="filled"-->
+<!--                         [(ngModel)]="selectedModerators" placeholder="Seleccione moderadores"-->
+<!--                         optionLabel="label" class="multiselect-custom" display="chip" showClear="true" [disabled]="true">-->
+<!--            <ng-template let-value pTemplate="selectedItems">-->
+<!--              <div>Seleccione moderadores</div>-->
+<!--            </ng-template>-->
+<!--            <ng-template let-item pTemplate="item">-->
+<!--              <div class="inline-flex align-items-center">-->
+<!--                <img [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"-->
+<!--                     (load)="imgLoaded[item.value] = true"-->
+<!--                     (error)="imgLoaded[item.value] = false"-->
+<!--                     alt="{{item.value}}"-->
+<!--                     class="mr-2"-->
+<!--                     style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">-->
+<!--                <div class="flex-col">-->
+<!--                  <div class="font-medium">{{ item.label }}</div>-->
+<!--                  <div class="text-sm text-color-secondary">{{ item.labelSecondary }}</div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </ng-template>-->
+<!--          </p-multiSelect>-->
         </div>
       </div>
       <div class="border-1 surface-border border-round field">
-        <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Agregar miembros del equipo</span>
+        <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Miembros del Equipo</span>
         <div class="p-3">
           <div class="auto-flex align-items-center field" *ngIf="selectedMembers.length > 0">
-            <p-chips [(ngModel)]="selectedMembers" class="chips-custom" >
+            <p-chips [(ngModel)]="selectedMembers" class="chips-custom"  [disabled]="true">
               <ng-template let-item pTemplate="item">
                 <img [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
                      (load)="imgLoaded[item.value] = true"
@@ -82,29 +82,29 @@
               </ng-template>
             </p-chips>
           </div>
-          <p-multiSelect [options]="userItems" [(ngModel)]="selectedMembers" placeholder="Seleccione miembros del equipo"
-                         optionLabel="label" class="multiselect-custom" display="chip" showClear="true">
-            <ng-template let-value pTemplate="selectedItems">
-              <div>Seleccione miembros del equipo</div>
-            </ng-template>
-            <ng-template let-item pTemplate="item">
-              <div class="inline-flex align-items-center">
-                <img [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
-                     (load)="imgLoaded[item.value] = true"
-                     (error)="imgLoaded[item.value] = false"
-                     alt="{{item.value}}"
-                     class="mr-2"
-                     style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
-                <div class="flex-col">
-                  <div class="font-medium">{{ item.label }}</div>
-                  <div class="text-sm text-color-secondary">{{ item.labelSecondary }}</div>
-                </div>              </div>
-            </ng-template>
-          </p-multiSelect>
+<!--          <p-multiSelect [options]="userItems" [(ngModel)]="selectedMembers" placeholder="Seleccione Miembros del Equipo"-->
+<!--                         optionLabel="label" class="multiselect-custom" display="chip" showClear="true" [disabled]="true">-->
+<!--            <ng-template let-value pTemplate="selectedItems">-->
+<!--              <div>Seleccione Miembros del Equipo</div>-->
+<!--            </ng-template>-->
+<!--            <ng-template let-item pTemplate="item">-->
+<!--              <div class="inline-flex align-items-center">-->
+<!--                <img [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"-->
+<!--                     (load)="imgLoaded[item.value] = true"-->
+<!--                     (error)="imgLoaded[item.value] = false"-->
+<!--                     alt="{{item.value}}"-->
+<!--                     class="mr-2"-->
+<!--                     style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">-->
+<!--                <div class="flex-col">-->
+<!--                  <div class="font-medium">{{ item.label }}</div>-->
+<!--                  <div class="text-sm text-color-secondary">{{ item.labelSecondary }}</div>-->
+<!--                </div>              </div>-->
+<!--            </ng-template>-->
+<!--          </p-multiSelect>-->
         </div>
       </div>
       <div class="flex flex-column sm:flex-row justify-content-between align-items-center gap-3 py-2">
-        <button pButton pRipple class="p-button-primary flex-1 p-button-outlined" label="Cancelar" icon="pi pi-fw pi-times" (click)="onBack()"></button>
+        <button pButton pRipple class="p-button-primary flex-1 p-button-outlined" label="Volver" icon="pi pi-arrow-left" (click)="onBack()"></button>
       </div>
     </div>
   </div>

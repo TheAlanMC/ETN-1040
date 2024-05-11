@@ -14,7 +14,8 @@ import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 @Component({
   selector: 'app-view-project',
   templateUrl: './view-project.component.html',
-  styleUrl: './view-project.component.scss'
+  styleUrl: './view-project.component.scss',
+  providers: [MessageService]
 })
 export class ViewProjectComponent implements OnInit {
 
