@@ -18,7 +18,7 @@ export class NewUserComponent implements OnInit {
   selectedGroupId: number = 0;
 
   roles: string[] = [];
-  selectedGroup: SelectItem = { value: '' };
+  selectedGroup: SelectItem = {value: ''};
   groups: SelectItem[] = [];
 
   loadingRoles = false;

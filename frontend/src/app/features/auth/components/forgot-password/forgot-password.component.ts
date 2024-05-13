@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {LayoutService} from "../../../../layout/service/app.layout.service";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {Router} from "@angular/router";
@@ -15,7 +15,8 @@ import {SharedService} from "../../../../core/services/shared.service";
 export class ForgotPasswordComponent {
   emailControl = new FormControl('', [Validators.required, Validators.email]);
 
-  constructor(private layoutService: LayoutService, private authService: AuthService, private router: Router, private messageService: MessageService, private sharedService: SharedService) {}
+  constructor(private layoutService: LayoutService, private authService: AuthService, private router: Router, private messageService: MessageService, private sharedService: SharedService) {
+  }
 
   get dark(): boolean {
     return this.layoutService.config().colorScheme !== 'light';

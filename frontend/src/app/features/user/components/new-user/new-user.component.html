@@ -4,7 +4,9 @@
   <div class="grid p-fluid">
     <div class="col-12 lg:col-3">
       <div class="text-900 font-medium text-xl mb-3">Rol de Usuario</div>
-      <p-dropdown [options]="groups" [(ngModel)]="selectedGroup" placeholder="Seleccione un rol" [showClear]="true" (onChange)="onSelectGroup($event)" (onClear)="onClearGroup()"></p-dropdown>
+      <p-dropdown (onChange)="onSelectGroup($event)" (onClear)="onClearGroup()" [(ngModel)]="selectedGroup"
+                  [options]="groups"
+                  [showClear]="true" placeholder="Seleccione un rol"></p-dropdown>
       <div class="text-900 font-medium text-xl mt-4 mb-3">Permisos Asignados</div>
       <div *ngIf="!loadingRoles; else loading">
         <div *ngIf="roles.length > 0; else noRoles">
@@ -26,33 +28,35 @@
     <div class="col-12 lg:col-9">
       <div class="grid formgrid p-fluid">
         <div class="field mb-4 col-12 md:col-6">
-          <label for="firstName" class="font-medium text-900">Nombres<span style="color: red;">*</span></label>
-          <input id="firstName" type="text" pInputText [formControl]="firstNameControl">
+          <label class="font-medium text-900" for="firstName">Nombres<span style="color: red;">*</span></label>
+          <input [formControl]="firstNameControl" id="firstName" pInputText type="text">
         </div>
         <div class="field mb-4 col-12 md:col-6">
-          <label for="lastName" class="font-medium text-900">Apellidos <span style="color: red;">*</span></label>
-          <input id="lastName" type="text" pInputText [formControl]="lastNameControl">
+          <label class="font-medium text-900" for="lastName">Apellidos <span style="color: red;">*</span></label>
+          <input [formControl]="lastNameControl" id="lastName" pInputText type="text">
         </div>
         <div class="field mb-4 col-12 md:col-6">
-          <label for="email" class="font-medium text-900">Correo Electrónico <span style="color: red;">*</span></label>
-          <input id="email" type="text" pInputText [formControl]="emailControl">
+          <label class="font-medium text-900" for="email">Correo Electrónico <span style="color: red;">*</span></label>
+          <input [formControl]="emailControl" id="email" pInputText type="text">
         </div>
         <div class="field mb-4 col-12 md:col-6">
-          <label for="phone" class="font-medium text-900">Teléfono</label>
-          <input id="phone" type="text" pInputText [formControl]="phoneControl">
+          <label class="font-medium text-900" for="phone">Teléfono</label>
+          <input [formControl]="phoneControl" [pKeyFilter]="'int'" id="phone" pInputText type="text">
         </div>
 
         <div class="field mb-4 col-12">
-          <label for="bio" class="font-medium text-900">Acerca de mi</label>
-          <textarea id="bio" type="text" pInputTextarea rows="5" [autoResize]="true" [formControl]="descriptionControl"></textarea>
+          <label class="font-medium text-900" for="bio">Acerca de mi</label>
+          <textarea [autoResize]="true" [formControl]="descriptionControl" id="bio" pInputTextarea rows="5"
+                    type="text"></textarea>
         </div>
 
-          <div class="col-12 lg:col-3 md:col-4 field">
-            <button pButton pRipple label="Guardar" icon="pi pi-save" class="flex-auto" (click)="onSave()"></button>
-          </div>
-          <div class="col-12 lg:col-3 md:col-4 field">
-            <button pButton pRipple label="Cancelar" icon="pi pi-times" class="flex-auto p-button-outlined" (click)="onCancel()"></button>
-          </div>
+        <div class="col-12 lg:col-3 md:col-4 field">
+          <button (click)="onSave()" class="flex-auto" icon="pi pi-save" label="Guardar" pButton pRipple></button>
+        </div>
+        <div class="col-12 lg:col-3 md:col-4 field">
+          <button (click)="onCancel()" class="flex-auto p-button-outlined" icon="pi pi-times" label="Cancelar" pButton
+                  pRipple></button>
+        </div>
 
       </div>
     </div>

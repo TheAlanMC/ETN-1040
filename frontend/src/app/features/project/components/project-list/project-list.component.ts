@@ -8,7 +8,7 @@ import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {ResponseDto} from "../../../../core/models/response.dto";
 import {PageDto} from "../../../../core/models/page.dto";
-import { ProjectService } from '../../../../core/services/project.service';
+import {ProjectService} from '../../../../core/services/project.service';
 import {UserService} from "../../../../core/services/user.service";
 import {UserDto} from "../../../user/models/user.dto";
 
@@ -106,7 +106,7 @@ export class ProjectListComponent implements OnInit {
         console.error(error);
       }
     });
-    }
+  }
 
 
   public fetchUserImage(userId: number) {
@@ -159,7 +159,7 @@ export class ProjectListComponent implements OnInit {
   }
 
   public setImageLoaded(userId: any, value: boolean) {
-   this.imgLoaded[userId] = value;
+    this.imgLoaded[userId] = value;
   }
 
   public getFullName(userId: any): string {

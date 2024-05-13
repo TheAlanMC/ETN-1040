@@ -45,7 +45,7 @@ export class ProfileComponent implements OnInit {
 
   @ViewChild('fileUpload') fileUpload!: FileUpload;
 
-  constructor(private profileService: ProfileService, private authService:AuthService, private router: Router, private messageService: MessageService) {
+  constructor(private profileService: ProfileService, private authService: AuthService, private router: Router, private messageService: MessageService) {
     // Get token from local storage
     const token = localStorage.getItem('token');
     // Check if token exists
@@ -62,7 +62,7 @@ export class ProfileComponent implements OnInit {
     this.getProfilePictureUrl();
   }
 
-  public getProfilePictureUrl(){
+  public getProfilePictureUrl() {
     this.profileService.getProfilePicture().subscribe({
       next: (data) => {
         this.profilePictureUrl = URL.createObjectURL(data);
@@ -74,7 +74,7 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  public getProfileInfo(){
+  public getProfileInfo() {
     this.profileService.getProfile().subscribe({
       next: (data) => {
         this.profile = data.data;
@@ -89,12 +89,12 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  public onSelect(event: any){
+  public onSelect(event: any) {
     this.changeProfilePicture = true
     this.profilePictureUrl = URL.createObjectURL(event.files[0]);
   }
 
-  public onCancelSelect(){
+  public onCancelSelect() {
     this.changeProfilePicture = false;
     this.fileUpload.clear();
     this.profilePictureUrl = this.backupProfilePictureUrl;
@@ -122,8 +122,8 @@ export class ProfileComponent implements OnInit {
     })
   }
 
-  public onUpload(){
-    if(this.changeProfilePicture){
+  public onUpload() {
+    if (this.changeProfilePicture) {
       this.profileService.uploadProfilePicture(this.fileUpload.files[0]).subscribe({
         next: (data) => {
           this.backupProfilePictureUrl = this.profilePictureUrl;
@@ -136,7 +136,7 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  public refreshToken(){
+  public refreshToken() {
     const refreshToken = localStorage.getItem('refreshToken') || '';
     this.authService.refreshToken(refreshToken).subscribe({
       next: (data) => {

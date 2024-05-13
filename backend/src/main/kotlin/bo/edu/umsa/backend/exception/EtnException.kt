@@ -6,4 +6,4 @@ class EtnException(
     val httpStatus: HttpStatus,
     val logMessage: String,
     val errorMessage: String
-): Exception()
+) : Exception()

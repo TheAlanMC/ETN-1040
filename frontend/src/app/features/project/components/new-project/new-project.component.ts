@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, Validators} from "@angular/forms";
-import { MessageService, PrimeNGConfig, SelectItem} from "primeng/api";
+import {MessageService, SelectItem} from "primeng/api";
 import {environment} from "../../../../../environments/environment";
 import {UserDto} from "../../../user/models/user.dto";
 import {UserService} from "../../../../core/services/user.service";
@@ -15,13 +15,13 @@ import {Router} from "@angular/router";
   selector: 'app-new-project',
   templateUrl: './new-project.component.html',
   styleUrl: './new-project.component.scss',
-  providers: [ MessageService]
+  providers: [MessageService]
 })
 export class NewProjectComponent implements OnInit {
 
   editorModules = {
     toolbar: [
-      [{ 'header': [1, 2, false] }],
+      [{'header': [1, 2, false]}],
       ['bold', 'italic', 'underline'],
       [{'color': []}, {'background': []}],
       [{'list': 'ordered'}, {'list': 'bullet'}, {'align': []}],
@@ -45,7 +45,7 @@ export class NewProjectComponent implements OnInit {
 
 
   constructor(private userService: UserService, private messageService: MessageService, private utilService: UtilService, private location: Location, private projectService: ProjectService, private router: Router) {
-       this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
+    this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     const token = localStorage.getItem('token');
     // Check if token exists
     if (token) {

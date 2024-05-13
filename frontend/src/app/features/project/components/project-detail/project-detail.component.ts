@@ -16,12 +16,12 @@ import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
   templateUrl: './project-detail.component.html',
   styleUrl: './project-detail.component.scss'
 })
-export class ProjectDetailComponent implements OnInit{
+export class ProjectDetailComponent implements OnInit {
   projectId: number = 0;
 
   editorModules = {
     toolbar: [
-      [{ 'header': [1, 2, false] }],
+      [{'header': [1, 2, false]}],
       ['bold', 'italic', 'underline'],
       [{'color': []}, {'background': []}],
       [{'list': 'ordered'}, {'list': 'bullet'}, {'align': []}],

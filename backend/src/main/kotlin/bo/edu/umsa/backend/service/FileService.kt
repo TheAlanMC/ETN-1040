@@ -4,7 +4,7 @@ import bo.edu.umsa.backend.dto.FileDto
 import bo.edu.umsa.backend.entity.File
 import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.FileMapper
-import bo.edu.umsa.backend.repository.*
+import bo.edu.umsa.backend.repository.FileRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile
 class FileService @Autowired constructor(
     private val fileRepository: FileRepository,
     private val thumbnailService: ThumbnailService
-){
+) {
     companion object {
         private val logger = org.slf4j.LoggerFactory.getLogger(FileService::class.java)
     }
@@ -23,7 +23,7 @@ class FileService @Autowired constructor(
         logger.info("Getting the file with id $fileId")
         // Get the file
         val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId.toLong())
-            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found","Archivo no encontrado")
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found", "Archivo no encontrado")
         return FileMapper.entityToDto(fileEntity)
     }
 
@@ -43,9 +43,9 @@ class FileService @Autowired constructor(
         logger.info("Getting the picture with id $fileId")
         // Get the file
         val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId.toLong())
-            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found","Archivo no encontrado")
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found", "Archivo no encontrado")
         if (!fileEntity.isPicture) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: File is not a picture","El archivo no es una imagen")
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: File is not a picture", "El archivo no es una imagen")
         }
         return FileMapper.entityToDto(fileEntity)
     }
@@ -54,7 +54,7 @@ class FileService @Autowired constructor(
         logger.info("Overwriting the picture with id $fileId")
         // Overwrite the file
         val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId.toLong())
-            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found","Archivo no encontrado")
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found", "Archivo no encontrado")
         fileEntity.filename = file.originalFilename!!
         fileEntity.contentType = file.contentType!!
         fileEntity.fileData = file.bytes
@@ -67,7 +67,7 @@ class FileService @Autowired constructor(
         val thumbnailBytes = thumbnailService.createThumbnail(thumbnail)
         // Overwrite the thumbnail
         val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId.toLong())
-            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found","Archivo no encontrado")
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found", "Archivo no encontrado")
         fileEntity.thumbnail = thumbnailBytes
         fileRepository.save(fileEntity)
     }

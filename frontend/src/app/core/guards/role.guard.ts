@@ -1,13 +1,14 @@
-import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
-import { jwtDecode } from 'jwt-decode';
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
+import {jwtDecode} from 'jwt-decode';
 import {JwtPayload} from "../models/jwt-payload.dto";
 
 @Injectable({
   providedIn: 'root'
 })
 export class RoleGuard implements CanActivate {
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+  }
 
   canActivate(
     route: ActivatedRouteSnapshot,

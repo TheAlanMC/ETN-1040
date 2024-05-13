@@ -1,55 +1,82 @@
 <p-toast></p-toast>
 <div class="card">
-  <p-confirmDialog header="Confirmation" key="confirmDeleteUser" icon="pi pi-exclamation-triangle" message="'¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.'"
-                   [style]="{width: '350px'}" acceptButtonStyleClass="p-button-primary" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+  <p-confirmDialog [style]="{width: '350px'}" acceptButtonStyleClass="p-button-primary" header="Confirmation"
+                   icon="pi pi-exclamation-triangle"
+                   key="confirmDeleteUser"
+                   message="'¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.'"
+                   rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
-  <p-table [value]="users" (onSort)="onSortChange($event)" [customSort]="true" [rows]="10" [showCurrentPageReport]="true"
-           [rowsPerPageOptions]="[5, 10, 25]" [paginator]="true" [totalRecords]="totalElements" [loading]="isLoading"
-           (onPage)="onPageChange($event)" [lazy]="true"
+  <p-table (onPage)="onPageChange($event)" (onSort)="onSortChange($event)" [customSort]="true" [lazy]="true"
+           [loading]="isLoading"
+           [paginator]="true" [rowsPerPageOptions]="[5, 10, 25]" [rows]="10" [showCurrentPageReport]="true"
+           [totalRecords]="totalElements" [value]="users"
            currentPageReportTemplate="Mostrando registros {first}-{last} de {totalRecords}">
     <ng-template pTemplate="caption">
       <div class="flex flex-wrap gap-2 align-items-center justify-content-between">
                 <span class="p-input-icon-left w-full sm:w-20rem flex-order-1 sm:flex-order-0">
                     <i class="pi pi-search"></i>
-                    <input type="text" pInputText class="input w-full right-search-input" [(ngModel)]="keyword" (input)="onSearch($event)" placeholder="Busqueda Global">
+                    <input (input)="onSearch($event)" [(ngModel)]="keyword" class="input w-full right-search-input"
+                           pInputText
+                           placeholder="Busqueda Global" type="text">
                 </span>
-        <button (click)="navigateToCreateUser()" pButton class="p-button-outlined w-full sm:w-auto flex-order-0 sm:flex-order-1" icon="pi pi-user-plus" label="Crear Usuario" *ngIf="canAddUser"></button>
+        <button (click)="navigateToCreateUser()" *ngIf="canAddUser"
+                class="p-button-outlined w-full sm:w-auto flex-order-0 sm:flex-order-1" icon="pi pi-user-plus"
+                label="Crear Usuario" pButton></button>
       </div>
     </ng-template>
     <ng-template pTemplate="header">
       <tr>
-        <th pSortableColumn="email" class="white-space-nowrap" style="width:10%">Email <p-sortIcon field="email"></p-sortIcon></th>
-        <th pSortableColumn="firstName" class="white-space-nowrap" style="width:10%">Nombres<p-sortIcon field="name"></p-sortIcon></th>
-        <th pSortableColumn="lastName" class="white-space-nowrap" style="width:10%">Apellidos<p-sortIcon field="lastName"></p-sortIcon></th>
-        <th pSortableColumn="phone" class="white-space-nowrap" style="width:10%">Teléfono <p-sortIcon field="phone"></p-sortIcon></th>
-        <th pSortableColumn="txDate" class="white-space-nowrap" style="width:10%">Creación <p-sortIcon field="txDate"></p-sortIcon></th>
-        <th pSortableColumn="txUser" class="white-space-nowrap" style="width:10%">Creado por <p-sortIcon field="txUser"></p-sortIcon></th>
+        <th class="white-space-nowrap" pSortableColumn="email" style="width:10%">Email
+          <p-sortIcon field="email"></p-sortIcon>
+        </th>
+        <th class="white-space-nowrap" pSortableColumn="firstName" style="width:10%">Nombres
+          <p-sortIcon field="name"></p-sortIcon>
+        </th>
+        <th class="white-space-nowrap" pSortableColumn="lastName" style="width:10%">Apellidos
+          <p-sortIcon field="lastName"></p-sortIcon>
+        </th>
+        <th class="white-space-nowrap" pSortableColumn="phone" style="width:10%">Teléfono
+          <p-sortIcon field="phone"></p-sortIcon>
+        </th>
+        <th class="white-space-nowrap" pSortableColumn="txDate" style="width:10%">Creación
+          <p-sortIcon field="txDate"></p-sortIcon>
+        </th>
+        <th class="white-space-nowrap" pSortableColumn="txUser" style="width:10%">Creado por
+          <p-sortIcon field="txUser"></p-sortIcon>
+        </th>
         <th class="white-space-nowrap" style="width:10%">Acciones</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-user>
+    <ng-template let-user pTemplate="body">
       <tr>
         <td>
           <div class="inline-flex align-items-center">
-            <img [src]="imgLoaded[user.userId] ? (baseUrl + '/' + user.userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
-                 (load)="imgLoaded[user.userId] = true"
-                 (error)="imgLoaded[user.userId] = false"
-                 alt="{{user.userId}}"
-                 class="mr-2"
-                 style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
-            <span>{{user.email}}</span>
+            <img
+              (error)="imgLoaded[user.userId] = false"
+              (load)="imgLoaded[user.userId] = true"
+              [src]="imgLoaded[user.userId] ? (baseUrl + '/' + user.userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+              alt="{{user.userId}}"
+              class="mr-2"
+              style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
+            <span>{{ user.email }}</span>
           </div>
         </td>
-        <td>{{user.firstName}}</td>
-        <td>{{user.lastName}}</td>
-        <td>{{user.phone}}</td>
-        <td>{{user.txDate | date: 'MM/dd/yyyy-HH:mm'}}</td>
-        <td>{{user.txUser}}</td>
-        <td  *ngIf="user.userId!==userId else elseBlock">
+        <td>{{ user.firstName }}</td>
+        <td>{{ user.lastName }}</td>
+        <td>{{ user.phone }}</td>
+        <td>{{ user.txDate | date: 'MM/dd/yyyy-HH:mm' }}</td>
+        <td>{{ user.txUser }}</td>
+        <td *ngIf="user.userId!==userId else elseBlock">
           <div class="flex justify-content-center">
-            <button pButton icon="pi pi-eye" class="p-button-rounded p-button p-button-secondary mr-1" (click)="navigateToViewUser(user.userId)"></button>
-            <button pButton icon="pi pi-user-edit" class="p-button-rounded p-button p-button-secondary mr-1" (click)="navigateToEditUser(user.userId)" *ngIf="canEditUser"></button>
-            <button pButton icon="pi pi-user-minus" class="p-button-rounded p-button p-button-secondary" (click)="onDeleteUser(user.userId)" *ngIf="canEditUser"></button>
+            <button (click)="navigateToViewUser(user.userId)" class="p-button-rounded p-button p-button-secondary mr-1"
+                    icon="pi pi-eye"
+                    pButton></button>
+            <button (click)="navigateToEditUser(user.userId)" *ngIf="canEditUser"
+                    class="p-button-rounded p-button p-button-secondary mr-1"
+                    icon="pi pi-user-edit" pButton></button>
+            <button (click)="onDeleteUser(user.userId)" *ngIf="canEditUser"
+                    class="p-button-rounded p-button p-button-secondary"
+                    icon="pi pi-user-minus" pButton></button>
           </div>
         </td>
         <ng-template #elseBlock>

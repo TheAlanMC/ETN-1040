@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {UserDto} from "../../models/user.dto";
 import {FormControl, Validators} from "@angular/forms";
 import {FileUpload} from "primeng/fileupload";
-import {ActivatedRoute, Params, Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {MessageService} from "primeng/api";
 import {UserService} from "../../../../core/services/user.service";
 import {GroupService} from "../../../../core/services/group.service";
@@ -46,7 +46,7 @@ export class EditUserComponent implements OnInit {
     this.getUserProfilePictureUrl();
   }
 
-  public getUserProfilePictureUrl(){
+  public getUserProfilePictureUrl() {
     this.userService.getUserProfilePicture(this.userId).subscribe({
       next: (data) => {
         this.profilePictureUrl = URL.createObjectURL(data);
@@ -58,7 +58,7 @@ export class EditUserComponent implements OnInit {
     });
   }
 
-  public getUserInfo(){
+  public getUserInfo() {
     this.userService.getUser(this.userId).subscribe({
       next: (data) => {
         this.user = data.data;
@@ -76,41 +76,44 @@ export class EditUserComponent implements OnInit {
     });
   }
 
-  public onSelect(event: any){
+  public onSelect(event: any) {
     this.changeProfilePicture = true
     this.profilePictureUrl = URL.createObjectURL(event.files[0]);
   }
 
-  public onCancelSelect(){
+  public onCancelSelect() {
     this.changeProfilePicture = false;
     this.fileUpload.clear();
     this.profilePictureUrl = this.backupProfilePictureUrl;
   }
 
-  public onSave(){
+  public onSave() {
     this.onUpload();
     this.userService.updateUser(
-        this.userId,
-        this.firstNameControl.value!,
-        this.lastNameControl.value!,
-        this.phoneControl.value!,
-        this.descriptionControl.value!
-      ).subscribe({
-        next: (data) => {
-          this.messageService.add({severity:'success', summary:'Éxito', detail:'Usuario actualizado'});
-          setTimeout(() => {
-            this.router.navigate(['/users']).then(r => {console.log('Redirect to users page'); window.location.reload();});
-          }, 1000);
-        },
-        error: (error) => {
-          console.log(error);
-          this.messageService.add({severity:'error', summary:'Error', detail:error.error.message});
-        }
-      })
+      this.userId,
+      this.firstNameControl.value!,
+      this.lastNameControl.value!,
+      this.phoneControl.value!,
+      this.descriptionControl.value!
+    ).subscribe({
+      next: (data) => {
+        this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Usuario actualizado'});
+        setTimeout(() => {
+          this.router.navigate(['/users']).then(r => {
+            console.log('Redirect to users page');
+            window.location.reload();
+          });
+        }, 1000);
+      },
+      error: (error) => {
+        console.log(error);
+        this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
+      }
+    })
   }
 
-  public onUpload(){
-    if(this.changeProfilePicture){
+  public onUpload() {
+    if (this.changeProfilePicture) {
       this.userService.uploadUserProfilePicture(this.userId, this.fileUpload.files[0]).subscribe({
         next: (data) => {
           this.backupProfilePictureUrl = this.profilePictureUrl;

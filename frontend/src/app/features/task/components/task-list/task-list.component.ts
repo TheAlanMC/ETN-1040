@@ -8,7 +8,7 @@ import interactionPlugin from "@fullcalendar/interaction";
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss'
 })
-export class TaskListComponent  implements OnInit {
+export class TaskListComponent implements OnInit {
 
   events: any[] = [];
 

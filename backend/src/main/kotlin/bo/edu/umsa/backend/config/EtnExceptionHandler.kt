@@ -16,6 +16,6 @@ class EtnExceptionHandler {
     @ExceptionHandler(EtnException::class)
     fun handleEtnException(ex: EtnException): ResponseEntity<ResponseDto<Nothing>> {
         logger.error(ex.logMessage)
-        return ResponseEntity(ResponseDto(false, ex.errorMessage,null), ex.httpStatus)
+        return ResponseEntity(ResponseDto(false, ex.errorMessage, null), ex.httpStatus)
     }
 }

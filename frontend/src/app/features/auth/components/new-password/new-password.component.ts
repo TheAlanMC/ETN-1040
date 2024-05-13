@@ -16,7 +16,8 @@ export class NewPasswordComponent implements OnInit {
   passwordControl = new FormControl('', [Validators.required, Validators.minLength(8)]);
   confirmPasswordControl = new FormControl('', [Validators.required, Validators.minLength(8)]);
 
-  constructor(private layoutService: LayoutService, private authService: AuthService, private router: Router, private messageService: MessageService, private sharedService: SharedService) {}
+  constructor(private layoutService: LayoutService, private authService: AuthService, private router: Router, private messageService: MessageService, private sharedService: SharedService) {
+  }
 
   ngOnInit() {
     if (this.sharedService.getData('email') == null || this.sharedService.getData('code') == null) {

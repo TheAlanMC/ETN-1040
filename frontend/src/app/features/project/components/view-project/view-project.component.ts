@@ -12,10 +12,10 @@ export class ViewProjectComponent implements OnInit {
 
   ngOnInit() {
     this.routeItems = [
-      { label: 'Detalles', routerLink: 'detail' },
-      { label: 'Tareas', routerLink: 'task-list' },
-      { label: 'Plazos', routerLink: 'task-deadline' },
-      { label: 'Calendario', routerLink: 'task-calendar' }
+      {label: 'Detalles', routerLink: 'detail'},
+      {label: 'Tareas', routerLink: 'task-list'},
+      {label: 'Plazos', routerLink: 'task-deadline'},
+      {label: 'Calendario', routerLink: 'task-calendar'}
     ];
   }
 

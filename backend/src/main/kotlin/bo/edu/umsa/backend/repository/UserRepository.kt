@@ -10,7 +10,7 @@ import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface UserRepository: PagingAndSortingRepository<User, Long>, JpaRepository<User, Long> {
+interface UserRepository : PagingAndSortingRepository<User, Long>, JpaRepository<User, Long> {
 
     fun findByEmailAndStatusIsTrue(email: String): User?
 
@@ -23,7 +23,7 @@ interface UserRepository: PagingAndSortingRepository<User, Long>, JpaRepository<
     fun findAllByStatusIsTrueOrderByUserIdAsc(): List<User>
 
     @Query(
-    """
+        """
         SELECT u.* FROM "user" u
         WHERE u.user_id IN :userIds
         AND u.status = true

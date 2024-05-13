@@ -32,7 +32,7 @@ class ProjectController @Autowired constructor(
         AuthUtil.verifyAuthTokenHasRole("VER PROYECTOS")
         val projects: Page<ProjectDto> = projectService.getProjects(sortBy, sortType, page, size)
         logger.info("Success: Projects retrieved")
-        return ResponseEntity(ResponseDto(true,"Proyectos recuperados", projects), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true, "Proyectos recuperados", projects), HttpStatus.OK)
     }
 
     @PostMapping
@@ -44,7 +44,7 @@ class ProjectController @Autowired constructor(
         AuthUtil.verifyAuthTokenHasRole("CREAR PROYECTOS")
         projectService.createProject(newProjectDto)
         logger.info("Success: Project created")
-        return ResponseEntity(ResponseDto(true,"El proyecto se ha creado", null), HttpStatus.CREATED)
+        return ResponseEntity(ResponseDto(true, "El proyecto se ha creado", null), HttpStatus.CREATED)
     }
 
     @GetMapping("/{projectId}")
@@ -56,7 +56,7 @@ class ProjectController @Autowired constructor(
         AuthUtil.verifyAuthTokenHasRole("VER PROYECTOS")
         val project: ProjectDto = projectService.getProjectById(projectId)
         logger.info("Success: Project retrieved")
-        return ResponseEntity(ResponseDto(true,"Proyecto recuperado", project), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true, "Proyecto recuperado", project), HttpStatus.OK)
     }
 
     @PutMapping("/{projectId}")
@@ -69,7 +69,7 @@ class ProjectController @Autowired constructor(
         AuthUtil.verifyAuthTokenHasRole("EDITAR PROYECTOS")
         projectService.updateProject(projectId, projectDto)
         logger.info("Success: Project updated")
-        return ResponseEntity(ResponseDto(true,"El proyecto se ha actualizado", null), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true, "El proyecto se ha actualizado", null), HttpStatus.OK)
     }
 
     @DeleteMapping("/{projectId}")
@@ -81,7 +81,7 @@ class ProjectController @Autowired constructor(
         AuthUtil.verifyAuthTokenHasRole("EDITAR PROYECTOS")
         projectService.deleteProject(projectId)
         logger.info("Success: Project deleted")
-        return ResponseEntity(ResponseDto(true,"El proyecto se ha eliminado", null), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true, "El proyecto se ha eliminado", null), HttpStatus.OK)
     }
-    
+
 }

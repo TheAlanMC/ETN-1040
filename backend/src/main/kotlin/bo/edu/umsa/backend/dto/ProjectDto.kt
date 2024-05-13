@@ -2,7 +2,7 @@ package bo.edu.umsa.backend.dto
 
 import java.sql.Timestamp
 
-data class ProjectDto (
+data class ProjectDto(
     val projectId: Int,
     val projectName: String,
     val projectDescription: String,

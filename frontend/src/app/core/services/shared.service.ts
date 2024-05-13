@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +7,8 @@ import { BehaviorSubject } from 'rxjs';
 export class SharedService {
   private dataMapSource = new BehaviorSubject<Map<string, any>>(new Map());
 
-  constructor() { }
+  constructor() {
+  }
 
   changeData(key: string, value: any) {
     let currentMap = this.dataMapSource.value;

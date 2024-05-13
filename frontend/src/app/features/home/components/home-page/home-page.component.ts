@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {LayoutService} from "../../../../layout/service/app.layout.service";
-import {debounceTime} from "rxjs";
 import {Table} from "primeng/table";
 
 @Component({
@@ -25,7 +24,8 @@ export class HomePageComponent implements OnInit {
 
   cols: any[] = [];
 
-  constructor(private layoutService: LayoutService) {}
+  constructor(private layoutService: LayoutService) {
+  }
 
   ngOnInit(): void {
     this.weeks = [
@@ -51,10 +51,10 @@ export class HomePageComponent implements OnInit {
     this.initCharts();
 
     this.cols = [
-      { header: 'Name', field: 'name' },
-      { header: 'Category', field: 'category' },
-      { header: 'Price', field: 'price' },
-      { header: 'Status', field: 'inventoryStatus' },
+      {header: 'Name', field: 'name'},
+      {header: 'Category', field: 'category'},
+      {header: 'Price', field: 'price'},
+      {header: 'Status', field: 'inventoryStatus'},
     ];
   }
 
@@ -171,7 +171,7 @@ export class HomePageComponent implements OnInit {
   }
 
   onWeekChange() {
-    let newBarData = { ...this.barData };
+    let newBarData = {...this.barData};
     newBarData.datasets[0].data = this.selectedWeek.data[0];
     newBarData.datasets[1].data = this.selectedWeek.data[1];
     this.barData = newBarData;

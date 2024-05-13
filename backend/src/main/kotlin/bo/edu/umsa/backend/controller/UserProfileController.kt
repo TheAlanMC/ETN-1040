@@ -27,7 +27,7 @@ class UserProfileController @Autowired constructor(
         logger.info("GET /api/v1/users/profile")
         val profileDto: ProfileDto = userProfileService.getProfile()
         logger.info("Success: Profile retrieved")
-        return ResponseEntity(ResponseDto(true,"Perfil recuperado", profileDto), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true, "Perfil recuperado", profileDto), HttpStatus.OK)
     }
 
     @PutMapping
@@ -38,7 +38,7 @@ class UserProfileController @Autowired constructor(
         logger.info("PUT /api/v1/profile")
         userProfileService.updateProfile(profileDto)
         logger.info("Success: Profile updated")
-        return ResponseEntity(ResponseDto(true,"El perfil se ha actualizado", null), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true, "El perfil se ha actualizado", null), HttpStatus.OK)
     }
 
     @GetMapping("/picture")
@@ -61,7 +61,7 @@ class UserProfileController @Autowired constructor(
         logger.info("PUT /api/v1/profile/picture")
         userProfileService.uploadProfilePicture(file)
         logger.info("Success: Profile picture uploaded")
-        return ResponseEntity(ResponseDto(true,"La foto de perfil se ha subido", null), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true, "La foto de perfil se ha subido", null), HttpStatus.OK)
     }
 
     @PutMapping("/password")
@@ -72,6 +72,6 @@ class UserProfileController @Autowired constructor(
         logger.info("POST /api/v1/profile/password")
         userProfileService.updatePassword(passwordChangeDto)
         logger.info("Success: Password updated")
-        return ResponseEntity(ResponseDto(true,"La contraseña se ha actualizado", null), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true, "La contraseña se ha actualizado", null), HttpStatus.OK)
     }
 }

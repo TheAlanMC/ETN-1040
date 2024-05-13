@@ -22,7 +22,8 @@ export class VerificationComponent implements OnInit {
 
   email!: string;
 
-  constructor(private layoutService: LayoutService, private route: ActivatedRoute, private authService: AuthService, private router: Router, private sharedService: SharedService, private messageService: MessageService) {}
+  constructor(private layoutService: LayoutService, private route: ActivatedRoute, private authService: AuthService, private router: Router, private sharedService: SharedService, private messageService: MessageService) {
+  }
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {

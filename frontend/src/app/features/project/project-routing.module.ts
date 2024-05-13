@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
 import {ProjectListComponent} from "./components/project-list/project-list.component";
 import {EditProjectComponent} from "./components/edit-project/edit-project.component";
 import {NewProjectComponent} from "./components/new-project/new-project.component";
@@ -12,10 +12,15 @@ import {ProjectTaskCalendarComponent} from "./components/project-task-calendar/p
 
 
 const routes: Routes = [
-  {path: 'projects',
+  {
+    path: 'projects',
     children: [
-      {path: '', component: ProjectListComponent, canActivate: [RoleGuard], data: { roles: ['VER PROYECTOS']}},
-      {path: 'view/:id', component: ViewProjectComponent, canActivate: [RoleGuard], data: { roles: ['VER PROYECTOS'],  breadcrumb: 'Ver'},
+      {path: '', component: ProjectListComponent, canActivate: [RoleGuard], data: {roles: ['VER PROYECTOS']}},
+      {
+        path: 'view/:id',
+        component: ViewProjectComponent,
+        canActivate: [RoleGuard],
+        data: {roles: ['VER PROYECTOS'], breadcrumb: 'Ver'},
         children: [
           {path: 'detail', component: ProjectDetailComponent},
           {path: 'task-list', component: ProjectTaskListComponent},
@@ -24,8 +29,18 @@ const routes: Routes = [
           {path: '', redirectTo: 'detail', pathMatch: 'full'}
         ]
       },
-      {path: 'create', component: NewProjectComponent, canActivate: [RoleGuard], data: { roles: ['CREAR PROYECTOS'],  breadcrumb: 'Nuevo'}},
-      {path: 'edit/:id', component: EditProjectComponent, canActivate: [RoleGuard], data: { roles: ['EDITAR PROYECTOS'],  breadcrumb: 'Editar'}},
+      {
+        path: 'create',
+        component: NewProjectComponent,
+        canActivate: [RoleGuard],
+        data: {roles: ['CREAR PROYECTOS'], breadcrumb: 'Nuevo'}
+      },
+      {
+        path: 'edit/:id',
+        component: EditProjectComponent,
+        canActivate: [RoleGuard],
+        data: {roles: ['EDITAR PROYECTOS'], breadcrumb: 'Editar'}
+      },
     ],
   },
 ];
@@ -34,4 +49,5 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class ProjectRoutingModule { }
+export class ProjectRoutingModule {
+}

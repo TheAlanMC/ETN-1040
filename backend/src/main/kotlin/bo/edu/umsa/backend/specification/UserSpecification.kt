@@ -18,6 +18,7 @@ class UserSpecification {
                 )
             }
         }
+
         fun statusIsTrue(): Specification<User> {
             return Specification { root, _, cb ->
                 cb.equal(root.get<User>("status"), true)

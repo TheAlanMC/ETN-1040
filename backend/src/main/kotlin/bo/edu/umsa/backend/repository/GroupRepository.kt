@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 
 @Repository
-interface GroupRepository: JpaRepository<Group, Long> {
+interface GroupRepository : JpaRepository<Group, Long> {
 
     @Query(
         """
@@ -23,9 +23,9 @@ interface GroupRepository: JpaRepository<Group, Long> {
     )
     fun findAllByEmail(email: String): List<Group>
 
-    fun findByGroupIdAndStatusIsTrue (groupId: Long): Group?
+    fun findByGroupIdAndStatusIsTrue(groupId: Long): Group?
 
-    fun findAllByStatusIsTrueOrderByGroupId (): List<Group>
+    fun findAllByStatusIsTrueOrderByGroupId(): List<Group>
 
     @Query(
         """
@@ -36,7 +36,7 @@ interface GroupRepository: JpaRepository<Group, Long> {
         """,
         nativeQuery = true
     )
-    fun findAllByGroupIds (groupIds: List<Long>): List<Group>
+    fun findAllByGroupIds(groupIds: List<Long>): List<Group>
 
     @Query(
         """
@@ -49,5 +49,5 @@ interface GroupRepository: JpaRepository<Group, Long> {
         """,
         nativeQuery = true
     )
-    fun findAllByUserId (userId: Long): List<Group>
+    fun findAllByUserId(userId: Long): List<Group>
 }

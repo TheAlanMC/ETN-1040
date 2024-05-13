@@ -1,6 +1,6 @@
 package bo.edu.umsa.backend.dto
 
-data class NewProjectDto (
+data class NewProjectDto(
     val projectName: String,
     val projectDescription: String,
     val dateFrom: String,

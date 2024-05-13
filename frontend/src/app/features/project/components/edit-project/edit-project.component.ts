@@ -24,7 +24,7 @@ export class EditProjectComponent implements OnInit {
 
   editorModules = {
     toolbar: [
-      [{ 'header': [1, 2, false] }],
+      [{'header': [1, 2, false]}],
       ['bold', 'italic', 'underline'],
       [{'color': []}, {'background': []}],
       [{'list': 'ordered'}, {'list': 'bullet'}, {'align': []}],
@@ -49,7 +49,7 @@ export class EditProjectComponent implements OnInit {
   project: ProjectDto | null = null;
 
 
-  constructor( private activatedRoute: ActivatedRoute, private userService: UserService, private messageService: MessageService, private utilService: UtilService, private location: Location, private projectService: ProjectService, private router: Router) {
+  constructor(private activatedRoute: ActivatedRoute, private userService: UserService, private messageService: MessageService, private utilService: UtilService, private location: Location, private projectService: ProjectService, private router: Router) {
     this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     const token = localStorage.getItem('token');
     // Check if token exists

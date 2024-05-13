@@ -1,9 +1,9 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 
-import { HomeRoutingModule } from './home-routing.module';
-import { HomePageComponent } from './components/home-page/home-page.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
+import {HomeRoutingModule} from './home-routing.module';
+import {HomePageComponent} from './components/home-page/home-page.component';
+import {DashboardComponent} from './components/dashboard/dashboard.component';
 import {KnobModule} from "primeng/knob";
 import {FormsModule} from "@angular/forms";
 import {DropdownModule} from "primeng/dropdown";
@@ -28,4 +28,5 @@ import {RatingModule} from "primeng/rating";
     RatingModule
   ]
 })
-export class HomeModule { }
+export class HomeModule {
+}

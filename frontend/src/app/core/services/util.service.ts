@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { Capacitor } from '@capacitor/core';
+import {Injectable} from '@angular/core';
+import {Capacitor} from '@capacitor/core';
 import {HttpHeaders} from "@angular/common/http";
-import {el} from "@fullcalendar/core/internal-common";
 
 @Injectable({
   providedIn: 'root'
 })
 export class UtilService {
 
-  constructor() {}
+  constructor() {
+  }
 
   public checkIfMobile(): boolean {
     const platform = Capacitor.getPlatform();

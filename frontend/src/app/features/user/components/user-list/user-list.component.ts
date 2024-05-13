@@ -45,7 +45,7 @@ export class UserListComponent implements OnInit {
 
 
   constructor(private userService: UserService, private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private utilService: UtilService) {
-       this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
+    this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     // Get token from local storage
     const token = localStorage.getItem('token');
     if (token) {

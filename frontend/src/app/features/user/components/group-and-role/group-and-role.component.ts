@@ -4,7 +4,7 @@ import {UserService} from "../../../../core/services/user.service";
 import {GroupService} from "../../../../core/services/group.service";
 import {GroupDto} from "../../models/group.dto";
 import {RoleService} from "../../../../core/services/role.service";
-import { RoleDto } from '../../models/role.dto';
+import {RoleDto} from '../../models/role.dto';
 import {FormControl, Validators} from "@angular/forms";
 import {UtilService} from "../../../../core/services/util.service";
 import {environment} from "../../../../../environments/environment";
@@ -18,13 +18,13 @@ import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
   styleUrl: './group-and-role.component.scss',
   providers: [MessageService, ConfirmationService]
 })
-export class GroupAndRoleComponent implements OnInit{
+export class GroupAndRoleComponent implements OnInit {
 
   selectedUserId = 0;
   selectedGroupId = 0;
 
-  selectedUser: SelectItem = { value: '' };
-  selectedGroup: SelectItem = { value: '' };
+  selectedUser: SelectItem = {value: ''};
+  selectedGroup: SelectItem = {value: ''};
 
   userItems: SelectItem[] = [];
   groupItems: SelectItem[] = [];
@@ -34,17 +34,17 @@ export class GroupAndRoleComponent implements OnInit{
   roles: RoleDto[] = [];
 
   sourceGroups: any[] = [
-    { name: 'Seleccione un usuario', code: '' }
+    {name: 'Seleccione un usuario', code: ''}
   ];
   targetGroups: any[] = [
-    { name: 'Seleccione un usuario', code: '' }
+    {name: 'Seleccione un usuario', code: ''}
   ];
 
   sourceRoles: any[] = [
-    { name: 'Seleccione un rol', code: '' }
+    {name: 'Seleccione un rol', code: ''}
   ];
   targetRoles: any[] = [
-    { name: 'Seleccione un rol', code: '' }
+    {name: 'Seleccione un rol', code: ''}
   ];
 
   isPickListDisabled = true;
@@ -62,7 +62,7 @@ export class GroupAndRoleComponent implements OnInit{
   users: UserDto[] = [];
 
   constructor(private userService: UserService, private confirmationService: ConfirmationService, private groupsService: GroupService, private rolseService: RoleService, private messageService: MessageService, private utilService: UtilService) {
-       this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
+    this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     const token = localStorage.getItem('token');
     // Check if token exists
     if (token) {
@@ -130,7 +130,7 @@ export class GroupAndRoleComponent implements OnInit{
   }
 
   public onSelectUser(event: any) {
-    if (event.value == null){
+    if (event.value == null) {
       return
     }
     this.userService.getUserGroups(event.value).subscribe({
@@ -160,12 +160,12 @@ export class GroupAndRoleComponent implements OnInit{
 
   public onClearUser() {
     this.selectedUserId = 0;
-    this.selectedUser = { value: '' };
+    this.selectedUser = {value: ''};
     this.sourceGroups = [
-      { name: 'Seleccione un usuario', code: '' }
+      {name: 'Seleccione un usuario', code: ''}
     ];
     this.targetGroups = [
-      { name: 'Seleccione un usuario', code: '' }
+      {name: 'Seleccione un usuario', code: ''}
     ];
   }
 
@@ -177,7 +177,7 @@ export class GroupAndRoleComponent implements OnInit{
           summary: 'Éxito',
           detail: 'Grupos asignados correctamente'
         });
-        this.selectedUser = { value: '' };
+        this.selectedUser = {value: ''};
         this.onClearUser();
       },
       error: (error) => {
@@ -195,7 +195,7 @@ export class GroupAndRoleComponent implements OnInit{
     this.targetGroups.sort((a, b) => a.code - b.code);
   }
 
-  public onDeleteUser(){
+  public onDeleteUser() {
     this.confirmationService.confirm({
       key: 'confirmDeleteUser',
       message: '¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.',
@@ -209,7 +209,7 @@ export class GroupAndRoleComponent implements OnInit{
     });
   }
 
-  public deleteUser(){
+  public deleteUser() {
     this.userService.deleteUser(this.selectedUserId).subscribe({
       next: (data) => {
         this.messageService.add({
@@ -217,7 +217,7 @@ export class GroupAndRoleComponent implements OnInit{
           summary: 'Éxito',
           detail: 'Usuario eliminado correctamente'
         });
-        this.selectedUser = { value: '' };
+        this.selectedUser = {value: ''};
         this.onClearUser();
         this.getAllUsers();
       },
@@ -229,7 +229,7 @@ export class GroupAndRoleComponent implements OnInit{
   }
 
   public onSelectRole(event: any) {
-    if (event.value == null){
+    if (event.value == null) {
       return
     }
     this.groupsService.getGroupRoles(event.value).subscribe({
@@ -258,13 +258,13 @@ export class GroupAndRoleComponent implements OnInit{
   }
 
   public onClearGroup() {
-    this.selectedGroup = { value: '' };
+    this.selectedGroup = {value: ''};
     this.selectedGroupId = 0;
     this.sourceRoles = [
-      { name: 'Seleccione un rol', code: '' }
+      {name: 'Seleccione un rol', code: ''}
     ];
     this.targetRoles = [
-      { name: 'Seleccione un rol', code: '' }
+      {name: 'Seleccione un rol', code: ''}
     ];
   }
 
@@ -293,7 +293,7 @@ export class GroupAndRoleComponent implements OnInit{
     this.targetRoles.sort((a, b) => a.code - b.code);
   }
 
-  public onDeleteGroup(){
+  public onDeleteGroup() {
     this.confirmationService.confirm({
       key: 'confirmDeleteGroup',
       message: '¿Estás seguro de que deseas eliminar este rol? Esta acción no se puede deshacer.',
@@ -307,7 +307,7 @@ export class GroupAndRoleComponent implements OnInit{
     });
   }
 
-  public deleteGroup(){
+  public deleteGroup() {
     this.groupsService.deleteGroup(this.selectedGroupId).subscribe({
       next: (data) => {
         this.messageService.add({
@@ -325,19 +325,19 @@ export class GroupAndRoleComponent implements OnInit{
     });
   }
 
-  public onAddGroup(){
+  public onAddGroup() {
     this.visibleAddGroup = true;
     this.groupNameControl.setValue('');
     this.groupDescriptionControl.setValue('');
   }
 
-  public onEditGroup(){
+  public onEditGroup() {
     this.visibleEditGroup = true;
     this.groupNameControl.setValue(this.groups.find(group => group.groupId === this.selectedGroupId)!!.groupName);
     this.groupDescriptionControl.setValue(this.groups.find(group => group.groupId === this.selectedGroupId)!!.groupDescription);
   }
 
-  onSaveGroup(){
+  onSaveGroup() {
     this.groupsService.createGroup(this.groupNameControl.value!, this.groupDescriptionControl.value!).subscribe({
       next: (data) => {
         this.messageService.add({
@@ -355,7 +355,7 @@ export class GroupAndRoleComponent implements OnInit{
     });
   }
 
-  public onUpdateGroup(){
+  public onUpdateGroup() {
     this.groupsService.updateGroup(this.selectedGroupId, this.groupNameControl.value!!, this.groupDescriptionControl.value!!).subscribe({
       next: (data) => {
         this.messageService.add({

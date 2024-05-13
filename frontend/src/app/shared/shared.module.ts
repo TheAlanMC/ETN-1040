@@ -1,6 +1,6 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ForbiddenComponent } from './components/forbidden/forbidden.component';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {ForbiddenComponent} from './components/forbidden/forbidden.component';
 import {SidebarModule} from "primeng/sidebar";
 import {RadioButtonModule} from "primeng/radiobutton";
 import {InputSwitchModule} from "primeng/inputswitch";
@@ -14,8 +14,7 @@ import {RouterLink} from "@angular/router";
     ForbiddenComponent,
     NotFoundComponent,
   ],
-  exports: [
-  ],
+  exports: [],
   imports: [
     CommonModule,
     SidebarModule,
@@ -26,4 +25,5 @@ import {RouterLink} from "@angular/router";
     RouterLink
   ]
 })
-export class SharedModule { }
+export class SharedModule {
+}

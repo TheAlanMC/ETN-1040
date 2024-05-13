@@ -26,7 +26,7 @@ export class ViewUserComponent implements OnInit {
     this.getUserProfilePictureUrl();
   }
 
-  public getUserProfilePictureUrl(){
+  public getUserProfilePictureUrl() {
     this.userService.getUserProfilePicture(this.userId).subscribe({
       next: (data) => {
         this.profilePictureUrl = URL.createObjectURL(data);
@@ -37,7 +37,7 @@ export class ViewUserComponent implements OnInit {
     });
   }
 
-  public getUserInfo(){
+  public getUserInfo() {
     this.userService.getUser(this.userId).subscribe({
       next: (data) => {
         this.user = data.data;

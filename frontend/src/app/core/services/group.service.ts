@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
@@ -15,7 +15,7 @@ export class GroupService {
   baseUrl: string = `${environment.API_URL}/api/v1/groups`;
 
   constructor(private http: HttpClient, private utilService: UtilService) {
-       this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
+    this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
   }
 
   getGroups(): Observable<ResponseDto<GroupDto[]>> {
@@ -23,11 +23,17 @@ export class GroupService {
   }
 
   createGroup(groupName: string, groupDescription: string): Observable<ResponseDto<Nullable>> {
-    return this.http.post<ResponseDto<Nullable>>(this.baseUrl, {groupName, groupDescription}, this.utilService.getHttpOptions());
+    return this.http.post<ResponseDto<Nullable>>(this.baseUrl, {
+      groupName,
+      groupDescription
+    }, this.utilService.getHttpOptions());
   }
 
   updateGroup(groupId: number, groupName: string, groupDescription: string): Observable<ResponseDto<Nullable>> {
-    return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/${groupId}`, {groupName, groupDescription}, this.utilService.getHttpOptions());
+    return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/${groupId}`, {
+      groupName,
+      groupDescription
+    }, this.utilService.getHttpOptions());
   }
 
   deleteGroup(groupId: number): Observable<ResponseDto<Nullable>> {

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
@@ -14,7 +14,7 @@ export class ProfileService {
   baseUrl: string = `${environment.API_URL}/api/v1/profile`;
 
   constructor(private http: HttpClient, private utilService: UtilService) {
-       this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
+    this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
   }
 
   public getProfilePicture(): Observable<Blob> {
@@ -32,10 +32,19 @@ export class ProfileService {
   }
 
   public updateProfile(firstName: string, lastName: string, phone: string, description: string): Observable<ResponseDto<Nullable>> {
-    return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}`, {firstName, lastName, phone, description}, this.utilService.getHttpOptions());
+    return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}`, {
+      firstName,
+      lastName,
+      phone,
+      description
+    }, this.utilService.getHttpOptions());
   }
 
   public changePassword(oldPassword: string, password: string, confirmPassword: string): Observable<ResponseDto<Nullable>> {
-    return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/password`, {oldPassword, password, confirmPassword}, this.utilService.getHttpOptions());
+    return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/password`, {
+      oldPassword,
+      password,
+      confirmPassword
+    }, this.utilService.getHttpOptions());
   }
 }

@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 
-import { AuthRoutingModule } from './auth-routing.module';
-import { LoginComponent } from './components/login/login.component';
-import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
-import { NewPasswordComponent } from './components/new-password/new-password.component';
-import { VerificationComponent } from './components/verification/verification.component';
+import {AuthRoutingModule} from './auth-routing.module';
+import {LoginComponent} from './components/login/login.component';
+import {ForgotPasswordComponent} from './components/forgot-password/forgot-password.component';
+import {NewPasswordComponent} from './components/new-password/new-password.component';
+import {VerificationComponent} from './components/verification/verification.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CheckboxModule} from "primeng/checkbox";
 import {SharedModule} from "../../shared/shared.module";
@@ -15,6 +15,7 @@ import {ButtonModule} from "primeng/button";
 import {RippleModule} from "primeng/ripple";
 import {ToastModule} from "primeng/toast";
 import {PasswordModule} from "primeng/password";
+import {KeyFilterModule} from "primeng/keyfilter";
 
 
 @NgModule({
@@ -36,7 +37,9 @@ import {PasswordModule} from "primeng/password";
     ButtonModule,
     RippleModule,
     ToastModule,
-    PasswordModule
+    PasswordModule,
+    KeyFilterModule
   ]
 })
-export class AuthModule { }
+export class AuthModule {
+}

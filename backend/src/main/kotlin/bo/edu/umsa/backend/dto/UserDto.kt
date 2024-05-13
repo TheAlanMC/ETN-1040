@@ -2,7 +2,7 @@ package bo.edu.umsa.backend.dto
 
 import java.sql.Timestamp
 
-data class UserDto (
+data class UserDto(
     val userId: Int,
     val email: String,
     val firstName: String,

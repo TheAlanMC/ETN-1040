@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {AuthService} from "../../../../core/services/auth.service";
 import {Router} from "@angular/router";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {FormControl, Validators} from "@angular/forms";
 import {LayoutService} from "../../../../layout/service/app.layout.service";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {jwtDecode} from "jwt-decode";
@@ -16,6 +16,7 @@ import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 export class LoginComponent {
   emailControl = new FormControl('', [Validators.required, Validators.email]);
   passwordControl = new FormControl('', [Validators.required]);
+
   // rememberMe: boolean = false;
 
   constructor(private layoutService: LayoutService, private authService: AuthService, private router: Router, private messageService: MessageService) {

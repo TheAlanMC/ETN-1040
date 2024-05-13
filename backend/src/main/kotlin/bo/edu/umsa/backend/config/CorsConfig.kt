@@ -14,13 +14,19 @@ class CorsConfig {
         val corsConfiguration = CorsConfiguration()
         corsConfiguration.allowCredentials = false
         corsConfiguration.allowedOrigins = listOf(
+            // Development Server
             "http://localhost:4200",
             "http://localhost",
+            // Production Server
             "http://167.172.144.172:4200",
             "http://167.172.144.172",
+            // VPN Server
+            "http://10.244.150.84:4200",
+            "http://10.244.150.84",
+            // Mobile App
             "capacitor://localhost"
         )
-        corsConfiguration.allowedHeaders=listOf(
+        corsConfiguration.allowedHeaders = listOf(
             "Origin",
             "Access-Control-Allow-Origin",
             "Content-Type", "Accept", "Authorization",
@@ -35,10 +41,11 @@ class CorsConfig {
             "Access-Control-Allow-Credentials"
         )
         corsConfiguration.allowedMethods = listOf(
-            "GET", "POST", "PUT", "DELETE")
+            "GET", "POST", "PUT", "DELETE"
+        )
         val urlBasedCorsConfigurationSource = UrlBasedCorsConfigurationSource()
         urlBasedCorsConfigurationSource
-            .registerCorsConfiguration ("/**", corsConfiguration)
-        return CorsFilter (urlBasedCorsConfigurationSource)
+            .registerCorsConfiguration("/**", corsConfiguration)
+        return CorsFilter(urlBasedCorsConfigurationSource)
     }
 }

@@ -1,9 +1,8 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {ResponseDto} from "../models/response.dto";
-import {RoleDto} from "../../features/user/models/role.dto";
 import {UtilService} from "./util.service";
 import {Nullable} from "primeng/ts-helpers";
 import {PageDto} from "../models/page.dto";
@@ -28,11 +27,25 @@ export class ProjectService {
   }
 
   public createProject(projectName: string, projectDescription: string, dateFrom: string, dateTo: string, projectMemberIds: number[], projectModeratorIds: number[]): Observable<ResponseDto<Nullable>> {
-    return this.http.post<ResponseDto<Nullable>>(this.baseUrl, {projectName, projectDescription, dateFrom, dateTo, projectMemberIds, projectModeratorIds}, this.utilService.getHttpOptions());
+    return this.http.post<ResponseDto<Nullable>>(this.baseUrl, {
+      projectName,
+      projectDescription,
+      dateFrom,
+      dateTo,
+      projectMemberIds,
+      projectModeratorIds
+    }, this.utilService.getHttpOptions());
   }
 
   public updateProject(projectId: number, projectName: string, projectDescription: string, dateFrom: string, dateTo: string, projectMemberIds: number[], projectModeratorIds: number[]): Observable<ResponseDto<Nullable>> {
-    return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/${projectId}`, {projectName, projectDescription, dateFrom, dateTo, projectMemberIds, projectModeratorIds}, this.utilService.getHttpOptions());
+    return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/${projectId}`, {
+      projectName,
+      projectDescription,
+      dateFrom,
+      dateTo,
+      projectMemberIds,
+      projectModeratorIds
+    }, this.utilService.getHttpOptions());
   }
 
   public deleteProject(projectId: number): Observable<ResponseDto<Nullable>> {

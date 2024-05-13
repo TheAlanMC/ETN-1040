@@ -1,11 +1,11 @@
 export interface PageDto<T> {
-    content: T[];
-    page: Page;
+  content: T[];
+  page: Page;
 }
 
 interface Page {
-    size: number;
-    number: number;
-    totalElements: number;
-    totalPages: number;
+  size: number;
+  number: number;
+  totalElements: number;
+  totalPages: number;
 }

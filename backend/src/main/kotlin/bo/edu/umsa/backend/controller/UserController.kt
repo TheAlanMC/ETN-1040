@@ -21,14 +21,13 @@ class UserController @Autowired constructor(
     }
 
     @GetMapping("/all")
-    fun getAllUsers(): ResponseEntity<ResponseDto<List<UserPartialDto>>>
-    {
+    fun getAllUsers(): ResponseEntity<ResponseDto<List<UserPartialDto>>> {
         logger.info("Starting the API call to get all users")
         logger.info("GET /api/v1/users/all")
         AuthUtil.verifyAuthTokenHasRole("GESTIONAR ROLES Y PERMISOS")
         val users: List<UserPartialDto> = userService.getAllUsers()
         logger.info("Success: Users retrieved")
-        return ResponseEntity(ResponseDto(true,"Usuarios recuperados", users), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true, "Usuarios recuperados", users), HttpStatus.OK)
     }
 
     @GetMapping
@@ -44,7 +43,7 @@ class UserController @Autowired constructor(
         AuthUtil.verifyAuthTokenHasRole("VER USUARIOS")
         val users: Page<UserDto> = userService.getUsers(sortBy, sortType, page, size, keyword)
         logger.info("Success: Users retrieved")
-        return ResponseEntity(ResponseDto(true,"Usuarios recuperados", users), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true, "Usuarios recuperados", users), HttpStatus.OK)
     }
 
     @GetMapping("/{userId}")
@@ -56,7 +55,7 @@ class UserController @Autowired constructor(
         AuthUtil.verifyAuthTokenHasRole("VER USUARIOS")
         val user: UserDto = userService.getUserById(userId)
         logger.info("Success: User retrieved")
-        return ResponseEntity(ResponseDto(true,"Usuario recuperado", user), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true, "Usuario recuperado", user), HttpStatus.OK)
     }
 
 
@@ -69,7 +68,7 @@ class UserController @Autowired constructor(
         AuthUtil.verifyAuthTokenHasRole("CREAR USUARIOS")
         userService.createUser(newUserDto)
         logger.info("Success: User created")
-        return ResponseEntity(ResponseDto(true,"El usuario se ha creado", null), HttpStatus.CREATED)
+        return ResponseEntity(ResponseDto(true, "El usuario se ha creado", null), HttpStatus.CREATED)
     }
 
     @PutMapping("/{userId}")
@@ -82,7 +81,7 @@ class UserController @Autowired constructor(
         AuthUtil.verifyAuthTokenHasRole("EDITAR USUARIOS")
         userService.updateUser(userId, profileDto)
         logger.info("Success: User updated")
-        return ResponseEntity(ResponseDto(true,"El usuario se ha actualizado", null), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true, "El usuario se ha actualizado", null), HttpStatus.OK)
     }
 
     @DeleteMapping("/{userId}")
@@ -94,7 +93,7 @@ class UserController @Autowired constructor(
         AuthUtil.verifyAuthTokenHasRole("EDITAR USUARIOS")
         userService.deleteUser(userId)
         logger.info("Success: User deleted")
-        return ResponseEntity(ResponseDto(true,"El usuario se ha eliminado", null), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true, "El usuario se ha eliminado", null), HttpStatus.OK)
     }
 
     @GetMapping("/{userId}/profile-picture")
@@ -136,7 +135,7 @@ class UserController @Autowired constructor(
         AuthUtil.verifyAuthTokenHasRole("EDITAR USUARIOS")
         userService.uploadProfilePicture(userId, file)
         logger.info("Success: Profile picture updated")
-        return ResponseEntity(ResponseDto(true,"Foto de perfil actualizada", null), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true, "Foto de perfil actualizada", null), HttpStatus.OK)
     }
 
 

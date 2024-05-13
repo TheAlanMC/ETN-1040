@@ -2,7 +2,10 @@ package bo.edu.umsa.backend.service
 
 import bo.edu.umsa.backend.dto.NewProjectDto
 import bo.edu.umsa.backend.dto.ProjectDto
-import bo.edu.umsa.backend.entity.*
+import bo.edu.umsa.backend.entity.Project
+import bo.edu.umsa.backend.entity.ProjectMember
+import bo.edu.umsa.backend.entity.ProjectModerator
+import bo.edu.umsa.backend.entity.ProjectOwner
 import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.ProjectMapper
 import bo.edu.umsa.backend.repository.*
@@ -50,7 +53,7 @@ class ProjectService @Autowired constructor(
         logger.info("Getting the project by id $projectId")
         // Validate the project exists
         val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(projectId) ?: throw EtnException(
-            HttpStatus.NOT_FOUND, "Error: Project not found","Proyecto no encontrado"
+            HttpStatus.NOT_FOUND, "Error: Project not found", "Proyecto no encontrado"
         )
         return ProjectMapper.entityToDto(projectEntity)
     }
@@ -59,7 +62,11 @@ class ProjectService @Autowired constructor(
     fun createProject(newProjectDto: NewProjectDto) {
         // Validate the name is not empty
         if (newProjectDto.projectName.isEmpty() || newProjectDto.dateFrom.isEmpty() || newProjectDto.dateTo.isEmpty()) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one required field is blank","Al menos un campo requerido está en blanco")
+            throw EtnException(
+                HttpStatus.BAD_REQUEST,
+                "Error: At least one required field is blank",
+                "Al menos un campo requerido está en blanco"
+            )
         }
         // Validate the dates have the correct format
         try {
@@ -67,18 +74,36 @@ class ProjectService @Autowired constructor(
             val dateTo = Timestamp.from(Instant.parse(newProjectDto.dateTo))
             logger.info("Date from: $dateFrom, Date to: $dateTo")
         } catch (e: Exception) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date format is incorrect","El formato de fecha es incorrecto")
+            throw EtnException(
+                HttpStatus.BAD_REQUEST,
+                "Error: Date format is incorrect",
+                "El formato de fecha es incorrecto"
+            )
         }
-        if (Timestamp.from(Instant.parse(newProjectDto.dateFrom)).after(Timestamp.from(Instant.parse(newProjectDto.dateTo)))) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date range is incorrect","El rango de fechas es incorrecto")
+        if (Timestamp.from(Instant.parse(newProjectDto.dateFrom))
+                .after(Timestamp.from(Instant.parse(newProjectDto.dateTo)))
+        ) {
+            throw EtnException(
+                HttpStatus.BAD_REQUEST,
+                "Error: Date range is incorrect",
+                "El rango de fechas es incorrecto"
+            )
         }
         // Validate the project moderators are not empty and valid
         if (newProjectDto.projectModeratorIds.isEmpty()) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one moderator is required","Se requiere al menos un moderador")
+            throw EtnException(
+                HttpStatus.BAD_REQUEST,
+                "Error: At least one moderator is required",
+                "Se requiere al menos un moderador"
+            )
         }
         // Validate the project members are not empty
         if (newProjectDto.projectMemberIds.isEmpty()) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one member is required","Se requiere al menos un miembro del equipo")
+            throw EtnException(
+                HttpStatus.BAD_REQUEST,
+                "Error: At least one member is required",
+                "Se requiere al menos un miembro del equipo"
+            )
         }
         // Validate the project moderators exist
         if (userRepository.findAllInUserIdAndStatusIsTrue(newProjectDto.projectModeratorIds.map { it.toLong() }).size != newProjectDto.projectModeratorIds.size) {
@@ -93,7 +118,11 @@ class ProjectService @Autowired constructor(
             )
         }
         // Get the project owner id from the token
-        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized","No autorizado")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(
+            HttpStatus.UNAUTHORIZED,
+            "Error: Unauthorized",
+            "No autorizado"
+        )
         logger.info("Creating a new project with owner id $userId")
 
         // Create the project
@@ -132,19 +161,31 @@ class ProjectService @Autowired constructor(
     fun updateProject(projectId: Long, projectDto: NewProjectDto) {
         // Validate the project exists
         val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(projectId) ?: throw EtnException(
-            HttpStatus.NOT_FOUND, "Error: Project not found","Proyecto no encontrado"
+            HttpStatus.NOT_FOUND, "Error: Project not found", "Proyecto no encontrado"
         )
         // Validate the project name is not empty
         if (projectDto.projectName.isEmpty()) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project name is required","Se requiere el nombre del proyecto")
+            throw EtnException(
+                HttpStatus.BAD_REQUEST,
+                "Error: Project name is required",
+                "Se requiere el nombre del proyecto"
+            )
         }
         // Validate the project moderators are not empty and valid
         if (projectDto.projectModeratorIds.isEmpty()) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one moderator is required","Se requiere al menos un moderador")
+            throw EtnException(
+                HttpStatus.BAD_REQUEST,
+                "Error: At least one moderator is required",
+                "Se requiere al menos un moderador"
+            )
         }
         // Validate the project members are not empty
         if (projectDto.projectMemberIds.isEmpty()) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one member is required","Se requiere al menos un miembro del equipo")
+            throw EtnException(
+                HttpStatus.BAD_REQUEST,
+                "Error: At least one member is required",
+                "Se requiere al menos un miembro del equipo"
+            )
         }
         // Validate the project moderators exist
         if (userRepository.findAllInUserIdAndStatusIsTrue(projectDto.projectModeratorIds.map { it.toLong() }).size != projectDto.projectModeratorIds.size) {
@@ -204,14 +245,13 @@ class ProjectService @Autowired constructor(
     fun deleteProject(projectId: Long) {
         // Validate the project exists
         val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(projectId) ?: throw EtnException(
-            HttpStatus.NOT_FOUND, "Error: Project not found","Proyecto no encontrado"
+            HttpStatus.NOT_FOUND, "Error: Project not found", "Proyecto no encontrado"
         )
         // Delete the project changing its status to false
         projectEntity.status = false
         projectRepository.save(projectEntity)
         logger.info("Project deleted with id $projectId")
     }
-
 
 
 }

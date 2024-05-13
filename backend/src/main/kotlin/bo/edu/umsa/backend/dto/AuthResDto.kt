@@ -1,6 +1,6 @@
 package bo.edu.umsa.backend.dto
 
-data class AuthResDto (
+data class AuthResDto(
     val token: String,
     val refreshToken: String
 )

@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 
 @Repository
-interface RoleRepository: JpaRepository<Role, Long> {
+interface RoleRepository : JpaRepository<Role, Long> {
 
     @Query(
         """
@@ -50,8 +50,8 @@ interface RoleRepository: JpaRepository<Role, Long> {
         """,
         nativeQuery = true
     )
-    fun findAllByRoleIds (roleIds: List<Long>): List<Role>
+    fun findAllByRoleIds(roleIds: List<Long>): List<Role>
 
-    fun findAllByStatusIsTrueOrderByRoleId (): List<Role>
+    fun findAllByStatusIsTrueOrderByRoleId(): List<Role>
 
 }

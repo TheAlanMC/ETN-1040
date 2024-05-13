@@ -14,7 +14,7 @@ class RoleService @Autowired constructor(
         private val logger = org.slf4j.LoggerFactory.getLogger(RoleService::class.java)
     }
 
-    fun getRoles() : List<RoleDto> {
+    fun getRoles(): List<RoleDto> {
         logger.info("Getting roles")
         val roleEntities = roleRepository.findAllByStatusIsTrueOrderByRoleId()
         return roleEntities.map { RoleMapper.entityToDto(it) }

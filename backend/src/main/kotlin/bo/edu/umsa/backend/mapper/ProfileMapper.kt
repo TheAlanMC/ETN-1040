@@ -5,7 +5,7 @@ import bo.edu.umsa.backend.entity.User
 
 
 class ProfileMapper {
-    companion object{
+    companion object {
         fun entityToDto(user: User): ProfileDto {
             return ProfileDto(
                 firstName = user.firstName,

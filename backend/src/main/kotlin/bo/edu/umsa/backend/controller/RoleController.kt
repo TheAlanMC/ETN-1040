@@ -29,5 +29,5 @@ class RoleController @Autowired constructor(
         logger.info("Success: Roles retrieved")
         return ResponseEntity(ResponseDto(true, "Roles recuperados", roles), HttpStatus.OK)
     }
-    
+
 }
