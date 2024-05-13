@@ -1,1 +1,73 @@
-<p>project-detail works!</p>
+<div class="grid p-fluid" *ngIf="project else loading">
+  <div class="col-12 lg:col-8">
+    <div class="grid formgrid">
+      <div class="col-12 field">
+        <label for="projectName" class="font-bold text-900">Nombre del Proyecto</label>
+        <input id="projectName" label="Nombre del Proyecto" pInputText placeholder="Nombre del Proyecto" type="text" [(ngModel)]="project.projectName" readonly>
+      </div>
+      <div class="col-12 lg:col-6 field">
+        <label for="dateFrom" class="font-bold text-900">Fecha de inicio</label>
+        <p-calendar id="dateFrom" [showIcon]="true" placeholder="Fecha de inicio" dateFormat="dd/mm/yy" [ngModel]="dateFrom" [disabled]="true"></p-calendar>
+      </div>
+      <div class="col-12 lg:col-6 field">
+        <label for="dateTo" class="font-bold text-900">Fecha de finalización</label>
+        <p-calendar id="dateTo" [showIcon]="true" placeholder="Fecha de finalización" dateFormat="dd/mm/yy" [ngModel]="dateTo" [disabled]="true"></p-calendar>
+      </div>
+      <div class="col-12 field">
+        <label for="projectDescription" class="font-bold text-900">Descripción del Proyecto</label>
+        <p-editor id="projectDescription" [style]="{'height':'250px'}" [modules]="editorModules" [(ngModel)]="project.projectDescription" placeholder="Ingrese la descripción del proyecto" [readonly]="true">
+          <ng-template pTemplate="header">
+          </ng-template>
+        </p-editor>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 lg:col-4">
+    <div class="border-1 surface-border border-round field">
+      <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Collaboradores</span>
+      <div class="p-3">
+        <div class="auto-flex align-items-center field" *ngIf="selectedModerators.length > 0">
+          <p-chips [(ngModel)]="selectedModerators" class="chips-custom" [disabled]="true">
+            <ng-template let-item pTemplate="item">
+              <img [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                   (load)="imgLoaded[item.value] = true"
+                   (error)="imgLoaded[item.value] = false"
+                   alt="{{item.value}}"
+                   class="mr-1"
+                   style="width: 25px; height: 25px; border-radius: 50%; object-fit: cover;">
+              <span class="ml-1">{{item.label}}</span>
+            </ng-template>
+          </p-chips>
+        </div>
+      </div>
+    </div>
+    <div class="border-1 surface-border border-round field">
+      <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Miembros del Equipo</span>
+      <div class="p-3">
+        <div class="auto-flex align-items-center field" *ngIf="selectedMembers.length > 0">
+          <p-chips [(ngModel)]="selectedMembers" class="chips-custom"  [disabled]="true">
+            <ng-template let-item pTemplate="item">
+              <img [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                   (load)="imgLoaded[item.value] = true"
+                   (error)="imgLoaded[item.value] = false"
+                   alt="{{item.value}}"
+                   class="mr-1"
+                   style="width: 25px; height: 25px; border-radius: 50%; object-fit: cover;">
+              <span class="ml-1">{{item.label}}</span>
+            </ng-template>
+          </p-chips>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-column sm:flex-row justify-content-between align-items-center gap-3 py-2">
+      <button pButton pRipple class="p-button-primary flex-1 p-button-outlined" label="Volver" icon="pi pi-arrow-left" (click)="onBack()"></button>
+    </div>
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="col-12 lg:col-12" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+    <p-progressSpinner ariaLabel="Cargando..."></p-progressSpinner>
+  </div>
+</ng-template>

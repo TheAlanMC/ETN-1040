@@ -1,6 +1,10 @@
 
 @media screen and (max-width: 768px) {
   :host ::ng-deep {
+    fc-widget-content .fc-scroller {
+      height: auto !important;
+    }
+
     .fc .fc-toolbar {
       justify-content: center;
     }

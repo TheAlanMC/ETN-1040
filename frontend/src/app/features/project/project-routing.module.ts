@@ -8,13 +8,22 @@ import {ViewProjectComponent} from "./components/view-project/view-project.compo
 import {ProjectDetailComponent} from "./components/project-detail/project-detail.component";
 import {ProjectTaskListComponent} from "./components/project-task-list/project-task-list.component";
 import {ProjectTaskDeadlineComponent} from "./components/project-task-deadline/project-task-deadline.component";
+import {ProjectTaskCalendarComponent} from "./components/project-task-calendar/project-task-calendar.component";
 
 
 const routes: Routes = [
   {path: 'projects',
     children: [
       {path: '', component: ProjectListComponent, canActivate: [RoleGuard], data: { roles: ['VER PROYECTOS']}},
-      {path: 'view/:id', component: ViewProjectComponent, canActivate: [RoleGuard], data: { roles: ['VER PROYECTOS'],  breadcrumb: 'Ver'}},
+      {path: 'view/:id', component: ViewProjectComponent, canActivate: [RoleGuard], data: { roles: ['VER PROYECTOS'],  breadcrumb: 'Ver'},
+        children: [
+          {path: 'detail', component: ProjectDetailComponent},
+          {path: 'task-list', component: ProjectTaskListComponent},
+          {path: 'task-deadline', component: ProjectTaskDeadlineComponent},
+          {path: 'task-calendar', component: ProjectTaskCalendarComponent},
+          {path: '', redirectTo: 'detail', pathMatch: 'full'}
+        ]
+      },
       {path: 'create', component: NewProjectComponent, canActivate: [RoleGuard], data: { roles: ['CREAR PROYECTOS'],  breadcrumb: 'Nuevo'}},
       {path: 'edit/:id', component: EditProjectComponent, canActivate: [RoleGuard], data: { roles: ['EDITAR PROYECTOS'],  breadcrumb: 'Editar'}},
     ],

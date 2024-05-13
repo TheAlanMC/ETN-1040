@@ -1,4 +1,3 @@
-<div class="card">
   <full-calendar [options]="calendarOptions"></full-calendar>
 
   <p-dialog #dd [(visible)]="showDialog" [breakpoints]="{'960px': '75vw', '640px': '90vw'}" [style]="{width: '36rem'}" [modal]="true" [closable]="true" (onHide)="view = ''">
@@ -96,4 +95,3 @@
       <button pButton *ngIf="view === 'new' || view === 'edit'" label="Save" icon="pi pi-check" (click)="handleSave()" [disabled]="!changedEvent.start || !changedEvent.end"></button>
     </ng-template>
   </p-dialog>
-</div>

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -8,7 +8,7 @@ import interactionPlugin from "@fullcalendar/interaction";
   templateUrl: './project-task-calendar.component.html',
   styleUrl: './project-task-calendar.component.scss'
 })
-export class ProjectTaskCalendarComponent  implements OnInit {
+export class ProjectTaskCalendarComponent  implements OnInit{
 
   events: any[] = [];
 
@@ -53,6 +53,7 @@ export class ProjectTaskCalendarComponent  implements OnInit {
       dayMaxEvents: true,
       eventClick: (e: MouseEvent) => this.onEventClick(e),
       select: (e: MouseEvent) => this.onDateSelect(e)
+
     };
   }
 
