@@ -18,7 +18,7 @@
     <div class="col-12 lg:col-10">
       <div class="grid formgrid p-fluid">
         <div class="field mb-4 col-12 md:col-6">
-          <label for="firstName" class="font-medium text-900">Nombre</label>
+          <label for="firstName" class="font-medium text-900">Nombres</label>
           <input id="firstName" type="text" pInputText [formControl]="firstNameControl">
         </div>
         <div class="field mb-4 col-12 md:col-6">
@@ -28,7 +28,7 @@
         <div class="field mb-4 col-12">
           <label for="photo" class="font-medium text-900">Cambiar Foto de Perfil</label>
           <div style="display: flex; align-items: center;">
-            <p-fileUpload #fileUpload mode="basic" name="avatar" accept="image/*" [maxFileSize]="1000000" styleClass="p-button-outlined p-button-plain" chooseLabel="Subir Imagen" (onSelect)="onSelect($event)"></p-fileUpload>
+            <p-fileUpload #fileUpload mode="basic" name="avatar" accept=".jpg,.jpeg,.png" [maxFileSize]="1000000" styleClass="p-button-outlined p-button-plain" chooseLabel="Subir Imagen" (onSelect)="onSelect($event)"></p-fileUpload>
             <i class="pi pi-times" style="margin-left: 10px; cursor: pointer;" *ngIf="changeProfilePicture" (click)="onCancelSelect()"></i>
           </div>
         </div>
@@ -58,7 +58,7 @@
 </div>
 
 <ng-template #loading>
-  <div class="col-12 lg:col-12" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+  <div class="col-12 lg:col-12" style="display: flex; justify-content: center; align-items: center; height: 100%;">
     <p-progressSpinner ariaLabel="Cargando..."></p-progressSpinner>
   </div>
 </ng-template>

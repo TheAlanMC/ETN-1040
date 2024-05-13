@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2024-05-01 18:48:27.814
+-- Last modification date: 2024-05-13 04:24:54.018
 
 -- tables
 -- Table: account_recovery
@@ -8,7 +8,7 @@ CREATE TABLE account_recovery (
     user_id int  NOT NULL,
     hash_code varchar(255)  NOT NULL,
     expiration_date timestamp  NOT NULL,
-    stauts boolean  NOT NULL,
+    status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
     tx_user varchar(255)  NOT NULL,
     tx_host varchar(255)  NOT NULL,
@@ -21,6 +21,8 @@ CREATE TABLE file (
     content_type varchar(255)  NOT NULL,
     filename varchar(255)  NOT NULL,
     file_data bytea  NOT NULL,
+    is_picture boolean  NOT NULL,
+    thumbnail bytea  NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
     tx_user varchar(100)  NOT NULL,
@@ -163,14 +165,27 @@ CREATE TABLE notification (
 -- Table: project
 CREATE TABLE project (
     project_id serial  NOT NULL,
-    file_icon_id int  NOT NULL,
     project_name varchar(100)  NOT NULL,
-    project_description varchar(255)  NOT NULL,
+    project_description text  NOT NULL,
+    date_from timestamp  NOT NULL,
+    date_to timestamp  NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
     tx_user varchar(100)  NOT NULL,
     tx_host varchar(100)  NOT NULL,
     CONSTRAINT project_pk PRIMARY KEY (project_id)
+);
+
+-- Table: project_member
+CREATE TABLE project_member (
+    project_member_id serial  NOT NULL,
+    project_id int  NOT NULL,
+    user_id int  NOT NULL,
+    status boolean  NOT NULL,
+    tx_date timestamp  NOT NULL,
+    tx_user varchar(100)  NOT NULL,
+    tx_host varchar(100)  NOT NULL,
+    CONSTRAINT project_member_pk PRIMARY KEY (project_member_id)
 );
 
 -- Table: project_moderator
@@ -197,18 +212,6 @@ CREATE TABLE project_owner (
     CONSTRAINT project_owner_pk PRIMARY KEY (project_owner_id)
 );
 
--- Table: project_team
-CREATE TABLE project_team (
-    project_team_id serial  NOT NULL,
-    project_id int  NOT NULL,
-    user_id int  NOT NULL,
-    status boolean  NOT NULL,
-    tx_date timestamp  NOT NULL,
-    tx_user varchar(100)  NOT NULL,
-    tx_host varchar(100)  NOT NULL,
-    CONSTRAINT project_team_pk PRIMARY KEY (project_team_id)
-);
-
 -- Table: role
 CREATE TABLE role (
     role_id serial  NOT NULL,
@@ -224,12 +227,12 @@ CREATE TABLE role (
 -- Table: task
 CREATE TABLE task (
     task_id serial  NOT NULL,
-    project_project_id int  NOT NULL,
+    project_id int  NOT NULL,
+    task_status_id int  NOT NULL,
     task_name varchar(100)  NOT NULL,
     task_description varchar(255)  NOT NULL,
     task_deadline timestamp  NOT NULL,
     task_priority int  NOT NULL,
-    task_status varchar(50)  NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
     tx_user varchar(100)  NOT NULL,
@@ -300,6 +303,17 @@ CREATE TABLE task_review (
     CONSTRAINT task_review_pk PRIMARY KEY (task_review_id)
 );
 
+-- Table: task_status
+CREATE TABLE task_status (
+    task_status_id serial  NOT NULL,
+    task_status_name varchar(50)  NOT NULL,
+    status boolean  NOT NULL,
+    tx_date timestamp  NOT NULL,
+    tx_user varchar(100)  NOT NULL,
+    tx_host varchar(100)  NOT NULL,
+    CONSTRAINT task_status_pk PRIMARY KEY (task_status_id)
+);
+
 -- Table: tool
 CREATE TABLE tool (
     tool_id serial  NOT NULL,
@@ -324,6 +338,8 @@ CREATE TABLE "user" (
     email varchar(100)  NOT NULL,
     username varchar(100)  NOT NULL,
     password varchar(100)  NOT NULL,
+    phone varchar(50)  NOT NULL,
+    description varchar(255)  NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
     tx_user varchar(100)  NOT NULL,
@@ -400,14 +416,6 @@ ALTER TABLE notification ADD CONSTRAINT notification_user
     INITIALLY IMMEDIATE
 ;
 
--- Reference: project_file (table: project)
-ALTER TABLE project ADD CONSTRAINT project_file
-    FOREIGN KEY (file_icon_id)
-    REFERENCES file (file_id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
 -- Reference: project_moderator_project (table: project_moderator)
 ALTER TABLE project_moderator ADD CONSTRAINT project_moderator_project
     FOREIGN KEY (project_id)
@@ -440,16 +448,16 @@ ALTER TABLE project_owner ADD CONSTRAINT project_owner_user
     INITIALLY IMMEDIATE
 ;
 
--- Reference: project_team_project (table: project_team)
-ALTER TABLE project_team ADD CONSTRAINT project_team_project
+-- Reference: project_team_project (table: project_member)
+ALTER TABLE project_member ADD CONSTRAINT project_team_project
     FOREIGN KEY (project_id)
     REFERENCES project (project_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: project_team_user (table: project_team)
-ALTER TABLE project_team ADD CONSTRAINT project_team_user
+-- Reference: project_team_user (table: project_member)
+ALTER TABLE project_member ADD CONSTRAINT project_team_user
     FOREIGN KEY (user_id)
     REFERENCES "user" (user_id)  
     NOT DEFERRABLE 
@@ -522,7 +530,7 @@ ALTER TABLE task_file ADD CONSTRAINT task_file_task
 
 -- Reference: task_project (table: task)
 ALTER TABLE task ADD CONSTRAINT task_project
-    FOREIGN KEY (project_project_id)
+    FOREIGN KEY (project_id)
     REFERENCES project (project_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
@@ -532,6 +540,14 @@ ALTER TABLE task ADD CONSTRAINT task_project
 ALTER TABLE task_review ADD CONSTRAINT task_review_task
     FOREIGN KEY (task_task_id)
     REFERENCES task (task_id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: task_task_status (table: task)
+ALTER TABLE task ADD CONSTRAINT task_task_status
+    FOREIGN KEY (task_status_id)
+    REFERENCES task_status (task_status_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
@@ -569,4 +585,3 @@ ALTER TABLE user_group ADD CONSTRAINT user_group_user
 ;
 
 -- End of file.
-

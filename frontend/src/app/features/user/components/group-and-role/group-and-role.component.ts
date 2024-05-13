@@ -174,7 +174,7 @@ export class GroupAndRoleComponent implements OnInit{
       next: (data) => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
+          summary: 'Éxito',
           detail: 'Grupos asignados correctamente'
         });
         this.selectedUser = { value: '' };
@@ -214,7 +214,7 @@ export class GroupAndRoleComponent implements OnInit{
       next: (data) => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
+          summary: 'Éxito',
           detail: 'Usuario eliminado correctamente'
         });
         this.selectedUser = { value: '' };
@@ -273,7 +273,7 @@ export class GroupAndRoleComponent implements OnInit{
       next: (data) => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
+          summary: 'Éxito',
           detail: 'Roles asignados correctamente'
         });
         this.onClearGroup();
@@ -312,7 +312,7 @@ export class GroupAndRoleComponent implements OnInit{
       next: (data) => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
+          summary: 'Éxito',
           detail: 'Grupo eliminado correctamente'
         });
         this.onClearGroup();
@@ -342,7 +342,7 @@ export class GroupAndRoleComponent implements OnInit{
       next: (data) => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
+          summary: 'Éxito',
           detail: 'Grupo creado correctamente'
         });
         this.visibleAddGroup = false;
@@ -360,7 +360,7 @@ export class GroupAndRoleComponent implements OnInit{
       next: (data) => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
+          summary: 'Éxito',
           detail: 'Grupo actualizado correctamente'
         });
         this.visibleEditGroup = false;
@@ -372,5 +372,13 @@ export class GroupAndRoleComponent implements OnInit{
         this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
       }
     });
+  }
+
+  public onTabChange(event: any) {
+    if (event.index === 0) {
+      this.onClearUser();
+    } else if (event.index === 1) {
+      this.onClearGroup();
+    }
   }
 }

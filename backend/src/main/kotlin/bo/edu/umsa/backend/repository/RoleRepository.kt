@@ -15,7 +15,7 @@ interface RoleRepository: JpaRepository<Role, Long> {
             JOIN "group" g ON gr.group_id = g.group_id
             JOIN user_group ug ON g.group_id = ug.group_id
             JOIN "user" u ON ug.user_id = u.user_id
-            WHERE u.username = :username
+            WHERE u.email = :email
             AND r.status = true
             AND gr.status = true
             AND g.status = true
@@ -24,7 +24,7 @@ interface RoleRepository: JpaRepository<Role, Long> {
         """,
         nativeQuery = true
     )
-    fun findAllByUsername(username: String): List<Role>
+    fun findAllByEmail(email: String): List<Role>
 
     @Query(
         """

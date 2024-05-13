@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface AccountRecoveryRepository: JpaRepository<AccountRecovery, Long> {
 
-    fun findAllByUser_UsernameAndStatusIsTrueAndStatusIsTrue (username: String): List<AccountRecovery>
+    fun findAllByUser_EmailAndStatusIsTrueAndStatusIsTrue (email: String): List<AccountRecovery>
 
 }

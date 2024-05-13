@@ -42,6 +42,10 @@ class UserProfileService @Autowired constructor(
         if (profileDto.firstName.isBlank() || profileDto.lastName.isBlank()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Firstname and lastname cannot be blank","Nombre y apellido no pueden estar en blanco")
         }
+        // Phone must be a number
+        if (!profileDto.phone.isBlank() && !profileDto.phone.matches(Regex("\\d+"))) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Phone must be a number","El teléfono debe ser un número")
+        }
         // Validate that the profileId is the same as the user's id
         val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized","No autorizado")
         logger.info("Updating the profile with id $userId")
@@ -58,22 +62,22 @@ class UserProfileService @Autowired constructor(
 
     // Profile picture
     fun getProfilePicture(): FileDto {
-        val username = AuthUtil.getUsernameFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized","No autorizado")
-        logger.info("Getting the profile picture of $username")
+        val email = AuthUtil.getEmailFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized","No autorizado")
+        logger.info("Getting the profile picture of $email")
         // Get the user
-        val userEntity: User = userRepository.findByUsernameAndStatusIsTrue(username)
+        val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
-        return  fileService.getFile(userEntity.filePhotoId)
+        return  fileService.getPicture(userEntity.filePhotoId)
     }
 
     fun uploadProfilePicture(file: MultipartFile) {
-        val username = AuthUtil.getUsernameFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized","No autorizado")
-        logger.info("Uploading the profile picture of $username")
+        val email = AuthUtil.getEmailFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized","No autorizado")
+        logger.info("Uploading the profile picture of $email")
         // Get the user
-        val userEntity: User = userRepository.findByUsernameAndStatusIsTrue(username)
+        val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
         // Update the same file
-        fileService.overwriteFile(file, userEntity.filePhotoId)
+        fileService.overwritePicture(file, userEntity.filePhotoId)
         // Create the thumbnail
         fileService.overwriteThumbnail(file, userEntity.filePhotoId)
     }
@@ -95,10 +99,10 @@ class UserProfileService @Autowired constructor(
         if (passwordChangeDto.password != passwordChangeDto.confirmPassword) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Passwords do not match","Las contraseñas no coinciden")
         }
-        val username = AuthUtil.getUsernameFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized","No autorizado")
-        logger.info("Updating the password of $username")
+        val email = AuthUtil.getEmailFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized","No autorizado")
+        logger.info("Updating the password of $email")
         // Get the user
-        val userEntity: User = userRepository.findByUsernameAndStatusIsTrue(username)
+        val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
         // Compare the old password
         if (!BCrypt.verifyer().verify(passwordChangeDto.oldPassword.toCharArray(), userEntity.password).verified) {

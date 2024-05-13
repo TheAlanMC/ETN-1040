@@ -13,7 +13,7 @@ interface GroupRepository: JpaRepository<Group, Long> {
             SELECT g.* FROM "group" g
             JOIN user_group ug ON g.group_id = ug.group_id
             JOIN "user" u ON ug.user_id = u.user_id
-            WHERE u.username = :username
+            WHERE u.email = :email
             AND g.status = true
             AND ug.status = true
             AND u.status = true
@@ -21,7 +21,7 @@ interface GroupRepository: JpaRepository<Group, Long> {
         """,
         nativeQuery = true
     )
-    fun findAllByUsername(username: String): List<Group>
+    fun findAllByEmail(email: String): List<Group>
 
     fun findByGroupIdAndStatusIsTrue (groupId: Long): Group?
 

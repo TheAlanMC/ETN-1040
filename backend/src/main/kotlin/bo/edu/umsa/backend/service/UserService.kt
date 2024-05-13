@@ -83,6 +83,10 @@ class UserService @Autowired constructor(
         if (!newUserDto.email.matches(Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}\$"))) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Invalid email format","Formato de correo inválido")
         }
+        // Phone must be a number
+        if (!newUserDto.phone.isBlank() && !newUserDto.phone.matches(Regex("\\d+"))) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Phone must be a number","El teléfono debe ser un número")
+        }
         // Validate that the group exists
         val groupEntity =groupRepository.findByGroupIdAndStatusIsTrue(newUserDto.groupId.toLong())
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Group not found","Grupo no encontrado")
@@ -99,6 +103,7 @@ class UserService @Autowired constructor(
         fileEntity.filename = "avatar.png"
         fileEntity.contentType = "image/png"
         fileEntity.fileData = avatarByteArray
+        fileEntity.isPicture = true
         fileEntity.thumbnail = avatarThumbnailByteArray
         val savedFile: File = fileRepository.save(fileEntity)
         logger.info("File created with id ${savedFile.fileId}")
@@ -146,6 +151,10 @@ class UserService @Autowired constructor(
         if (profileDto.firstName.isBlank() || profileDto.lastName.isBlank()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Firstname and lastname cannot be blank","Nombre y apellido no pueden estar en blanco")
         }
+        // Phone must be a number
+        if (!profileDto.phone.isBlank() && !profileDto.phone.matches(Regex("\\d+"))) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Phone must be a number","El teléfono debe ser un número")
+        }
         logger.info("Updating the user with id $userId")
         // Get the user
         val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
@@ -174,7 +183,7 @@ class UserService @Autowired constructor(
         // Get the user
         val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
-        return  fileService.getFile(userEntity.filePhotoId)
+        return  fileService.getPicture(userEntity.filePhotoId)
     }
 
     fun uploadProfilePicture(userId: Long, file: MultipartFile) {
@@ -183,7 +192,7 @@ class UserService @Autowired constructor(
         val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
         // Update the same file
-        fileService.overwriteFile(file, userEntity.filePhotoId)
+        fileService.overwritePicture(file, userEntity.filePhotoId)
         // Update the thumbnail
         fileService.overwriteThumbnail(file, userEntity.filePhotoId)
     }
@@ -227,6 +236,6 @@ class UserService @Autowired constructor(
         // Get the user
         val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found","Usuario no encontrado")
-        return  fileService.getThumbnail(userEntity.filePhotoId)
+        return  fileService.getPicture(userEntity.filePhotoId)
     }
 }

@@ -27,14 +27,6 @@ class FileService @Autowired constructor(
         return FileMapper.entityToDto(fileEntity)
     }
 
-    fun getThumbnail(fileId: Int): FileDto {
-        logger.info("Getting the thumbnail with id $fileId")
-        // Get the file
-        val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId.toLong())
-            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found","Archivo no encontrado")
-        return FileMapper.entityToDto(fileEntity)
-    }
-
     fun uploadFile(file: MultipartFile): Int {
         logger.info("Uploading the file ${file.originalFilename}")
         // Upload the file
@@ -47,8 +39,19 @@ class FileService @Autowired constructor(
         return savedFile.fileId
     }
 
-    fun overwriteFile(file: MultipartFile, fileId: Int) {
-        logger.info("Overwriting the file with id $fileId")
+    fun getPicture(fileId: Int): FileDto {
+        logger.info("Getting the picture with id $fileId")
+        // Get the file
+        val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId.toLong())
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found","Archivo no encontrado")
+        if (!fileEntity.isPicture) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: File is not a picture","El archivo no es una imagen")
+        }
+        return FileMapper.entityToDto(fileEntity)
+    }
+
+    fun overwritePicture(file: MultipartFile, fileId: Int) {
+        logger.info("Overwriting the picture with id $fileId")
         // Overwrite the file
         val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId.toLong())
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found","Archivo no encontrado")

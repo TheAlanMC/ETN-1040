@@ -99,7 +99,7 @@ export class EditUserComponent implements OnInit {
         next: (data) => {
           this.messageService.add({severity:'success', summary:'Éxito', detail:'Usuario actualizado'});
           setTimeout(() => {
-            this.router.navigate(['/users']).then(r => console.log('Redirect to users page'));
+            this.router.navigate(['/users']).then(r => {console.log('Redirect to users page'); window.location.reload();});
           }, 1000);
         },
         error: (error) => {

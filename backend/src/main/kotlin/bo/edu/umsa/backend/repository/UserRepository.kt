@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UserRepository: PagingAndSortingRepository<User, Long>, JpaRepository<User, Long> {
 
-    fun findByUsernameAndStatusIsTrue(username: String): User?
+    fun findByEmailAndStatusIsTrue(email: String): User?
 
     fun findByUserIdAndStatusIsTrue(userId: Long): User?
 

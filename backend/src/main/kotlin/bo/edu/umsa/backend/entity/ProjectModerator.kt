@@ -26,7 +26,7 @@ class ProjectModerator {
     var txDate: Timestamp = Timestamp(System.currentTimeMillis())
 
     @Column(name = "tx_user")
-    var txUser: String = AuthUtil.getUsernameFromAuthToken() ?: "admin"
+    var txUser: String = AuthUtil.getEmailFromAuthToken() ?: "admin"
 
     @Column(name = "tx_host")
     var txHost: String = HttpUtil.getRequestHost() ?: "localhost"

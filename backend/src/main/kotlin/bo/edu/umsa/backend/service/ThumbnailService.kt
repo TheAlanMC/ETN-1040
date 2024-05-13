@@ -10,6 +10,7 @@ import javax.imageio.ImageIO
 class ThumbnailService {
 
     fun createThumbnail(file: MultipartFile): ByteArray {
+        println("Creating thumbnail for file ${file.originalFilename}")
         val outputStream = ByteArrayOutputStream()
 
         val originalImage = ImageIO.read(file.inputStream)
@@ -31,7 +32,6 @@ class ThumbnailService {
             .size(newWidth, newHeight)
             .outputFormat(file.originalFilename?.substringAfterLast(".") ?: "png")
             .toOutputStream(outputStream)
-
         return outputStream.toByteArray()
     }
 }

@@ -17,7 +17,7 @@
     <div class="col-12 lg:col-10">
       <div class="grid formgrid p-fluid">
         <div class="field mb-4 col-12 md:col-6">
-          <label for="firstName" class="font-medium text-900">Nombre</label>
+          <label for="firstName" class="font-medium text-900">Nombres</label>
           <input id="firstName" type="text" pInputText [ngModel]="user.firstName" [readonly]="true">
         </div>
         <div class="field mb-4 col-12 md:col-6">
@@ -47,7 +47,7 @@
 </div>
 
 <ng-template #loading>
-  <div class="col-12 lg:col-12" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+  <div class="col-12 lg:col-12" style="display: flex; justify-content: center; align-items: center; height: 100%;">
     <p-progressSpinner ariaLabel="Cargando..."></p-progressSpinner>
   </div>
 </ng-template>

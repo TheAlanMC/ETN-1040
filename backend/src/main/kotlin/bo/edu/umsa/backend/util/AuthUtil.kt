@@ -93,7 +93,7 @@ class AuthUtil (@Autowired jwtConfig: JwtConfig) {
             val algorithm = Algorithm.HMAC256(jwtSecret)
             val jwtToken = JWT.create()
                 .withIssuer(jwtIssuer)
-                .withSubject(userEntity.username)
+                .withSubject(userEntity.email)
                 .withArrayClaim("groups", groups)
                 .withArrayClaim("roles", roles)
                 .withClaim("refresh", false)
@@ -107,7 +107,7 @@ class AuthUtil (@Autowired jwtConfig: JwtConfig) {
                 .sign(algorithm)
             val refreshToken = JWT.create()
                 .withIssuer(jwtIssuer)
-                .withSubject(userEntity.username)
+                .withSubject(userEntity.email)
                 .withClaim("refresh", true)
                 .withIssuedAt(Date.from(Instant.now()))
                 .withExpiresAt(Date.from(Instant.now().plusSeconds((jwtExpirationTime * 2).toLong())))
@@ -116,13 +116,13 @@ class AuthUtil (@Autowired jwtConfig: JwtConfig) {
         }
 
         // Methods to get fields from the token
-        fun getUsernameFromAuthToken(token: String? = null): String? {
+        fun getEmailFromAuthToken(token: String? = null): String? {
             val jwtToken = token ?: getAuthToken()
             return try {
                 JWT.require(Algorithm.HMAC256(jwtSecret))
                     .build()
                     .verify(jwtToken)
-                    .getClaim("sub")
+                    .getClaim("email")
                     .asString()
             } catch (e: Exception) {
                 null

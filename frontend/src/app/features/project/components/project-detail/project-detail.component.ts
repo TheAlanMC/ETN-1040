@@ -54,12 +54,12 @@ export class ProjectDetailComponent implements OnInit{
   }
 
   ngOnInit() {
-    if (this.activatedRoute.firstChild) {
-      this.activatedRoute.firstChild.params.subscribe(params => {
-        this.projectId = params['id'];
-      });
-    }
-    this.getAllUsers();
+    this.activatedRoute.parent?.params.subscribe(params => {
+      this.projectId = params['id'];
+      this.getAllUsers();
+    });
+    // this.projectId = this.activatedRoute.snapshot.params['id'];
+    // this.getAllUsers();
     this.getProjectInfo();
   }
 

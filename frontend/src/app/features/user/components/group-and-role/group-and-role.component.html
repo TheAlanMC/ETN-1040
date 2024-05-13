@@ -1,6 +1,6 @@
 <p-toast></p-toast>
 <div class="card">
-  <p-tabView orientation="left">
+  <p-tabView orientation="left" (onChange)="onTabChange($event)">
     <p-tabPanel header="Gestionar Roles" class="line-height-3 m-0">
       <p-confirmDialog header="Confirmation" key="confirmDeleteUser" icon="pi pi-exclamation-triangle" message="'¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.'"
                        [style]="{width: '350px'}" acceptButtonStyleClass="p-button-primary" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
@@ -47,7 +47,7 @@
               <div>{{groups.name}}</div>
             </ng-template>
           </p-pickList>
-      <div class="grid p-fluid mt-3">
+      <div class="grid p-fluid mt-3"  *ngIf="selectedUserId!=0">
         <div class="col-12 lg:col-2 md:col-3">
           <button pButton pRipple label="Guardar" class="flex-auto p-button" icon="pi pi-save" (click)="saveUserGroups()"></button>
         </div>
@@ -86,7 +86,7 @@
               <div>{{permissions.name}}</div>
             </ng-template>
           </p-pickList>
-      <div class="grid p-fluid mt-3">
+      <div class="grid p-fluid mt-3" *ngIf="selectedGroupId!=0">
         <div class="col-12 lg:col-2 md:col-3">
           <button pButton pRipple label="Guardar" class="flex-auto p-button" icon="pi pi-save" (click)="saveGroupRoles()"></button>
         </div>

@@ -22,6 +22,9 @@ class File {
     @Column(name = "file_data")
     var fileData: ByteArray = byteArrayOf()
 
+    @Column(name = "is_picture")
+    var isPicture: Boolean = false
+
     @Column(name = "thumbnail")
     var thumbnail: ByteArray = byteArrayOf()
 
@@ -32,7 +35,7 @@ class File {
     var txDate: Timestamp = Timestamp(System.currentTimeMillis())
 
     @Column(name = "tx_user")
-    var txUser: String = AuthUtil.getUsernameFromAuthToken() ?: "admin"
+    var txUser: String = AuthUtil.getEmailFromAuthToken() ?: "admin"
 
     @Column(name = "tx_host")
     var txHost: String = HttpUtil.getRequestHost() ?: "localhost"
