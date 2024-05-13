@@ -82,7 +82,7 @@
               </ng-template>
             </p-chips>
           </div>
-<!--          <p-multiSelect [options]="userItems" [(ngModel)]="selectedMembers" placeholder="Seleccione Miembros del Equipo"-->
+<!--          <p-multiSelect [options]="userItems" [(ngModel)]="selectedMembers" placeholder="Seleccione Miembros del E./dquipo"-->
 <!--                         optionLabel="label" class="multiselect-custom" display="chip" showClear="true" [disabled]="true">-->
 <!--            <ng-template let-value pTemplate="selectedItems">-->
 <!--              <div>Seleccione Miembros del Equipo</div>-->
@@ -109,6 +109,28 @@
     </div>
   </div>
 </div>
+
+<div class="col-12 w-full mt-4">
+  <p-tabView>
+    <p-tabPanel header="Detalles">
+      <div class="text-900 font-bold text-3xl mb-4 mt-2">Detalle del Proyecto</div>
+      <app-project-detail></app-project-detail>
+    </p-tabPanel>
+    <p-tabPanel header="Tareas">
+      <div class="text-900 font-bold text-3xl mb-4 mt-2">Tareas del Proyecto</div>
+      <app-project-task-list></app-project-task-list>
+    </p-tabPanel>
+    <p-tabPanel header="Plazos">
+      <div class="text-900 font-bold text-3xl mb-4 mt-2">Plazos de las Tareas del Proyecto</div>
+      <app-project-task-deadline></app-project-task-deadline>
+    </p-tabPanel>
+    <p-tabPanel header="Calendario">
+      <div class="text-900 font-bold text-3xl mb-4 mt-2">Calendario del Proyecto</div>
+      <app-project-task-calendar></app-project-task-calendar>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
 
 <ng-template #loading>
   <div class="col-12 lg:col-12" style="display: flex; justify-content: center; align-items: center; height: 100vh;">

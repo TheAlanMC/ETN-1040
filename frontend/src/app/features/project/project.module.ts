@@ -26,6 +26,13 @@ import { ViewProjectComponent } from './components/view-project/view-project.com
 import {DockModule} from "primeng/dock";
 import {OverlayPanelModule} from "primeng/overlaypanel";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import { ProjectDetailComponent } from './components/project-detail/project-detail.component';
+import { ProjectTaskListComponent } from './components/project-task-list/project-task-list.component';
+import { ProjectTaskDeadlineComponent } from './components/project-task-deadline/project-task-deadline.component';
+import { ProjectTaskCalendarComponent } from './components/project-task-calendar/project-task-calendar.component';
+import {TabMenuModule} from "primeng/tabmenu";
+import {StepsModule} from "primeng/steps";
+import {TabViewModule} from "primeng/tabview";
 
 
 
@@ -35,6 +42,10 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
     NewProjectComponent,
     EditProjectComponent,
     ViewProjectComponent,
+    ProjectDetailComponent,
+    ProjectTaskListComponent,
+    ProjectTaskDeadlineComponent,
+    ProjectTaskCalendarComponent,
   ],
   imports: [
     CommonModule,
@@ -60,7 +71,10 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
     AvatarModule,
     DockModule,
     OverlayPanelModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    TabMenuModule,
+    StepsModule,
+    TabViewModule
   ]
 })
 export class ProjectModule { }

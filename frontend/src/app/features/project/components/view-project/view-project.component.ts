@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {environment} from "../../../../../environments/environment";
 import {UserDto} from "../../../user/models/user.dto";
-import {MessageService, SelectItem} from "primeng/api";
+import {MenuItem, MessageService, SelectItem} from "primeng/api";
 import {ProjectDto} from "../../models/project.dto";
 import {ActivatedRoute, Router} from "@angular/router";
 import {UserService} from "../../../../core/services/user.service";
@@ -44,7 +44,6 @@ export class ViewProjectComponent implements OnInit {
 
   dateFrom: string = '';
   dateTo: string = '';
-
 
   constructor(private activatedRoute: ActivatedRoute, private userService: UserService, private messageService: MessageService, private utilService: UtilService, private location: Location, private projectService: ProjectService, private router: Router) {
     this.baseUrl = this.utilService.getApiUrl(this.baseUrl);

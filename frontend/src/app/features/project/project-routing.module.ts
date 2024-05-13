@@ -5,6 +5,9 @@ import {EditProjectComponent} from "./components/edit-project/edit-project.compo
 import {NewProjectComponent} from "./components/new-project/new-project.component";
 import {RoleGuard} from "../../core/guards/role.guard";
 import {ViewProjectComponent} from "./components/view-project/view-project.component";
+import {ProjectDetailComponent} from "./components/project-detail/project-detail.component";
+import {ProjectTaskListComponent} from "./components/project-task-list/project-task-list.component";
+import {ProjectTaskDeadlineComponent} from "./components/project-task-deadline/project-task-deadline.component";
 
 
 const routes: Routes = [
@@ -14,8 +17,8 @@ const routes: Routes = [
       {path: 'view/:id', component: ViewProjectComponent, canActivate: [RoleGuard], data: { roles: ['VER PROYECTOS'],  breadcrumb: 'Ver'}},
       {path: 'create', component: NewProjectComponent, canActivate: [RoleGuard], data: { roles: ['CREAR PROYECTOS'],  breadcrumb: 'Nuevo'}},
       {path: 'edit/:id', component: EditProjectComponent, canActivate: [RoleGuard], data: { roles: ['EDITAR PROYECTOS'],  breadcrumb: 'Editar'}},
-    ]
-  }
+    ],
+  },
 ];
 
 @NgModule({
