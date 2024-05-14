@@ -13,5 +13,7 @@ interface TaskRepository : PagingAndSortingRepository<Task, Long>, JpaRepository
 
     fun findAll(specification: Specification<Task>, pageable: Pageable): Page<Task>
 
+    fun findByTaskIdAndStatusIsTrue(taskId: Long): Task?
+
 
 }

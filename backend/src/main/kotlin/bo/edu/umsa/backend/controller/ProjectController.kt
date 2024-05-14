@@ -21,6 +21,16 @@ class ProjectController @Autowired constructor(
         private val logger = LoggerFactory.getLogger(ProjectController::class.java.name)
     }
 
+    @GetMapping("/all")
+    fun getAllProjects(): ResponseEntity<ResponseDto<List<ProjectPartialDto>>> {
+        logger.info("Starting the API call to get all projects")
+        logger.info("GET /api/v1/projects/all")
+        AuthUtil.verifyAuthTokenHasRoles(listOf("VER TAREAS", "CREAR TAREAS", "EDITAR TAREAS").toTypedArray())
+        val projects: List<ProjectPartialDto> = projectService.getAllProjects()
+        logger.info("Success: Projects retrieved")
+        return ResponseEntity(ResponseDto(true, "Proyectos recuperados", projects), HttpStatus.OK)
+    }
+
     @GetMapping
     fun getProjects(
         @RequestParam(defaultValue = "userId") sortBy: String,
@@ -92,12 +102,13 @@ class ProjectController @Autowired constructor(
         @RequestParam(defaultValue = "asc") sortType: String,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int,
-        @RequestParam(required = false) keyword: String?
+        @RequestParam(required = false) keyword: String?,
+        @RequestParam(required = false) status: String?,
     ): ResponseEntity<ResponseDto<Page<TaskDto>>> {
         logger.info("Starting the API call to get the tasks")
         logger.info("GET /api/v1/projects/$projectId/tasks")
         AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
-        val tasks: Page<TaskDto> = projectService.getProjectTasks(projectId, sortBy, sortType, page, size, keyword)
+        val tasks: Page<TaskDto> = projectService.getProjectTasks(projectId, sortBy, sortType, page, size, keyword, status)
         logger.info("Success: Tasks retrieved")
         return ResponseEntity(ResponseDto(true, "Tareas recuperadas", tasks), HttpStatus.OK)
     }

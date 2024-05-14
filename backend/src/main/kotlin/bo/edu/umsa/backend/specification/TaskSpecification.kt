@@ -16,7 +16,6 @@ class TaskSpecification {
                 cb.or(
                     cb.like(cb.lower(root.get("taskName")), "%${keyword.lowercase()}%"),
                     cb.like(cb.lower(root.get("taskDescription")), "%${keyword.lowercase()}%"),
-                    cb.like(cb.lower(root.get("taskPriority")), "%${keyword.lowercase()}%"),
                     cb.like(
                         cb.lower(
                             root.get<Task>("taskStatus").get<TaskStatus>("taskStatusName") as Expression<String>
@@ -24,23 +23,41 @@ class TaskSpecification {
                     ),
                     cb.like(
                         cb.lower(
-                            root.get<Task>("taskAssignee").get<TaskAssignee>("user")
+                            root.get<Task>("taskAssignees").get<TaskAssignee>("user")
                                 .get<User>("firstName") as Expression<String>
                         ), "%${keyword.lowercase()}%"
                     ),
                     cb.like(
                         cb.lower(
-                            root.get<Task>("taskAssignee").get<TaskAssignee>("user")
+                            root.get<Task>("taskAssignees").get<TaskAssignee>("user")
                                 .get<User>("lastName") as Expression<String>
                         ), "%${keyword.lowercase()}%"
                     ),
                     cb.like(
                         cb.lower(
-                            root.get<Task>("taskAssignee").get<TaskAssignee>("user")
+                            root.get<Task>("taskAssignees").get<TaskAssignee>("user")
                                 .get<User>("email") as Expression<String>
                         ), "%${keyword.lowercase()}%"
                     )
                 )
+            }
+        }
+
+        fun taskAssignee(userId: Int): Specification<Task> {
+            return Specification { root, _, cb ->
+                cb.equal(root.get<Task>("taskAssignees").get<TaskAssignee>("userId"), userId)
+            }
+        }
+
+        fun taskStatus(taskStatus: String): Specification<Task> {
+            return Specification { root, _, cb ->
+                cb.equal(root.get<Task>("taskStatus").get<TaskStatus>("taskStatusName"), taskStatus)
+            }
+        }
+
+        fun taskPriority(taskPriority: String): Specification<Task> {
+            return Specification { root, _, cb ->
+                cb.equal(root.get<Task>("taskPriority"), taskPriority)
             }
         }
 

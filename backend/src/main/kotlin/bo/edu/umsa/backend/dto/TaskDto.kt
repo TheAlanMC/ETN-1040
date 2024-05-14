@@ -11,4 +11,5 @@ data class TaskDto(
     val taskDeadline: Timestamp,
     val taskPriority: Int,
     val taskAssigneeIds: List<Int>,
+    val taskFileIds: List<Int>
 )

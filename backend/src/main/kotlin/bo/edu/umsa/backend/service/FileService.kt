@@ -30,9 +30,8 @@ class FileService @Autowired constructor(
 
     fun uploadFile(file: MultipartFile): FileDto {
         logger.info("Uploading the file ${file.originalFilename}")
-        // Upload the file
         val fileEntity = File()
-        fileEntity.filename = file.originalFilename!!
+        fileEntity.filename = sanitizeFilename(file.originalFilename!!)
         fileEntity.contentType = file.contentType!!
         fileEntity.fileData = file.bytes
         // Save the file
@@ -64,7 +63,7 @@ class FileService @Autowired constructor(
         val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId.toLong()) ?: throw EtnException(
             HttpStatus.NOT_FOUND, "Error: File not found", "Archivo no encontrado"
         )
-        fileEntity.filename = file.originalFilename!!
+        fileEntity.filename = sanitizeFilename(file.originalFilename!!)
         fileEntity.contentType = file.contentType!!
         fileEntity.fileData = file.bytes
         fileRepository.save(fileEntity)
@@ -80,6 +79,10 @@ class FileService @Autowired constructor(
         )
         fileEntity.thumbnail = thumbnailBytes
         fileRepository.save(fileEntity)
+    }
+
+    fun sanitizeFilename(filename: String): String {
+        return filename.map { if (it.toInt() in 0..255) it else '_' }.joinToString("")
     }
 
 }

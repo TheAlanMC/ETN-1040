@@ -1,13 +1,14 @@
 package bo.edu.umsa.backend.service
 
-import bo.edu.umsa.backend.dto.NewProjectDto
-import bo.edu.umsa.backend.dto.ProjectDto
-import bo.edu.umsa.backend.dto.TaskDto
+import bo.edu.umsa.backend.dto.*
 import bo.edu.umsa.backend.entity.*
 import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.ProjectMapper
+import bo.edu.umsa.backend.mapper.ProjectPartialMapper
 import bo.edu.umsa.backend.mapper.TaskMapper
+import bo.edu.umsa.backend.mapper.UserPartialMapper
 import bo.edu.umsa.backend.repository.*
+import bo.edu.umsa.backend.service.UserService.Companion
 import bo.edu.umsa.backend.specification.ProjectSpecification
 import bo.edu.umsa.backend.specification.TaskSpecification
 import bo.edu.umsa.backend.util.AuthUtil
@@ -33,6 +34,12 @@ class ProjectService @Autowired constructor(
 ) {
     companion object {
         private val logger = org.slf4j.LoggerFactory.getLogger(ProjectService::class.java)
+    }
+
+    fun getAllProjects(): List<ProjectPartialDto> {
+        logger.info("Getting all users")
+        val projectEntities = projectRepository.findAllByStatusIsTrueOrderByProjectIdAsc()
+        return projectEntities.map { ProjectPartialMapper.entityToDto(it) }
     }
 
     fun getProjects(
@@ -246,11 +253,11 @@ class ProjectService @Autowired constructor(
     }
 
     fun getProjectTasks(
-        projectId: Long, sortBy: String, sortType: String, page: Int, size: Int, keyword: String?
+        projectId: Long, sortBy: String, sortType: String, page: Int, size: Int, keyword: String?, status: String?
     ): Page<TaskDto> {
         logger.info("Getting the tasks for project $projectId")
         // Validate the project exists
-        val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(projectId) ?: throw EtnException(
+        projectRepository.findByProjectIdAndStatusIsTrue(projectId) ?: throw EtnException(
             HttpStatus.NOT_FOUND, "Error: Project not found", "Proyecto no encontrado"
         )
         // Pagination and sorting
@@ -258,12 +265,20 @@ class ProjectService @Autowired constructor(
         var specification: Specification<Task> = Specification.where(null)
         specification = specification.and(specification.and(TaskSpecification.statusIsTrue()))
         specification = specification.and(specification.and(TaskSpecification.projectId(projectId.toInt())))
-        if (keyword != null) {
-            specification = specification.and(specification.and(TaskSpecification.taskKeyword(keyword)))
+
+        if (!keyword.isNullOrEmpty() && keyword.isNotBlank()) {
+            specification = if (keyword.toIntOrNull() != null) {
+                specification.and(specification.and(TaskSpecification.taskPriority(keyword)))
+            } else {
+                specification.and(specification.and(TaskSpecification.taskKeyword(keyword)))
+            }
         }
+
+        if (!status.isNullOrEmpty() && status.isNotBlank()) {
+            specification = specification.and(specification.and(TaskSpecification.taskStatus(status)))
+        }
+
         val taskEntities: Page<Task> = taskRepository.findAll(specification, pageable)
         return taskEntities.map { TaskMapper.entityToDto(it) }
     }
-
-
 }

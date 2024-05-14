@@ -70,12 +70,12 @@ CREATE TABLE h_loaned_tool (
 -- Table: h_task
 CREATE TABLE h_task (
     h_task_id serial  NOT NULL,
-    project_project_id int  NOT NULL,
+    project_id int  NOT NULL,
     task_name varchar(100)  NOT NULL,
     task_description varchar(255)  NOT NULL,
     task_deadline timestamp  NOT NULL,
     task_priority int  NOT NULL,
-    task_status varchar(50)  NOT NULL,
+    task_statu_id int NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
     tx_user varchar(100)  NOT NULL,

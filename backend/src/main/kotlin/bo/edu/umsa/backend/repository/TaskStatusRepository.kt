@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository
 interface TaskStatusRepository : JpaRepository<TaskStatus, Long> {
 
     fun findByTaskStatusIdAndStatusIsTrue (taskStatusId: Long): TaskStatus?
+
+    fun findAllByStatusIsTrueOrderByTaskStatusId(): List<TaskStatus>
 }

@@ -5,4 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface TaskAssigneeRepository : JpaRepository<TaskAssignee, Long> {}
+interface TaskAssigneeRepository : JpaRepository<TaskAssignee, Long> {
+
+    fun findAllByTaskIdAndStatusIsTrue(taskId: Long): List<TaskAssignee>
+}

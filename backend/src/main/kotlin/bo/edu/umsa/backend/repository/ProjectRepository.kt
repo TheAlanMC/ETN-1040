@@ -14,4 +14,6 @@ interface ProjectRepository : JpaRepository<Project, Long> {
 
     fun findByProjectIdAndStatusIsTrue(projectId: Long): Project?
 
+    fun findAllByStatusIsTrueOrderByProjectIdAsc(): List<Project>
+
 }

@@ -55,15 +55,17 @@ class Task {
     @OneToMany(mappedBy = "task")
     var taskFiles: List<TaskFile>? = null
 
+    @OneToMany
+    @JoinColumn(name = "task_id", insertable = false, updatable = false)
+    var taskReviews: List<TaskReview>? = null
+
     @ManyToOne
     @JoinColumn(name = "task_status_id", insertable = false, updatable = false)
     var taskStatus: TaskStatus? = null
 
     @ManyToOne
-    @JoinColumn(name = "task_review_id", insertable = false, updatable = false)
-    var taskReview: TaskReview? = null
-
-    @ManyToOne
     @JoinColumn(name = "project_id", insertable = false, updatable = false)
     var project: Project? = null
+
+
 }

@@ -16,6 +16,7 @@ class TaskMapper {
                 taskPriority = task.taskPriority,
                 taskAssigneeIds = task.taskAssignees?.filter { it.status }?.mapNotNull { it.user?.userId }
                     ?: emptyList(),
+                taskFileIds = task.taskFiles?.filter { it.status }?.mapNotNull { it.file?.fileId } ?: emptyList()
             )
         }
     }

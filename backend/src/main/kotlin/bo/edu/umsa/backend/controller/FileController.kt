@@ -19,7 +19,7 @@ class FileController @Autowired constructor(
         private val logger = LoggerFactory.getLogger(FileController::class.java.name)
     }
 
-    @GetMapping("/files/{fileId}")
+    @GetMapping("/{fileId}")
     fun getFile(
         @PathVariable fileId: Long
     ) : ResponseEntity<ByteArray> {
@@ -34,7 +34,7 @@ class FileController @Autowired constructor(
         return ResponseEntity(fileDto.fileData, headers, HttpStatus.OK)
     }
 
-    @PostMapping("/files")
+    @PostMapping()
     fun uploadFile(
         @RequestParam("file") file: MultipartFile
     ) : ResponseEntity<ResponseDto<FileDto>> {
