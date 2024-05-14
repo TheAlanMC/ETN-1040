@@ -50,7 +50,7 @@ class TaskService @Autowired constructor(
     }
 
     fun getTasks(
-        sortBy: String, sortType: String, page: Int, size: Int, keyword: String?, status: String?
+        sortBy: String, sortType: String, page: Int, size: Int, keyword: String?, statuses: List<String>?
     ): Page<TaskDto> {
         val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(
             HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado"
@@ -75,9 +75,10 @@ class TaskService @Autowired constructor(
             }
         }
 
-        if (!status.isNullOrEmpty() && status.isNotBlank()) {
-            specification = specification.and(specification.and(TaskSpecification.taskStatus(status)))
+        if (!statuses.isNullOrEmpty()) {
+            specification = specification.and(specification.and(TaskSpecification.taskStatuses(statuses)))
         }
+
 
         val taskEntities: Page<Task> = taskRepository.findAll(specification, pageable)
         return taskEntities.map { TaskMapper.entityToDto(it) }

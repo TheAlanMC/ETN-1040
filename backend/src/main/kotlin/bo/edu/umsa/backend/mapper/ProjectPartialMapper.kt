@@ -9,7 +9,6 @@ class ProjectPartialMapper {
             return ProjectPartialDto(
                 projectId = project.projectId,
                 projectName = project.projectName,
-                projectDescription = project.projectDescription
             )
         }
     }

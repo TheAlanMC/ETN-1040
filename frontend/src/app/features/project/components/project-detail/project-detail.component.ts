@@ -57,10 +57,8 @@ export class ProjectDetailComponent implements OnInit {
     this.activatedRoute.parent?.params.subscribe(params => {
       this.projectId = params['id'];
       this.getAllUsers();
+      this.getProjectInfo();
     });
-    // this.projectId = this.activatedRoute.snapshot.params['id'];
-    // this.getAllUsers();
-    this.getProjectInfo();
   }
 
   public getProjectInfo() {

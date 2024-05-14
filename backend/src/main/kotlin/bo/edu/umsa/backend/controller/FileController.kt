@@ -25,7 +25,7 @@ class FileController @Autowired constructor(
     ) : ResponseEntity<ByteArray> {
         logger.info("Starting the API call to get the file")
         logger.info("GET /api/v1/files/$fileId")
-        AuthUtil.verifyAuthTokenHasRoles(listOf("VER TAREAS", "CREAR TAREAS", "EDITAR TAREAS").toTypedArray())
+        AuthUtil.verifyAuthTokenHasRoles(listOf("VER TAREAS","CREAR TAREAS", "EDITAR TAREAS","VER HERRAMIENTAS","CREAR HERRAMIENTAS","EDITAR HERRAMIENTAS").toTypedArray())
         val fileDto: FileDto = fileService.getFile(fileId)
         val headers = HttpHeaders()
         headers.contentType = MediaType.parseMediaType(fileDto.contentType)
@@ -40,7 +40,7 @@ class FileController @Autowired constructor(
     ) : ResponseEntity<ResponseDto<FileDto>> {
         logger.info("Starting the API call to upload a file")
         logger.info("POST /api/v1/files")
-        AuthUtil.verifyAuthTokenHasRoles(listOf("CREAR TAREAS", "EDITAR TAREAS").toTypedArray())
+        AuthUtil.verifyAuthTokenHasRoles(listOf("VER TAREAS","CREAR TAREAS", "EDITAR TAREAS","VER HERRAMIENTAS","CREAR HERRAMIENTAS","EDITAR HERRAMIENTAS").toTypedArray())
         val fileDto: FileDto = fileService.uploadFile(file)
         logger.info("Success: File uploaded")
         return ResponseEntity(ResponseDto(true, "Archivo subido", fileDto), HttpStatus.CREATED)

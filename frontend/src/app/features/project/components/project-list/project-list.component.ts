@@ -57,8 +57,8 @@ export class ProjectListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getData();
     this.getAllUsers();
+    this.getData();
   }
 
   public navigateToCreateProject() {

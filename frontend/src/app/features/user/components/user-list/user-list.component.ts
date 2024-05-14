@@ -63,7 +63,6 @@ export class UserListComponent implements OnInit {
   ngOnInit() {
     this.getData();
     this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
-      // When the user has stopped typing for 500 milliseconds, trigger the getAllTransactions method
       this.getData()
     });
   }

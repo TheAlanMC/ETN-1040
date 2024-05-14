@@ -253,7 +253,7 @@ class ProjectService @Autowired constructor(
     }
 
     fun getProjectTasks(
-        projectId: Long, sortBy: String, sortType: String, page: Int, size: Int, keyword: String?, status: String?
+        projectId: Long, sortBy: String, sortType: String, page: Int, size: Int, keyword: String?, statuses: List<String>?
     ): Page<TaskDto> {
         logger.info("Getting the tasks for project $projectId")
         // Validate the project exists
@@ -274,8 +274,8 @@ class ProjectService @Autowired constructor(
             }
         }
 
-        if (!status.isNullOrEmpty() && status.isNotBlank()) {
-            specification = specification.and(specification.and(TaskSpecification.taskStatus(status)))
+        if (!statuses.isNullOrEmpty()) {
+            specification = specification.and(specification.and(TaskSpecification.taskStatuses(statuses)))
         }
 
         val taskEntities: Page<Task> = taskRepository.findAll(specification, pageable)

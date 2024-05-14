@@ -23,7 +23,7 @@ VALUES  ('VER DASHBOARD', 'Acceso al dashboard del sistema', true, CURRENT_TIMES
         ('CREAR USUARIOS', 'Crear usuarios en el sistema', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         ('EDITAR USUARIOS', 'Editar usuarios en el sistema', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         ('GESTIONAR ROLES Y PERMISOS', 'Gestionar roles y permisos del sistema', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost');
-    
+
 -- User Group
 INSERT INTO "user_group" (user_id, group_id, status, tx_date, tx_user, tx_host)
 VALUES  (1, 1, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost');
@@ -62,3 +62,14 @@ VALUES  ('PENDIENTE', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'loc
         ('EN PROCESO', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         ('FINALIZADO', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost');
         
+-- Funciones de Herramientas
+-- INSERT INTO "role" (role_name, role_description, status, tx_date, tx_user, tx_host)
+-- VALUES
+--         ('VER HERRAMIENTAS', 'Ver herramientas del Laboratorio Multimedia', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
+--         ('CREAR HERRAMIENTAS', 'Crear herramientas en el Laboratorio Multimedia', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
+--         ('EDITAR HERRAMIENTAS', 'Editar herramientas en el Laboratorio Multimedia', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost');
+
+-- INSERT INTO "group_role" (group_id, role_id, status, tx_date, tx_user, tx_host)
+-- VALUES  (1, 14, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
+--         (1, 15, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
+--         (1, 15, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost');

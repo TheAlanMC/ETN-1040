@@ -5,4 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ToolRepository : JpaRepository<Tool, Long> {}
+interface ToolRepository : JpaRepository<Tool, Long> {
+
+    fun findAllByStatusIsTrue(): List<Tool>
+
+    fun findByToolIdAndStatusIsTrue(toolId: Long): Tool?
+}

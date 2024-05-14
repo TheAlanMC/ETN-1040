@@ -7,6 +7,7 @@ import {UtilService} from "./util.service";
 import {Nullable} from "primeng/ts-helpers";
 import {PageDto} from "../models/page.dto";
 import {ProjectDto} from "../../features/project/models/project.dto";
+import {TaskDto} from "../../features/task/models/task.dto";
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +51,11 @@ export class ProjectService {
 
   public deleteProject(projectId: number): Observable<ResponseDto<Nullable>> {
     return this.http.delete<ResponseDto<Nullable>>(`${this.baseUrl}/${projectId}`, this.utilService.getHttpOptions());
+  }
+
+  public getProjectTasks(projectId: number, sortBy: string, sortType: string, page: number, size: number, keyword: string, statuses: string[]): Observable<ResponseDto<PageDto<TaskDto>>> {
+    const statusList = statuses.join(',');
+    return this.http.get<ResponseDto<PageDto<TaskDto>>>(`${this.baseUrl}/${projectId}/tasks?sortBy=${sortBy}&sortType=${sortType}&page=${page}&size=${size}&keyword=${keyword}&statuses=${statusList}`, this.utilService.getHttpOptions());
   }
 }
 

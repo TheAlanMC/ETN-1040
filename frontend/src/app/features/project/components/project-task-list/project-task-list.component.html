@@ -1,1 +1,130 @@
-<p>project-task-list works!</p>
+<p-toast></p-toast>
+  <p-confirmDialog [style]="{width: '350px'}" acceptButtonStyleClass="p-button-primary" header="Confirmation"
+                   icon="pi pi-exclamation-triangle"
+                   key="confirmDeleteTask"
+                   message="'¿Estás seguro de que deseas eliminar esta tarea? Esta acción no se puede deshacer.'"
+                   rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+<div class="flex flex-wrap gap-3 align-items-center justify-content-between mb-3">
+        <span class="p-input-icon-left w-full sm:w-20rem flex-order-0 sm:flex-order-0">
+          <i class="pi pi-search"></i>
+          <input (input)="onSearch($event)" [(ngModel)]="keyword" class="input w-full right-search-input"
+                 pInputText
+                 placeholder="Busqueda Global" type="text">
+        </span>
+  <button (click)="navigateToCreateTask()" *ngIf="canAddTask"
+          class="p-button-outlined w-full sm:w-auto flex-order-1 sm:flex-order-1" icon="pi pi-plus-circle"
+          label="Crear Tarea" pButton></button>
+</div>
+<div class="mb-3">
+  <p-multiSelect [(ngModel)]="selectedStatus" [options]="statusItems"
+                 class="multiselect-custom"
+                 [style]="{'width': '100%'}"
+                 display="chip"
+                 optionLabel="label" placeholder="Seleccionar Estado" [showClear]="true" (onChange)="onStatusChange($event)">
+  </p-multiSelect>
+</div>
+
+  <p-table (onPage)="onPageChange($event)" (onSort)="onSortChange($event)" [customSort]="true" [lazy]="true"
+           [loading]="isLoading"
+           [paginator]="true" [rowsPerPageOptions]="[5, 10, 25]" [rows]="10" [showCurrentPageReport]="true"
+           [totalRecords]="totalElements" [value]="tasks"
+           currentPageReportTemplate="Mostrando registros {first}-{last} de {totalRecords}">
+<!--    <ng-template pTemplate="caption">-->
+
+<!--    </ng-template>-->
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="white-space-nowrap" pSortableColumn="taskPriority" style="width:5%"> Prioridad
+          <p-sortIcon field="taskPriority"></p-sortIcon>
+        </th>
+        <th class="white-space-nowrap" pSortableColumn="taskName" style="width:20%"> Nombre de la Tarea
+          <p-sortIcon field="taskName"></p-sortIcon>
+        </th>
+        <th class="white-space-nowrap" pSortableColumn="txDate" style="width:15%"> Fecha de Creación
+          <p-sortIcon field="txDate"></p-sortIcon>
+        </th>
+        <th class="white-space-nowrap" pSortableColumn="taskDeadline" style="width:15%"> Fecha Límite
+          <p-sortIcon field="taskDeadline"></p-sortIcon>
+        </th>
+<!--        <th class="white-space-nowrap" pSortableColumn="txUser" style="width:10%"> Creado por-->
+<!--          <p-sortIcon field="txUser"></p-sortIcon>-->
+<!--        </th>-->
+        <th class="white-space-nowrap" pSortableColumn="taskStatusId" style="width:15%"> Estado
+          <p-sortIcon field="taskStatusId"></p-sortIcon>
+        </th>
+        <th class="white-space-nowrap" style="width:15%">Responsables</th>
+        <th class="white-space-nowrap" style="width:10%">Acciones</th>
+      </tr>
+    </ng-template>
+    <ng-template let-task pTemplate="body">
+      <tr>
+        <td>
+
+          <p-tag [style]="{background: getPriorityColor(task.taskPriority), color: '#ffffff', fontSize: '14px'}"
+                                  value="NIVEL {{task.taskPriority}}"></p-tag>
+        </td>
+        <td>{{ task.taskName }}</td>
+        <td>{{ task.taskCreationDate | date: 'MM/dd/yyyy, HH:mm' }}</td>
+        <td>{{ task.taskDeadline | date: 'MM/dd/yyyy, HH:mm' }}</td>
+<!--        <td>{{ task.createdBy }}</td>-->
+        <td>
+          <div class="flex align-items-center gap-2 flex-wrap">
+            <p-tag [style]="{background: getStatusColor(task.taskStatus.taskStatusId),}"
+                   value="{{task.taskStatus.taskStatusName}}"></p-tag>
+            <p-tag [style]="{background: '#FF000080'}"
+                   *ngIf="checkIfTaskIsOverdue(task.taskStatus.taskStatusId, task.taskDeadline)">
+              VENCIDA {{task.taskDeadline | timeAgo | uppercase}}
+            </p-tag>
+          </div>
+
+        <td>
+          <p-avatarGroup styleClass="mb-3">
+            <p-avatar (error)="setImageLoaded(userId, false)"
+                      (load)="setImageLoaded(userId, true)"
+                      *ngFor="let userId of task.taskAssigneeIds | slice : 0 : 5"
+                      [image]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                      pTooltip="{{getFullName(userId)}}"
+                      shape="circle"
+                      size="large" tooltipPosition="top"
+            >
+            </p-avatar>
+            <p-avatar (click)="responsible.toggle($event)" *ngIf="task.taskAssigneeIds.length > 5"
+                      [style]="{'background-color':'#D7D7D7', 'color': '#ffffff'}"
+                      label="+{{task.taskAssigneeIds.length - 5}}"
+                      shape="circle" size="large"></p-avatar>
+          </p-avatarGroup>
+          <p-overlayPanel #responsible>
+            <span class="font-medium text-900 block mb-2">Responsables</span>
+            <ul class="list-none p-0 m-0 flex flex-column gap-3">
+              <li *ngFor="let userId of task.taskAssigneeIds" class="flex align-items-center gap-2">
+                <img
+                  (error)="setImageLoaded(userId, false)"
+                  (load)="setImageLoaded(userId, true)"
+                  [src]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                  alt="{{userId}}"
+                  class="mr-2"
+                  style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
+                <div>
+                  <span class="font-medium">{{ getFullName(userId) }}</span>
+                  <div class="text-sm text-color-secondary">{{ getEmail(userId) }}</div>
+                </div>
+              </li>
+            </ul>
+          </p-overlayPanel>
+        </td>
+        <td>
+          <div class="inline-flex align-items-center">
+            <button (click)="navigateToViewTask(task.taskId)"
+                    class="p-button-rounded p-button p-button-secondary mr-1" icon="pi pi-eye"
+                    pButton></button>
+            <button (click)="navigateToEditTask(task.taskId)" *ngIf="canEditTask&&(isOwner || isModerator)"
+                    class="p-button-rounded p-button p-button-secondary mr-1"
+                    icon="pi pi-pencil" pButton></button>
+            <button (click)="onDeleteTask(task.taskId)" *ngIf="canEditTask&&(isOwner || isModerator)"
+                    class="p-button-rounded p-button p-button-secondary"
+                    icon="pi pi-trash" pButton></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>

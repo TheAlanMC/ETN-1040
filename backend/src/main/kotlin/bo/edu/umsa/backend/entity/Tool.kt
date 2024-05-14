@@ -41,7 +41,7 @@ class Tool {
     var txHost: String = HttpUtil.getRequestHost() ?: "localhost"
 
     @ManyToOne
-    @JoinColumn(name = "file_id", insertable = false, updatable = false)
+    @JoinColumn(name = "file_photo_id", referencedColumnName = "file_id", insertable = false, updatable = false)
     var file: File? = null
 
     @OneToMany(mappedBy = "tool")

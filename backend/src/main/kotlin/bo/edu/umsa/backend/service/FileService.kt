@@ -30,10 +30,17 @@ class FileService @Autowired constructor(
 
     fun uploadFile(file: MultipartFile): FileDto {
         logger.info("Uploading the file ${file.originalFilename}")
+        // Validate the file is an image
+
         val fileEntity = File()
         fileEntity.filename = sanitizeFilename(file.originalFilename!!)
         fileEntity.contentType = file.contentType!!
         fileEntity.fileData = file.bytes
+        if (file.contentType!!.startsWith("image")) {
+            val thumbnailBytes = thumbnailService.createThumbnail(file)
+            fileEntity.thumbnail = thumbnailBytes
+            fileEntity.isPicture = true
+        }
         // Save the file
         val savedFile: File = fileRepository.save(fileEntity)
         return FileDto (

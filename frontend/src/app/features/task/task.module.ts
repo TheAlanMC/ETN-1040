@@ -12,7 +12,6 @@ import {FullCalendarModule} from "@fullcalendar/angular";
 import {InputTextModule} from "primeng/inputtext";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {PaginatorModule} from "primeng/paginator";
-import {SharedModule} from "primeng/api";
 
 
 @NgModule({
@@ -32,7 +31,6 @@ import {SharedModule} from "primeng/api";
     InputTextModule,
     InputTextareaModule,
     PaginatorModule,
-    SharedModule
   ]
 })
 export class TaskModule {

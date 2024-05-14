@@ -33,6 +33,10 @@ import {ProjectTaskCalendarComponent} from './components/project-task-calendar/p
 import {TabMenuModule} from "primeng/tabmenu";
 import {StepsModule} from "primeng/steps";
 import {TabViewModule} from "primeng/tabview";
+import {TagModule} from "primeng/tag";
+import {AppLayoutModule} from "../../layout/app.layout.module";
+import {TimeAgoPipe} from "../../core/pipes/time-ago.pipe";
+import {SharedModule} from "../../shared/shared.module";
 
 
 @NgModule({
@@ -73,7 +77,10 @@ import {TabViewModule} from "primeng/tabview";
     ProgressSpinnerModule,
     TabMenuModule,
     StepsModule,
-    TabViewModule
+    TabViewModule,
+    TagModule,
+    AppLayoutModule,
+    SharedModule
   ]
 })
 export class ProjectModule {

@@ -12,7 +12,8 @@ class TaskSpecification {
     companion object {
 
         fun taskKeyword(keyword: String): Specification<Task> {
-            return Specification { root, _, cb ->
+            return Specification { root, query, cb ->
+                query.distinct(true)
                 cb.or(
                     cb.like(cb.lower(root.get("taskName")), "%${keyword.lowercase()}%"),
                     cb.like(cb.lower(root.get("taskDescription")), "%${keyword.lowercase()}%"),
@@ -54,6 +55,13 @@ class TaskSpecification {
                 cb.equal(root.get<Task>("taskStatus").get<TaskStatus>("taskStatusName"), taskStatus)
             }
         }
+
+        fun taskStatuses(taskStatuses: List<String>): Specification<Task> {
+            return Specification { root, _, cb ->
+                cb.`in`(root.get<Any>("taskStatus").get<Any>("taskStatusName")).value(taskStatuses)
+            }
+        }
+
 
         fun taskPriority(taskPriority: String): Specification<Task> {
             return Specification { root, _, cb ->
