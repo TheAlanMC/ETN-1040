@@ -1,13 +1,14 @@
 package bo.edu.umsa.backend.service
 
 import bo.edu.umsa.backend.dto.NewTaskDto
+import bo.edu.umsa.backend.dto.TaskCommentDto
 import bo.edu.umsa.backend.dto.TaskDto
 import bo.edu.umsa.backend.dto.TaskStatusDto
-import bo.edu.umsa.backend.entity.ProjectModerator
 import bo.edu.umsa.backend.entity.Task
 import bo.edu.umsa.backend.entity.TaskAssignee
 import bo.edu.umsa.backend.entity.TaskFile
 import bo.edu.umsa.backend.exception.EtnException
+import bo.edu.umsa.backend.mapper.TaskCommentMapper
 import bo.edu.umsa.backend.mapper.TaskMapper
 import bo.edu.umsa.backend.mapper.TaskStatusMapper
 import bo.edu.umsa.backend.repository.*
@@ -36,6 +37,7 @@ class TaskService @Autowired constructor(
     private val taskAssigneeRepository: TaskAssigneeRepository,
     private val taskFileRepository: TaskFileRepository,
     private val taskStatusRepository: TaskStatusRepository,
+    private val taskCommentRepository: TaskCommentRepository
 ) {
     companion object {
         private val logger = org.slf4j.LoggerFactory.getLogger(TaskService::class.java)
@@ -282,10 +284,7 @@ class TaskService @Autowired constructor(
         val taskEntity = taskRepository.findByTaskIdAndStatusIsTrue(taskId) ?: throw EtnException(
             HttpStatus.NOT_FOUND, "Error: Task not found", "Tarea no encontrada"
         )
-        // Validate the project exists
-        projectRepository.findByProjectIdAndStatusIsTrue(newTaskDto.projectId.toLong()) ?: throw EtnException(
-            HttpStatus.BAD_REQUEST, "Error: Project does not exist", "El proyecto no existe"
-        )
+
         // Validate the task assignees exist
         if (userRepository.findAllByUserIdInAndStatusIsTrue(newTaskDto.taskAssigneeIds).size != newTaskDto.taskAssigneeIds.size) {
             throw EtnException(
@@ -296,9 +295,9 @@ class TaskService @Autowired constructor(
         }
         // Validate that the user is the project owner or a project moderator
         if (projectOwnerRepository.findByProjectIdAndUserIdAndStatusIsTrue(
-                newTaskDto.projectId.toLong(), userId
+                taskEntity.projectId.toLong(), userId
             ) == null && projectModeratorRepository.findByProjectIdAndUserIdAndStatusIsTrue(
-                newTaskDto.projectId.toLong(), userId
+                taskEntity.projectId.toLong(), userId
             ) == null
         ) {
             throw EtnException(
@@ -309,7 +308,7 @@ class TaskService @Autowired constructor(
         }
         // Validate the assignees are project members
         if (projectMemberRepository.findAllByProjectIdAndUserIdInAndStatusIsTrue(
-                newTaskDto.projectId.toLong(),
+                taskEntity.projectId.toLong(),
                 newTaskDto.taskAssigneeIds
             ).size != newTaskDto.taskAssigneeIds.size
         ) {
@@ -333,7 +332,6 @@ class TaskService @Autowired constructor(
 
         logger.info("Updating the task with id $taskId")
         // Update the task
-        taskEntity.projectId = newTaskDto.projectId
         taskEntity.taskName = newTaskDto.taskName
         taskEntity.taskDescription = newTaskDto.taskDescription
         taskEntity.taskDeadline = Timestamp.from(Instant.parse(newTaskDto.taskDeadline))
@@ -420,6 +418,14 @@ class TaskService @Autowired constructor(
         val taskEntity = taskRepository.findByTaskIdAndStatusIsTrue(taskId) ?: throw EtnException(
             HttpStatus.NOT_FOUND, "Error: Task not found", "Tarea no encontrada"
         )
+        // Validate that the task status id is equal to 1 (To Do) or (Pendiente)
+        if (taskEntity.taskStatusId != 1) {
+            throw EtnException(
+                HttpStatus.BAD_REQUEST,
+                "Error: Task status is in progress or completed",
+                "La tarea ya está en progreso o completada"
+            )
+        }
         // Validate that the user is the project owner or a project moderator
         if (projectOwnerRepository.findByProjectIdAndUserIdAndStatusIsTrue(
                 taskEntity.projectId.toLong(), userId
@@ -436,5 +442,38 @@ class TaskService @Autowired constructor(
         // Delete the task
         taskEntity.status = false
         taskRepository.save(taskEntity)
+    }
+
+    fun getTaskComments(taskId: Long): List<TaskCommentDto> {
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(
+            HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado"
+        )
+        logger.info("Getting the task comments for user $userId")
+        // Validate the user exists
+        userRepository.findByUserIdAndStatusIsTrue(userId) ?: throw EtnException(
+            HttpStatus.NOT_FOUND, "Error: User not found", "Usuario no encontrado"
+        )
+        // Validate the task exists
+        val taskEntity = taskRepository.findByTaskIdAndStatusIsTrue(taskId) ?: throw EtnException(
+            HttpStatus.NOT_FOUND, "Error: Task not found", "Tarea no encontrada"
+        )
+        // Validate that the user is the project owner, a project moderator or a project member
+        if (projectOwnerRepository.findByProjectIdAndUserIdAndStatusIsTrue(
+                taskEntity.projectId.toLong(), userId
+            ) == null && projectModeratorRepository.findByProjectIdAndUserIdAndStatusIsTrue(
+                taskEntity.projectId.toLong(), userId
+            ) == null && projectMemberRepository.findByProjectIdAndUserIdAndStatusIsTrue(
+                taskEntity.projectId.toLong(), userId
+            ) == null
+        ) {
+            throw EtnException(
+                HttpStatus.FORBIDDEN,
+                "Error: User is not the project owner or a project moderator",
+                "El usuario no es el propietario del proyecto, un colaborador del proyecto o un miembro del proyecto"
+            )
+        }
+        // Get the task comments
+        val taskCommentEntities = taskCommentRepository.findAllByTaskIdAndStatusIsTrueOrderByCommentNumberDesc(taskId)
+        return taskCommentEntities.map { TaskCommentMapper.entityToDto(it) }
     }
 }

@@ -103,9 +103,20 @@ class TaskController @Autowired constructor(
         logger.info("Starting the API call to delete the task")
         logger.info("DELETE /api/v1/tasks/$taskId")
         AuthUtil.verifyAuthTokenHasRole("EDITAR TAREAS")
-        taskService.deleteTask(taskId.toLong())
+        taskService.deleteTask(taskId)
         logger.info("Success: Task deleted")
         return ResponseEntity(ResponseDto(true, "La tarea se ha eliminado", null), HttpStatus.OK)
     }
 
+    @GetMapping("/{taskId}/comments")
+    fun getComments(
+        @PathVariable taskId: Long
+    ): ResponseEntity<ResponseDto<List<TaskCommentDto>>> {
+        logger.info("Starting the API call to get the comments of the task")
+        logger.info("GET /api/v1/tasks/$taskId/comments")
+        AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
+        val comments: List<TaskCommentDto> = taskService.getTaskComments(taskId)
+        logger.info("Success: Comments retrieved")
+        return ResponseEntity(ResponseDto(true, "Comentarios recuperados", comments), HttpStatus.OK)
+    }
 }

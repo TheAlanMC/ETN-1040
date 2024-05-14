@@ -56,7 +56,8 @@ CREATE TABLE group_role (
 
 -- Table: h_loaned_tool
 CREATE TABLE h_loaned_tool (
-    h_loaned_tool_id int  NOT NULL,
+    h_loaned_tool_id serial  NOT NULL,
+    loaned_tool_id int  NOT NULL,
     task_id int  NOT NULL,
     tool_id int  NOT NULL,
     user_id int  NOT NULL,
@@ -70,6 +71,7 @@ CREATE TABLE h_loaned_tool (
 -- Table: h_task
 CREATE TABLE h_task (
     h_task_id serial  NOT NULL,
+    task_id int  NOT NULL,
     project_id int  NOT NULL,
     task_name varchar(100)  NOT NULL,
     task_description varchar(255)  NOT NULL,
@@ -86,6 +88,7 @@ CREATE TABLE h_task (
 -- Table: h_task_assignee
 CREATE TABLE h_task_assignee (
     h_task_assignee_id serial  NOT NULL,
+    task_assignee_id int  NOT NULL,
     task_id int  NOT NULL,
     user_id int  NOT NULL,
     status boolean  NOT NULL,
@@ -98,6 +101,7 @@ CREATE TABLE h_task_assignee (
 -- Table: h_task_comment
 CREATE TABLE h_task_comment (
     h_task_comment_id serial  NOT NULL,
+    task_comment_id int  NOT NULL,
     task_id int  NOT NULL,
     user_id int  NOT NULL,
     comment_number int  NOT NULL,
@@ -112,6 +116,7 @@ CREATE TABLE h_task_comment (
 -- Table: h_task_comment_file
 CREATE TABLE h_task_comment_file (
     h_task_comment_file_id serial  NOT NULL,
+    task_comment_file_id int  NOT NULL,
     task_comment_id int  NOT NULL,
     file_id int  NOT NULL,
     status boolean  NOT NULL,
@@ -124,6 +129,7 @@ CREATE TABLE h_task_comment_file (
 -- Table: h_tool
 CREATE TABLE h_tool (
     h_tool_id serial  NOT NULL,
+    tool_id int  NOT NULL,
     file_photo_id int  NOT NULL,
     tool_code varchar(50)  NOT NULL,
     tool_name varchar(50)  NOT NULL,
@@ -138,7 +144,7 @@ CREATE TABLE h_tool (
 
 -- Table: loaned_tool
 CREATE TABLE loaned_tool (
-    loaned_tool_id int  NOT NULL,
+    loaned_tool_id serial  NOT NULL,
     task_id int  NOT NULL,
     tool_id int  NOT NULL,
     user_id int  NOT NULL,
