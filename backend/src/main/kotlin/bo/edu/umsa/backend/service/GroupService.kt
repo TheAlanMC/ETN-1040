@@ -36,9 +36,7 @@ class GroupService @Autowired constructor(
     fun createGroup(groupDto: GroupDto) {
         // Validate that the fields are not empty
         if (groupDto.groupName.isBlank() || groupDto.groupDescription.isBlank()) throw EtnException(
-            HttpStatus.BAD_REQUEST,
-            "Error: Empty fields",
-            "Al menos un campo está vacío"
+            HttpStatus.BAD_REQUEST, "Error: Empty fields", "Al menos un campo está vacío"
         )
         logger.info("Creating group")
         val groupEntity = Group()
@@ -50,15 +48,11 @@ class GroupService @Autowired constructor(
     fun updateGroup(groupId: Long, groupDto: GroupDto) {
         // Validate that the fields are not empty
         if (groupDto.groupName.isBlank() || groupDto.groupDescription.isBlank()) throw EtnException(
-            HttpStatus.BAD_REQUEST,
-            "Error: Empty fields",
-            "Al menos un campo está vacío"
+            HttpStatus.BAD_REQUEST, "Error: Empty fields", "Al menos un campo está vacío"
         )
         logger.info("Updating group")
         val groupEntity = groupRepository.findByGroupIdAndStatusIsTrue(groupId) ?: throw EtnException(
-            HttpStatus.NOT_FOUND,
-            "Error: Group not found",
-            "Grupo no encontrado"
+            HttpStatus.NOT_FOUND, "Error: Group not found", "Grupo no encontrado"
         )
         groupEntity.groupName = groupDto.groupName.uppercase(Locale.getDefault())
         groupEntity.groupDescription = groupDto.groupDescription
@@ -68,22 +62,16 @@ class GroupService @Autowired constructor(
     fun deleteGroup(groupId: Long) {
         logger.info("Deleting group")
         val groupEntity = groupRepository.findByGroupIdAndStatusIsTrue(groupId) ?: throw EtnException(
-            HttpStatus.NOT_FOUND,
-            "Error: Group not found",
-            "Grupo no encontrado"
+            HttpStatus.NOT_FOUND, "Error: Group not found", "Grupo no encontrado"
         )
         // Validate that the group has no roles nor users assigned
         val groupRoleEntities = groupRoleRepository.findAllByGroupIdAndStatusIsTrue(groupId)
         if (groupRoleEntities.isNotEmpty()) throw EtnException(
-            HttpStatus.BAD_REQUEST,
-            "Error: Group has roles assigned",
-            "El grupo tiene roles asignados"
+            HttpStatus.BAD_REQUEST, "Error: Group has roles assigned", "El grupo tiene roles asignados"
         )
         val userGroupEntities = userGroupRepository.findAllByGroupIdAndStatusIsTrue(groupId)
         if (userGroupEntities.isNotEmpty()) throw EtnException(
-            HttpStatus.BAD_REQUEST,
-            "Error: Group has users assigned",
-            "El grupo tiene usuarios asignados"
+            HttpStatus.BAD_REQUEST, "Error: Group has users assigned", "El grupo tiene usuarios asignados"
         )
         groupEntity.status = false
         groupRepository.save(groupEntity)
@@ -93,9 +81,7 @@ class GroupService @Autowired constructor(
         logger.info("Getting roles for group with id $groupId")
         // Validate that the group exists
         groupRepository.findByGroupIdAndStatusIsTrue(groupId) ?: throw EtnException(
-            HttpStatus.NOT_FOUND,
-            "Error: Group not found",
-            "Grupo no encontrado"
+            HttpStatus.NOT_FOUND, "Error: Group not found", "Grupo no encontrado"
         )
         // Get the roles
         val roleEntities = roleRepository.findAllByGroupId(groupId)
@@ -106,16 +92,12 @@ class GroupService @Autowired constructor(
         logger.info("Adding roles to group with id $groupId")
         // Validate that the group exists
         groupRepository.findByGroupIdAndStatusIsTrue(groupId) ?: throw EtnException(
-            HttpStatus.NOT_FOUND,
-            "Error: Group not found",
-            "Grupo no encontrado"
+            HttpStatus.NOT_FOUND, "Error: Group not found", "Grupo no encontrado"
         )
         // Validate that the roles exist
         val roleEntities = roleRepository.findAllByRoleIds(roleIds)
         if (roleEntities.size != roleIds.size) throw EtnException(
-            HttpStatus.NOT_FOUND,
-            "Error: Role not found",
-            "Al menos un rol no fue encontrado"
+            HttpStatus.NOT_FOUND, "Error: Role not found", "Al menos un rol no fue encontrado"
         )
         // Delete previous roles changing the status to false
         logger.info("Deleting previous roles")

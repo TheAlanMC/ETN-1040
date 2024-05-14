@@ -8,4 +8,8 @@ import org.springframework.stereotype.Repository
 interface FileRepository : JpaRepository<File, Long> {
 
     fun findByFileIdAndStatusIsTrue(fileId: Long): File?
+
+    fun findAllByFileIdInAndStatusIsTrue(fileIds: List<Int>): List<File>
+
+
 }

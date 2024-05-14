@@ -1,0 +1,8 @@
+package bo.edu.umsa.backend.repository
+
+import bo.edu.umsa.backend.entity.TaskAssignee
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
+
+@Repository
+interface TaskAssigneeRepository : JpaRepository<TaskAssignee, Long> {}

@@ -1,5 +1,6 @@
 package bo.edu.umsa.backend.controller
 
+import bo.edu.umsa.backend.controller.TaskController.Companion
 import bo.edu.umsa.backend.dto.*
 import bo.edu.umsa.backend.service.ProjectService
 import bo.edu.umsa.backend.util.AuthUtil
@@ -84,4 +85,20 @@ class ProjectController @Autowired constructor(
         return ResponseEntity(ResponseDto(true, "El proyecto se ha eliminado", null), HttpStatus.OK)
     }
 
+    @GetMapping("/{projectId}/tasks")
+    fun getProjectTasks(
+        @PathVariable projectId: Long,
+        @RequestParam(defaultValue = "taskId") sortBy: String,
+        @RequestParam(defaultValue = "asc") sortType: String,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int,
+        @RequestParam(required = false) keyword: String?
+    ): ResponseEntity<ResponseDto<Page<TaskDto>>> {
+        logger.info("Starting the API call to get the tasks")
+        logger.info("GET /api/v1/projects/$projectId/tasks")
+        AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
+        val tasks: Page<TaskDto> = projectService.getProjectTasks(projectId, sortBy, sortType, page, size, keyword)
+        logger.info("Success: Tasks retrieved")
+        return ResponseEntity(ResponseDto(true, "Tareas recuperadas", tasks), HttpStatus.OK)
+    }
 }

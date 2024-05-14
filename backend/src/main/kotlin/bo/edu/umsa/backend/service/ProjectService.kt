@@ -2,14 +2,14 @@ package bo.edu.umsa.backend.service
 
 import bo.edu.umsa.backend.dto.NewProjectDto
 import bo.edu.umsa.backend.dto.ProjectDto
-import bo.edu.umsa.backend.entity.Project
-import bo.edu.umsa.backend.entity.ProjectMember
-import bo.edu.umsa.backend.entity.ProjectModerator
-import bo.edu.umsa.backend.entity.ProjectOwner
+import bo.edu.umsa.backend.dto.TaskDto
+import bo.edu.umsa.backend.entity.*
 import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.ProjectMapper
+import bo.edu.umsa.backend.mapper.TaskMapper
 import bo.edu.umsa.backend.repository.*
 import bo.edu.umsa.backend.specification.ProjectSpecification
+import bo.edu.umsa.backend.specification.TaskSpecification
 import bo.edu.umsa.backend.util.AuthUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -29,16 +29,14 @@ class ProjectService @Autowired constructor(
     private val projectOwnerRepository: ProjectOwnerRepository,
     private val projectModeratorRepository: ProjectModeratorRepository,
     private val projectMemberRepository: ProjectMemberRepository,
+    private val taskRepository: TaskRepository,
 ) {
     companion object {
         private val logger = org.slf4j.LoggerFactory.getLogger(ProjectService::class.java)
     }
 
     fun getProjects(
-        sortBy: String,
-        sortType: String,
-        page: Int,
-        size: Int
+        sortBy: String, sortType: String, page: Int, size: Int
     ): Page<ProjectDto> {
         logger.info("Getting the projects")
         // Pagination and sorting
@@ -75,26 +73,20 @@ class ProjectService @Autowired constructor(
             logger.info("Date from: $dateFrom, Date to: $dateTo")
         } catch (e: Exception) {
             throw EtnException(
-                HttpStatus.BAD_REQUEST,
-                "Error: Date format is incorrect",
-                "El formato de fecha es incorrecto"
+                HttpStatus.BAD_REQUEST, "Error: Date format is incorrect", "El formato de fecha es incorrecto"
             )
         }
         if (Timestamp.from(Instant.parse(newProjectDto.dateFrom))
                 .after(Timestamp.from(Instant.parse(newProjectDto.dateTo)))
         ) {
             throw EtnException(
-                HttpStatus.BAD_REQUEST,
-                "Error: Date range is incorrect",
-                "El rango de fechas es incorrecto"
+                HttpStatus.BAD_REQUEST, "Error: Date range is incorrect", "El rango de fechas es incorrecto"
             )
         }
         // Validate the project moderators are not empty and valid
         if (newProjectDto.projectModeratorIds.isEmpty()) {
             throw EtnException(
-                HttpStatus.BAD_REQUEST,
-                "Error: At least one moderator is required",
-                "Se requiere al menos un moderador"
+                HttpStatus.BAD_REQUEST, "Error: At least one moderator is required", "Se requiere al menos un moderador"
             )
         }
         // Validate the project members are not empty
@@ -105,24 +97,24 @@ class ProjectService @Autowired constructor(
                 "Se requiere al menos un miembro del equipo"
             )
         }
+        // Get the project owner id from the token
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(
+            HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado"
+        )
         // Validate the project moderators exist
-        if (userRepository.findAllInUserIdAndStatusIsTrue(newProjectDto.projectModeratorIds.map { it.toLong() }).size != newProjectDto.projectModeratorIds.size) {
+        if (userRepository.findAllByUserIdInAndStatusIsTrue(newProjectDto.projectModeratorIds).size != newProjectDto.projectModeratorIds.size) {
             throw EtnException(
-                HttpStatus.BAD_REQUEST, "Error: At least one moderator is invalid", "Al menos un moderador es inválido"
+                HttpStatus.BAD_REQUEST,
+                "Error: At least one moderator is invalid",
+                "Al menos un colaborador es inválido"
             )
         }
         // Validate the project members exist
-        if (userRepository.findAllInUserIdAndStatusIsTrue(newProjectDto.projectMemberIds.map { it.toLong() }).size != newProjectDto.projectMemberIds.size) {
+        if (userRepository.findAllByUserIdInAndStatusIsTrue(newProjectDto.projectMemberIds).size != newProjectDto.projectMemberIds.size) {
             throw EtnException(
                 HttpStatus.BAD_REQUEST, "Error: At least one member is invalid", "Al menos un miembro es inválido"
             )
         }
-        // Get the project owner id from the token
-        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(
-            HttpStatus.UNAUTHORIZED,
-            "Error: Unauthorized",
-            "No autorizado"
-        )
         logger.info("Creating a new project with owner id $userId")
 
         // Create the project
@@ -166,9 +158,7 @@ class ProjectService @Autowired constructor(
         // Validate the project name is not empty
         if (projectDto.projectName.isEmpty()) {
             throw EtnException(
-                HttpStatus.BAD_REQUEST,
-                "Error: Project name is required",
-                "Se requiere el nombre del proyecto"
+                HttpStatus.BAD_REQUEST, "Error: Project name is required", "Se requiere el nombre del proyecto"
             )
         }
         // Validate the project moderators are not empty and valid
@@ -176,7 +166,7 @@ class ProjectService @Autowired constructor(
             throw EtnException(
                 HttpStatus.BAD_REQUEST,
                 "Error: At least one moderator is required",
-                "Se requiere al menos un moderador"
+                "Se requiere al menos un colaborador"
             )
         }
         // Validate the project members are not empty
@@ -188,13 +178,15 @@ class ProjectService @Autowired constructor(
             )
         }
         // Validate the project moderators exist
-        if (userRepository.findAllInUserIdAndStatusIsTrue(projectDto.projectModeratorIds.map { it.toLong() }).size != projectDto.projectModeratorIds.size) {
+        if (userRepository.findAllByUserIdInAndStatusIsTrue(projectDto.projectModeratorIds).size != projectDto.projectModeratorIds.size) {
             throw EtnException(
-                HttpStatus.BAD_REQUEST, "Error: At least one moderator is invalid", "Al menos un moderador es inválido"
+                HttpStatus.BAD_REQUEST,
+                "Error: At least one moderator is invalid",
+                "Al menos un colaborador es inválido"
             )
         }
         // Validate the project members exist
-        if (userRepository.findAllInUserIdAndStatusIsTrue(projectDto.projectMemberIds.map { it.toLong() }).size != projectDto.projectMemberIds.size) {
+        if (userRepository.findAllByUserIdInAndStatusIsTrue(projectDto.projectMemberIds).size != projectDto.projectMemberIds.size) {
             throw EtnException(
                 HttpStatus.BAD_REQUEST, "Error: At least one member is invalid", "Al menos un miembro es inválido"
             )
@@ -251,6 +243,26 @@ class ProjectService @Autowired constructor(
         projectEntity.status = false
         projectRepository.save(projectEntity)
         logger.info("Project deleted with id $projectId")
+    }
+
+    fun getProjectTasks(
+        projectId: Long, sortBy: String, sortType: String, page: Int, size: Int, keyword: String?
+    ): Page<TaskDto> {
+        logger.info("Getting the tasks for project $projectId")
+        // Validate the project exists
+        val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(projectId) ?: throw EtnException(
+            HttpStatus.NOT_FOUND, "Error: Project not found", "Proyecto no encontrado"
+        )
+        // Pagination and sorting
+        val pageable: Pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortType), sortBy))
+        var specification: Specification<Task> = Specification.where(null)
+        specification = specification.and(specification.and(TaskSpecification.statusIsTrue()))
+        specification = specification.and(specification.and(TaskSpecification.projectId(projectId.toInt())))
+        if (keyword != null) {
+            specification = specification.and(specification.and(TaskSpecification.taskKeyword(keyword)))
+        }
+        val taskEntities: Page<Task> = taskRepository.findAll(specification, pageable)
+        return taskEntities.map { TaskMapper.entityToDto(it) }
     }
 
 

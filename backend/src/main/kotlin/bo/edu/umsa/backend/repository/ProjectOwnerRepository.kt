@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ProjectOwnerRepository : JpaRepository<ProjectOwner, Long> {}
+interface ProjectOwnerRepository : JpaRepository<ProjectOwner, Long> {
+    fun findByProjectIdAndUserIdAndStatusIsTrue(projectId: Long, userId: Long): ProjectOwner?
+}

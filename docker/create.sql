@@ -125,9 +125,9 @@ CREATE TABLE h_task_comment_file (
 CREATE TABLE h_tool (
     h_tool_id serial  NOT NULL,
     file_photo_id int  NOT NULL,
+    tool_code varchar(50)  NOT NULL,
     tool_name varchar(50)  NOT NULL,
-    tool_description varchar(100)  NOT NULL,
-    tool_code varchar(255)  NOT NULL,
+    tool_description varchar(255)  NOT NULL,
     available boolean  NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
@@ -281,7 +281,7 @@ CREATE TABLE task_comment_file (
 -- Table: task_file
 CREATE TABLE task_file (
     task_file_id serial  NOT NULL,
-    task_task_id int  NOT NULL,
+    task_id int  NOT NULL,
     file_id int  NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
@@ -293,7 +293,7 @@ CREATE TABLE task_file (
 -- Table: task_review
 CREATE TABLE task_review (
     task_review_id serial  NOT NULL,
-    task_task_id int  NOT NULL,
+    task_id int  NOT NULL,
     rating int  NOT NULL,
     comment varchar(255)  NOT NULL,
     status boolean  NOT NULL,
@@ -318,9 +318,9 @@ CREATE TABLE task_status (
 CREATE TABLE tool (
     tool_id serial  NOT NULL,
     file_photo_id int  NOT NULL,
+    tool_code varchar(50)  NOT NULL,
     tool_name varchar(50)  NOT NULL,
-    tool_description varchar(100)  NOT NULL,
-    tool_code varchar(255)  NOT NULL,
+    tool_description varchar(255)  NOT NULL,
     available boolean  NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
@@ -522,7 +522,7 @@ ALTER TABLE task_file ADD CONSTRAINT task_file_file
 
 -- Reference: task_file_task (table: task_file)
 ALTER TABLE task_file ADD CONSTRAINT task_file_task
-    FOREIGN KEY (task_task_id)
+    FOREIGN KEY (task_id)
     REFERENCES task (task_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
@@ -538,7 +538,7 @@ ALTER TABLE task ADD CONSTRAINT task_project
 
 -- Reference: task_review_task (table: task_review)
 ALTER TABLE task_review ADD CONSTRAINT task_review_task
-    FOREIGN KEY (task_task_id)
+    FOREIGN KEY (task_id)
     REFERENCES task (task_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE

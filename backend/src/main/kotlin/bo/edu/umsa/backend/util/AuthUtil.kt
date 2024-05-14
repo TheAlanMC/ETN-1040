@@ -89,6 +89,19 @@ class AuthUtil (@Autowired jwtConfig: JwtConfig) {
             }
         }
 
+        fun verifyAuthTokenHasRoles(roles: Array<String>) {
+            val jwtToken = getAuthToken()
+            verifyIsAuthToken(jwtToken)
+            val userRoles = JWT.require(Algorithm.HMAC256(jwtSecret))
+                .build()
+                .verify(jwtToken)
+                .getClaim("roles")
+                .asList(String::class.java)
+            if (!roles.any { userRoles.contains(it) }) {
+                throw EtnException(HttpStatus.FORBIDDEN, "Error: User is not authorized to perform this action","El usuario no está autorizado para realizar esta acción")
+            }
+        }
+
         fun generateAuthAndRefreshToken(userEntity: User, roles: Array<String>, groups: Array<String>): AuthResDto {
             val algorithm = Algorithm.HMAC256(jwtSecret)
             val jwtToken = JWT.create()

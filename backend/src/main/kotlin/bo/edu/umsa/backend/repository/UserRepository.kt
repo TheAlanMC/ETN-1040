@@ -21,14 +21,6 @@ interface UserRepository : PagingAndSortingRepository<User, Long>, JpaRepository
     fun existsByEmailAndStatusIsTrue(email: String): Boolean
 
     fun findAllByStatusIsTrueOrderByUserIdAsc(): List<User>
-
-    @Query(
-        """
-        SELECT u.* FROM "user" u
-        WHERE u.user_id IN :userIds
-        AND u.status = true
-    """,
-        nativeQuery = true
-    )
-    fun findAllInUserIdAndStatusIsTrue(userIds: List<Long>): List<User>
+    
+    fun findAllByUserIdInAndStatusIsTrue(userIds: List<Int>): List<User>
 }

@@ -7,6 +7,7 @@ class FileMapper {
     companion object {
         fun entityToDto(file: File): FileDto {
             return FileDto(
+                fileId = file.fileId,
                 filename = file.filename,
                 contentType = file.contentType,
                 fileData = file.fileData,
