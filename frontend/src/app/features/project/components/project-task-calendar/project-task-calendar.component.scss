@@ -38,7 +38,7 @@
   }
 }
 
-host ::ng-deep .fc.fc-theme-standard .fc-view-harness .fc-event.fc-daygrid-dot-event .fc-daygrid-event-dot {
-  background: none !important;
+:host ::ng-deep .p-avatar img {
+  object-fit: cover;
 }
 

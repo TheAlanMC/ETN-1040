@@ -120,8 +120,8 @@ export class ProjectTaskDeadlineListComponent implements OnInit {
             this.taskList.tasks.find(t => t.taskId === task.taskId)!.taskDeadline = newTaskDeadline;
           }
           },
-        error: (err) => {
-          this.messageService.add({severity: 'error', summary: 'Error', detail: 'No se pudo actualizar la fecha límite de la tarea'});
+        error: (error) => {
+          this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
         }
       });
       }
@@ -181,7 +181,7 @@ export class ProjectTaskDeadlineListComponent implements OnInit {
         }
       }, error: (error) => {
         console.error(error);
-        this.messageService.add({severity: 'error', summary: 'Error', detail: 'No se pudo eliminar la tarea'});
+        this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
       }
     });
   }

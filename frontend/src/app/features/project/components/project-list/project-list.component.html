@@ -51,7 +51,7 @@
             >
             </p-avatar>
             <p-avatar (click)="collaborator.toggle($event)" *ngIf="project.projectModeratorIds.length > 5"
-                      [style]="{'background-color':'#D7D7D7', 'color': '#ffffff'}"
+                      [style]="{'background-color':'#D7D7D7', 'color': '#ffffff','cursor': 'pointer'}"
                       label="+{{project.projectModeratorIds.length - 5}}"
                       shape="circle" size="large"></p-avatar>
           </p-avatarGroup>
@@ -86,7 +86,7 @@
             >
             </p-avatar>
             <p-avatar (click)="member.toggle($event)" *ngIf="project.projectMemberIds.length > 5"
-                      [style]="{'background-color':'#D7D7D7', 'color': '#ffffff'}"
+                      [style]="{'background-color':'#D7D7D7', 'color': '#ffffff','cursor': 'pointer'}"
                       label="+{{project.projectMemberIds.length - 5}}"
                       shape="circle" size="large"></p-avatar>
           </p-avatarGroup>

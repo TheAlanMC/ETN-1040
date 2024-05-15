@@ -9,7 +9,7 @@ import {ProjectDto} from "../../models/project.dto";
 import {environment} from "../../../../../environments/environment";
 import {UserDto} from "../../../user/models/user.dto";
 import {ActivatedRoute, Router} from "@angular/router";
-import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
+import {ConfirmationService, MenuItem, MessageService, SelectItem} from "primeng/api";
 import {UtilService} from "../../../../core/services/util.service";
 import {ProjectService} from "../../../../core/services/project.service";
 import {UserService} from "../../../../core/services/user.service";
@@ -72,6 +72,11 @@ export class ProjectTaskCalendarComponent implements OnInit {
   isModerator: boolean = false;
 
   isMember: boolean = false;
+
+  selectedTask: TaskDto | null = null;
+  showTaskDialog: boolean = false;
+
+  menuItems: MenuItem[] = [];
 
   private searchSubject = new Subject<string>();
 
@@ -136,7 +141,9 @@ export class ProjectTaskCalendarComponent implements OnInit {
   }
 
   onEventClick(e: any) {
-    // this.navigateToViewTask(e.event.id);
+    this.selectedTask = this.tasks.find(task => task.taskId === Number(e.event.id)) ?? null;
+    this.showTaskDialog = true;
+    this.generateMenu();
   }
 
   onDateClick(e: any) {
@@ -148,11 +155,31 @@ export class ProjectTaskCalendarComponent implements OnInit {
   onEventDrop(e: any) {
     // if the event is dropped on a past date from the current date, then do not update the task deadline
     if (new Date(e.event.start).getTime() < new Date().getTime()) {
-      this.messageService.add({severity: 'error', summary: 'Error', detail: 'No se puede actualizar la fecha límite de la tarea a una fecha pasada'});
+      this.messageService.add({severity: 'error', summary: 'Error', detail: 'No puedes establecer una fecha límite en el pasado'});
       e.revert();
       return;
     }
     this.updateTaskDeadline(e.event.id, e.event.start);
+  }
+
+  generateMenu() {
+    if (this.selectedTask != null) {
+      this.menuItems = [
+        {
+          label: 'Ver tarea',
+          command: () => this.router.navigate(['/tasks/view/' + this.selectedTask!.taskId]).then(r => console.log('Navigate to view task'))
+        },
+        {
+          label: 'Editar tarea',
+          command: () => this.router.navigate(['/tasks/edit/' + this.selectedTask!.taskId]).then(r => console.log('Navigate to edit task'))
+        },
+        {label: 'Eliminar tarea', command: () => this.onDeleteTask(this.selectedTask!.taskId)}
+      ];
+
+      if (!((this.isOwner || this.isModerator) && this.canEditTask)) {
+        this.menuItems = this.menuItems.filter(item => item.label === 'Ver tarea');
+      }
+    }
   }
 
   public navigateToCreateTask() {
@@ -177,7 +204,7 @@ export class ProjectTaskCalendarComponent implements OnInit {
 
   public getData() {
     this.isLoading = true;
-    this.projectService.getProjectTasks(this.projectId, 'taskDeadline', 'desc', 0, 1000, this.keyword,
+    this.projectService.getProjectTasks(this.projectId, 'taskDeadline', 'asc', 0, 1000, this.keyword,
       this.selectedStatus.map(status => status.label), this.dateFrom.toString(), this.dateTo.toString(),
     ).subscribe({
       next: (data: ResponseDto<PageDto<TaskDto>>) => {
@@ -213,6 +240,7 @@ export class ProjectTaskCalendarComponent implements OnInit {
   }
 
   public onDeleteTask(taskId: number) {
+    this.showTaskDialog = false;
     this.confirmationService.confirm({
       key: 'confirmDeleteTask',
       message: '¿Estás seguro de que deseas eliminar esta tarea? Esta acción no se puede deshacer.',
@@ -232,8 +260,7 @@ export class ProjectTaskCalendarComponent implements OnInit {
         this.getData();
         this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Tarea eliminada correctamente'});
       }, error: (error) => {
-        console.error(error);
-        this.messageService.add({severity: 'error', summary: 'Error', detail: 'No se pudo eliminar la tarea'});
+        this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
       }
     });
   }
@@ -246,7 +273,7 @@ export class ProjectTaskCalendarComponent implements OnInit {
         this.isModerator = this.project.projectModeratorIds.includes(this.userId);
         this.isMember = this.project.projectMemberIds.includes(this.userId);
         this.calendarOptions = { ...this.calendarOptions, ...{ editable: ((this.isOwner || this.isModerator)&& this.canEditTask) } };
-      }, error: (error) => {
+        }, error: (error) => {
         console.log(error);
       }
     });
@@ -364,8 +391,8 @@ export class ProjectTaskCalendarComponent implements OnInit {
       next: (data: ResponseDto<null>) => {
         this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Fecha actualizada correctamente'});
       },
-      error: (err) => {
-        this.messageService.add({severity: 'error', summary: 'Error', detail: 'No se pudo actualizar la fecha límite de la tarea'});
+      error: (error) => {
+        this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
       }
     });
   }

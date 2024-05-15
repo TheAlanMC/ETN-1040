@@ -138,7 +138,7 @@ export class ProjectListComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
-        this.messageService.add({severity: 'error', summary: 'Error', detail: 'No se pudo eliminar el proyecto'});
+        this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
       }
     });
   }

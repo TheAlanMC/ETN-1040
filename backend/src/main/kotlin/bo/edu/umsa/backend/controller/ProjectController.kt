@@ -1,6 +1,5 @@
 package bo.edu.umsa.backend.controller
 
-import bo.edu.umsa.backend.controller.TaskController.Companion
 import bo.edu.umsa.backend.dto.*
 import bo.edu.umsa.backend.service.ProjectService
 import bo.edu.umsa.backend.util.AuthUtil

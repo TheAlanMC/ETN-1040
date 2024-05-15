@@ -31,7 +31,7 @@
       >
       </p-avatar>
       <p-avatar (click)="responsible.toggle($event)" *ngIf="card.taskAssigneeIds.length > 3"
-                [style]="{'background-color':'#D7D7D7', 'color': '#ffffff', 'width': '30px', 'height': '30px', 'font-size': '14px'}"
+                [style]="{'background-color':'#D7D7D7', 'color': '#ffffff', 'width': '30px', 'height': '30px', 'font-size': '14px','cursor': 'pointer'}"
                 label="+{{card.taskAssigneeIds.length - 3}}"
                 shape="circle" size="large"
       ></p-avatar>

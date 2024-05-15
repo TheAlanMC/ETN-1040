@@ -89,7 +89,7 @@
             >
             </p-avatar>
             <p-avatar (click)="responsible.toggle($event)" *ngIf="task.taskAssigneeIds.length > 4"
-                      [style]="{'background-color':'#D7D7D7', 'color': '#ffffff'}"
+                      [style]="{'background-color':'#D7D7D7', 'color': '#ffffff','cursor': 'pointer'}"
                       label="+{{task.taskAssigneeIds.length - 4}}"
                       shape="circle" size="large"></p-avatar>
           </p-avatarGroup>

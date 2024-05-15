@@ -182,7 +182,7 @@ export class GroupAndRoleComponent implements OnInit {
       },
       error: (error) => {
         console.log(error);
-        this.messageService.add({severity: 'error', summary: 'Error', detail: 'Error al asignar los grupos'});
+        this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
       }
     });
   }
@@ -280,7 +280,7 @@ export class GroupAndRoleComponent implements OnInit {
       },
       error: (error) => {
         console.log(error);
-        this.messageService.add({severity: 'error', summary: 'Error', detail: 'Error al asignar los roles'});
+        this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
       }
     });
   }

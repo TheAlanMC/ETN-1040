@@ -94,7 +94,6 @@ export class ProjectTaskDeadlineCardComponent implements OnInit{
       {label: 'Eliminar tarea', command: () => this.onDelete()}
     ];
 
-
     if (!((this.isOwner || this.isModerator) && this.canEditTask)) {
       this.menuItems = this.menuItems.filter(item => item.label === 'Ver tarea');
     }

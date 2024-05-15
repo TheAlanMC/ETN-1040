@@ -181,7 +181,7 @@ export class ProjectTaskListComponent implements OnInit {
         this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Tarea eliminada correctamente'});
       }, error: (error) => {
         console.error(error);
-        this.messageService.add({severity: 'error', summary: 'Error', detail: 'No se pudo eliminar la tarea'});
+        this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
       }
     });
   }

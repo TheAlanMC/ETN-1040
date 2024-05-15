@@ -138,7 +138,7 @@ export class UserListComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
-        this.messageService.add({severity: 'error', summary: 'Error', detail: 'No se pudo eliminar el usuario'});
+        this.messageService.add({severity: 'error', summary: 'Error',  detail: error.error.message});
       }
     });
   }

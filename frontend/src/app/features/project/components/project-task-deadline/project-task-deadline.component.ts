@@ -129,7 +129,7 @@ export class ProjectTaskDeadlineComponent implements OnInit{
 
   public getData() {
     this.isLoading = true;
-    this.projectService.getProjectTasks(this.projectId, 'taskDeadline', 'desc', 0, 1000, this.keyword,
+    this.projectService.getProjectTasks(this.projectId, 'taskDeadline', 'asc', 0, 1000, this.keyword,
       this.selectedStatus.map(status => status.label)
     ).subscribe({
       next: (data: ResponseDto<PageDto<TaskDto>>) => {
@@ -139,17 +139,29 @@ export class ProjectTaskDeadlineComponent implements OnInit{
         });
         // Add a new task to the list according to the deadline
         this.taskLists.forEach(list => {
+          let start = new Date();
+          let end = new Date();
           list.tasks = this.tasks.filter(task => {
             if (list.listId === '1') {
               return task.taskDeadline && new Date(task.taskDeadline) < new Date();
             } else if (list.listId === '2') {
               return task.taskDeadline && new Date(task.taskDeadline).toDateString() === new Date().toDateString();
             } else if (list.listId === '3') {
-              return task.taskDeadline && new Date(task.taskDeadline) > new Date(new Date().setDate(new Date().getDate() + 1)) && new Date(task.taskDeadline) < new Date(new Date().setDate(new Date().getDate() + 7));
+              let start = new Date(new Date().setDate(new Date().getDate() + 1));
+              start.setHours(0, 0, 0, 0);
+              let end = new Date(new Date().setDate(new Date().getDate() + 6));
+              end.setHours(23, 59, 59, 999);
+              return task.taskDeadline && new Date(task.taskDeadline) > new Date(start) && new Date(task.taskDeadline) < new Date(end);
             } else if (list.listId === '4') {
-              return task.taskDeadline && new Date(task.taskDeadline) > new Date(new Date().setDate(new Date().getDate() + 7)) && new Date(task.taskDeadline) < new Date(new Date().setDate(new Date().getDate() + 14));
+              let start = new Date(new Date().setDate(new Date().getDate() + 7));
+              start.setHours(0, 0, 0, 0);
+              let end = new Date(new Date().setDate(new Date().getDate() + 13));
+              end.setHours(23, 59, 59, 999);
+              return task.taskDeadline && new Date(task.taskDeadline) > new Date(start) && new Date(task.taskDeadline) < new Date(end);
             } else if (list.listId === '5') {
-              return task.taskDeadline && new Date(task.taskDeadline) > new Date(new Date().setDate(new Date().getDate() + 14));
+              let start = new Date(new Date().setDate(new Date().getDate() + 14));
+              start.setHours(0, 0, 0, 0);
+              return task.taskDeadline && new Date(task.taskDeadline) > new Date(start);
             } else {
               return false;
             }
