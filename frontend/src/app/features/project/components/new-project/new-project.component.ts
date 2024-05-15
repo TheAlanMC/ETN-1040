@@ -100,7 +100,7 @@ export class NewProjectComponent implements OnInit {
         this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Proyecto creado'});
         setTimeout(() => {
           this.router.navigate(['/projects']).then(r => console.log('Redirect to projects page'));
-        }, 1000);
+        }, 500);
       },
       error: (error) => {
         console.log(error);

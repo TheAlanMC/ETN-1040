@@ -29,7 +29,7 @@ export class ForgotPasswordComponent {
         this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Correo enviado'});
         setTimeout(() => {
           this.router.navigate(['/auth/verification']).then(r => console.log('Navigated to home'));
-        }, 1000);
+        }, 500);
       },
       error: (error) => {
         this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});

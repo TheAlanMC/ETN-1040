@@ -1,4 +1,4 @@
-<div [id]="card.taskId" class="flex surface-card flex-column w-full border-1 surface-border p-3 gap-3 hover:surface-ground cursor-pointer border-round">
+<div [id]="card.taskId" class="flex surface-card flex-column w-full border-1 surface-border p-3 gap-2 hover:surface-ground cursor-pointer border-round">
   <div class="flex justify-content-between align-items-center">
     <span class="text-900 font-semibold">{{card.taskName}}</span>
     <div>
@@ -7,13 +7,16 @@
     </div>
   </div>
   <div *ngIf="card.taskDescription" style="word-break: break-word" class="text-700">{{card.taskDescription}}</div>
-  <div class="flex align-items-center gap-2 flex-wrap">
-    <p-tag [style]="{background: getStatusColor(card.taskStatus.taskStatusId),}"
-           value="{{card.taskStatus.taskStatusName}}"></p-tag>
+  <div class="flex align-items-center gap-1 flex-wrap">
+    <p-tag [style]="{background: getPriorityColor(card.taskPriority)}"
+           value="NIVEL {{card.taskPriority}}"></p-tag>
+
     <p-tag [style]="{background: '#FF000080'}"
            *ngIf="checkIfTaskIsOverdue(card.taskStatus.taskStatusId, card.taskDeadline)">
       VENCIDA {{card.taskDeadline | timeAgo | uppercase}}
     </p-tag>
+    <p-tag [style]="{background: getStatusColor(card.taskStatus.taskStatusId),}"
+           value="{{card.taskStatus.taskStatusName}}"></p-tag>
   </div>
   <div class="flex align-items-center justify-content-between flex-column md:flex-row gap-4 md:gap-0">
     <p-avatarGroup>

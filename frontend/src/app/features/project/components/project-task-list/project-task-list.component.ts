@@ -79,7 +79,7 @@ export class ProjectTaskListComponent implements OnInit {
       if (decoded.roles.includes('CREAR TAREAS')) {
         this.canAddTask = true;
       }
-      if (decoded.roles.includes('EDITAR PROYECTOS')) {
+      if (decoded.roles.includes('EDITAR TAREAS')) {
         this.canEditTask = true;
       }
       this.userId = decoded.userId;
@@ -95,7 +95,6 @@ export class ProjectTaskListComponent implements OnInit {
       this.getProjectInfo();
       this.getAllUsers();
       this.getAllStatuses();
-      this.getData();
       this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
         this.getData()
       });
@@ -164,7 +163,7 @@ export class ProjectTaskListComponent implements OnInit {
   public onDeleteTask(taskId: number) {
     this.confirmationService.confirm({
       key: 'confirmDeleteTask',
-      message: '¿Estás seguro de que deseas eliminar esta tarea?',
+      message: '¿Estás seguro de que deseas eliminar esta tarea? Esta acción no se puede deshacer.',
       header: 'Confirmar',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Sí',
@@ -225,7 +224,8 @@ export class ProjectTaskListComponent implements OnInit {
           value: 4
         });
         this.selectedStatus = this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 1 || status.value === 2)) : this.selectedStatus;
-        }, error: (error) => {
+        this.getData();
+      }, error: (error) => {
         console.log(error);
       }
     });

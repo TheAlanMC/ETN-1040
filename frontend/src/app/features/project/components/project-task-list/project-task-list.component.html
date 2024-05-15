@@ -60,7 +60,7 @@
       <tr>
         <td>
 
-          <p-tag [style]="{background: getPriorityColor(task.taskPriority), color: '#ffffff', fontSize: '14px'}"
+          <p-tag [style]="{background: getPriorityColor(task.taskPriority), color: '#00000080', fontSize: '14px'}"
                                   value="NIVEL {{task.taskPriority}}"></p-tag>
         </td>
         <td>{{ task.taskName }}</td>
@@ -69,12 +69,12 @@
 <!--        <td>{{ task.createdBy }}</td>-->
         <td>
           <div class="flex align-items-center gap-2 flex-wrap">
-            <p-tag [style]="{background: getStatusColor(task.taskStatus.taskStatusId),}"
-                   value="{{task.taskStatus.taskStatusName}}"></p-tag>
             <p-tag [style]="{background: '#FF000080'}"
                    *ngIf="checkIfTaskIsOverdue(task.taskStatus.taskStatusId, task.taskDeadline)">
               VENCIDA {{task.taskDeadline | timeAgo | uppercase}}
             </p-tag>
+            <p-tag [style]="{background: getStatusColor(task.taskStatus.taskStatusId),}"
+                   value="{{task.taskStatus.taskStatusName}}"></p-tag>
           </div>
 
         <td>

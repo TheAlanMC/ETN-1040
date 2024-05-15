@@ -88,7 +88,7 @@ export class NewUserComponent implements OnInit {
         this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Usuario creado'});
         setTimeout(() => {
           this.router.navigate(['/users']).then(r => console.log('Redirect to users page'));
-        }, 1000);
+        }, 500);
       },
       error: (error) => {
         console.log(error);

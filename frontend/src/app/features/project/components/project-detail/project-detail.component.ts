@@ -43,7 +43,7 @@ export class ProjectDetailComponent implements OnInit {
   dateFrom: string = '';
   dateTo: string = '';
 
-  constructor(private activatedRoute: ActivatedRoute, private userService: UserService, private utilService: UtilService, private location: Location, private projectService: ProjectService, private router: Router) {
+  constructor(private activatedRoute: ActivatedRoute, private userService: UserService, private utilService: UtilService, private projectService: ProjectService, private router: Router) {
     this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     const token = localStorage.getItem('token');
     // Check if token exists
@@ -117,6 +117,6 @@ export class ProjectDetailComponent implements OnInit {
   }
 
   public onBack() {
-    this.location.back();
+    this.router.navigate(['/projects']).then(r => console.log('Navigate to projects'));
   }
 }

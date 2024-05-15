@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {UserDto} from "../../models/user.dto";
 import {FormControl, Validators} from "@angular/forms";
 import {FileUpload} from "primeng/fileupload";
@@ -103,7 +103,7 @@ export class EditUserComponent implements OnInit {
             console.log('Redirect to users page');
             window.location.reload();
           });
-        }, 1000);
+        }, 500);
       },
       error: (error) => {
         console.log(error);

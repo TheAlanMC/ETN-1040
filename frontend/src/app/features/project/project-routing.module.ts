@@ -22,10 +22,10 @@ const routes: Routes = [
         canActivate: [RoleGuard],
         data: {roles: ['VER PROYECTOS'], breadcrumb: 'Ver'},
         children: [
-          {path: 'detail', component: ProjectDetailComponent},
-          {path: 'task-list', component: ProjectTaskListComponent},
-          {path: 'task-deadline', component: ProjectTaskDeadlineComponent},
-          {path: 'task-calendar', component: ProjectTaskCalendarComponent},
+          {path: 'detail', component: ProjectDetailComponent, data: {breadcrumb: 'Detalles'}},
+          {path: 'task-list', component: ProjectTaskListComponent, data: {breadcrumb: 'Tareas'}},
+          {path: 'task-deadline', component: ProjectTaskDeadlineComponent, data: {breadcrumb: 'Plazos'}},
+          {path: 'task-calendar', component: ProjectTaskCalendarComponent, data: {breadcrumb: 'Calendario'}},
           {path: '', redirectTo: 'detail', pathMatch: 'full'}
         ]
       },

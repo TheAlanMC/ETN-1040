@@ -18,6 +18,6 @@
   </p-multiSelect>
 </div>
 <div [cdkDropListData]="taskLists" cdkDropList cdkDropListOrientation="horizontal" class="grid grid-nogutter w-full flex-column md:flex-row flex-nowrap gap-5 lg:overflow-y-hidden overflow-x-auto"
-     id="task-wrapper">
-  <app-project-task-deadline-list *ngFor="let taskList of taskLists; let i = index;" [taskListIds]="taskListIds" [taskList]="taskList" cdkDrag [cdkDragDisabled]="true" [users]="users" [isOwner]="isOwner" [isModerator]="isModerator" [isMember]="isMember" cdkDragHandle class="p-kanban-list"></app-project-task-deadline-list>
+     id="task-wrapper" *ngIf="project">
+  <app-project-task-deadline-list *ngFor="let taskList of taskLists; let i = index;" [taskListIds]="taskListIds" [taskList]="taskList" cdkDrag [cdkDragDisabled]="true" [users]="users" cdkDragHandle class="p-kanban-list"></app-project-task-deadline-list>
 </div>

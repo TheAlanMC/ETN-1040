@@ -84,8 +84,12 @@ class TaskSpecification {
         }
 
         fun dateBetween(dateFrom: Date, dateTo: Date): Specification<Task> {
+            val cal = Calendar.getInstance()
+            cal.time = dateFrom
+            cal.add(Calendar.DATE, -1)
+            val newDateFrom = cal.time
             return Specification { root, _, cb ->
-                cb.between(root.get("taskDeadline"), dateFrom, dateTo)
+                cb.between(root.get("taskDeadline"), newDateFrom, dateTo)
             }
         }
 

@@ -53,9 +53,9 @@ export class ProjectService {
     return this.http.delete<ResponseDto<Nullable>>(`${this.baseUrl}/${projectId}`, this.utilService.getHttpOptions());
   }
 
-  public getProjectTasks(projectId: number, sortBy: string, sortType: string, page: number, size: number, keyword: string, statuses: string[]): Observable<ResponseDto<PageDto<TaskDto>>> {
+  public getProjectTasks(projectId: number, sortBy: string, sortType: string, page: number, size: number, keyword: string, statuses: string[], dateFrom: string | null = null, dateTo: string | null = null): Observable<ResponseDto<PageDto<TaskDto>>> {
     const statusList = statuses.join(',');
-    return this.http.get<ResponseDto<PageDto<TaskDto>>>(`${this.baseUrl}/${projectId}/tasks?sortBy=${sortBy}&sortType=${sortType}&page=${page}&size=${size}&keyword=${keyword}&statuses=${statusList}`, this.utilService.getHttpOptions());
+    return this.http.get<ResponseDto<PageDto<TaskDto>>>(`${this.baseUrl}/${projectId}/tasks?sortBy=${sortBy}&sortType=${sortType}&page=${page}&size=${size}&keyword=${keyword}&statuses=${statusList}&dateFrom=${(dateFrom ? dateFrom : '')}&dateTo=${(dateTo ? dateTo : '')}`, this.utilService.getHttpOptions());
   }
 }
 

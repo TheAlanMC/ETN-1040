@@ -61,7 +61,7 @@ export class VerificationComponent implements OnInit {
         this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Código verificado'});
         setTimeout(() => {
           this.router.navigate(['/auth/new-password']).then(r => console.log('Redirect to new password'));
-        }, 1000);
+        }, 500);
       },
       error: (error) => {
         console.log(error);

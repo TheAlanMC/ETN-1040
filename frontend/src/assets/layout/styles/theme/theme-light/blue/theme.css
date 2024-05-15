@@ -6482,7 +6482,8 @@
   color: #ffffff;
 }
 .fc.fc-theme-standard .fc-view-harness .fc-event.fc-daygrid-dot-event .fc-daygrid-event-dot {
-  background: #2563eb;
+  /*background: #2563eb;*/
+  background: none;
   border-color: #2563eb;
 }
 .fc.fc-theme-standard .fc-view-harness .fc-event.fc-daygrid-dot-event:hover {

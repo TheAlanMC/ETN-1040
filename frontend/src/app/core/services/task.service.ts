@@ -23,9 +23,9 @@ export class TaskService {
     return this.http.get<ResponseDto<TaskStatusDto[]>>(`${this.baseUrl}/statuses`, this.utilService.getHttpOptions());
   }
 
-  public getTasks(sortBy: string, sortType: string, page: number, size: number, keyword: string, statuses: string[]): Observable<ResponseDto<PageDto<TaskDto>>> {
+  public getTasks(sortBy: string, sortType: string, page: number, size: number, keyword: string, statuses: string[], dateFrom: string | null = null, dateTo: string | null = null): Observable<ResponseDto<PageDto<TaskDto>>> {
     const statusList = statuses.join(',');
-    return this.http.get<ResponseDto<PageDto<TaskDto>>>(`${this.baseUrl}?sortBy=${sortBy}&sortType=${sortType}&page=${page}&size=${size}&keyword=${keyword}&statuses=${statusList}`, this.utilService.getHttpOptions());
+    return this.http.get<ResponseDto<PageDto<TaskDto>>>(`${this.baseUrl}?sortBy=${sortBy}&sortType=${sortType}&page=${page}&size=${size}&keyword=${keyword}&statuses=${statusList}&dateFrom=${(dateFrom ? dateFrom : '')}&dateTo=${(dateTo ? dateTo : '')}`, this.utilService.getHttpOptions());
   }
 
   public getTask(taskId: number): Observable<ResponseDto<TaskDto>> {

@@ -79,11 +79,11 @@ export class ProjectTaskDeadlineComponent implements OnInit{
   canAddTask: boolean = false;
 
   project: ProjectDto | null = null;
-  isOwner: boolean = false;
-  isModerator: boolean = false;
-  isMember: boolean = false;
 
   users: UserDto[] = [];
+
+  isOwner: boolean = false;
+  isModerator: boolean = false;
 
   constructor(private projectService: ProjectService, private sharedService: SharedService, private activatedRoute: ActivatedRoute, private taskService: TaskService, private utilService: UtilService, private router: Router, private userService: UserService) {
     this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
@@ -94,6 +94,7 @@ export class ProjectTaskDeadlineComponent implements OnInit{
       if (decoded.roles.includes('CREAR TAREAS')) {
         this.canAddTask = true;
       }
+
       this.userId = decoded.userId;
     }
     this.keyword = this.sharedService.getData('keyword') ?? '';
@@ -107,7 +108,6 @@ export class ProjectTaskDeadlineComponent implements OnInit{
       this.getProjectInfo();
       this.getAllUsers();
       this.getAllStatuses();
-      this.getData();
       this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
         this.getData()
       });
@@ -145,7 +145,7 @@ export class ProjectTaskDeadlineComponent implements OnInit{
             } else if (list.listId === '2') {
               return task.taskDeadline && new Date(task.taskDeadline).toDateString() === new Date().toDateString();
             } else if (list.listId === '3') {
-              return task.taskDeadline && new Date(task.taskDeadline) > new Date() && new Date(task.taskDeadline) < new Date(new Date().setDate(new Date().getDate() + 7));
+              return task.taskDeadline && new Date(task.taskDeadline) > new Date(new Date().setDate(new Date().getDate() + 1)) && new Date(task.taskDeadline) < new Date(new Date().setDate(new Date().getDate() + 7));
             } else if (list.listId === '4') {
               return task.taskDeadline && new Date(task.taskDeadline) > new Date(new Date().setDate(new Date().getDate() + 7)) && new Date(task.taskDeadline) < new Date(new Date().setDate(new Date().getDate() + 14));
             } else if (list.listId === '5') {
@@ -170,7 +170,8 @@ export class ProjectTaskDeadlineComponent implements OnInit{
         this.project = data.data!!;
         this.isOwner = this.project.projectOwnerIds.includes(this.userId);
         this.isModerator = this.project.projectModeratorIds.includes(this.userId);
-        this.isMember = this.project.projectMemberIds.includes(this.userId);
+        this.sharedService.changeData('isOwner', this.isOwner);
+        this.sharedService.changeData('isModerator', this.isModerator);
       }, error: (error) => {
         console.log(error);
       }
@@ -203,6 +204,7 @@ export class ProjectTaskDeadlineComponent implements OnInit{
           value: 4
         });
         this.selectedStatus = this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 1 || status.value === 2)) : this.selectedStatus;
+        this.getData();
       }, error: (error) => {
         console.log(error);
       }

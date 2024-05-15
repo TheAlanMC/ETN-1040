@@ -113,7 +113,7 @@ export class ProfileComponent implements OnInit {
         this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Perfil actualizado'});
         setTimeout(() => {
           this.router.navigate(['/']).then(r => window.location.reload());
-        }, 1000);
+        }, 500);
       },
       error: (error) => {
         console.log(error);

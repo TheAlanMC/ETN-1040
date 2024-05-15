@@ -36,7 +36,7 @@ export class NewPasswordComponent implements OnInit {
         this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Contraseña restablecida'});
         setTimeout(() => {
           this.router.navigate(['/auth/login']).then(r => console.log('Redirect to login'));
-        }, 1000);
+        }, 500);
       },
       error: (error) => {
         this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
