@@ -6,6 +6,8 @@ import bo.edu.umsa.backend.entity.TaskStatus
 import bo.edu.umsa.backend.entity.User
 import jakarta.persistence.criteria.Expression
 import org.springframework.data.jpa.domain.Specification
+import java.sql.Timestamp
+import java.util.*
 
 
 class TaskSpecification {
@@ -50,15 +52,21 @@ class TaskSpecification {
             }
         }
 
-        fun taskStatus(taskStatus: String): Specification<Task> {
-            return Specification { root, _, cb ->
-                cb.equal(root.get<Task>("taskStatus").get<TaskStatus>("taskStatusName"), taskStatus)
-            }
-        }
-
-        fun taskStatuses(taskStatuses: List<String>): Specification<Task> {
-            return Specification { root, _, cb ->
-                cb.`in`(root.get<Any>("taskStatus").get<Any>("taskStatusName")).value(taskStatuses)
+        fun taskStatuses(taskStatuses: List<String>, currentDate: Timestamp?): Specification<Task> {
+            return if (currentDate == null) {
+                Specification { root, _, cb ->
+                    cb.`in`(root.get<Any>("taskStatus").get<Any>("taskStatusName")).value(taskStatuses)
+                }
+            } else {
+                Specification { root, _, cb ->
+                    cb.or(
+                        cb.`in`(root.get<Any>("taskStatus").get<Any>("taskStatusName")).value(taskStatuses),
+                        cb.and(
+                            cb.lessThan(root.get("taskDeadline"), currentDate),
+                            cb.notEqual(root.get<Task>("taskStatusId"), 3)
+                        )
+                    )
+                }
             }
         }
 
@@ -72,6 +80,12 @@ class TaskSpecification {
         fun projectId(projectId: Int): Specification<Task> {
             return Specification { root, _, cb ->
                 cb.equal(root.get<Task>("project").get<Int>("projectId"), projectId)
+            }
+        }
+
+        fun dateBetween(dateFrom: Date, dateTo: Date): Specification<Task> {
+            return Specification { root, _, cb ->
+                cb.between(root.get("taskDeadline"), dateFrom, dateTo)
             }
         }
 

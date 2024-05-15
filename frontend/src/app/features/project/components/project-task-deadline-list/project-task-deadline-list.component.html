@@ -1,0 +1,13 @@
+<p-toast></p-toast>
+<div class="card  md:w-25rem  overflow-hidden p-3">
+  <div class="flex justify-content-between align-items-center w-full  h-3rem">
+    <span class="block text-900 font-semibold mt-4 pl-2 text-lg" style="word-break: break-word;">{{taskList.title}}</span>
+  </div>
+
+  <div [id]="taskList.listId" class="flex flex-column gap-5 overflow-y-auto  mt-3 scrollable kanban-list" cdkDropList (cdkDropListDropped)="dropCard($event)" (cdkDropListEntered)="insertHeight($event)" (cdkDropListExited)="removeHeight($event)" [cdkDropListData]="taskList.tasks" [cdkDropListConnectedTo]="getConnectedListIds()" #listEl style="min-height:2rem">
+    <app-project-task-deadline-card *ngFor="let task of taskList.tasks" [card]="task" [listId]="taskList.listId" (click)="onCardClick($event, task)" [users]="users" cdkDrag cdkDragHandle [cdkDragDisabled]="isMobileDevice || (!isOwner && !isModerator)"></app-project-task-deadline-card>
+    <div *ngIf="taskList.tasks.length === 0" class="flex justify-content-center align-items-center h-11rem">
+      <span class="text-900 text-lg font-semibold">No hay tareas</span>
+    </div>
+  </div>
+</div>

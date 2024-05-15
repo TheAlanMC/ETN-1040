@@ -37,6 +37,12 @@ import {TagModule} from "primeng/tag";
 import {AppLayoutModule} from "../../layout/app.layout.module";
 import {TimeAgoPipe} from "../../core/pipes/time-ago.pipe";
 import {SharedModule} from "../../shared/shared.module";
+import { ProjectTaskDeadlineListComponent } from './components/project-task-deadline-list/project-task-deadline-list.component';
+import {CdkDrag, CdkDragHandle, CdkDropList} from "@angular/cdk/drag-drop";
+import {InplaceModule} from "primeng/inplace";
+import {MenuModule} from "primeng/menu";
+import { ProjectTaskDeadlineCardComponent } from './components/project-task-deadline-card/project-task-deadline-card.component';
+import {TieredMenuModule} from "primeng/tieredmenu";
 
 
 @NgModule({
@@ -49,6 +55,8 @@ import {SharedModule} from "../../shared/shared.module";
     ProjectTaskListComponent,
     ProjectTaskDeadlineComponent,
     ProjectTaskCalendarComponent,
+    ProjectTaskDeadlineListComponent,
+    ProjectTaskDeadlineCardComponent,
   ],
   imports: [
     CommonModule,
@@ -80,7 +88,13 @@ import {SharedModule} from "../../shared/shared.module";
     TabViewModule,
     TagModule,
     AppLayoutModule,
-    SharedModule
+    SharedModule,
+    CdkDropList,
+    InplaceModule,
+    MenuModule,
+    CdkDragHandle,
+    CdkDrag,
+    TieredMenuModule
   ]
 })
 export class ProjectModule {

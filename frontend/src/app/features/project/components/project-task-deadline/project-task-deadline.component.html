@@ -1,1 +1,23 @@
-<p>project-task-deadline works!</p>
+<div class="flex flex-wrap gap-3 align-items-center justify-content-between mb-3">
+        <span class="p-input-icon-left w-full sm:w-20rem flex-order-0 sm:flex-order-0">
+          <i class="pi pi-search"></i>
+          <input (input)="onSearch($event)" [(ngModel)]="keyword" class="input w-full right-search-input"
+                 pInputText
+                 placeholder="Busqueda Global" type="text">
+        </span>
+  <button (click)="navigateToCreateTask()" *ngIf="canAddTask&&(isOwner || isModerator)"
+          class="p-button-outlined w-full sm:w-auto flex-order-1 sm:flex-order-1" icon="pi pi-plus-circle"
+          label="Crear Tarea" pButton></button>
+</div>
+<div class="mb-3">
+  <p-multiSelect [(ngModel)]="selectedStatus" [options]="statusItems"
+                 class="multiselect-custom"
+                 [style]="{'width': '100%'}"
+                 display="chip"
+                 optionLabel="label" placeholder="Seleccionar Estado" [showClear]="true" (onChange)="onStatusChange($event)">
+  </p-multiSelect>
+</div>
+<div [cdkDropListData]="taskLists" cdkDropList cdkDropListOrientation="horizontal" class="grid grid-nogutter w-full flex-column md:flex-row flex-nowrap gap-5 lg:overflow-y-hidden overflow-x-auto"
+     id="task-wrapper">
+  <app-project-task-deadline-list *ngFor="let taskList of taskLists; let i = index;" [taskListIds]="taskListIds" [taskList]="taskList" cdkDrag [cdkDragDisabled]="true" [users]="users" [isOwner]="isOwner" [isModerator]="isModerator" [isMember]="isMember" cdkDragHandle class="p-kanban-list"></app-project-task-deadline-list>
+</div>

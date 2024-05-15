@@ -40,7 +40,7 @@
         <td>{{ project.dateFrom | date: 'MM/dd/yyyy' }}</td>
         <td>{{ project.dateTo | date: 'MM/dd/yyyy' }}</td>
         <td>
-          <p-avatarGroup styleClass="mb-3">
+          <p-avatarGroup>
             <p-avatar (error)="setImageLoaded(userId, false)"
                       (load)="setImageLoaded(userId, true)"
                       *ngFor="let userId of project.projectModeratorIds | slice : 0 : 5"
@@ -75,7 +75,7 @@
           </p-overlayPanel>
         </td>
         <td>
-          <p-avatarGroup styleClass="mb-3">
+          <p-avatarGroup>
             <p-avatar (error)="setImageLoaded(userId, false)"
                       (load)="setImageLoaded(userId, true)"
                       *ngFor="let userId of project.projectMemberIds | slice : 0 : 5"

@@ -50,7 +50,7 @@ class TaskService @Autowired constructor(
     }
 
     fun getTasks(
-        sortBy: String, sortType: String, page: Int, size: Int, keyword: String?, statuses: List<String>?
+        sortBy: String, sortType: String, page: Int, size: Int, keyword: String?, statuses: List<String>?, dateFrom: String?, dateTo: String?
     ): Page<TaskDto> {
         val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(
             HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado"
@@ -76,9 +76,28 @@ class TaskService @Autowired constructor(
         }
 
         if (!statuses.isNullOrEmpty()) {
-            specification = specification.and(specification.and(TaskSpecification.taskStatuses(statuses)))
+            val currentDate = if (statuses.contains("VENCIDO")) Timestamp.from(Instant.now()) else null
+            specification = specification.and(TaskSpecification.taskStatuses(statuses, currentDate))
         }
 
+        try {
+            val newDateFrom =
+                if (!dateFrom.isNullOrEmpty()) Timestamp.from(Instant.parse(dateFrom)) else Timestamp.from(
+                    Instant.parse("2024-01-01T00:00:00Z")
+                )
+            val newDateTo =
+                if (!dateTo.isNullOrEmpty()) Timestamp.from(Instant.parse(dateTo)) else Timestamp.from(Instant.parse("2050-01-01T00:00:00Z"))
+            if (newDateFrom.after(newDateTo)) {
+                specification =
+                    specification.and(specification.and(TaskSpecification.dateBetween(newDateFrom, newDateTo)))
+            }
+        } catch (
+            e: Exception
+        ) {
+            throw EtnException(
+                HttpStatus.BAD_REQUEST, "Error: Date format is incorrect", "El formato de fecha es incorrecto"
+            )
+        }
 
         val taskEntities: Page<Task> = taskRepository.findAll(specification, pageable)
         return taskEntities.map { TaskMapper.entityToDto(it) }

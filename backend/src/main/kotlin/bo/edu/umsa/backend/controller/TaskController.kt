@@ -37,11 +37,13 @@ class TaskController @Autowired constructor(
         @RequestParam(defaultValue = "10") size: Int,
         @RequestParam(required = false) keyword: String?,
         @RequestParam(required = false) statuses: List<String>?,
+        @RequestParam(required = false) dateFrom: String?,
+        @RequestParam(required = false) dateTo: String?,
     ): ResponseEntity<ResponseDto<Page<TaskDto>>> {
         logger.info("Starting the API call to get the tasks")
         logger.info("GET /api/v1/tasks")
         AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
-        val tasks: Page<TaskDto> = taskService.getTasks(sortBy, sortType, page, size, keyword, statuses)
+        val tasks: Page<TaskDto> = taskService.getTasks(sortBy, sortType, page, size, keyword, statuses, dateFrom, dateTo)
         logger.info("Success: Tasks retrieved")
         return ResponseEntity(ResponseDto(true, "Tareas recuperadas", tasks), HttpStatus.OK)
     }

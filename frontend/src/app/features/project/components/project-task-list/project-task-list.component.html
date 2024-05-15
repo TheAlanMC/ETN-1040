@@ -11,7 +11,7 @@
                  pInputText
                  placeholder="Busqueda Global" type="text">
         </span>
-  <button (click)="navigateToCreateTask()" *ngIf="canAddTask"
+  <button (click)="navigateToCreateTask()" *ngIf="canAddTask&&(isOwner || isModerator)"
           class="p-button-outlined w-full sm:w-auto flex-order-1 sm:flex-order-1" icon="pi pi-plus-circle"
           label="Crear Tarea" pButton></button>
 </div>
@@ -78,19 +78,19 @@
           </div>
 
         <td>
-          <p-avatarGroup styleClass="mb-3">
+          <p-avatarGroup>
             <p-avatar (error)="setImageLoaded(userId, false)"
                       (load)="setImageLoaded(userId, true)"
-                      *ngFor="let userId of task.taskAssigneeIds | slice : 0 : 5"
+                      *ngFor="let userId of task.taskAssigneeIds | slice : 0 : 4"
                       [image]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
                       pTooltip="{{getFullName(userId)}}"
                       shape="circle"
                       size="large" tooltipPosition="top"
             >
             </p-avatar>
-            <p-avatar (click)="responsible.toggle($event)" *ngIf="task.taskAssigneeIds.length > 5"
+            <p-avatar (click)="responsible.toggle($event)" *ngIf="task.taskAssigneeIds.length > 4"
                       [style]="{'background-color':'#D7D7D7', 'color': '#ffffff'}"
-                      label="+{{task.taskAssigneeIds.length - 5}}"
+                      label="+{{task.taskAssigneeIds.length - 4}}"
                       shape="circle" size="large"></p-avatar>
           </p-avatarGroup>
           <p-overlayPanel #responsible>

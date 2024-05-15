@@ -1,0 +1,59 @@
+<div [id]="card.taskId" class="flex surface-card flex-column w-full border-1 surface-border p-3 gap-3 hover:surface-ground cursor-pointer border-round">
+  <div class="flex justify-content-between align-items-center">
+    <span class="text-900 font-semibold">{{card.taskName}}</span>
+    <div>
+      <button pButton pRipple type="button" icon="pi pi-ellipsis-v" class="p-button-rounded p-button-text p-button-secondary p-trigger" (click)="menu.toggle($event)"></button>
+      <p-tieredMenu #menu [model]="menuItems" appendTo="body" [popup]="true"></p-tieredMenu>
+    </div>
+  </div>
+  <div *ngIf="card.taskDescription" style="word-break: break-word" class="text-700">{{card.taskDescription}}</div>
+  <div class="flex align-items-center gap-2 flex-wrap">
+    <p-tag [style]="{background: getStatusColor(card.taskStatus.taskStatusId),}"
+           value="{{card.taskStatus.taskStatusName}}"></p-tag>
+    <p-tag [style]="{background: '#FF000080'}"
+           *ngIf="checkIfTaskIsOverdue(card.taskStatus.taskStatusId, card.taskDeadline)">
+      VENCIDA {{card.taskDeadline | timeAgo | uppercase}}
+    </p-tag>
+  </div>
+  <div class="flex align-items-center justify-content-between flex-column md:flex-row gap-4 md:gap-0">
+    <p-avatarGroup>
+      <p-avatar (error)="setImageLoaded(userId, false)"
+                (load)="setImageLoaded(userId, true)"
+                *ngFor="let userId of card.taskAssigneeIds | slice : 0 : 3"
+                [image]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                pTooltip="{{getFullName(userId)}}"
+                shape="circle"
+                size="large" tooltipPosition="top"
+                [style]="{width: '30px', height: '30px'}"
+      >
+      </p-avatar>
+      <p-avatar (click)="responsible.toggle($event)" *ngIf="card.taskAssigneeIds.length > 3"
+                [style]="{'background-color':'#D7D7D7', 'color': '#ffffff', 'width': '30px', 'height': '30px', 'font-size': '14px'}"
+                label="+{{card.taskAssigneeIds.length - 3}}"
+                shape="circle" size="large"
+      ></p-avatar>
+    </p-avatarGroup>
+    <p-overlayPanel #responsible>
+      <span class="font-medium text-900 block mb-2">Responsables</span>
+      <ul class="list-none p-0 m-0 flex flex-column gap-3">
+        <li *ngFor="let userId of card.taskAssigneeIds" class="flex align-items-center gap-2">
+          <img
+            (error)="setImageLoaded(userId, false)"
+            (load)="setImageLoaded(userId, true)"
+            [src]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+            alt="{{userId}}"
+            class="mr-2"
+            style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
+          <div>
+            <span class="font-medium">{{ getFullName(userId) }}</span>
+            <div class="text-sm text-color-secondary">{{ getEmail(userId) }}</div>
+          </div>
+        </li>
+      </ul>
+    </p-overlayPanel>
+    <div *ngIf="card.taskFileIds|| card.taskDeadline" class="flex align-items-center gap-3">
+      <span class="text-900 font-semibold" *ngIf="card.taskFileIds"><i class="pi pi-paperclip text-700 mr-2"></i>{{card.taskFileIds.length}}</span>
+      <span class="text-900 font-semibold" *ngIf="card.taskDeadline"><i class="pi pi-clock text-700 mr-2"></i> {{card.taskDeadline | date: 'dd/MM/yyyy, HH:mm'}}</span>
+    </div>
+  </div>
+</div>
