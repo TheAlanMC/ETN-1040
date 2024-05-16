@@ -21,3 +21,4 @@
      id="task-wrapper" *ngIf="project">
   <app-project-task-deadline-list *ngFor="let taskList of taskLists; let i = index;" [taskListIds]="taskListIds" [taskList]="taskList" cdkDrag [cdkDragDisabled]="true" [users]="users" cdkDragHandle class="p-kanban-list"></app-project-task-deadline-list>
 </div>
+<app-new-task [projectId]="projectId" [sidebarVisible]="sidebarVisible" (sidebarVisibleChange)="sidebarVisible = $event"></app-new-task>

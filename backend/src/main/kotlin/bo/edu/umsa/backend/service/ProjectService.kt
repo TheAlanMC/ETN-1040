@@ -37,7 +37,7 @@ class ProjectService @Autowired constructor(
 
     fun getAllProjects(): List<ProjectPartialDto> {
         logger.info("Getting all users")
-        val projectEntities = projectRepository.findAllByStatusIsTrueOrderByProjectIdAsc()
+        val projectEntities = projectRepository.findAllByStatusIsTrueOrderByProjectIdDesc()
         return projectEntities.map { ProjectPartialMapper.entityToDto(it) }
     }
 

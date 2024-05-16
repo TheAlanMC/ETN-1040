@@ -1,56 +1,190 @@
-<p-sidebar #sidebar [(visible)]="sidebarVisible" position="right" [baseZIndex]="10000" styleClass="w-full md:w-8 lg:w-6 xl:w-5" [showCloseIcon]="false" (onHide)="onClose()">
+<p-toast></p-toast>
+<p-sidebar #sidebar (onHide)="onClose()" [(visible)]="sidebarVisible" [baseZIndex]="10000" (onShow)="onSidebarShow()"
+           [showCloseIcon]="false" position="right" styleClass="w-full md:w-8 lg:w-6 xl:w-5">
   <ng-template pTemplate="header">
-    <div class="flex px-3 justify-content-between align-items-center w-full">
+    <div class="flex pl-3 pr-2 surface-border border-bottom-1 justify-content-between align-items-center w-full">
       <span class="block text-900 font-bold text-xl">Nueva Tarea</span>
-        <button pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-text p-button-secondary" (click)="onClose()"></button>
+      <button (click)="onClose()" class="p-button-rounded p-button-text p-button-secondary" icon="pi pi-times" pButton
+              pRipple
+              type="button"></button>
     </div>
   </ng-template>
   <ng-template pTemplate="content">
-      <div class="grid grid-nogutter gap-5 flex-wrap flex-1 flex flex-column">
-        <div class="col-12 flex flex-column field px-3">
-          <label for="title" class="block text-900 font-semibold">Título de la tarea</label>
-          <input id="title" name="title" type="text" pInputText class="w-full" [formControl]="taskNameControl" placeholder="Título de la tarea">
-        </div>
-        <div class="col-12 field px-3">
-          <label for="description" class="block text-900 font-semibold">Descripción de la tarea</label>
-          <textarea id="description" name="description" type="text" pInputTextarea [rows]="3" style="resize: none" class="w-full" [formControl]="taskDescriptionControl" placeholder="Description de la tarea"></textarea>
-        </div>
-        <div class="col-12 px-3 flex gap-5">
-          <div class="flex flex-column field w-full">
-
-            <label for="deadline" class="text-900 font-bold">Fecha límite</label>
-            <p-calendar [formControl]="taskDeadlineControl" [readonlyInput]="true" [showIcon]="true" dateFormat="dd/mm/yy" [showTime]="true" [inputStyle]="{'height':'3.5rem'}"
-                        id="deadline" placeholder="Fecha límite"></p-calendar>
-          </div>
-          <div class="flex flex-column field w-full">
-            <label for="priority" class="block text-900 font-semibold">Prioridad</label>
-            <p-dropdown id="priority" [appendTo]="sidebar" [options]="priorities" [formControl]="taskPriorityControl" optionLabel="name" placeholder="Seleccionar prioridad" [style]="{'width':'100%'}"></p-dropdown>
-          </div>
-        </div>
-
-        <div class="col-12 flex flex-column field px-3">
-          <label for="assignees" class="block text-900 font-semibold mb-3">Assignees</label>
-<!--          <p-autoComplete [appendTo]="sidebar" name="assignees" [(ngModel)]="formValue.assignees" [suggestions]="filteredAssignees" (completeMethod)="filterAssignees($event)" field="name" [multiple]="true" [showEmptyMessage]="true" emptyMessage="No results found" placeholder="Choose assignees" [inputStyle]="{'height': '2.5rem'}">-->
-<!--            <ng-template let-assignee pTemplate="selectedItem">-->
-<!--              <div class="flex align-items-center gap-3 border-round">-->
-<!--                <img src="assets/demo/images/avatar/{{assignee.image}}" [alt]="assignee.name" class="h-2rem w-2rem border-2 border-circle surface-border mr-2">-->
-<!--                <span class="text-900">{{assignee.name}}</span>-->
-<!--              </div>-->
-<!--            </ng-template>-->
-<!--            <ng-template let-assignee pTemplate="item">-->
-<!--              <div class="flex align-items-center border-round">-->
-<!--                <img src="assets/demo/images/avatar/{{assignee.image}}" [alt]="assignee.name" class="h-2rem w-2rem border-2 border-circle surface-border mr-2">-->
-<!--                <span class="text-900">{{assignee.name}}</span>-->
-<!--              </div>-->
-<!--            </ng-template>-->
-<!--          </p-autoComplete>-->
-        </div>
-
-      <div class="flex w-full justify-content-end border-top-1 surface-border py-5 px-3 gap-3">
-        <button pButton pRipple type="button" icon="pi pi-paperclip" class="p-button-outlined p-button-secondary surface-border text-900 w-3rem h-3rem"></button>
-<!--        <button pButton pRipple type="button" icon="pi pi-trash" class="p-button-outlined p-button-secondary surface-border text-900 w-3rem h-3rem" (click)="onDelete()"></button>-->
-        <button pButton pRipple type="submit" icon="pi pi-check" label="Save" class="p-button-primary h-3rem"></button>
+    <div class="grid p-fluid formgrid px-3">
+      <div class="col-12 field" *ngIf="showProjectDropdown">
+        <label class="font-semibold text-900" for="project"> Proyecto</label>
+        <p-dropdown (onChange)="onProjectChange($event)" [(ngModel)]="selectedProject" [appendTo]="sidebar"
+                    [filter]="false"
+                    [options]="projectItems"
+                    id=project placeholder="Seleccionar proyecto"></p-dropdown>
       </div>
+      <div class="col-12 field">
+        <label class="font-semibold text-900" for="title">Título de la tarea <span style="color: red;">*</span></label>
+        <input [formControl]="taskNameControl" class="w-full" id="title" name="title" pInputText
+               placeholder="Título de la tarea"
+               type="text">
       </div>
+      <div class="col-12 field">
+        <label class="font-semibold text-900" for="description">Descripción de la tarea</label>
+        <textarea [formControl]="taskDescriptionControl" [rows]="3" class="w-full" id="description" name="description"
+                  pInputTextarea
+                  placeholder="Description de la tarea" style="resize: none"
+                  type="text"></textarea>
+      </div>
+      <div class="col-12 lg:col-6 field">
+        <label class="font-semibold text-900" for="deadline">Fecha límite <span style="color: red;">*</span></label>
+        <p-calendar [appendTo]="sidebar" [formControl]="taskDeadlineControl" [maxDate]="project?.dateTo"
+                    [minDate]="today"
+                    [readonlyInput]="true" [showIcon]="true"
+                    [showSeconds]="false" [showTime]="true" dateFormat="dd/mm/yy" id="deadline"
+                    placeholder="Fecha límite"></p-calendar>
+      </div>
+      <div class="col-12 lg:col-6 field">
+        <label class="font-semibold text-900" for="priority">Prioridad <span style="color: red;">*</span></label>
+        <p-dropdown [(ngModel)]="selectedPriority" [appendTo]="sidebar" [disabled]="!selectedProject" [filter]="false"
+                    [options]="priorityItems"
+                    id=priority placeholder="Seleccionar prioridad"></p-dropdown>
+      </div>
+      <div class="col-12 field">
+        <div class="border-1 surface-border border-round field">
+          <span class="font-semibold text-900 block border-bottom-1 surface-border p-3">Agregar Responsables</span>
+          <div class="p-3">
+            <div *ngIf="selectedAssignees.length > 0" class="auto-flex align-items-center field">
+              <p-chips [(ngModel)]="selectedAssignees" class="chips-custom">
+                <ng-template let-item pTemplate="item">
+                  <img
+                    (error)="imgLoaded[item.value] = false"
+                    (load)="imgLoaded[item.value] = true"
+                    [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                    alt="{{item.value}}"
+                    class="mr-1"
+                    style="width: 25px; height: 25px; border-radius: 50%; object-fit: cover;">
+                  <span class="ml-1">{{ item.label }}</span>
+                </ng-template>
+              </p-chips>
+            </div>
+            <p-multiSelect [(ngModel)]="selectedAssignees" [disabled]="!selectedProject"
+                           [options]="userItems" class="multiselect-custom"
+                           display="chip" optionLabel="label" placeholder="Seleccione Responsables" showClear="true"
+                           variant="filled">
+              <ng-template let-value pTemplate="selectedItems">
+                <div>Seleccione Responsables</div>
+              </ng-template>
+              <ng-template let-item pTemplate="item">
+                <div class="inline-flex align-items-center">
+                  <img
+                    (error)="imgLoaded[item.value] = false"
+                    (load)="imgLoaded[item.value] = true"
+                    [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                    alt="{{item.value}}"
+                    class="mr-2"
+                    style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
+                  <div class="flex-col">
+                    <div class="font-medium">{{ item.label }}</div>
+                    <div class="text-sm text-color-secondary">{{ item.labelSecondary }}</div>
+                  </div>
+                </div>
+              </ng-template>
+            </p-multiSelect>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 field">
+        <div class="border-1 surface-border border-round field">
+          <span class="font-semibold text-900 block border-bottom-1 surface-border p-3">Adjuntar Archivos</span>
+          <div class="p-3">
+            <p-fileUpload #fileUploader (onSelect)="onUpload($event)" (onUpload)="onUpload($event)" [auto]="true"
+                          [customUpload]="true" [multiple]="true" [showCancelButton]="false"
+                          [showUploadButton]="false" maxFileSize="10000000"
+                          styleClass="border-1 surface-border surface-card border-round">
+              <ng-template pTemplate="content">
+                <div (click)="fileUploader.advancedFileInput.nativeElement.click()"
+                     class="h-15rem overflow-y-auto py-3 border-round"
+                     style="cursor: copy">
+                  <div *ngIf="!files.length"
+                       class="flex flex-column w-full h-full justify-content-center align-items-center">
+                    <i class="pi pi-file text-4xl text-primary"></i>
+                    <span class="block font-semibold text-900 text-lg mt-3">Arrastre o seleccione archivos</span>
+                  </div>
+                  <div *ngIf="files.length" class="flex flex-wrap border-round">
+                    <div (mouseenter)="onFileMouseOver(file)"
+                         (mouseleave)="onFileMouseLeave(file)"
+                         *ngFor="let file of files; let i = index;"
+                         class="h-full relative w-9rem h-10rem border-3 border-transparent border-round hover:bg-primary transition-duration-100 cursor-auto"
+                         style="padding: 1px;">
+                      <div class="w-full h-full border-round shadow-2 flex align-items-center justify-content-center" pTooltip="{{file.name}} - {{file.size | fileSize}}" tooltipPosition="top">
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                          <div style="height: 80px; width: 100%; display: flex; align-items: center; justify-content: center;">
+                            <ng-container *ngIf="file.type.startsWith('image'); else nonImageTemplate">
+                              <img [alt]="file.name" [src]="file.objectURL" class="px-1" style="object-fit: cover; width: 100%; height: 70px; border-radius: 5px;">
+                            </ng-container>
+                            <ng-template #nonImageTemplate>
+                        <span style="display: flex;"><svg fill="none" style="display:block" viewBox="0 0 100 117"
+                                                          width="40.32px" xmlns="http://www.w3.org/2000/svg"><path
+                          clip-rule="evenodd" d="
+				M 0 5
+				c 0 0 0 -4 5 -5
+				H 63
+				l 26 28
+				v 82
+				c 0 0 0 4 -5 5
+				h -79
+				c 0 0 -4 0 -5 -5
+				Z" fill="#e5e8eb" fill-rule="evenodd"></path><path clip-rule="evenodd" d="
+				M 63 0
+			 	L 89 28
+			 	H 66
+			 	C 66 28 63 28 63 25
+			 	V 63
+			 	Z" fill="#535c69" fill-rule="evenodd" opacity="0.3"></path><svg height="33" width="65" x="35"
+                                                                         xmlns="http://www.w3.org/2000/svg" y="53"><rect
+                          [attr.fill]="getFileDetails(file.name).color" height="33" rx="2" ry="2" width="100%" x="0"
+                          y="0"></rect><text [attr.x]="getFileDetails(file.name).x" dominant-baseline="middle"
+                                             fill="#fff"
+                                             style="color:#fff; font-family: &quot;OpenSans-Semibold&quot;, &quot;Open Sans&quot;, Helvetica, Arial, sans-serif;font-weight: 500;font-size: 22px;line-height: 25px;"
+                                             y="54%">{{ getFileDetails(file.name).extension }}</text></svg></svg></span>
+                            </ng-template>
+                          </div>
+                          <div style="overflow: hidden; text-overflow: ellipsis; max-width: 100px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; word-wrap: break-word; overflow-wrap: break-word;"> <p style="font-size: 12px;">{{ getTruncatedFileName(file.name) }}</p> </div>
+                      </div>
+                      </div>
+
+                      <button #buttonEl (click)="$event.stopPropagation(); removeFile(file)" [id]="file.name"
+                              class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
+                              icon="pi pi-times" pButton
+                              pRipple
+                              style="top: 0px; display: none;"
+                              type="button" pTooltip="Eliminar archivo" tooltipPosition="top"></button>
+                      <button #buttonOp (click)="$event.stopPropagation(); downloadFile(file)" [id]="file.name"
+                              class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
+                              icon="pi pi-download" pButton
+                              pRipple
+                              style="top: 0px; right: 0px; display: none;"
+                              type="button" pTooltip="Descargar archivo" tooltipPosition="top"></button>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </p-fileUpload>
+          </div>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="flex flex-column sm:flex-row justify-content-between align-items-center gap-3 py-2">
+          <button (click)="onSave()" class="p-button-primary flex-1 border-round" pButton pRipple label="Guardar"
+                  [disabled]="loading">
+            <span *ngIf="!loading"></span>
+            <i *ngIf="loading" class="pi pi-spin pi-spinner"></i>
+            <i *ngIf="!loading" class="pi pi-fw pi-save"></i>
+          </button>
+          <button (click)="onClose()" class="p-button-primary flex-1 p-button-outlined" icon="pi pi-fw pi-times"
+                  label="Cancelar" [disabled]="loading"
+                  pButton pRipple></button>
+        </div>
+      </div>
+    </div>
+
+
+
   </ng-template>
 </p-sidebar>

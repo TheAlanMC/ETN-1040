@@ -78,6 +78,10 @@ export class ProjectTaskCalendarComponent implements OnInit {
 
   menuItems: MenuItem[] = [];
 
+  sidebarVisible: boolean = false;
+
+  deadline: Date = new Date();
+
   private searchSubject = new Subject<string>();
 
   constructor(private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private utilService: UtilService, private projectService: ProjectService, private userService: UserService, private sharedService: SharedService, private activatedRoute: ActivatedRoute, private taskService: TaskService) {
@@ -148,12 +152,20 @@ export class ProjectTaskCalendarComponent implements OnInit {
 
   onDateClick(e: any) {
     if (this.canAddTask&&(this.isOwner || this.isModerator)) {
-      this.navigateToCreateTask();
+      let currentDate = new Date();
+      currentDate.setHours(0,0,0,0);
+      let selectedDate = new Date(e.date);
+      selectedDate.setHours(20,0,0,0);
+      if (selectedDate > currentDate) {
+        this.deadline = selectedDate;
+        this.navigateToCreateTask();
+      }
     }
   }
 
+
+
   onEventDrop(e: any) {
-    // if the event is dropped on a past date from the current date, then do not update the task deadline
     if (new Date(e.event.start).getTime() < new Date().getTime()) {
       this.messageService.add({severity: 'error', summary: 'Error', detail: 'No puedes establecer una fecha límite en el pasado'});
       e.revert();
@@ -183,7 +195,8 @@ export class ProjectTaskCalendarComponent implements OnInit {
   }
 
   public navigateToCreateTask() {
-    this.router.navigate(['/tasks/create']).then(r => console.log('Navigate to create task'));
+    this.sidebarVisible =true
+    // this.router.navigate(['/tasks/create']).then(r => console.log('Navigate to create task'));
   }
 
   public navigateToViewTask(taskId: number) {

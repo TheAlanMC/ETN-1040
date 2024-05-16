@@ -23,6 +23,11 @@ import {OverlayPanelModule} from "primeng/overlaypanel";
 import {RippleModule} from "primeng/ripple";
 import {DockModule} from "primeng/dock";
 import {ReactiveFormsModule} from "@angular/forms";
+import {ChipsModule} from "primeng/chips";
+import {MultiSelectModule} from "primeng/multiselect";
+import {FileUploadModule} from "primeng/fileupload";
+import {SharedModule} from "../../shared/shared.module";
+import {ToastModule} from "primeng/toast";
 
 
 @NgModule({
@@ -56,6 +61,11 @@ import {ReactiveFormsModule} from "@angular/forms";
     RippleModule,
     DockModule,
     ReactiveFormsModule,
+    ChipsModule,
+    MultiSelectModule,
+    FileUploadModule,
+    SharedModule,
+    ToastModule,
   ]
 })
 export class TaskModule {

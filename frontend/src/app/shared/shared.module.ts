@@ -9,15 +9,18 @@ import {NotFoundComponent} from "./components/not-found/not-found.component";
 import {ButtonModule} from "primeng/button";
 import {RouterLink} from "@angular/router";
 import {TimeAgoPipe} from "../core/pipes/time-ago.pipe";
+import {FileSizePipe} from "../core/pipes/file-size.pipe";
 
 @NgModule({
   declarations: [
     ForbiddenComponent,
     NotFoundComponent,
-    TimeAgoPipe
+    TimeAgoPipe,
+    FileSizePipe
 ],
   exports: [
-    TimeAgoPipe
+    TimeAgoPipe,
+    FileSizePipe
   ],
   imports: [
     CommonModule,

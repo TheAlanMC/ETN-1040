@@ -85,6 +85,8 @@ export class ProjectTaskDeadlineComponent implements OnInit{
   isOwner: boolean = false;
   isModerator: boolean = false;
 
+  sidebarVisible: boolean = false;
+
   constructor(private projectService: ProjectService, private sharedService: SharedService, private activatedRoute: ActivatedRoute, private taskService: TaskService, private utilService: UtilService, private router: Router, private userService: UserService) {
     this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     // Get token from local storage
@@ -231,6 +233,7 @@ export class ProjectTaskDeadlineComponent implements OnInit{
   }
 
   public navigateToCreateTask() {
-    this.router.navigate(['/tasks/create']).then(r => console.log('Navigate to create task'));
+    this.sidebarVisible =true
+    // this.router.navigate(['/tasks/create']).then(r => console.log('Navigate to create task'));
   }
 }

@@ -78,7 +78,7 @@
         <div class="col-12 lg:col-6">
           <p-dropdown [options]="groupItems" [(ngModel)]="selectedGroup" placeholder="Seleccione un rol"
                       [showClear]="true" (onChange)="onSelectRole($event)" (onClear)="onClearGroup()"
-                      [filter]="true"></p-dropdown>
+                      [filter]="false"></p-dropdown>
         </div>
         <div class="col-12 lg:col-6">
           <div class="grid p-fluid">

@@ -24,6 +24,7 @@
   </p-multiSelect>
 </div>
 <full-calendar [options]="calendarOptions"></full-calendar>
+<app-new-task [projectId]="projectId" [sidebarVisible]="sidebarVisible" [deadline]="deadline" (sidebarVisibleChange)="sidebarVisible = $event"></app-new-task>
 
 <p-dialog #dd [(visible)]="showTaskDialog" [breakpoints]="{'960px': '75vw', '640px': '90vw'}" [style]="{width: '32rem'}" [modal]="true" [closable]="true" [resizable]="false" *ngIf="selectedTask" [draggable]="false">
   <ng-template pTemplate="header" >
