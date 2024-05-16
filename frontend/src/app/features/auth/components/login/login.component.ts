@@ -50,6 +50,10 @@ export class LoginComponent {
     });
   }
 
+  onEnter(event: Event, loginButton: HTMLButtonElement) {
+    loginButton.click();
+  }
+
   get dark(): boolean {
     return this.layoutService.config().colorScheme !== 'light';
   }

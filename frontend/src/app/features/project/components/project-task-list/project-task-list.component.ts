@@ -67,6 +67,8 @@ export class ProjectTaskListComponent implements OnInit {
 
   isMember: boolean = false;
 
+  sidebarVisible: boolean = false;
+
   private searchSubject = new Subject<string>();
 
 
@@ -102,7 +104,8 @@ export class ProjectTaskListComponent implements OnInit {
   }
 
   public navigateToCreateTask() {
-    this.router.navigate(['/tasks/create']).then(r => console.log('Navigate to create task'));
+    this.sidebarVisible =true
+    // this.router.navigate(['/tasks/create']).then(r => console.log('Navigate to create task'));
   }
 
   public navigateToViewTask(taskId: number) {
@@ -304,4 +307,6 @@ export class ProjectTaskListComponent implements OnInit {
     }
     return new Date(taskDeadline).getTime() < new Date().getTime();
   }
+
+  protected readonly console = console;
 }

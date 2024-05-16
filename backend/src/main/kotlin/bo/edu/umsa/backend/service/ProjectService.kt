@@ -6,9 +6,7 @@ import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.ProjectMapper
 import bo.edu.umsa.backend.mapper.ProjectPartialMapper
 import bo.edu.umsa.backend.mapper.TaskMapper
-import bo.edu.umsa.backend.mapper.UserPartialMapper
 import bo.edu.umsa.backend.repository.*
-import bo.edu.umsa.backend.service.UserService.Companion
 import bo.edu.umsa.backend.specification.ProjectSpecification
 import bo.edu.umsa.backend.specification.TaskSpecification
 import bo.edu.umsa.backend.util.AuthUtil
@@ -31,6 +29,7 @@ class ProjectService @Autowired constructor(
     private val projectModeratorRepository: ProjectModeratorRepository,
     private val projectMemberRepository: ProjectMemberRepository,
     private val taskRepository: TaskRepository,
+    private val taskAssigneeRepository: TaskAssigneeRepository,
 ) {
     companion object {
         private val logger = org.slf4j.LoggerFactory.getLogger(ProjectService::class.java)
@@ -56,6 +55,25 @@ class ProjectService @Autowired constructor(
 
     fun getProjectById(projectId: Long): ProjectDto {
         logger.info("Getting the project by id $projectId")
+        // Get the user id from the token
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(
+            HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado"
+        )
+        // Validate that the user is the project owner, a project moderator or a project member
+        if (projectOwnerRepository.findByProjectIdAndUserIdAndStatusIsTrue(
+               projectId, userId
+            ) == null && projectModeratorRepository.findByProjectIdAndUserIdAndStatusIsTrue(
+                projectId, userId
+            ) == null && projectMemberRepository.findByProjectIdAndUserIdAndStatusIsTrue(
+                projectId, userId
+            ) == null
+        ) {
+            throw EtnException(
+                HttpStatus.FORBIDDEN,
+                "Error: User is not the project owner or a project moderator",
+                "El usuario no es el propietario del proyecto, un colaborador del proyecto o un miembro del proyecto"
+            )
+        }
         // Validate the project exists
         val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(projectId) ?: throw EtnException(
             HttpStatus.NOT_FOUND, "Error: Project not found", "Proyecto no encontrado"
@@ -226,6 +244,16 @@ class ProjectService @Autowired constructor(
         val projectMemberEntities = projectMemberRepository.findAllByProjectIdAndStatusIsTrue(projectId)
         // If they are different, update the project members
         if (projectMemberEntities.map { it.userId }.toSet() != projectDto.projectMemberIds.map { it }.toSet()) {
+            // Validate that none of the members have been assigned to a task
+            val taskEntities = taskRepository.findAllByProjectIdAndStatusIsTrue(projectId)
+            val taskAssigneeEntities = taskAssigneeRepository.findAllByTaskIdInAndStatusIsTrue(taskEntities.map { it.taskId })
+            if (taskAssigneeEntities.isNotEmpty()) {
+                throw EtnException(
+                    HttpStatus.BAD_REQUEST,
+                    "Error: At least one member has been assigned to a task, cannot delete",
+                    "Al menos un miembro ha sido asignado a una tarea, no se puede eliminar"
+                )
+            }
             projectMemberEntities.forEach {
                 it.status = false
                 projectMemberRepository.save(it)

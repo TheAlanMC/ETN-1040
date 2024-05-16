@@ -12,13 +12,32 @@ import {FullCalendarModule} from "@fullcalendar/angular";
 import {InputTextModule} from "primeng/inputtext";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {PaginatorModule} from "primeng/paginator";
+import { TaskDeadlineListComponent } from './components/task-deadline-list/task-deadline-list.component';
+import { TaskDeadlineComponent } from './components/task-deadline/task-deadline.component';
+import { TaskDeadlineCardComponent } from './components/task-deadline-card/task-deadline-card.component';
+import { TaskCalendarComponent } from './components/task-calendar/task-calendar.component';
+import { ViewTaskComponent } from './components/view-task/view-task.component';
+import {SidebarModule} from "primeng/sidebar";
+import {InplaceModule} from "primeng/inplace";
+import {OverlayPanelModule} from "primeng/overlaypanel";
+import {RippleModule} from "primeng/ripple";
+import {DockModule} from "primeng/dock";
+import {ReactiveFormsModule} from "@angular/forms";
 
 
 @NgModule({
   declarations: [
     NewTaskComponent,
     EditTaskComponent,
-    TaskListComponent
+    TaskListComponent,
+    TaskDeadlineListComponent,
+    TaskDeadlineComponent,
+    TaskDeadlineCardComponent,
+    TaskCalendarComponent,
+    ViewTaskComponent
+  ],
+  exports: [
+    NewTaskComponent
   ],
   imports: [
     CommonModule,
@@ -31,6 +50,12 @@ import {PaginatorModule} from "primeng/paginator";
     InputTextModule,
     InputTextareaModule,
     PaginatorModule,
+    SidebarModule,
+    InplaceModule,
+    OverlayPanelModule,
+    RippleModule,
+    DockModule,
+    ReactiveFormsModule,
   ]
 })
 export class TaskModule {

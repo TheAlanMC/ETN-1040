@@ -20,13 +20,13 @@
     <div class="flex flex-column">
             <span class="p-input-icon-left w-full mb-4">
                 <i class="pi pi-envelope"></i>
-                <input [formControl]="emailControl" class="w-full md:w-25rem" id="email" pInputText
+                <input (keydown.enter)="onEnter($event, loginButton)" [formControl]="emailControl" class="w-full md:w-25rem" id="email" pInputText
                        placeholder="Correo electrónico"
                        type="text">
             </span>
       <span class="p-input-icon-left w-full mb-4">
                 <i class="pi pi-lock z-2"></i>
-                <p-password [feedback]=false [formControl]="passwordControl" [inputStyle]="{paddingLeft: '2.5rem'}"
+                <p-password (keydown.enter)="onEnter($event, loginButton)" [feedback]=false [formControl]="passwordControl" [inputStyle]="{paddingLeft: '2.5rem'}"
                             [toggleMask]="true" id="password"
                             inputStyleClass="w-full md:w-25rem" placeholder="Contraseña"
                             styleClass="w-full"></p-password>
@@ -37,7 +37,7 @@
           class="text-600 cursor-pointer hover:text-primary cursor-pointer ml-auto transition-colors transition-duration-300">Olvidé
           mi contraseña</a>
       </div>
-      <button (click)="login()" class="w-full" label="Iniciar Sesión" pButton pRipple></button>
+      <button #loginButton (click)="login()" class="w-full" label="Iniciar Sesión" pButton pRipple></button>
     </div>
   </div>
 </div>

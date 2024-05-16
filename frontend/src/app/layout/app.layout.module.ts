@@ -18,7 +18,6 @@ import { AppMenuitemComponent } from './app.menuitem.component';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import {CommonModule, NgOptimizedImage} from "@angular/common";
-import {TimeAgoPipe} from "../core/pipes/time-ago.pipe";
 import {ToastModule} from "primeng/toast";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {SharedModule} from "../shared/shared.module";

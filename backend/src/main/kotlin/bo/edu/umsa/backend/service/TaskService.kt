@@ -178,9 +178,19 @@ class TaskService @Autowired constructor(
             HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado"
         )
         // Validate the project exists
-        projectRepository.findByProjectIdAndStatusIsTrue(newTaskDto.projectId.toLong()) ?: throw EtnException(
+        val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(newTaskDto.projectId.toLong()) ?: throw EtnException(
             HttpStatus.BAD_REQUEST, "Error: Project does not exist", "El proyecto no existe"
         )
+        // Validate the task deadline is between the project date from and date to
+        if (Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).before(projectEntity.dateFrom) ||
+            Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).after(projectEntity.dateTo)
+        ) {
+            throw EtnException(
+                HttpStatus.BAD_REQUEST,
+                "Error: Task deadline is not between the project date from and date to",
+                "La fecha límite de la tarea no está entre la fecha de inicio y la fecha de finalización del proyecto"
+            )
+        }
         // Validate the task assignees exist
         if (userRepository.findAllByUserIdInAndStatusIsTrue(newTaskDto.taskAssigneeIds).size != newTaskDto.taskAssigneeIds.size) {
             throw EtnException(
@@ -304,6 +314,20 @@ class TaskService @Autowired constructor(
         val taskEntity = taskRepository.findByTaskIdAndStatusIsTrue(taskId) ?: throw EtnException(
             HttpStatus.NOT_FOUND, "Error: Task not found", "Tarea no encontrada"
         )
+        // Validate the project exists
+        val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(taskEntity.projectId.toLong()) ?: throw EtnException(
+            HttpStatus.BAD_REQUEST, "Error: Project does not exist", "El proyecto no existe"
+        )
+        // Validate the task deadline is between the project date from and date to
+        if (Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).before(projectEntity.dateFrom) ||
+            Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).after(projectEntity.dateTo)
+        ) {
+            throw EtnException(
+                HttpStatus.BAD_REQUEST,
+                "Error: Task deadline is not between the project date from and date to",
+                "La fecha límite de la tarea no está entre la fecha de inicio y la fecha de finalización del proyecto"
+            )
+        }
 
         // Validate the task assignees exist
         if (userRepository.findAllByUserIdInAndStatusIsTrue(newTaskDto.taskAssigneeIds).size != newTaskDto.taskAssigneeIds.size) {

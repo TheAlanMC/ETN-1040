@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {LayoutService} from "../../../../layout/service/app.layout.service";
 import {Table} from "primeng/table";
+import {debounceTime, Subscription} from "rxjs";
 
 @Component({
   selector: 'app-home-page',
@@ -22,9 +23,18 @@ export class HomePageComponent implements OnInit {
 
   pieOptions: any;
 
+  subscription: Subscription;
+
   cols: any[] = [];
 
-  constructor(private layoutService: LayoutService) {
+  constructor(
+    private layoutService: LayoutService
+  ) {
+    this.subscription = this.layoutService.configUpdate$
+      .pipe(debounceTime(25))
+      .subscribe((config) => {
+        this.initCharts();
+      });
   }
 
   ngOnInit(): void {
@@ -51,10 +61,10 @@ export class HomePageComponent implements OnInit {
     this.initCharts();
 
     this.cols = [
-      {header: 'Name', field: 'name'},
-      {header: 'Category', field: 'category'},
-      {header: 'Price', field: 'price'},
-      {header: 'Status', field: 'inventoryStatus'},
+      { header: 'Name', field: 'name' },
+      { header: 'Category', field: 'category' },
+      { header: 'Price', field: 'price' },
+      { header: 'Status', field: 'inventoryStatus' },
     ];
   }
 
@@ -171,7 +181,7 @@ export class HomePageComponent implements OnInit {
   }
 
   onWeekChange() {
-    let newBarData = {...this.barData};
+    let newBarData = { ...this.barData };
     newBarData.datasets[0].data = this.selectedWeek.data[0];
     newBarData.datasets[1].data = this.selectedWeek.data[1];
     this.barData = newBarData;
@@ -183,4 +193,5 @@ export class HomePageComponent implements OnInit {
       'contains'
     );
   }
+
 }

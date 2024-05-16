@@ -15,5 +15,6 @@ interface TaskRepository : PagingAndSortingRepository<Task, Long>, JpaRepository
 
     fun findByTaskIdAndStatusIsTrue(taskId: Long): Task?
 
+    fun findAllByProjectIdAndStatusIsTrue(projectId: Long): List<Task>
 
 }

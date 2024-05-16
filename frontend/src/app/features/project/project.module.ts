@@ -43,6 +43,7 @@ import {InplaceModule} from "primeng/inplace";
 import {MenuModule} from "primeng/menu";
 import { ProjectTaskDeadlineCardComponent } from './components/project-task-deadline-card/project-task-deadline-card.component';
 import {TieredMenuModule} from "primeng/tieredmenu";
+import {TaskModule} from "../task/task.module";
 
 
 @NgModule({
@@ -58,44 +59,45 @@ import {TieredMenuModule} from "primeng/tieredmenu";
     ProjectTaskDeadlineListComponent,
     ProjectTaskDeadlineCardComponent,
   ],
-  imports: [
-    CommonModule,
-    ProjectRoutingModule,
-    DialogModule,
-    FullCalendarModule,
-    FormsModule,
-    CalendarModule,
-    DropdownModule,
-    ChipsModule,
-    InputTextareaModule,
-    EditorModule,
-    FileUploadModule,
-    ChipModule,
-    InputSwitchModule,
-    RippleModule,
-    ReactiveFormsModule,
-    MultiSelectModule,
-    ToastModule,
-    ConfirmDialogModule,
-    TableModule,
-    AvatarGroupModule,
-    AvatarModule,
-    DockModule,
-    OverlayPanelModule,
-    ProgressSpinnerModule,
-    TabMenuModule,
-    StepsModule,
-    TabViewModule,
-    TagModule,
-    AppLayoutModule,
-    SharedModule,
-    CdkDropList,
-    InplaceModule,
-    MenuModule,
-    CdkDragHandle,
-    CdkDrag,
-    TieredMenuModule
-  ]
+    imports: [
+        CommonModule,
+        ProjectRoutingModule,
+        DialogModule,
+        FullCalendarModule,
+        FormsModule,
+        CalendarModule,
+        DropdownModule,
+        ChipsModule,
+        InputTextareaModule,
+        EditorModule,
+        FileUploadModule,
+        ChipModule,
+        InputSwitchModule,
+        RippleModule,
+        ReactiveFormsModule,
+        MultiSelectModule,
+        ToastModule,
+        ConfirmDialogModule,
+        TableModule,
+        AvatarGroupModule,
+        AvatarModule,
+        DockModule,
+        OverlayPanelModule,
+        ProgressSpinnerModule,
+        TabMenuModule,
+        StepsModule,
+        TabViewModule,
+        TagModule,
+        AppLayoutModule,
+        SharedModule,
+        CdkDropList,
+        InplaceModule,
+        MenuModule,
+        CdkDragHandle,
+        CdkDrag,
+        TieredMenuModule,
+        TaskModule
+    ]
 })
 export class ProjectModule {
 }

@@ -118,8 +118,6 @@ export class AppConfigComponent implements OnInit {
             { name: 'orange', color: '#f59e0b' },
             { name: 'pink', color: '#d946ef' },
         ];
-        // Default theme
-        // this.changeTheme('green');
     }
 
     onConfigButtonClick() {

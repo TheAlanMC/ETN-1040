@@ -3,29 +3,24 @@ import {RouterModule, Routes} from '@angular/router';
 
 import {RoleGuard} from "../../core/guards/role.guard";
 import {TaskListComponent} from "./components/task-list/task-list.component";
-import {NewTaskComponent} from "./components/new-task/new-task.component";
-import {EditTaskComponent} from "./components/edit-task/edit-task.component";
+import {ViewTaskComponent} from "./components/view-task/view-task.component";
+import {TaskCalendarComponent} from "./components/task-calendar/task-calendar.component";
+import {TaskDeadlineComponent} from "./components/task-deadline/task-deadline.component";
 
 
 const routes: Routes = [
   {
-    path: 'tasks',
+    path: 'tasks/view',
+    component: ViewTaskComponent,
+    canActivate: [RoleGuard],
+    data: {roles: ['VER TAREAS'], breadcrumb: 'Ver'},
     children: [
-      {path: '', component: TaskListComponent, canActivate: [RoleGuard], data: {roles: ['VER TAREAS']}},
-      {
-        path: 'create',
-        component: NewTaskComponent,
-        canActivate: [RoleGuard],
-        data: {roles: ['CREAR TAREAS'], breadcrumb: 'Nuevo'}
-      },
-      {
-        path: 'edit/:id',
-        component: EditTaskComponent,
-        canActivate: [RoleGuard],
-        data: {roles: ['EDITAR TAREAS'], breadcrumb: 'Editar'}
-      },
+      {path: 'list', component: TaskListComponent, data: {breadcrumb: 'Tareas'}},
+      {path: 'deadline', component: TaskDeadlineComponent, data: {breadcrumb: 'Plazos'}},
+      {path: 'calendar', component: TaskCalendarComponent, data: {breadcrumb: 'Calendario'}},
+      {path: '', redirectTo: 'list', pathMatch: 'full'}
     ]
-  }
+  },
 ];
 
 @NgModule({

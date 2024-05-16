@@ -1,1 +1,56 @@
-<p>new-task works!</p>
+<p-sidebar #sidebar [(visible)]="sidebarVisible" position="right" [baseZIndex]="10000" styleClass="w-full md:w-8 lg:w-6 xl:w-5" [showCloseIcon]="false" (onHide)="onClose()">
+  <ng-template pTemplate="header">
+    <div class="flex px-3 justify-content-between align-items-center w-full">
+      <span class="block text-900 font-bold text-xl">Nueva Tarea</span>
+        <button pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-text p-button-secondary" (click)="onClose()"></button>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="content">
+      <div class="grid grid-nogutter gap-5 flex-wrap flex-1 flex flex-column">
+        <div class="col-12 flex flex-column field px-3">
+          <label for="title" class="block text-900 font-semibold">Título de la tarea</label>
+          <input id="title" name="title" type="text" pInputText class="w-full" [formControl]="taskNameControl" placeholder="Título de la tarea">
+        </div>
+        <div class="col-12 field px-3">
+          <label for="description" class="block text-900 font-semibold">Descripción de la tarea</label>
+          <textarea id="description" name="description" type="text" pInputTextarea [rows]="3" style="resize: none" class="w-full" [formControl]="taskDescriptionControl" placeholder="Description de la tarea"></textarea>
+        </div>
+        <div class="col-12 px-3 flex gap-5">
+          <div class="flex flex-column field w-full">
+
+            <label for="deadline" class="text-900 font-bold">Fecha límite</label>
+            <p-calendar [formControl]="taskDeadlineControl" [readonlyInput]="true" [showIcon]="true" dateFormat="dd/mm/yy" [showTime]="true" [inputStyle]="{'height':'3.5rem'}"
+                        id="deadline" placeholder="Fecha límite"></p-calendar>
+          </div>
+          <div class="flex flex-column field w-full">
+            <label for="priority" class="block text-900 font-semibold">Prioridad</label>
+            <p-dropdown id="priority" [appendTo]="sidebar" [options]="priorities" [formControl]="taskPriorityControl" optionLabel="name" placeholder="Seleccionar prioridad" [style]="{'width':'100%'}"></p-dropdown>
+          </div>
+        </div>
+
+        <div class="col-12 flex flex-column field px-3">
+          <label for="assignees" class="block text-900 font-semibold mb-3">Assignees</label>
+<!--          <p-autoComplete [appendTo]="sidebar" name="assignees" [(ngModel)]="formValue.assignees" [suggestions]="filteredAssignees" (completeMethod)="filterAssignees($event)" field="name" [multiple]="true" [showEmptyMessage]="true" emptyMessage="No results found" placeholder="Choose assignees" [inputStyle]="{'height': '2.5rem'}">-->
+<!--            <ng-template let-assignee pTemplate="selectedItem">-->
+<!--              <div class="flex align-items-center gap-3 border-round">-->
+<!--                <img src="assets/demo/images/avatar/{{assignee.image}}" [alt]="assignee.name" class="h-2rem w-2rem border-2 border-circle surface-border mr-2">-->
+<!--                <span class="text-900">{{assignee.name}}</span>-->
+<!--              </div>-->
+<!--            </ng-template>-->
+<!--            <ng-template let-assignee pTemplate="item">-->
+<!--              <div class="flex align-items-center border-round">-->
+<!--                <img src="assets/demo/images/avatar/{{assignee.image}}" [alt]="assignee.name" class="h-2rem w-2rem border-2 border-circle surface-border mr-2">-->
+<!--                <span class="text-900">{{assignee.name}}</span>-->
+<!--              </div>-->
+<!--            </ng-template>-->
+<!--          </p-autoComplete>-->
+        </div>
+
+      <div class="flex w-full justify-content-end border-top-1 surface-border py-5 px-3 gap-3">
+        <button pButton pRipple type="button" icon="pi pi-paperclip" class="p-button-outlined p-button-secondary surface-border text-900 w-3rem h-3rem"></button>
+<!--        <button pButton pRipple type="button" icon="pi pi-trash" class="p-button-outlined p-button-secondary surface-border text-900 w-3rem h-3rem" (click)="onDelete()"></button>-->
+        <button pButton pRipple type="submit" icon="pi pi-check" label="Save" class="p-button-primary h-3rem"></button>
+      </div>
+      </div>
+  </ng-template>
+</p-sidebar>

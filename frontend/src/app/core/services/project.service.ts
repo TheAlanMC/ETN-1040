@@ -19,6 +19,10 @@ export class ProjectService {
     this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
   }
 
+  public getAllProjects(): Observable<ResponseDto<ProjectDto[]>> {
+    return this.http.get<ResponseDto<ProjectDto[]>>(`${this.baseUrl}/all`, this.utilService.getHttpOptions());
+  }
+
   public getProjects(sortBy: string, sortType: string, page: number, size: number): Observable<ResponseDto<PageDto<ProjectDto>>> {
     return this.http.get<ResponseDto<PageDto<ProjectDto>>>(`${this.baseUrl}?sortBy=${sortBy}&sortType=${sortType}&page=${page}&size=${size}`, this.utilService.getHttpOptions());
   }

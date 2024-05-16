@@ -51,36 +51,30 @@ export class AppMenuComponent {
           role: 'CREAR PROYECTOS',
           routerLink: ['/projects/create']
         },
-        // {
-        //   label: 'Editar Proyecto',
-        //   icon: 'pi pi-fw pi-pencil',
-        //   role: 'EDITAR PROYECTOS',
-        //   routerLink: ['/projects/edit']
-        // }
       ]
     },
     {
-      label: 'Tareas por Proyecto',
+      label: 'Tareas Asignadas',
       icon: 'pi pi-fw pi-check-square',
       items: [
         {
-          label: 'Ver Tareas',
-          icon: 'pi pi-fw pi-eye',
+          label: 'Ver Lista de Tareas',
+          icon: 'pi pi-fw pi-list',
           role: 'VER TAREAS',
-          routerLink: ['/tasks']
+          routerLink: ['/tasks/view/list']
         },
         {
-          label: 'Crear Tarea',
-          icon: 'pi pi-fw pi-plus',
-          role: 'CREAR TAREAS',
-          routerLink: ['/tasks/create']
+          label: 'Plazos de Tareas',
+          icon: 'pi pi-fw pi-clock',
+          role: 'VER TAREAS',
+          routerLink: ['/tasks/view/deadline']
         },
-        // {
-        //   label: 'Editar Tareas',
-        //   icon: 'pi pi-fw pi-pencil',
-        //   role: 'EDITAR TAREAS',
-        //   routerLink: ['/tasks/edit']
-        // }
+        {
+          label: 'Calendario de Tareas',
+          icon: 'pi pi-fw pi-calendar',
+          role: 'VER TAREAS',
+          routerLink: ['/tasks/view/calendar']
+        }
       ]
     },
     {
@@ -117,12 +111,6 @@ export class AppMenuComponent {
           role: 'CREAR USUARIOS',
           routerLink: ['/users/create']
         },
-        // {
-        //   label: 'Editar Usuario',
-        //   icon: 'pi pi-fw pi-user-edit',
-        //   role: 'EDITAR USUARIOS',
-        //   routerLink: ['/users/edit']
-        // },
         {
           label: 'Roles y Permisos',
           icon: 'pi pi-fw pi-key',
