@@ -95,8 +95,7 @@ export class NewTaskComponent implements OnInit {
                 });
                 this.selectedProject = this.projectItems.find(project => project.value == this.projectId)?.value;
                 this.onProjectChange(null);
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
             }
         });
@@ -106,8 +105,7 @@ export class NewTaskComponent implements OnInit {
         this.userService.getAllUsers().subscribe({
             next: (data) => {
                 this.users = data.data!;
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
             }
         });
@@ -127,9 +125,7 @@ export class NewTaskComponent implements OnInit {
                 img.onload = () => this.imgLoaded[user.userId] = true;
                 img.onerror = () => this.imgLoaded[user.userId] = false;
                 return {
-                    label: `${user.firstName} ${user.lastName}`,
-                    labelSecondary: user.email,
-                    value: user.userId,
+                    label: `${user.firstName} ${user.lastName}`, labelSecondary: user.email, value: user.userId,
                 }
             });
         } else {
@@ -140,9 +136,11 @@ export class NewTaskComponent implements OnInit {
     }
 
     public onSidebarShow() {
-        let datePart = new Date(this.deadline!).toLocaleDateString('en-GB');
-        let timePart = new Date(this.deadline!).toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
-        this.taskDeadlineControl.setValue(`${datePart} ${timePart}`);
+        if (this.deadline != null) {
+            let datePart = new Date(this.deadline!).toLocaleDateString('en-GB');
+            let timePart = new Date(this.deadline!).toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
+            this.taskDeadlineControl.setValue(`${datePart} ${timePart}`);
+        }
     }
 
 
@@ -258,14 +256,11 @@ export class NewTaskComponent implements OnInit {
                     if (this.uploadedFiles.length == this.files.length) {
                         this.saveTask();
                     }
-                },
-                error: (error) => {
+                }, error: (error) => {
                     console.log(error);
                     this.loading = false;
                     this.messageService.add({
-                        severity: 'error',
-                        summary: 'Error',
-                        detail: error.error.message
+                        severity: 'error', summary: 'Error', detail: error.error.message
                     });
                 }
             });
@@ -274,21 +269,11 @@ export class NewTaskComponent implements OnInit {
     }
 
     public saveTask() {
-        this.taskService.createTask(
-            this.selectedProject,
-            this.taskNameControl.value!,
-            this.taskDescriptionControl.value!,
-            this.taskDeadlineControl.value!,
-            this.selectedPriority,
-            this.selectedAssignees.map(assignee => assignee.value),
-            this.uploadedFiles.map(file => file.fileId)
-        ).subscribe({
+        this.taskService.createTask(this.selectedProject, this.taskNameControl.value!, this.taskDescriptionControl.value!, this.taskDeadlineControl.value!, this.selectedPriority, this.selectedAssignees.map(assignee => assignee.value), this.uploadedFiles.map(file => file.fileId)).subscribe({
             next: (data) => {
                 this.loading = false;
                 this.messageService.add({
-                    severity: 'success',
-                    summary: 'Éxito',
-                    detail: 'Tarea creada con éxito'
+                    severity: 'success', summary: 'Éxito', detail: 'Tarea creada con éxito'
                 });
                 setTimeout(() => {
                     let currentRoute = this.router.url;
@@ -297,14 +282,11 @@ export class NewTaskComponent implements OnInit {
                     });
                 }, 500);
                 this.onClose();
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
                 this.loading = false;
                 this.messageService.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: error.error.message
+                    severity: 'error', summary: 'Error', detail: error.error.message
                 });
             }
         });

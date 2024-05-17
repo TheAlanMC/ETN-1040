@@ -85,6 +85,8 @@ export class ProjectTaskCalendarComponent implements OnInit {
 
     editSidebarVisible: boolean = false;
 
+    viewSidebarVisible: boolean = false;
+
     task: TaskDto | null = null;
 
     deadline: Date = new Date();
@@ -208,6 +210,8 @@ export class ProjectTaskCalendarComponent implements OnInit {
     }
 
     public navigateToViewTask(taskId: number) {
+        this.viewSidebarVisible = true
+        this.task = this.tasks.find(task => task.taskId === taskId) ?? null;
         // this.router.navigate(['/tasks/view/' + taskId]).then(r => console.log('Navigate to view task'));
     }
 

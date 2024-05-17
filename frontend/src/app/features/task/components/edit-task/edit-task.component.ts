@@ -13,7 +13,9 @@ import {TaskDto} from "../../models/task.dto";
 
 @Component({
     selector: 'app-edit-task',
-    templateUrl: './edit-task.component.html', styleUrl: './edit-task.component.scss', providers: [MessageService]
+    templateUrl: './edit-task.component.html',
+    styleUrl: './edit-task.component.scss',
+    providers: [MessageService]
 })
 export class EditTaskComponent implements OnInit {
 
@@ -50,8 +52,6 @@ export class EditTaskComponent implements OnInit {
     newUploadedFiles: FileDto[] = [];
 
     loading: boolean = false;
-
-    showProjectDropdown: boolean = false;
 
     objectURLs: any[] = [];
 
@@ -93,8 +93,7 @@ export class EditTaskComponent implements OnInit {
         this.taskDescriptionControl.setValue(this.task!.taskDescription);
         let datePart = new Date(this.task!.taskDeadline).toLocaleDateString('en-GB');
         let timePart = new Date(this.task!.taskDeadline).toLocaleTimeString('en-GB', {
-            hour: '2-digit',
-            minute: '2-digit'
+            hour: '2-digit', minute: '2-digit'
         });
         this.taskDeadlineControl.setValue(`${datePart} ${timePart}`);
         this.selectedPriority = this.task!.taskPriority;
@@ -150,6 +149,8 @@ export class EditTaskComponent implements OnInit {
     public onClose() {
         this.sidebarVisibleChange.emit(false);
         this.sidebarVisible = false;
+        this.newUploadedFiles = [];
+        this.objectURLs = [];
         this.taskNameControl.reset();
         this.taskDescriptionControl.reset();
         this.taskDeadlineControl.reset();
@@ -269,6 +270,7 @@ export class EditTaskComponent implements OnInit {
                     }, error: (error) => {
                         console.log(error);
                         this.loading = false;
+                        this.newUploadedFiles = [];
                         this.messageService.add({
                             severity: 'error', summary: 'Error', detail: error.error.message
                         });

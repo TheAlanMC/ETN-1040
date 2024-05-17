@@ -3,15 +3,15 @@ import {RouterModule, Routes} from '@angular/router';
 
 import {RoleGuard} from "../../core/guards/role.guard";
 import {TaskListComponent} from "./components/task-list/task-list.component";
-import {ViewTaskComponent} from "./components/view-task/view-task.component";
 import {TaskCalendarComponent} from "./components/task-calendar/task-calendar.component";
 import {TaskDeadlineComponent} from "./components/task-deadline/task-deadline.component";
+import {ViewAssignedTaskComponent} from "./components/view-assigned-task/view-assigned-task.component";
 
 
 const routes: Routes = [
     {
         path: 'tasks/view',
-        component: ViewTaskComponent,
+        component: ViewAssignedTaskComponent,
         canActivate: [RoleGuard],
         data: {roles: ['VER TAREAS'], breadcrumb: 'Ver'},
         children: [
@@ -24,8 +24,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
+    imports: [RouterModule.forChild(routes)], exports: [RouterModule]
 })
 export class TaskRoutingModule {
 }

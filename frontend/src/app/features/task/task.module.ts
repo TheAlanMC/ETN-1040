@@ -29,6 +29,7 @@ import {FileUploadModule} from "primeng/fileupload";
 import {SharedModule} from "../../shared/shared.module";
 import {ToastModule} from "primeng/toast";
 import {TabMenuModule} from "primeng/tabmenu";
+import {ViewAssignedTaskComponent} from './components/view-assigned-task/view-assigned-task.component';
 
 
 @NgModule({
@@ -40,13 +41,13 @@ import {TabMenuModule} from "primeng/tabmenu";
         TaskDeadlineComponent,
         TaskDeadlineCardComponent,
         TaskCalendarComponent,
-        ViewTaskComponent
-    ],
-    exports: [
+        ViewTaskComponent,
+        ViewAssignedTaskComponent
+    ], exports: [
         NewTaskComponent,
-        EditTaskComponent
-    ],
-    imports: [
+        EditTaskComponent,
+        ViewTaskComponent
+    ], imports: [
         CommonModule,
         TaskRoutingModule,
         ButtonModule,

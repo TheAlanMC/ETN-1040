@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {TaskListDto} from "../../../task/models/task-list.dto";
 import {environment} from "../../../../../environments/environment";
 import {TaskStatusDto} from "../../../task/models/task-status.dto";
-import {SelectItem} from "primeng/api";
+import {MessageService, SelectItem} from "primeng/api";
 import {debounceTime, Subject} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 import {UtilService} from "../../../../core/services/util.service";
@@ -21,7 +21,8 @@ import {UserDto} from "../../../user/models/user.dto";
 @Component({
     selector: 'app-project-task-deadline',
     templateUrl: './project-task-deadline.component.html',
-    styleUrl: './project-task-deadline.component.scss'
+    styleUrl: './project-task-deadline.component.scss',
+    providers: [MessageService]
 })
 export class ProjectTaskDeadlineComponent implements OnInit {
 
@@ -70,6 +71,7 @@ export class ProjectTaskDeadlineComponent implements OnInit {
     isModerator: boolean = false;
     createSidebarVisible: boolean = false;
     editSidebarVisible: boolean = false;
+    viewSidebarVisible: boolean = false;
     task: TaskDto | null = null;
     private searchSubject = new Subject<string>();
 
@@ -177,6 +179,8 @@ export class ProjectTaskDeadlineComponent implements OnInit {
 
 
     public onViewCard(event: any) {
+        this.task = event;
+        this.viewSidebarVisible = true;
         // this.router.navigate(['/tasks/view/' + this.card.taskId]).then(r => console.log('Navigate to view task'));
     }
 

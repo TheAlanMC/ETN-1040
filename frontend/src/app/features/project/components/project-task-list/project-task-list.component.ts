@@ -73,8 +73,10 @@ export class ProjectTaskListComponent implements OnInit {
 
     editSidebarVisible: boolean = false;
 
+    viewSidebarVisible: boolean = false;
+
     task: TaskDto | null = null;
-    protected readonly console = console;
+
     private searchSubject = new Subject<string>();
 
     constructor(private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private utilService: UtilService, private projectService: ProjectService, private userService: UserService, private sharedService: SharedService, private activatedRoute: ActivatedRoute, private taskService: TaskService) {
@@ -114,8 +116,9 @@ export class ProjectTaskListComponent implements OnInit {
     }
 
     public navigateToViewTask(taskId: number) {
-
-        // this.router.navigate(['/tasks/view/' + taskId]).then(r => console.log('Navigate to view task'));
+      // this.router.navigate(['/tasks/view/' + taskId]).then(r => console.log('Navigate to view task'));
+      this.viewSidebarVisible = true;
+        this.task = this.tasks.find(task => task.taskId === taskId)!;
     }
 
     public navigateToEditTask(taskId: number) {

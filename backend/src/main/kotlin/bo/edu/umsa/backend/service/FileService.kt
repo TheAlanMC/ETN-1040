@@ -32,11 +32,16 @@ class FileService @Autowired constructor(private val fileRepository: FileReposit
         fileEntity.filename = sanitizeFilename(file.originalFilename!!)
         fileEntity.contentType = file.contentType!!
         fileEntity.fileData = file.bytes
-        if (file.contentType!!.startsWith("image")) {
-            val thumbnailBytes = thumbnailService.createThumbnail(file)
-            fileEntity.thumbnail = thumbnailBytes
-            fileEntity.isPicture = true
+        try {
+            if (file.contentType!!.startsWith("image")) {
+                val thumbnailBytes = thumbnailService.createThumbnail(file)
+                fileEntity.thumbnail = thumbnailBytes
+                fileEntity.isPicture = true
+            }
+        } catch (e: Exception) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: File is not an image", "La imagen con extensión ${file.originalFilename?.substringAfterLast(".")} no es válida")
         }
+
         // Save the file
         val savedFile: File = fileRepository.save(fileEntity)
         return FileDto(fileId = savedFile.fileId, filename = file.originalFilename!!, contentType = file.contentType!!, fileData = null, thumbnail = null)
