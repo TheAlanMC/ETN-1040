@@ -7,17 +7,17 @@ import {RoleDto} from "../../features/user/models/role.dto";
 import {UtilService} from "./util.service";
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class RoleService {
-  baseUrl: string = `${environment.API_URL}/api/v1/roles`;
+    baseUrl: string = `${environment.API_URL}/api/v1/roles`;
 
-  constructor(private http: HttpClient, private utilService: UtilService) {
-    this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
-  }
+    constructor(private http: HttpClient, private utilService: UtilService) {
+        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
+    }
 
-  getRoles(): Observable<ResponseDto<RoleDto[]>> {
-    return this.http.get<ResponseDto<RoleDto[]>>(this.baseUrl, this.utilService.getHttpOptions());
-  }
+    getRoles(): Observable<ResponseDto<RoleDto[]>> {
+        return this.http.get<ResponseDto<RoleDto[]>>(this.baseUrl, this.utilService.getHttpOptions());
+    }
 }
 

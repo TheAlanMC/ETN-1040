@@ -9,23 +9,23 @@ import {TaskDeadlineComponent} from "./components/task-deadline/task-deadline.co
 
 
 const routes: Routes = [
-  {
-    path: 'tasks/view',
-    component: ViewTaskComponent,
-    canActivate: [RoleGuard],
-    data: {roles: ['VER TAREAS'], breadcrumb: 'Ver'},
-    children: [
-      {path: 'list', component: TaskListComponent, data: {breadcrumb: 'Tareas'}},
-      {path: 'deadline', component: TaskDeadlineComponent, data: {breadcrumb: 'Plazos'}},
-      {path: 'calendar', component: TaskCalendarComponent, data: {breadcrumb: 'Calendario'}},
-      {path: '', redirectTo: 'list', pathMatch: 'full'}
-    ]
-  },
+    {
+        path: 'tasks/view',
+        component: ViewTaskComponent,
+        canActivate: [RoleGuard],
+        data: {roles: ['VER TAREAS'], breadcrumb: 'Ver'},
+        children: [
+            {path: 'list', component: TaskListComponent, data: {breadcrumb: 'Tareas'}},
+            {path: 'deadline', component: TaskDeadlineComponent, data: {breadcrumb: 'Plazos'}},
+            {path: 'calendar', component: TaskCalendarComponent, data: {breadcrumb: 'Calendario'}},
+            {path: '', redirectTo: 'list', pathMatch: 'full'}
+        ]
+    },
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule]
 })
 export class TaskRoutingModule {
 }

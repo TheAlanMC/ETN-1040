@@ -125,7 +125,7 @@ export class AppMenuComponent {
       const token = localStorage.getItem('token');
       // Check if token exists
       if (token) {
-        const decoded = jwtDecode<JwtPayload>(token!!);
+        const decoded = jwtDecode<JwtPayload>(token!);
         // Extract roles from token
         const roles = decoded.roles;
         // Filter menu items based on roles

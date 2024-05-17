@@ -11,86 +11,99 @@
                  pInputText
                  placeholder="Busqueda Global" type="text">
         </span>
-  <button (click)="navigateToCreateTask()" *ngIf="canAddTask&&(isOwner || isModerator)"
-          class="p-button-outlined w-full sm:w-auto flex-order-1 sm:flex-order-1" icon="pi pi-plus-circle"
-          label="Crear Tarea" pButton></button>
+    <button (click)="navigateToCreateTask()" *ngIf="canAddTask&&(isOwner || isModerator)"
+            class="p-button-outlined w-full sm:w-auto flex-order-1 sm:flex-order-1" icon="pi pi-plus-circle"
+            label="Crear Tarea" pButton></button>
 </div>
 <div class="mb-3">
-  <p-multiSelect [(ngModel)]="selectedStatus" [options]="statusItems"
-                 class="multiselect-custom"
-                 [style]="{'width': '100%'}"
-                 display="chip"
-                 optionLabel="label" placeholder="Seleccionar Estado" [showClear]="true" (onChange)="onStatusChange($event)">
-  </p-multiSelect>
+    <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus"
+                   [options]="statusItems"
+                   [showClear]="true"
+                   [style]="{'width': '100%'}"
+                   class="multiselect-custom" display="chip" optionLabel="label"
+                   placeholder="Seleccionar Estado">
+    </p-multiSelect>
 </div>
 <full-calendar [options]="calendarOptions"></full-calendar>
-<app-new-task [projectId]="projectId" [sidebarVisible]="sidebarVisible" [deadline]="deadline" (sidebarVisibleChange)="sidebarVisible = $event"></app-new-task>
+<app-new-task (sidebarVisibleChange)="createSidebarVisible = $event" [projectId]="projectId"
+              [sidebarVisible]="createSidebarVisible"></app-new-task>
+<app-edit-task (sidebarVisibleChange)="editSidebarVisible = $event" [sidebarVisible]="editSidebarVisible"
+               [task]="task"></app-edit-task>
 
-<p-dialog #dd [(visible)]="showTaskDialog" [breakpoints]="{'960px': '75vw', '640px': '90vw'}" [style]="{width: '32rem'}" [modal]="true" [closable]="true" [resizable]="false" *ngIf="selectedTask" [draggable]="false">
-  <ng-template pTemplate="header" >
-    <div class="flex justify-content-between align-items-center w-full">
-      <span class="text-900 font-semibold">{{selectedTask.taskName}}</span>
-      <div>
-        <button pButton pRipple type="button" icon="pi pi-ellipsis-v" class="p-button-rounded p-button-text p-button-secondary p-trigger" (click)="menu.toggle($event)"></button>
-        <p-tieredMenu [appendTo]="dd" #menu [model]="menuItems" [popup]="true"></p-tieredMenu>
-      </div>
-    </div>
-  </ng-template>
-  <ng-template pTemplate="content">
-    <div [id]="selectedTask.taskId" class="flex flex-column w-full gap-3 border-round">
-      <div *ngIf="selectedTask.taskDescription" style="word-break: break-word" class="text-700">{{selectedTask.taskDescription}}</div>
-      <div class="flex align-items-center gap-1 flex-wrap">
-        <p-tag [style]="{background: getPriorityColor(selectedTask.taskPriority)}"
-               value="NIVEL {{selectedTask.taskPriority}}"></p-tag>
-        <p-tag [style]="{background: '#FF000080'}"
-               *ngIf="checkIfTaskIsOverdue(selectedTask.taskStatus.taskStatusId, selectedTask.taskDeadline)">
-          VENCIDA {{selectedTask.taskDeadline | timeAgo | uppercase}}
-        </p-tag>
-        <p-tag [style]="{background: getStatusColor(selectedTask.taskStatus.taskStatusId),}"
-               value="{{selectedTask.taskStatus.taskStatusName}}"></p-tag>
-      </div>
-      <div class="flex align-items-center justify-content-between flex-column md:flex-row gap-4 md:gap-0">
-        <p-avatarGroup>
-          <p-avatar (error)="setImageLoaded(userId, false)"
-                    (load)="setImageLoaded(userId, true)"
-                    *ngFor="let userId of selectedTask.taskAssigneeIds | slice : 0 : 5"
-                    [image]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
-                    pTooltip="{{getFullName(userId)}}"
-                    shape="circle"
-                    size="large" tooltipPosition="top"
-                    [style]="{width: '38px', height: '38px'}"
-          >
-          </p-avatar>
-          <p-avatar (click)="responsible.toggle($event)" *ngIf="selectedTask.taskAssigneeIds.length > 5"
-                    [style]="{'background-color':'#D7D7D7', 'color': '#ffffff', 'width': '38px', 'height': '38px', 'cursor': 'pointer'}"
-                    label="+{{selectedTask.taskAssigneeIds.length - 5}}"
-                    shape="circle" size="large"
-          ></p-avatar>
-        </p-avatarGroup>
-        <p-overlayPanel #responsible [appendTo]="dd">
-          <span class="font-medium text-900 block mb-2">Responsables</span>
-          <ul class="list-none p-0 m-0 flex flex-column gap-3">
-            <li *ngFor="let userId of selectedTask.taskAssigneeIds" class="flex align-items-center gap-2">
-              <img
-                (error)="setImageLoaded(userId, false)"
-                (load)="setImageLoaded(userId, true)"
-                [src]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
-                alt="{{userId}}"
-                class="mr-2"
-                style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
-              <div>
-                <span class="font-medium">{{ getFullName(userId) }}</span>
-                <div class="text-sm text-color-secondary">{{ getEmail(userId) }}</div>
-              </div>
-            </li>
-          </ul>
-        </p-overlayPanel>
-        <div *ngIf="selectedTask.taskFileIds|| selectedTask.taskDeadline" class="flex align-items-center gap-3">
-          <span class="text-900 font-semibold" *ngIf="selectedTask.taskFileIds"><i class="pi pi-paperclip text-700 mr-2"></i>{{selectedTask.taskFileIds.length}}</span>
-          <span class="text-900 font-semibold" *ngIf="selectedTask.taskDeadline"><i class="pi pi-clock text-700 mr-2"></i> {{selectedTask.taskDeadline | date: 'dd/MM/yyyy, HH:mm'}}</span>
+<p-dialog #dd *ngIf="selectedTask" [(visible)]="showTaskDialog" [breakpoints]="{'960px': '75vw', '640px': '90vw'}"
+          [closable]="true" [draggable]="false" [modal]="true" [resizable]="false" [style]="{width: '32rem'}">
+    <ng-template pTemplate="header">
+        <div class="flex justify-content-between align-items-center w-full">
+            <span class="text-900 font-semibold">{{ selectedTask.taskName }}</span>
+            <div>
+                <button (click)="menu.toggle($event)"
+                        class="p-button-rounded p-button-text p-button-secondary p-trigger" icon="pi pi-ellipsis-v"
+                        pButton
+                        pRipple
+                        type="button"></button>
+                <p-tieredMenu #menu [appendTo]="dd" [model]="menuItems" [popup]="true"></p-tieredMenu>
+            </div>
         </div>
-      </div>
-    </div>
-  </ng-template>
+    </ng-template>
+    <ng-template pTemplate="content">
+        <div [id]="selectedTask.taskId" class="flex flex-column w-full gap-3 border-round">
+            <div *ngIf="selectedTask.taskDescription" class="text-700"
+                 style="word-break: break-word">{{ selectedTask.taskDescription }}
+            </div>
+            <div class="flex align-items-center gap-1 flex-wrap">
+                <p-tag [style]="{background: getPriorityColor(selectedTask.taskPriority)}"
+                       value="NIVEL {{selectedTask.taskPriority}}"></p-tag>
+                <p-tag *ngIf="checkIfTaskIsOverdue(selectedTask.taskStatus.taskStatusId, selectedTask.taskDeadline)"
+                       [style]="{background: '#FF000080'}">
+                    VENCIDA {{ selectedTask.taskDeadline | timeAgo | uppercase }}
+                </p-tag>
+                <p-tag [style]="{background: getStatusColor(selectedTask.taskStatus.taskStatusId),}"
+                       value="{{selectedTask.taskStatus.taskStatusName}}"></p-tag>
+            </div>
+            <div class="flex align-items-center justify-content-between flex-column md:flex-row gap-4 md:gap-0">
+                <p-avatarGroup>
+                    <p-avatar (error)="setImageLoaded(userId, false)"
+                              (load)="setImageLoaded(userId, true)"
+                              *ngFor="let userId of selectedTask.taskAssigneeIds | slice : 0 : 5"
+                              [image]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                              [style]="{width: '38px', height: '38px'}"
+                              pTooltip="{{getFullName(userId)}}"
+                              shape="circle" size="large"
+                              tooltipPosition="top"
+                    >
+                    </p-avatar>
+                    <p-avatar (click)="responsible.toggle($event)" *ngIf="selectedTask.taskAssigneeIds.length > 5"
+                              [style]="{'background-color':'#D7D7D7', 'color': '#ffffff', 'width': '38px', 'height': '38px', 'cursor': 'pointer'}"
+                              label="+{{selectedTask.taskAssigneeIds.length - 5}}"
+                              shape="circle" size="large"
+                    ></p-avatar>
+                </p-avatarGroup>
+                <p-overlayPanel #responsible [appendTo]="dd">
+                    <span class="font-medium text-900 block mb-2">Responsables</span>
+                    <ul class="list-none p-0 m-0 flex flex-column gap-3">
+                        <li *ngFor="let userId of selectedTask.taskAssigneeIds" class="flex align-items-center gap-2">
+                            <img
+                                    (error)="setImageLoaded(userId, false)"
+                                    (load)="setImageLoaded(userId, true)"
+                                    [src]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                                    alt="{{userId}}"
+                                    class="mr-2"
+                                    style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
+                            <div>
+                                <span class="font-medium">{{ getFullName(userId) }}</span>
+                                <div class="text-sm text-color-secondary">{{ getEmail(userId) }}</div>
+                            </div>
+                        </li>
+                    </ul>
+                </p-overlayPanel>
+                <div *ngIf="selectedTask.taskFileIds|| selectedTask.taskDeadline" class="flex align-items-center gap-3">
+          <span *ngIf="selectedTask.taskFileIds" class="text-900 font-semibold"><i
+                  class="pi pi-paperclip text-700 mr-2"></i>{{ selectedTask.taskFileIds.length }}</span>
+                    <span *ngIf="selectedTask.taskDeadline" class="text-900 font-semibold"><i
+                            class="pi pi-clock text-700 mr-2"></i> {{ selectedTask.taskDeadline | date: 'dd/MM/yyyy, HH:mm' }}</span>
+                </div>
+            </div>
+        </div>
+    </ng-template>
 
 </p-dialog>

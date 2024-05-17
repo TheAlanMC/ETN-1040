@@ -2,8 +2,8 @@ package bo.edu.umsa.backend.controller
 
 import bo.edu.umsa.backend.dto.FileDto
 import bo.edu.umsa.backend.dto.PasswordChangeDto
-import bo.edu.umsa.backend.dto.ResponseDto
 import bo.edu.umsa.backend.dto.ProfileDto
+import bo.edu.umsa.backend.dto.ResponseDto
 import bo.edu.umsa.backend.service.UserProfileService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -14,9 +14,7 @@ import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/api/v1/profile")
-class UserProfileController @Autowired constructor(
-    private val userProfileService: UserProfileService
-) {
+class UserProfileController @Autowired constructor(private val userProfileService: UserProfileService) {
     companion object {
         val logger: Logger = LoggerFactory.getLogger(UserProfileController::class.java)
     }
@@ -54,9 +52,7 @@ class UserProfileController @Autowired constructor(
     }
 
     @PutMapping("/picture")
-    fun uploadProfilePicture(
-        @RequestParam("file") file: MultipartFile
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun uploadProfilePicture(@RequestParam("file") file: MultipartFile): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to upload the profile picture")
         logger.info("PUT /api/v1/profile/picture")
         userProfileService.uploadProfilePicture(file)
@@ -65,9 +61,7 @@ class UserProfileController @Autowired constructor(
     }
 
     @PutMapping("/password")
-    fun updatePassword(
-        @RequestBody passwordChangeDto: PasswordChangeDto
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun updatePassword(@RequestBody passwordChangeDto: PasswordChangeDto): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the password")
         logger.info("POST /api/v1/profile/password")
         userProfileService.updatePassword(passwordChangeDto)

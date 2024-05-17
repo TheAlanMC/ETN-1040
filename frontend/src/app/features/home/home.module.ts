@@ -13,20 +13,20 @@ import {RatingModule} from "primeng/rating";
 
 
 @NgModule({
-  declarations: [
-    HomePageComponent,
-    DashboardComponent
-  ],
-  imports: [
-    CommonModule,
-    HomeRoutingModule,
-    KnobModule,
-    FormsModule,
-    DropdownModule,
-    ChartModule,
-    TableModule,
-    RatingModule
-  ]
+    declarations: [
+        HomePageComponent,
+        DashboardComponent
+    ],
+    imports: [
+        CommonModule,
+        HomeRoutingModule,
+        KnobModule,
+        FormsModule,
+        DropdownModule,
+        ChartModule,
+        TableModule,
+        RatingModule
+    ]
 })
 export class HomeModule {
 }

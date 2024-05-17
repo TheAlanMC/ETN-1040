@@ -1,81 +1,82 @@
 <p-toast></p-toast>
 <div class="card">
-  <span class="text-900 text-xl font-bold mb-4 block">Mi Perfil</span>
-  <div class="grid">
-    <div class="col-12 lg:col-2">
-      <div class="flex justify-center items-center mb-4 justify-content-center">
-        <img [src]="profilePictureUrl" alt="Profile"
-             style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover"/>
-      </div>
-      <div class="text-900 font-medium text-xl mb-3">Roles</div>
-      <div *ngFor="let group of groups">
-        <p class="m-0 p-0 text-600 line-height-3 mr-3">-{{ group }}</p>
-      </div>
-      <div class="text-900 font-medium text-xl mt-4 mb-3">Permisos</div>
-      <div *ngFor="let rol of roles">
-        <p class="m-0 p-0 text-600 line-height-3 mr-3">-{{ rol }}</p>
-      </div>
-    </div>
-    <div *ngIf="profile; else loading" class="col-12 lg:col-10">
-      <div class="grid formgrid p-fluid">
-        <div class="field mb-4 col-12 md:col-6">
-          <label class="font-medium text-900" for="firstName">Nombres</label>
-          <input [formControl]="firstNameControl" id="firstName" pInputText type="text">
+    <span class="text-900 text-xl font-bold mb-4 block">Mi Perfil</span>
+    <div class="grid">
+        <div class="col-12 lg:col-2">
+            <div class="flex justify-center items-center mb-4 justify-content-center">
+                <img [src]="profilePictureUrl" alt="Profile"
+                     style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover"/>
+            </div>
+            <div class="text-900 font-medium text-xl mb-3">Roles</div>
+            <div *ngFor="let group of groups">
+                <p class="m-0 p-0 text-600 line-height-3 mr-3">-{{ group }}</p>
+            </div>
+            <div class="text-900 font-medium text-xl mt-4 mb-3">Permisos</div>
+            <div *ngFor="let rol of roles">
+                <p class="m-0 p-0 text-600 line-height-3 mr-3">-{{ rol }}</p>
+            </div>
         </div>
-        <div class="field mb-4 col-12 md:col-6">
-          <label class="font-medium text-900" for="lastName">Apellidos</label>
-          <input [formControl]="lastNameControl" id="lastName" pInputText type="text">
-        </div>
-        <div class="field mb-4 col-12">
-          <label class="font-medium text-900" for="photo">Cambiar Foto de Perfil</label>
-          <div style="display: flex; align-items: center;">
-            <p-fileUpload #fileUpload (onSelect)="onSelect($event)" [maxFileSize]="1000000" accept="image/*"
-                          chooseLabel="Subir Imagen"
-                          mode="basic" name="avatar"
-                          styleClass="p-button-outlined p-button-plain"></p-fileUpload>
-            <i (click)="onCancelSelect()" *ngIf="changeProfilePicture" class="pi pi-times"
-               style="margin-left: 10px; cursor: pointer;"></i>
-          </div>
-        </div>
-        <div class="field mb-4 col-12 md:col-6">
-          <label class="font-medium text-900" for="email">Correo Electrónico</label>
-          <input [(ngModel)]="email" [readonly]="true" id="email" pInputText type="text">
-        </div>
-        <div class="field mb-4 col-12 md:col-6">
-          <label class="font-medium text-900" for="phone">Teléfono</label>
-          <input [formControl]="phoneControl" [pKeyFilter]="'int'" id="phone" pInputText type="text">
-        </div>
+        <div *ngIf="profile; else loading" class="col-12 lg:col-10">
+            <div class="grid formgrid p-fluid">
+                <div class="field mb-4 col-12 md:col-6">
+                    <label class="font-medium text-900" for="firstName">Nombres</label>
+                    <input [formControl]="firstNameControl" id="firstName" pInputText type="text">
+                </div>
+                <div class="field mb-4 col-12 md:col-6">
+                    <label class="font-medium text-900" for="lastName">Apellidos</label>
+                    <input [formControl]="lastNameControl" id="lastName" pInputText type="text">
+                </div>
+                <div class="field mb-4 col-12">
+                    <label class="font-medium text-900" for="photo">Cambiar Foto de Perfil</label>
+                    <div style="display: flex; align-items: center;">
+                        <p-fileUpload #fileUpload (onSelect)="onSelect($event)" [maxFileSize]="1000000" accept="image/*"
+                                      chooseLabel="Subir Imagen"
+                                      mode="basic" name="avatar"
+                                      styleClass="p-button-outlined p-button-plain"></p-fileUpload>
+                        <i (click)="onCancelSelect()" *ngIf="changeProfilePicture" class="pi pi-times"
+                           style="margin-left: 10px; cursor: pointer;"></i>
+                    </div>
+                </div>
+                <div class="field mb-4 col-12 md:col-6">
+                    <label class="font-medium text-900" for="email">Correo Electrónico</label>
+                    <input [(ngModel)]="email" [readonly]="true" id="email" pInputText type="text">
+                </div>
+                <div class="field mb-4 col-12 md:col-6">
+                    <label class="font-medium text-900" for="phone">Teléfono</label>
+                    <input [formControl]="phoneControl" [pKeyFilter]="'int'" id="phone" pInputText type="text">
+                </div>
 
-        <div class="field mb-4 col-12">
-          <label class="font-medium text-900" for="bio">Acerca de mi</label>
-          <textarea [autoResize]="true" [formControl]="descriptionControl" id="bio" pInputTextarea rows="5"
-                    type="text"></textarea>
+                <div class="field mb-4 col-12">
+                    <label class="font-medium text-900" for="bio">Acerca de mi</label>
+                    <textarea [autoResize]="true" [formControl]="descriptionControl" id="bio" pInputTextarea rows="5"
+                              type="text"></textarea>
+                </div>
+                <div class="col-12 lg:col-3 md:col-4 field">
+                    <button (click)="onSave()" class="flex-auto" icon="pi pi-save" label="Guardar" pButton
+                            pRipple></button>
+                </div>
+                <div class="col-12 lg:col-4 md:col-5 field">
+                    <button (click)="visibleChangePassword = true" class="flex-auto p-button-outlined" icon="pi pi-key"
+                            label="Cambiar Contraseña" pButton
+                            pRipple></button>
+                </div>
+            </div>
         </div>
-        <div class="col-12 lg:col-3 md:col-4 field">
-          <button (click)="onSave()" class="flex-auto" icon="pi pi-save" label="Guardar" pButton pRipple></button>
-        </div>
-        <div class="col-12 lg:col-4 md:col-5 field">
-          <button (click)="visibleChangePassword = true" class="flex-auto p-button-outlined" icon="pi pi-key"
-                  label="Cambiar Contraseña" pButton
-                  pRipple></button>
-        </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <ng-template #loading>
-  <div class="col-12 lg:col-10" style="display: flex; justify-content: center; align-items: center; height: 100%;">
-    <p-progressSpinner ariaLabel="Cargando..."></p-progressSpinner>
-  </div>
+    <div class="col-12 lg:col-10" style="display: flex; justify-content: center; align-items: center; height: 100%;">
+        <p-progressSpinner ariaLabel="Cargando..."></p-progressSpinner>
+    </div>
 </ng-template>
 
-<p-dialog [(visible)]="visibleChangePassword" [modal]="true" [resizable]="false" header="Cambiar Contraseña"
-          showEffect="fade" [draggable]="false">
-  <div class="mb-4">
-    <span class="text-600 font-medium">Ingresa tu nueva contraseña</span>
-  </div>
-  <div class="flex flex-column">
+<p-dialog [(visible)]="visibleChangePassword" [draggable]="false" [modal]="true" [resizable]="false"
+          header="Cambiar Contraseña" showEffect="fade">
+    <div class="mb-4">
+        <span class="text-600 font-medium">Ingresa tu nueva contraseña</span>
+    </div>
+    <div class="flex flex-column">
           <span class="p-input-icon-left w-full mb-4">
                 <i class="pi pi-lock z-2"></i>
                 <p-password [feedback]=false [formControl]="oldPasswordControl" [inputStyle]="{paddingLeft: '2.5rem'}"
@@ -83,13 +84,13 @@
                             inputStyleClass="w-full md:w-25rem" placeholder="Contraseña Actual"
                             styleClass="w-full"></p-password>
             </span>
-    <span class="p-input-icon-left w-full mb-4">
+        <span class="p-input-icon-left w-full mb-4">
                 <i class="pi pi-lock z-2"></i>
                 <p-password [formControl]="passwordControl" [inputStyle]="{paddingLeft: '2.5rem'}" [toggleMask]="true"
                             id="password" inputStyleClass="w-full md:w-25rem "
                             placeholder="Nueva Contraseña" styleClass="w-full"></p-password>
             </span>
-    <span class="p-input-icon-left w-full mb-4">
+        <span class="p-input-icon-left w-full mb-4">
                 <i class="pi pi-lock z-2"></i>
                 <p-password [feedback]="false" [formControl]="confirmPasswordControl"
                             [inputStyle]="{paddingLeft: '2.5rem'}"
@@ -97,11 +98,11 @@
                             inputStyleClass="w-full md:w-25rem" placeholder="Confirmar Nueva Contraseña"
                             styleClass="w-full"></p-password>
             </span>
-    <div class="flex flex-wrap gap-2 justify-content-between">
-      <button (click)="visibleChangePassword = false" class="flex-auto p-button-outlined" label="Cancelar" pButton
-              pRipple></button>
-      <button (click)="onSubmit()" class="flex-auto" label="Guardar" pButton pRipple></button>
+        <div class="flex flex-wrap gap-2 justify-content-between">
+            <button (click)="visibleChangePassword = false" class="flex-auto p-button-outlined" label="Cancelar" pButton
+                    pRipple></button>
+            <button (click)="onSubmit()" class="flex-auto" label="Guardar" pButton pRipple></button>
+        </div>
     </div>
-  </div>
 </p-dialog>
 

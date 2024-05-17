@@ -30,7 +30,7 @@ export class AppProfileSidebarComponent {
     const token = localStorage.getItem('token');
     // Check if token exists
     if (token) {
-      this.decoded = jwtDecode<JwtPayload>(token!!);
+      this.decoded = jwtDecode<JwtPayload>(token!);
     }
   }
 

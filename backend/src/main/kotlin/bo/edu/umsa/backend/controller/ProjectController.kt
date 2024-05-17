@@ -46,9 +46,7 @@ class ProjectController @Autowired constructor(
     }
 
     @PostMapping
-    fun createProject(
-        @RequestBody newProjectDto: NewProjectDto
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun createProject(@RequestBody newProjectDto: NewProjectDto): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to create the project")
         logger.info("POST /api/v1/projects")
         AuthUtil.verifyAuthTokenHasRole("CREAR PROYECTOS")
@@ -109,7 +107,8 @@ class ProjectController @Autowired constructor(
         logger.info("Starting the API call to get the tasks")
         logger.info("GET /api/v1/projects/$projectId/tasks")
         AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
-        val tasks: Page<TaskDto> = projectService.getProjectTasks(projectId, sortBy, sortType, page, size, keyword, statuses, dateFrom, dateTo)
+        val tasks: Page<TaskDto> =
+            projectService.getProjectTasks(projectId, sortBy, sortType, page, size, keyword, statuses, dateFrom, dateTo)
         logger.info("Success: Tasks retrieved")
         return ResponseEntity(ResponseDto(true, "Tareas recuperadas", tasks), HttpStatus.OK)
     }

@@ -9,7 +9,8 @@ import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface TaskRepository : PagingAndSortingRepository<Task, Long>, JpaRepository<Task, Long> {
+interface TaskRepository : PagingAndSortingRepository<Task, Long>,
+    JpaRepository<Task, Long> {
 
     fun findAll(specification: Specification<Task>, pageable: Pageable): Page<Task>
 

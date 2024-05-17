@@ -1,167 +1,176 @@
 <p-toast></p-toast>
 <div class="card">
-  <p-tabView orientation="left" (onChange)="onTabChange($event)">
-    <p-tabPanel header="Gestionar Roles" class="line-height-3 m-0">
-      <p-confirmDialog header="Confirmation" key="confirmDeleteUser" icon="pi pi-exclamation-triangle"
-                       message="'¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.'"
-                       [style]="{width: '350px'}" acceptButtonStyleClass="p-button-primary"
-                       rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+    <p-tabView (onChange)="onTabChange($event)" orientation="left">
+        <p-tabPanel class="line-height-3 m-0" header="Gestionar Roles">
+            <p-confirmDialog [style]="{width: '350px'}" acceptButtonStyleClass="p-button-primary" header="Confirmation"
+                             icon="pi pi-exclamation-triangle"
+                             key="confirmDeleteUser" message="'¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.'"
+                             rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
-      <div class="text-900 font-medium text-xl mb-3">Asignar Roles a Usuarios</div>
-      <div class="grid p-fluid">
-        <div class="col-12 lg:col-6">
-          <p-dropdown [options]="userItems" [(ngModel)]="selectedUser" placeholder="Seleccione un usuario"
-                      [showClear]="true" (onChange)="onSelectUser($event)" (onClear)="onClearUser()" [filter]="true">
-            <ng-template let-item pTemplate="item">
-              <div class="inline-flex align-items-center">
-                <img
-                  [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
-                  (load)="imgLoaded[item.value] = true"
-                  (error)="imgLoaded[item.value] = false"
-                  alt="{{item.value}}"
-                  class="mr-2"
-                  style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
-                <div class="flex-col">
-                  <div class="font-medium">{{ item.label }}</div>
-                  <div class="text-sm text-color-secondary">{{ item.labelSecondary }}</div>
+            <div class="text-900 font-medium text-xl mb-3">Asignar Roles a Usuarios</div>
+            <div class="grid p-fluid">
+                <div class="col-12 lg:col-6">
+                    <p-dropdown (onChange)="onSelectUser($event)" (onClear)="onClearUser()" [(ngModel)]="selectedUser"
+                                [filter]="true" [options]="userItems" [showClear]="true"
+                                placeholder="Seleccione un usuario">
+                        <ng-template let-item pTemplate="item">
+                            <div class="inline-flex align-items-center">
+                                <img
+                                        (error)="imgLoaded[item.value] = false"
+                                        (load)="imgLoaded[item.value] = true"
+                                        [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                                        alt="{{item.value}}"
+                                        class="mr-2"
+                                        style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
+                                <div class="flex-col">
+                                    <div class="font-medium">{{ item.label }}</div>
+                                    <div class="text-sm text-color-secondary">{{ item.labelSecondary }}</div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
                 </div>
-              </div>
-            </ng-template>
-          </p-dropdown>
-        </div>
-        <div class="col-12 lg:col-6">
-          <div class="grid p-fluid">
-            <div class="col-12 lg:col-6 md:col-6" *ngIf="selectedUserId==0">
-              <button pButton pRipple label="Crear Usuario" class="flex-auto p-button-outlined" icon="pi pi-user-plus"
-                      [routerLink]="['/users/create']"></button>
+                <div class="col-12 lg:col-6">
+                    <div class="grid p-fluid">
+                        <div *ngIf="selectedUserId==0" class="col-12 lg:col-6 md:col-6">
+                            <button [routerLink]="['/users/create']" class="flex-auto p-button-outlined" icon="pi pi-user-plus" label="Crear Usuario"
+                                    pButton
+                                    pRipple></button>
+                        </div>
+                        <div *ngIf="selectedUserId!=0" class="col-12 lg:col-6 md:col-6">
+                            <button [routerLink]="['/users/edit/', selectedUserId]" class="flex-auto p-button-outlined p-button-secondary" icon="pi pi-user-plus"
+                                    label="Editar Usuario"
+                                    pButton pRipple></button>
+                        </div>
+                        <div *ngIf="selectedUserId!=0" class="col-12 lg:col-6 md:col-6">
+                            <button (click)="onDeleteUser()" class="flex-auto p-button-outlined p-button-secondary" icon="pi pi-user-minus"
+                                    label="Eliminar Usuario"
+                                    pButton pRipple></button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-12 lg:col-6 md:col-6" *ngIf="selectedUserId!=0">
-              <button pButton pRipple label="Editar Usuario" class="flex-auto p-button-outlined p-button-secondary"
-                      icon="pi pi-user-plus" [routerLink]="['/users/edit/', selectedUserId]"></button>
-            </div>
-            <div class="col-12 lg:col-6 md:col-6" *ngIf="selectedUserId!=0">
-              <button pButton pRipple label="Eliminar Usuario" class="flex-auto p-button-outlined p-button-secondary"
-                      icon="pi pi-user-minus" (click)="onDeleteUser()"></button>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <p-pickList [source]="sourceGroups" [target]="targetGroups" sourceHeader="Roles Disponibles"
-                  targetHeader="Roles Asignados"
-                  [responsive]="true" [sourceStyle]="{'height':'250px'}" [targetStyle]="{'height':'250px'}"
-                  [showSourceControls]="false" [showTargetControls]="false" [disabled]="isPickListDisabled"
-                  (onMoveAllToSource)="sortSourceGroups()" (onMoveAllToTarget)="sortTargetGroups()"
-                  (onMoveToSource)="sortSourceGroups()" (onMoveToTarget)="sortTargetGroups()">
-        <ng-template let-groups pTemplate="item">
-          <div>{{ groups.name }}</div>
-        </ng-template>
-      </p-pickList>
-      <div class="grid p-fluid mt-3" *ngIf="selectedUserId!=0">
-        <div class="col-12 lg:col-2 md:col-3">
-          <button pButton pRipple label="Guardar" class="flex-auto p-button" icon="pi pi-save"
-                  (click)="saveUserGroups()"></button>
-        </div>
-        <div class="col-12 lg:col-2 md:col-3">
-          <button pButton pRipple label="Cancelar" class="flex-auto p-button-outlined" icon="pi pi-times"
-                  (click)="onClearUser()"></button>
-        </div>
-      </div>
-    </p-tabPanel>
-    <p-tabPanel header="Gestionar Permisos" class="line-height-3 m-0">
-      <p-confirmDialog header="Confirmation" key="confirmDeleteGroup" icon="pi pi-exclamation-triangle"
-                       message="'¿Estás seguro de que deseas eliminar este rol? Esta acción no se puede deshacer.'"
-                       [style]="{width: '350px'}" acceptButtonStyleClass="p-button-primary"
-                       rejectButtonStyleClass="p-button-text"></p-confirmDialog>
-      <div class="text-900 font-medium text-xl mb-3">Asignar Permisos a Roles</div>
-      <div class="grid p-fluid">
-        <div class="col-12 lg:col-6">
-          <p-dropdown [options]="groupItems" [(ngModel)]="selectedGroup" placeholder="Seleccione un rol"
-                      [showClear]="true" (onChange)="onSelectRole($event)" (onClear)="onClearGroup()"
-                      [filter]="false"></p-dropdown>
-        </div>
-        <div class="col-12 lg:col-6">
-          <div class="grid p-fluid">
-            <div class="col-12 lg:col-6 md:col-6" *ngIf="selectedGroupId==0">
-              <button pButton pRipple label="Crear Rol" class="flex-auto p-button-outlined " icon="pi pi-plus"
-                      (click)="onAddGroup()"></button>
+            <p-pickList (onMoveAllToSource)="sortSourceGroups()" (onMoveAllToTarget)="sortTargetGroups()" (onMoveToSource)="sortSourceGroups()"
+                        (onMoveToTarget)="sortTargetGroups()"
+                        [disabled]="isPickListDisabled" [responsive]="true" [showSourceControls]="false"
+                        [showTargetControls]="false" [sourceStyle]="{'height':'250px'}" [source]="sourceGroups"
+                        [targetStyle]="{'height':'250px'}" [target]="targetGroups"
+                        sourceHeader="Roles Disponibles" targetHeader="Roles Asignados">
+                <ng-template let-groups pTemplate="item">
+                    <div>{{ groups.name }}</div>
+                </ng-template>
+            </p-pickList>
+            <div *ngIf="selectedUserId!=0" class="grid p-fluid mt-3">
+                <div class="col-12 lg:col-2 md:col-3">
+                    <button (click)="saveUserGroups()" class="flex-auto p-button" icon="pi pi-save" label="Guardar" pButton
+                            pRipple></button>
+                </div>
+                <div class="col-12 lg:col-2 md:col-3">
+                    <button (click)="onClearUser()" class="flex-auto p-button-outlined" icon="pi pi-times" label="Cancelar" pButton
+                            pRipple></button>
+                </div>
             </div>
-            <div class="col-12 lg:col-6 md:col-6" *ngIf="selectedGroupId!=0">
-              <button pButton pRipple label="Editar Rol" class="flex-auto p-button-outlined p-button-secondary"
-                      icon="pi pi-user-plus" (click)="onEditGroup()"></button>
+        </p-tabPanel>
+        <p-tabPanel class="line-height-3 m-0" header="Gestionar Permisos">
+            <p-confirmDialog [style]="{width: '350px'}" acceptButtonStyleClass="p-button-primary" header="Confirmation"
+                             icon="pi pi-exclamation-triangle"
+                             key="confirmDeleteGroup" message="'¿Estás seguro de que deseas eliminar este rol? Esta acción no se puede deshacer.'"
+                             rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+            <div class="text-900 font-medium text-xl mb-3">Asignar Permisos a Roles</div>
+            <div class="grid p-fluid">
+                <div class="col-12 lg:col-6">
+                    <p-dropdown (onChange)="onSelectRole($event)" (onClear)="onClearGroup()" [(ngModel)]="selectedGroup"
+                                [filter]="false" [options]="groupItems" [showClear]="true"
+                                placeholder="Seleccione un rol"></p-dropdown>
+                </div>
+                <div class="col-12 lg:col-6">
+                    <div class="grid p-fluid">
+                        <div *ngIf="selectedGroupId==0" class="col-12 lg:col-6 md:col-6">
+                            <button (click)="onAddGroup()" class="flex-auto p-button-outlined " icon="pi pi-plus" label="Crear Rol"
+                                    pButton
+                                    pRipple></button>
+                        </div>
+                        <div *ngIf="selectedGroupId!=0" class="col-12 lg:col-6 md:col-6">
+                            <button (click)="onEditGroup()" class="flex-auto p-button-outlined p-button-secondary" icon="pi pi-user-plus"
+                                    label="Editar Rol"
+                                    pButton pRipple></button>
+                        </div>
+                        <div *ngIf="selectedGroupId!=0" class="col-12 lg:col-6 md:col-6">
+                            <button (click)="onDeleteGroup()" class="flex-auto p-button-outlined p-button-secondary" icon="pi pi-minus"
+                                    label="Eliminar Rol"
+                                    pButton pRipple></button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-12 lg:col-6 md:col-6" *ngIf="selectedGroupId!=0">
-              <button pButton pRipple label="Eliminar Rol" class="flex-auto p-button-outlined p-button-secondary"
-                      icon="pi pi-minus" (click)="onDeleteGroup()"></button>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <p-pickList [source]="sourceRoles" [target]="targetRoles" sourceHeader="Permisos Disponibles"
-                  targetHeader="Permisos Asignados"
-                  [responsive]="true" [sourceStyle]="{'height':'250px'}" [targetStyle]="{'height':'250px'}"
-                  [showSourceControls]="false" [showTargetControls]="false" [disabled]="isPickListDisabled"
-                  (onMoveAllToSource)="sortSourceRoles()" (onMoveAllToTarget)="sortTargetRoles()"
-                  (onMoveToSource)="sortSourceRoles()" (onMoveToTarget)="sortTargetRoles()">
-        <ng-template let-permissions pTemplate="item">
-          <div>{{ permissions.name }}</div>
-        </ng-template>
-      </p-pickList>
-      <div class="grid p-fluid mt-3" *ngIf="selectedGroupId!=0">
-        <div class="col-12 lg:col-2 md:col-3">
-          <button pButton pRipple label="Guardar" class="flex-auto p-button" icon="pi pi-save"
-                  (click)="saveGroupRoles()"></button>
-        </div>
-        <div class="col-12 lg:col-2 md:col-3">
-          <button pButton pRipple label="Cancelar" class="flex-auto p-button-outlined" icon="pi pi-times"
-                  (click)="onClearGroup()"></button>
-        </div>
-      </div>
-    </p-tabPanel>
-  </p-tabView>
+            <p-pickList (onMoveAllToSource)="sortSourceRoles()" (onMoveAllToTarget)="sortTargetRoles()" (onMoveToSource)="sortSourceRoles()"
+                        (onMoveToTarget)="sortTargetRoles()"
+                        [disabled]="isPickListDisabled" [responsive]="true" [showSourceControls]="false"
+                        [showTargetControls]="false" [sourceStyle]="{'height':'250px'}" [source]="sourceRoles"
+                        [targetStyle]="{'height':'250px'}" [target]="targetRoles"
+                        sourceHeader="Permisos Disponibles" targetHeader="Permisos Asignados">
+                <ng-template let-permissions pTemplate="item">
+                    <div>{{ permissions.name }}</div>
+                </ng-template>
+            </p-pickList>
+            <div *ngIf="selectedGroupId!=0" class="grid p-fluid mt-3">
+                <div class="col-12 lg:col-2 md:col-3">
+                    <button (click)="saveGroupRoles()" class="flex-auto p-button" icon="pi pi-save" label="Guardar" pButton
+                            pRipple></button>
+                </div>
+                <div class="col-12 lg:col-2 md:col-3">
+                    <button (click)="onClearGroup()" class="flex-auto p-button-outlined" icon="pi pi-times" label="Cancelar" pButton
+                            pRipple></button>
+                </div>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
 </div>
 
-<p-dialog header="Crear Nuevo Rol" [(visible)]="visibleAddGroup" [modal]="true" [resizable]="false" showEffect="fade" [draggable]="false">>
-  <div class="flex flex-column">
+<p-dialog [(visible)]="visibleAddGroup" [draggable]="false" [modal]="true" [resizable]="false" header="Crear Nuevo Rol"
+          showEffect="fade">>
+    <div class="flex flex-column">
 
-    <div class="field col-12 p-0">
-      <label for="roleName" class="font-medium text-900">Nombre del Rol</label>
-      <input id="roleName" type="text" pInputText placeholder="Nombre del Rol" class="w-full"
-             [formControl]="groupNameControl">
-    </div>
-    <div class="field col-12 p-0">
-      <label for="roleDescription" class="font-medium text-900">Descripción del Rol</label>
-      <textarea id="roleDescription" type="text" pInputTextarea rows="3" placeholder="Descripción del Rol"
-                [autoResize]="true" class="w-full h-5rem" [formControl]="groupDescriptionControl"></textarea>
-    </div>
+        <div class="field col-12 p-0">
+            <label class="font-medium text-900" for="roleName">Nombre del Rol</label>
+            <input [formControl]="groupNameControl" class="w-full" id="roleName" pInputText placeholder="Nombre del Rol"
+                   type="text">
+        </div>
+        <div class="field col-12 p-0">
+            <label class="font-medium text-900" for="roleDescription">Descripción del Rol</label>
+            <textarea [autoResize]="true" [formControl]="groupDescriptionControl" class="w-full h-5rem" id="roleDescription" pInputTextarea
+                      placeholder="Descripción del Rol" rows="3" type="text"></textarea>
+        </div>
 
-    <div class="flex flex-wrap gap-2 justify-content-between">
-      <button pButton pRipple label="Cancelar" class="flex-auto p-button-outlined"
-              (click)="visibleAddGroup = false"></button>
-      <button pButton pRipple label="Guardar" class="flex-auto" (click)="onSaveGroup()"></button>
+        <div class="flex flex-wrap gap-2 justify-content-between">
+            <button (click)="visibleAddGroup = false" class="flex-auto p-button-outlined" label="Cancelar" pButton
+                    pRipple></button>
+            <button (click)="onSaveGroup()" class="flex-auto" label="Guardar" pButton pRipple></button>
+        </div>
     </div>
-  </div>
 </p-dialog>
 
-<p-dialog header="Editar Rol" [(visible)]="visibleEditGroup" [modal]="true" [resizable]="false" showEffect="fade" [draggable]="false">
-  <div class="flex flex-column">
+<p-dialog [(visible)]="visibleEditGroup" [draggable]="false" [modal]="true" [resizable]="false" header="Editar Rol"
+          showEffect="fade">
+    <div class="flex flex-column">
 
-    <div class="field col-12 p-0">
-      <label for="newRoleName" class="font-medium text-900">Nombre del Rol</label>
-      <input id="newRoleName" type="text" pInputText placeholder="Nombre del Rol" class="w-full"
-             [formControl]="groupNameControl">
-    </div>
-    <div class="field col-12 p-0">
-      <label for="newRoleDescription" class="font-medium text-900">Descripción del Rol</label>
-      <textarea id="newRoleDescription" type="text" pInputTextarea rows="3" placeholder="Descripción del Rol"
-                [autoResize]="true" class="w-full h-5rem" [formControl]="groupDescriptionControl"></textarea>
-    </div>
+        <div class="field col-12 p-0">
+            <label class="font-medium text-900" for="newRoleName">Nombre del Rol</label>
+            <input [formControl]="groupNameControl" class="w-full" id="newRoleName" pInputText placeholder="Nombre del Rol"
+                   type="text">
+        </div>
+        <div class="field col-12 p-0">
+            <label class="font-medium text-900" for="newRoleDescription">Descripción del Rol</label>
+            <textarea [autoResize]="true" [formControl]="groupDescriptionControl" class="w-full h-5rem" id="newRoleDescription" pInputTextarea
+                      placeholder="Descripción del Rol" rows="3" type="text"></textarea>
+        </div>
 
-    <div class="flex flex-wrap gap-2 justify-content-between">
-      <button pButton pRipple label="Cancelar" class="flex-auto p-button-outlined"
-              (click)="visibleEditGroup = false"></button>
-      <button pButton pRipple label="Guardar" class="flex-auto" (click)="onUpdateGroup()"></button>
+        <div class="flex flex-wrap gap-2 justify-content-between">
+            <button (click)="visibleEditGroup = false" class="flex-auto p-button-outlined" label="Cancelar" pButton
+                    pRipple></button>
+            <button (click)="onUpdateGroup()" class="flex-auto" label="Guardar" pButton pRipple></button>
+        </div>
     </div>
-  </div>
 </p-dialog>

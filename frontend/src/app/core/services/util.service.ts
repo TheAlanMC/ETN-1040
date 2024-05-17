@@ -3,29 +3,28 @@ import {Capacitor} from '@capacitor/core';
 import {HttpHeaders} from "@angular/common/http";
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class UtilService {
 
-  constructor() {
-  }
+    constructor() {
+    }
 
-  public checkIfMobile(): boolean {
-    const platform = Capacitor.getPlatform();
-    return platform === 'ios' || platform === 'android';
-  }
+    public checkIfMobile(): boolean {
+        const platform = Capacitor.getPlatform();
+        return platform === 'ios' || platform === 'android';
+    }
 
-  public getApiUrl(url: string): string {
-    return (this.checkIfMobile()) ? url.replace('/backend', ':8080') : url;
-  }
+    public getApiUrl(url: string): string {
+        return (this.checkIfMobile()) ? url.replace('/backend', ':8080') : url;
+    }
 
-  public getHttpOptions(responseType: 'json' | 'blob' = 'json'): Object {
-    const token = localStorage.getItem('token') || '';
-    return {
-      headers: new HttpHeaders({
-        'Authorization': `Bearer ${token}`
-      }),
-      responseType
-    };
-  }
+    public getHttpOptions(responseType: 'json' | 'blob' = 'json', observeResponse: boolean = false): Object {
+        const token = localStorage.getItem('token') || '';
+        return {
+            headers: new HttpHeaders({
+                'Authorization': `Bearer ${token}`
+            }), responseType, observe: observeResponse ? 'response' : 'body'
+        };
+    }
 }

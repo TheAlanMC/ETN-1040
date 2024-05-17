@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/groups")
-class GroupController @Autowired constructor(
-    private val groupService: GroupService
-) {
+class GroupController @Autowired constructor(private val groupService: GroupService) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(GroupController::class.java.name)
@@ -32,9 +30,7 @@ class GroupController @Autowired constructor(
     }
 
     @PostMapping
-    fun createGroup(
-        @RequestBody groupDto: GroupDto
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun createGroup(@RequestBody groupDto: GroupDto): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to create the group")
         logger.info("POST /api/v1/groups")
         AuthUtil.verifyAuthTokenHasRole("GESTIONAR ROLES Y PERMISOS")
@@ -44,10 +40,7 @@ class GroupController @Autowired constructor(
     }
 
     @PutMapping("/{groupId}")
-    fun updateGroup(
-        @PathVariable groupId: Long,
-        @RequestBody groupDto: GroupDto
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun updateGroup(@PathVariable groupId: Long, @RequestBody groupDto: GroupDto): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the group")
         logger.info("PUT /api/v1/groups/{groupId}")
         AuthUtil.verifyAuthTokenHasRole("GESTIONAR ROLES Y PERMISOS")
@@ -57,9 +50,7 @@ class GroupController @Autowired constructor(
     }
 
     @DeleteMapping("/{groupId}")
-    fun deleteGroup(
-        @PathVariable groupId: Long
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun deleteGroup(@PathVariable groupId: Long): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to delete the group")
         logger.info("DELETE /api/v1/groups/{groupId}")
         AuthUtil.verifyAuthTokenHasRole("GESTIONAR ROLES Y PERMISOS")
@@ -69,9 +60,7 @@ class GroupController @Autowired constructor(
     }
 
     @GetMapping("/{groupId}/roles")
-    fun getRolesByGroupId(
-        @PathVariable groupId: Long
-    ): ResponseEntity<ResponseDto<List<RoleDto>>> {
+    fun getRolesByGroupId(@PathVariable groupId: Long): ResponseEntity<ResponseDto<List<RoleDto>>> {
         logger.info("Starting the API call to get the roles by group id")
         logger.info("GET /api/v1/groups/{groupId}/roles")
         AuthUtil.verifyAuthTokenHasRole("GESTIONAR ROLES Y PERMISOS")
@@ -81,10 +70,7 @@ class GroupController @Autowired constructor(
     }
 
     @PostMapping("/{groupId}/roles")
-    fun addRolesToGroup(
-        @PathVariable groupId: Long,
-        @RequestBody roleIds: Map<String, List<Long>>
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun addRolesToGroup(@PathVariable groupId: Long, @RequestBody roleIds: Map<String, List<Long>>): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to add roles to group")
         logger.info("POST /api/v1/groups/{groupId}/roles")
         AuthUtil.verifyAuthTokenHasRole("GESTIONAR ROLES Y PERMISOS")

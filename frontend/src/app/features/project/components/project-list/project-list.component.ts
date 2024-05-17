@@ -13,163 +13,163 @@ import {UserService} from "../../../../core/services/user.service";
 import {UserDto} from "../../../user/models/user.dto";
 
 @Component({
-  selector: 'app-project-list',
-  templateUrl: './project-list.component.html',
-  styleUrl: './project-list.component.scss',
-  providers: [ConfirmationService, MessageService]
+    selector: 'app-project-list',
+    templateUrl: './project-list.component.html',
+    styleUrl: './project-list.component.scss',
+    providers: [
+        ConfirmationService,
+        MessageService
+    ]
 })
 export class ProjectListComponent implements OnInit {
 
-  projects: ProjectDto[] = [];
+    projects: ProjectDto[] = [];
 
-  // Pagination variables
-  sortBy: string = 'projectId';
-  sortType: string = 'asc';
-  page: number = 0;
-  size: number = 10;
+    // Pagination variables
+    sortBy: string = 'projectId';
+    sortType: string = 'asc';
+    page: number = 0;
+    size: number = 10;
 
-  totalElements: number = 0;
+    totalElements: number = 0;
 
-  canAddProject: boolean = false;
-  canEditProject: boolean = false;
+    canAddProject: boolean = false;
+    canEditProject: boolean = false;
 
-  isLoading: boolean = true;
+    isLoading: boolean = true;
 
-  baseUrl: string = `${environment.API_URL}/api/v1/users`;
+    baseUrl: string = `${environment.API_URL}/api/v1/users`;
 
-  imgLoaded: { [key: string]: boolean } = {};
+    imgLoaded: { [key: string]: boolean } = {};
 
-  users: UserDto[] = [];
+    users: UserDto[] = [];
 
-  constructor(private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private utilService: UtilService, private projectService: ProjectService, private userService: UserService) {
-    this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
-    // Get token from local storage
-    const token = localStorage.getItem('token');
-    if (token) {
-      const decoded = jwtDecode<JwtPayload>(token!!);
-      if (decoded.roles.includes('CREAR PROYECTOS')) {
-        this.canAddProject = true;
-      }
-      if (decoded.roles.includes('EDITAR PROYECTOS')) {
-        this.canEditProject = true;
-      }
+    constructor(private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private utilService: UtilService, private projectService: ProjectService, private userService: UserService) {
+        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
+        // Get token from local storage
+        const token = localStorage.getItem('token');
+        if (token) {
+            const decoded = jwtDecode<JwtPayload>(token!);
+            if (decoded.roles.includes('CREAR PROYECTOS')) {
+                this.canAddProject = true;
+            }
+            if (decoded.roles.includes('EDITAR PROYECTOS')) {
+                this.canEditProject = true;
+            }
+        }
     }
-  }
 
-  ngOnInit() {
-    this.getAllUsers();
-    this.getData();
-  }
-
-  public navigateToCreateProject() {
-    this.router.navigate(['/projects/create']).then(r => console.log('Navigate to create project'));
-  }
-
-  public navigateToViewProject(projectId: number) {
-    this.router.navigate(['/projects/view/' + projectId]).then(r => console.log('Navigate to view project'));
-  }
-
-  public navigateToEditProject(projectId: number) {
-    this.router.navigate(['/projects/edit/' + projectId]).then(r => console.log('Navigate to edit project'));
-  }
-
-  public onPageChange(event: any) {
-    const first = event.first;
-    const rows = event.rows;
-    this.page = Math.floor(first / rows);
-    this.size = rows;
-    this.getData();
-  }
-
-  public onSortChange(event: any) {
-    this.sortBy = event.field;
-    this.sortType = (event.order == 1) ? 'asc' : 'desc';
-    this.getData();
-    console.log(event);
-  }
-
-  public getData() {
-    this.isLoading = true;
-    this.projectService.getProjects(this.sortBy, this.sortType, this.page, this.size).subscribe({
-      next: (data: ResponseDto<PageDto<ProjectDto>>) => {
-        this.projects = data.data!.content;
-        this.totalElements = data.data!.page.totalElements;
-        this.projects.forEach(project => {
-            project.projectOwnerIds.forEach(userId => this.fetchUserImage(userId));
-            project.projectModeratorIds.forEach(userId => this.fetchUserImage(userId));
-            project.projectMemberIds.forEach(userId => this.fetchUserImage(userId));
-          }
-        );
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
-  }
-
-
-  public fetchUserImage(userId: number) {
-    const img = new Image();
-    img.src = this.baseUrl + '/' + userId + '/profile-picture/thumbnail';
-    img.onload = () => this.imgLoaded[userId] = true;
-    img.onerror = () => this.imgLoaded[userId] = false;
-  }
-
-  public onDeleteProject(projectId: number) {
-    this.confirmationService.confirm({
-      key: 'confirmDeleteProject',
-      message: '¿Estás seguro de que deseas eliminar este proyecto? Esta acción no se puede deshacer.',
-      header: 'Confirmar',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Sí',
-      rejectLabel: 'No',
-      accept: () => {
-        this.deleteProject(projectId);
-      },
-    });
-  }
-
-  public deleteProject(projectId: number): void {
-    this.projectService.deleteProject(projectId).subscribe({
-      next: (data) => {
+    ngOnInit() {
+        this.getAllUsers();
         this.getData();
-        this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Proyecto eliminado correctamente'});
-      },
-      error: (error) => {
-        console.error(error);
-        this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
-      }
-    });
-  }
+    }
 
-  public getAllUsers() {
-    this.userService.getAllUsers().subscribe({
-      next: (data) => {
-        this.users = data.data!!;
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    });
-  }
+    public navigateToCreateProject() {
+        this.router.navigate(['/projects/create']).then(r => console.log('Navigate to create project'));
+    }
 
-  public getImageLoaded(userId: any): boolean {
-    return this.imgLoaded[userId] ?? false;
-  }
+    public navigateToViewProject(projectId: number) {
+        this.router.navigate(['/projects/view/' + projectId]).then(r => console.log('Navigate to view project'));
+    }
 
-  public setImageLoaded(userId: any, value: boolean) {
-    this.imgLoaded[userId] = value;
-  }
+    public navigateToEditProject(projectId: number) {
+        this.router.navigate(['/projects/edit/' + projectId]).then(r => console.log('Navigate to edit project'));
+    }
 
-  public getFullName(userId: any): string {
-    const user = this.users.find(user => user.userId === userId);
-    return `${user?.firstName} ${user?.lastName}`;
-  }
+    public onPageChange(event: any) {
+        const first = event.first;
+        const rows = event.rows;
+        this.page = Math.floor(first / rows);
+        this.size = rows;
+        this.getData();
+    }
 
-  public getEmail(userId: any): string {
-    const user = this.users.find(user => user.userId === userId);
-    return user?.email ?? '';
-  }
+    public onSortChange(event: any) {
+        this.sortBy = event.field;
+        this.sortType = (event.order == 1) ? 'asc' : 'desc';
+        this.getData();
+    }
+
+    public getData() {
+        this.isLoading = true;
+        this.projectService.getProjects(this.sortBy, this.sortType, this.page, this.size).subscribe({
+            next: (data: ResponseDto<PageDto<ProjectDto>>) => {
+                this.projects = data.data!.content;
+                this.totalElements = data.data!.page.totalElements;
+                this.projects.forEach(project => {
+                    project.projectOwnerIds.forEach(userId => this.fetchUserImage(userId));
+                    project.projectModeratorIds.forEach(userId => this.fetchUserImage(userId));
+                    project.projectMemberIds.forEach(userId => this.fetchUserImage(userId));
+                });
+                this.isLoading = false;
+            }, error: (error) => {
+                console.error(error);
+            }
+        });
+    }
+
+
+    public fetchUserImage(userId: number) {
+        const img = new Image();
+        img.src = this.baseUrl + '/' + userId + '/profile-picture/thumbnail';
+        img.onload = () => this.imgLoaded[userId] = true;
+        img.onerror = () => this.imgLoaded[userId] = false;
+    }
+
+    public onDeleteProject(projectId: number) {
+        this.confirmationService.confirm({
+            key: 'confirmDeleteProject',
+            message: '¿Estás seguro de que deseas eliminar este proyecto? Esta acción no se puede deshacer.',
+            header: 'Confirmar',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Sí',
+            rejectLabel: 'No',
+            accept: () => {
+                this.deleteProject(projectId);
+            },
+        });
+    }
+
+    public deleteProject(projectId: number): void {
+        this.projectService.deleteProject(projectId).subscribe({
+            next: (data) => {
+                this.getData();
+                this.messageService.add({
+                    severity: 'success', summary: 'Éxito', detail: 'Proyecto eliminado correctamente'
+                });
+            }, error: (error) => {
+                console.error(error);
+                this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
+            }
+        });
+    }
+
+    public getAllUsers() {
+        this.userService.getAllUsers().subscribe({
+            next: (data) => {
+                this.users = data.data!;
+            }, error: (error) => {
+                console.log(error);
+            }
+        });
+    }
+
+    public getImageLoaded(userId: any): boolean {
+        return this.imgLoaded[userId] ?? false;
+    }
+
+    public setImageLoaded(userId: any, value: boolean) {
+        this.imgLoaded[userId] = value;
+    }
+
+    public getFullName(userId: any): string {
+        const user = this.users.find(user => user.userId === userId);
+        return `${user?.firstName} ${user?.lastName}`;
+    }
+
+    public getEmail(userId: any): string {
+        const user = this.users.find(user => user.userId === userId);
+        return user?.email ?? '';
+    }
 
 }

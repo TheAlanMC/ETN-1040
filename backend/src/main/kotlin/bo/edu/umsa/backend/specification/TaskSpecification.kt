@@ -16,33 +16,13 @@ class TaskSpecification {
         fun taskKeyword(keyword: String): Specification<Task> {
             return Specification { root, query, cb ->
                 query.distinct(true)
-                cb.or(
-                    cb.like(cb.lower(root.get("taskName")), "%${keyword.lowercase()}%"),
-                    cb.like(cb.lower(root.get("taskDescription")), "%${keyword.lowercase()}%"),
-                    cb.like(
-                        cb.lower(
-                            root.get<Task>("taskStatus").get<TaskStatus>("taskStatusName") as Expression<String>
-                        ), "%${keyword.lowercase()}%"
-                    ),
-                    cb.like(
-                        cb.lower(
-                            root.get<Task>("taskAssignees").get<TaskAssignee>("user")
-                                .get<User>("firstName") as Expression<String>
-                        ), "%${keyword.lowercase()}%"
-                    ),
-                    cb.like(
-                        cb.lower(
-                            root.get<Task>("taskAssignees").get<TaskAssignee>("user")
-                                .get<User>("lastName") as Expression<String>
-                        ), "%${keyword.lowercase()}%"
-                    ),
-                    cb.like(
-                        cb.lower(
-                            root.get<Task>("taskAssignees").get<TaskAssignee>("user")
-                                .get<User>("email") as Expression<String>
-                        ), "%${keyword.lowercase()}%"
-                    )
-                )
+                cb.or(cb.like(cb.lower(root.get("taskName")), "%${keyword.lowercase()}%"), cb.like(cb.lower(root.get("taskDescription")), "%${keyword.lowercase()}%"), cb.like(cb.lower(root.get<Task>("taskStatus")
+                    .get<TaskStatus>("taskStatusName") as Expression<String>), "%${keyword.lowercase()}%"), cb.like(cb.lower(root.get<Task>("taskAssignees")
+                    .get<TaskAssignee>("user")
+                    .get<User>("firstName") as Expression<String>), "%${keyword.lowercase()}%"), cb.like(cb.lower(root.get<Task>("taskAssignees")
+                    .get<TaskAssignee>("user")
+                    .get<User>("lastName") as Expression<String>), "%${keyword.lowercase()}%"), cb.like(cb.lower(root.get<Task>("taskAssignees")
+                    .get<TaskAssignee>("user").get<User>("email") as Expression<String>), "%${keyword.lowercase()}%"))
             }
         }
 
@@ -59,13 +39,8 @@ class TaskSpecification {
                 }
             } else {
                 Specification { root, _, cb ->
-                    cb.or(
-                        cb.`in`(root.get<Any>("taskStatus").get<Any>("taskStatusName")).value(taskStatuses),
-                        cb.and(
-                            cb.lessThan(root.get("taskDeadline"), currentDate),
-                            cb.notEqual(root.get<Task>("taskStatusId"), 3)
-                        )
-                    )
+                    cb.or(cb.`in`(root.get<Any>("taskStatus").get<Any>("taskStatusName"))
+                        .value(taskStatuses), cb.and(cb.lessThan(root.get("taskDeadline"), currentDate), cb.notEqual(root.get<Task>("taskStatusId"), 3)))
                 }
             }
         }

@@ -1,6 +1,6 @@
 export interface ProfileDto {
-  firstName: string;
-  lastName: string;
-  phone: string;
-  description: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    description: string;
 }

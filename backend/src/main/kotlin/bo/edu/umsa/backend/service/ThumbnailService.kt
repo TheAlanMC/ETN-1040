@@ -28,10 +28,8 @@ class ThumbnailService {
             newWidth = (width * (newHeight.toDouble() / height)).toInt()
         }
 
-        Thumbnails.of(originalImage)
-            .size(newWidth, newHeight)
-            .outputFormat(file.originalFilename?.substringAfterLast(".") ?: "png")
-            .toOutputStream(outputStream)
+        Thumbnails.of(originalImage).size(newWidth, newHeight)
+            .outputFormat(file.originalFilename?.substringAfterLast(".") ?: "png").toOutputStream(outputStream)
         return outputStream.toByteArray()
     }
 }

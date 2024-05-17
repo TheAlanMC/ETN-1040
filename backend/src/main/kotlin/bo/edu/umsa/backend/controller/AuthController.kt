@@ -14,17 +14,13 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1/auth")
-class AuthController @Autowired constructor(
-    private val authService: AuthService
-) {
+class AuthController @Autowired constructor(private val authService: AuthService) {
     companion object {
         val logger: Logger = LoggerFactory.getLogger(AuthController::class.java)
     }
 
     @PostMapping("/login")
-    fun authenticate(
-        @RequestBody authReqDto: AuthReqDto
-    ): ResponseEntity<ResponseDto<AuthResDto>> {
+    fun authenticate(@RequestBody authReqDto: AuthReqDto): ResponseEntity<ResponseDto<AuthResDto>> {
         logger.info("Starting the API call to authenticate")
         logger.info("POST /api/v1/auth")
         val authResDto: AuthResDto = authService.authenticate(authReqDto)
@@ -33,9 +29,7 @@ class AuthController @Autowired constructor(
     }
 
     @PostMapping("/refresh-token")
-    fun refreshToken(
-        @RequestBody refreshToken: RefreshTokenDto
-    ): ResponseEntity<ResponseDto<AuthResDto>> {
+    fun refreshToken(@RequestBody refreshToken: RefreshTokenDto): ResponseEntity<ResponseDto<AuthResDto>> {
         logger.info("Starting the API call to refresh the token")
         logger.info("POST /api/v1/auth/refresh")
         val authResDto: AuthResDto = authService.refreshToken(refreshToken.refreshToken)
@@ -44,9 +38,7 @@ class AuthController @Autowired constructor(
     }
 
     @PostMapping("/forgot-password")
-    fun forgotPassword(
-        @RequestBody passwordChangeDto: PasswordChangeDto
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun forgotPassword(@RequestBody passwordChangeDto: PasswordChangeDto): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to send an email to reset the password")
         logger.info("POST /api/v1/auth/forgot-password")
         authService.forgotPassword(passwordChangeDto)
@@ -55,9 +47,7 @@ class AuthController @Autowired constructor(
     }
 
     @PostMapping("/verification")
-    fun verification(
-        @RequestBody passwordChangeDto: PasswordChangeDto
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun verification(@RequestBody passwordChangeDto: PasswordChangeDto): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to verify the hash code")
         logger.info("POST /api/v1/auth/verification")
         authService.verification(passwordChangeDto)
@@ -66,9 +56,7 @@ class AuthController @Autowired constructor(
     }
 
     @PostMapping("/reset-password")
-    fun resetPassword(
-        @RequestBody passwordChangeDto: PasswordChangeDto
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun resetPassword(@RequestBody passwordChangeDto: PasswordChangeDto): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to reset the password")
         logger.info("POST /api/v1/auth/reset-password")
         authService.resetPassword(passwordChangeDto)

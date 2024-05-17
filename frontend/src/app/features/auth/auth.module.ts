@@ -19,27 +19,27 @@ import {KeyFilterModule} from "primeng/keyfilter";
 
 
 @NgModule({
-  declarations: [
-    LoginComponent,
-    ForgotPasswordComponent,
-    NewPasswordComponent,
-    VerificationComponent
-  ],
-  imports: [
-    CommonModule,
-    AuthRoutingModule,
-    ReactiveFormsModule,
-    CheckboxModule,
-    FormsModule,
-    SharedModule,
-    AppConfigModule,
-    InputTextModule,
-    ButtonModule,
-    RippleModule,
-    ToastModule,
-    PasswordModule,
-    KeyFilterModule
-  ]
+    declarations: [
+        LoginComponent,
+        ForgotPasswordComponent,
+        NewPasswordComponent,
+        VerificationComponent
+    ],
+    imports: [
+        CommonModule,
+        AuthRoutingModule,
+        ReactiveFormsModule,
+        CheckboxModule,
+        FormsModule,
+        SharedModule,
+        AppConfigModule,
+        InputTextModule,
+        ButtonModule,
+        RippleModule,
+        ToastModule,
+        PasswordModule,
+        KeyFilterModule
+    ]
 })
 export class AuthModule {
 }

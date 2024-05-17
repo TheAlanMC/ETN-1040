@@ -6,7 +6,8 @@ import bo.edu.umsa.backend.util.AuthUtil
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
-import org.springframework.http.*
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -43,15 +44,14 @@ class TaskController @Autowired constructor(
         logger.info("Starting the API call to get the tasks")
         logger.info("GET /api/v1/tasks")
         AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
-        val tasks: Page<TaskDto> = taskService.getTasks(sortBy, sortType, page, size, keyword, statuses, dateFrom, dateTo)
+        val tasks: Page<TaskDto> =
+            taskService.getTasks(sortBy, sortType, page, size, keyword, statuses, dateFrom, dateTo)
         logger.info("Success: Tasks retrieved")
         return ResponseEntity(ResponseDto(true, "Tareas recuperadas", tasks), HttpStatus.OK)
     }
 
     @GetMapping("/{taskId}")
-    fun getTaskById(
-        @PathVariable taskId: Long
-    ): ResponseEntity<ResponseDto<TaskDto>> {
+    fun getTaskById(@PathVariable taskId: Long): ResponseEntity<ResponseDto<TaskDto>> {
         logger.info("Starting the API call to get the task by id")
         logger.info("GET /api/v1/tasks/$taskId")
         AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
@@ -61,9 +61,7 @@ class TaskController @Autowired constructor(
     }
 
     @PostMapping
-    fun createTask(
-        @RequestBody newTaskDto: NewTaskDto
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun createTask(@RequestBody newTaskDto: NewTaskDto): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to create the task")
         logger.info("POST /api/v1/tasks")
         AuthUtil.verifyAuthTokenHasRole("CREAR TAREAS")
@@ -73,10 +71,7 @@ class TaskController @Autowired constructor(
     }
 
     @PutMapping("/{taskId}")
-    fun updateTask(
-        @PathVariable taskId: Long,
-        @RequestBody newTaskDto: NewTaskDto
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun updateTask(@PathVariable taskId: Long, @RequestBody newTaskDto: NewTaskDto): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the task")
         logger.info("PUT /api/v1/tasks/$taskId")
         AuthUtil.verifyAuthTokenHasRole("EDITAR TAREAS")
@@ -86,22 +81,17 @@ class TaskController @Autowired constructor(
     }
 
     @PutMapping("/{taskId}/status")
-    fun updateTaskStatus(
-        @PathVariable taskId: Long,
-        @RequestBody taskStatusDto: TaskStatusDto
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun updateTaskStatus(@PathVariable taskId: Long, @RequestBody taskStatusDto: TaskStatusDto): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the task status")
         logger.info("PUT /api/v1/tasks/$taskId/status")
-        AuthUtil.verifyAuthTokenHasRoles(listOf("VER TAREAS","EDITAR TAREAS").toTypedArray())
+        AuthUtil.verifyAuthTokenHasRoles(listOf("VER TAREAS", "EDITAR TAREAS").toTypedArray())
         taskService.updateTaskStatus(taskId, taskStatusDto.taskStatusId.toLong())
         logger.info("Success: Task status updated")
         return ResponseEntity(ResponseDto(true, "El estado de la tarea se ha actualizado", null), HttpStatus.OK)
     }
 
     @DeleteMapping("/{taskId}")
-    fun deleteTask(
-        @PathVariable taskId: Long
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun deleteTask(@PathVariable taskId: Long): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to delete the task")
         logger.info("DELETE /api/v1/tasks/$taskId")
         AuthUtil.verifyAuthTokenHasRole("EDITAR TAREAS")
@@ -111,9 +101,7 @@ class TaskController @Autowired constructor(
     }
 
     @GetMapping("/{taskId}/comments")
-    fun getComments(
-        @PathVariable taskId: Long
-    ): ResponseEntity<ResponseDto<List<TaskCommentDto>>> {
+    fun getComments(@PathVariable taskId: Long): ResponseEntity<ResponseDto<List<TaskCommentDto>>> {
         logger.info("Starting the API call to get the comments of the task")
         logger.info("GET /api/v1/tasks/$taskId/comments")
         AuthUtil.verifyAuthTokenHasRole("VER TAREAS")

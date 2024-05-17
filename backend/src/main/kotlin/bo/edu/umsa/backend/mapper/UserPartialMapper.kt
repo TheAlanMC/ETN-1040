@@ -7,12 +7,7 @@ import bo.edu.umsa.backend.entity.User
 class UserPartialMapper {
     companion object {
         fun entityToDto(user: User): UserPartialDto {
-            return UserPartialDto(
-                userId = user.userId,
-                email = user.email,
-                firstName = user.firstName,
-                lastName = user.lastName
-            )
+            return UserPartialDto(userId = user.userId, email = user.email, firstName = user.firstName, lastName = user.lastName)
         }
     }
 }

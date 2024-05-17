@@ -1,83 +1,83 @@
 <div *ngIf="project else loading" class="grid p-fluid">
-  <div class="col-12 lg:col-8">
-    <div class="grid formgrid">
-      <div class="col-12 field">
-        <label class="font-bold text-900" for="projectName">Nombre del Proyecto</label>
-        <input [(ngModel)]="project.projectName" id="projectName" label="Nombre del Proyecto" pInputText
-               placeholder="Nombre del Proyecto"
-               readonly type="text">
-      </div>
-      <div class="col-12 lg:col-6 field">
-        <label class="font-bold text-900" for="dateFrom">Fecha de inicio</label>
-        <p-calendar [disabled]="true" [ngModel]="dateFrom" [showIcon]="true" dateFormat="dd/mm/yy"
-                    id="dateFrom" placeholder="Fecha de inicio"></p-calendar>
-      </div>
-      <div class="col-12 lg:col-6 field">
-        <label class="font-bold text-900" for="dateTo">Fecha de finalización</label>
-        <p-calendar [disabled]="true" [ngModel]="dateTo" [showIcon]="true" dateFormat="dd/mm/yy"
-                    id="dateTo" placeholder="Fecha de finalización"></p-calendar>
-      </div>
-      <div class="col-12 field">
-        <label class="font-bold text-900" for="projectDescription">Descripción del Proyecto</label>
-        <p-editor [(ngModel)]="project.projectDescription" [modules]="editorModules" [readonly]="true"
-                  [style]="{'height':'250px'}" id="projectDescription"
-                  placeholder="Ingrese la descripción del proyecto">
-          <ng-template pTemplate="header">
-          </ng-template>
-        </p-editor>
-      </div>
+    <div class="col-12 lg:col-8">
+        <div class="grid formgrid">
+            <div class="col-12 field">
+                <label class="font-bold text-900" for="projectName">Nombre del Proyecto</label>
+                <input [(ngModel)]="project.projectName" id="projectName" label="Nombre del Proyecto" pInputText
+                       placeholder="Nombre del Proyecto"
+                       readonly type="text">
+            </div>
+            <div class="col-12 lg:col-6 field">
+                <label class="font-bold text-900" for="dateFrom">Fecha de inicio</label>
+                <p-calendar [disabled]="true" [ngModel]="dateFrom" [showIcon]="true" dateFormat="dd/mm/yy"
+                            id="dateFrom" placeholder="Fecha de inicio"></p-calendar>
+            </div>
+            <div class="col-12 lg:col-6 field">
+                <label class="font-bold text-900" for="dateTo">Fecha de finalización</label>
+                <p-calendar [disabled]="true" [ngModel]="dateTo" [showIcon]="true" dateFormat="dd/mm/yy"
+                            id="dateTo" placeholder="Fecha de finalización"></p-calendar>
+            </div>
+            <div class="col-12 field">
+                <label class="font-bold text-900" for="projectDescription">Descripción del Proyecto</label>
+                <p-editor [(ngModel)]="project.projectDescription" [modules]="editorModules" [readonly]="true"
+                          [style]="{'height':'250px'}" id="projectDescription"
+                          placeholder="Ingrese la descripción del proyecto">
+                    <ng-template pTemplate="header">
+                    </ng-template>
+                </p-editor>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div class="col-12 lg:col-4">
-    <div class="border-1 surface-border border-round field">
-      <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Collaboradores</span>
-      <div class="p-3">
-        <div *ngIf="selectedModerators.length > 0" class="auto-flex align-items-center field">
-          <p-chips [(ngModel)]="selectedModerators" [disabled]="true" class="chips-custom">
-            <ng-template let-item pTemplate="item">
-              <img
-                (error)="imgLoaded[item.value] = false"
-                (load)="imgLoaded[item.value] = true"
-                [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
-                alt="{{item.value}}"
-                class="mr-1"
-                style="width: 25px; height: 25px; border-radius: 50%; object-fit: cover;">
-              <span class="ml-1">{{ item.label }}</span>
-            </ng-template>
-          </p-chips>
+    <div class="col-12 lg:col-4">
+        <div class="border-1 surface-border border-round field">
+            <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Collaboradores</span>
+            <div class="p-3">
+                <div *ngIf="selectedModerators.length > 0" class="auto-flex align-items-center field">
+                    <p-chips [(ngModel)]="selectedModerators" [disabled]="true" class="chips-custom">
+                        <ng-template let-item pTemplate="item">
+                            <img
+                                    (error)="imgLoaded[item.value] = false"
+                                    (load)="imgLoaded[item.value] = true"
+                                    [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                                    alt="{{item.value}}"
+                                    class="mr-1"
+                                    style="width: 25px; height: 25px; border-radius: 50%; object-fit: cover;">
+                            <span class="ml-1">{{ item.label }}</span>
+                        </ng-template>
+                    </p-chips>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="border-1 surface-border border-round field">
-      <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Miembros del Equipo</span>
-      <div class="p-3">
-        <div *ngIf="selectedMembers.length > 0" class="auto-flex align-items-center field">
-          <p-chips [(ngModel)]="selectedMembers" [disabled]="true" class="chips-custom">
-            <ng-template let-item pTemplate="item">
-              <img
-                (error)="imgLoaded[item.value] = false"
-                (load)="imgLoaded[item.value] = true"
-                [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
-                alt="{{item.value}}"
-                class="mr-1"
-                style="width: 25px; height: 25px; border-radius: 50%; object-fit: cover;">
-              <span class="ml-1">{{ item.label }}</span>
-            </ng-template>
-          </p-chips>
+        <div class="border-1 surface-border border-round field">
+            <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Miembros del Equipo</span>
+            <div class="p-3">
+                <div *ngIf="selectedMembers.length > 0" class="auto-flex align-items-center field">
+                    <p-chips [(ngModel)]="selectedMembers" [disabled]="true" class="chips-custom">
+                        <ng-template let-item pTemplate="item">
+                            <img
+                                    (error)="imgLoaded[item.value] = false"
+                                    (load)="imgLoaded[item.value] = true"
+                                    [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                                    alt="{{item.value}}"
+                                    class="mr-1"
+                                    style="width: 25px; height: 25px; border-radius: 50%; object-fit: cover;">
+                            <span class="ml-1">{{ item.label }}</span>
+                        </ng-template>
+                    </p-chips>
+                </div>
+            </div>
         </div>
-      </div>
+        <div class="flex flex-column sm:flex-row justify-content-between align-items-center gap-3 py-2">
+            <button (click)="onBack()" class="p-button-primary flex-1 p-button-outlined" icon="pi pi-arrow-left"
+                    label="Volver" pButton
+                    pRipple></button>
+        </div>
     </div>
-    <div class="flex flex-column sm:flex-row justify-content-between align-items-center gap-3 py-2">
-      <button (click)="onBack()" class="p-button-primary flex-1 p-button-outlined" icon="pi pi-arrow-left"
-              label="Volver" pButton
-              pRipple></button>
-    </div>
-  </div>
 </div>
 
 <ng-template #loading>
-  <div class="col-12 lg:col-12" style="display: flex; justify-content: center; align-items: center; height: 100%;">
-    <p-progressSpinner ariaLabel="Cargando..."></p-progressSpinner>
-  </div>
+    <div class="col-12 lg:col-12" style="display: flex; justify-content: center; align-items: center; height: 100%;">
+        <p-progressSpinner ariaLabel="Cargando..."></p-progressSpinner>
+    </div>
 </ng-template>

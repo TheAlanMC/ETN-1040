@@ -1,11 +1,14 @@
 package bo.edu.umsa.backend.controller
 
-import bo.edu.umsa.backend.dto.*
+import bo.edu.umsa.backend.dto.NewTaskCommentDto
+import bo.edu.umsa.backend.dto.ResponseDto
+import bo.edu.umsa.backend.dto.TaskCommentDto
 import bo.edu.umsa.backend.service.TaskCommentService
 import bo.edu.umsa.backend.util.AuthUtil
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.*
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -19,9 +22,7 @@ class TaskCommentController @Autowired constructor(
     }
 
     @GetMapping("/{commentId}")
-    fun getCommentById(
-        @PathVariable commentId: Long
-    ): ResponseEntity<ResponseDto<TaskCommentDto>> {
+    fun getCommentById(@PathVariable commentId: Long): ResponseEntity<ResponseDto<TaskCommentDto>> {
         logger.info("Starting the API call to get the comment by id")
         logger.info("GET /api/v1/task-comments/$commentId")
         AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
@@ -31,9 +32,7 @@ class TaskCommentController @Autowired constructor(
     }
 
     @PostMapping
-    fun createComment(
-        @RequestBody newTaskCommentDto: NewTaskCommentDto
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun createComment(@RequestBody newTaskCommentDto: NewTaskCommentDto): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to create the comment")
         logger.info("POST /api/v1/task-comments")
         AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
@@ -43,10 +42,7 @@ class TaskCommentController @Autowired constructor(
     }
 
     @PutMapping("/{commentId}")
-    fun updateComment(
-        @PathVariable commentId: Long,
-        @RequestBody newTaskCommentDto: NewTaskCommentDto
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun updateComment(@PathVariable commentId: Long, @RequestBody newTaskCommentDto: NewTaskCommentDto): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the comment")
         logger.info("PUT /api/v1/task-comments/$commentId")
         AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
@@ -56,9 +52,7 @@ class TaskCommentController @Autowired constructor(
     }
 
     @DeleteMapping("/{commentId}")
-    fun deleteComment(
-        @PathVariable commentId: Long
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun deleteComment(@PathVariable commentId: Long): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to delete the comment")
         logger.info("DELETE /api/v1/task-comments/$commentId")
         AuthUtil.verifyAuthTokenHasRole("VER TAREAS")

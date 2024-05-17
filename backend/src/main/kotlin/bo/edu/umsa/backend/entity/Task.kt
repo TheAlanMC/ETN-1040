@@ -50,7 +50,7 @@ class Task {
     var taskComments: List<TaskComment>? = null
 
     @OneToMany(mappedBy = "task")
-    var loanedTools: List<LoanedTool>?  = null
+    var loanedTools: List<LoanedTool>? = null
 
     @OneToMany(mappedBy = "task")
     var taskFiles: List<TaskFile>? = null

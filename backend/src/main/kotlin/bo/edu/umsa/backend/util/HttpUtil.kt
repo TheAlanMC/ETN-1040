@@ -6,7 +6,7 @@ import org.springframework.web.context.request.ServletRequestAttributes
 
 class HttpUtil {
 
-    companion object{
+    companion object {
         private fun getRequestContext(): HttpServletRequest? {
             val requestAttributes = RequestContextHolder.getRequestAttributes() as? ServletRequestAttributes
             return requestAttributes?.request

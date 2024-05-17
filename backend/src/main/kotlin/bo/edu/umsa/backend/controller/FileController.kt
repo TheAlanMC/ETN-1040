@@ -12,20 +12,16 @@ import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/api/v1/files")
-class FileController @Autowired constructor(
-    private val fileService: FileService
-) {
+class FileController @Autowired constructor(private val fileService: FileService) {
     companion object {
         private val logger = LoggerFactory.getLogger(FileController::class.java.name)
     }
 
     @GetMapping("/{fileId}")
-    fun getFile(
-        @PathVariable fileId: Long
-    ) : ResponseEntity<ByteArray> {
+    fun getFile(@PathVariable fileId: Long): ResponseEntity<ByteArray> {
         logger.info("Starting the API call to get the file")
         logger.info("GET /api/v1/files/$fileId")
-        AuthUtil.verifyAuthTokenHasRoles(listOf("VER TAREAS","CREAR TAREAS", "EDITAR TAREAS","VER HERRAMIENTAS","CREAR HERRAMIENTAS","EDITAR HERRAMIENTAS").toTypedArray())
+        AuthUtil.verifyAuthTokenHasRoles(listOf("VER TAREAS", "CREAR TAREAS", "EDITAR TAREAS", "VER HERRAMIENTAS", "CREAR HERRAMIENTAS", "EDITAR HERRAMIENTAS").toTypedArray())
         val fileDto: FileDto = fileService.getFile(fileId)
         val headers = HttpHeaders()
         headers.contentType = MediaType.parseMediaType(fileDto.contentType)
@@ -35,12 +31,10 @@ class FileController @Autowired constructor(
     }
 
     @PostMapping()
-    fun uploadFile(
-        @RequestParam("file") file: MultipartFile
-    ) : ResponseEntity<ResponseDto<FileDto>> {
+    fun uploadFile(@RequestParam("file") file: MultipartFile): ResponseEntity<ResponseDto<FileDto>> {
         logger.info("Starting the API call to upload a file")
         logger.info("POST /api/v1/files")
-        AuthUtil.verifyAuthTokenHasRoles(listOf("VER TAREAS","CREAR TAREAS", "EDITAR TAREAS","VER HERRAMIENTAS","CREAR HERRAMIENTAS","EDITAR HERRAMIENTAS").toTypedArray())
+        AuthUtil.verifyAuthTokenHasRoles(listOf("VER TAREAS", "CREAR TAREAS", "EDITAR TAREAS", "VER HERRAMIENTAS", "CREAR HERRAMIENTAS", "EDITAR HERRAMIENTAS").toTypedArray())
         val fileDto: FileDto = fileService.uploadFile(file)
         logger.info("Success: File uploaded")
         return ResponseEntity(ResponseDto(true, "Archivo subido", fileDto), HttpStatus.CREATED)

@@ -7,10 +7,7 @@ import bo.edu.umsa.backend.entity.TaskStatus
 class TaskStatusMapper {
     companion object {
         fun entityToDto(taskStatus: TaskStatus): TaskStatusDto {
-            return TaskStatusDto(
-                taskStatusId = taskStatus.taskStatusId,
-                taskStatusName = taskStatus.taskStatusName
-            )
+            return TaskStatusDto(taskStatusId = taskStatus.taskStatusId, taskStatusName = taskStatus.taskStatusName)
         }
     }
 }

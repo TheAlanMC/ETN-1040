@@ -8,54 +8,58 @@ import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
-  providers: [MessageService, ConfirmationService]
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    styleUrl: './login.component.scss',
+    providers: [
+        MessageService,
+        ConfirmationService]
 })
 export class LoginComponent {
-  emailControl = new FormControl('', [Validators.required, Validators.email]);
-  passwordControl = new FormControl('', [Validators.required]);
+    emailControl = new FormControl('', [
+        Validators.required,
+        Validators.email]);
+    passwordControl = new FormControl('', [Validators.required]);
 
-  // rememberMe: boolean = false;
+    // rememberMe: boolean = false;
 
-  constructor(private layoutService: LayoutService, private authService: AuthService, private router: Router, private messageService: MessageService) {
-    // Get token from local storage
-    const token = localStorage.getItem('token');
-    // Check if token exists
-    if (token) {
-      const decoded = jwtDecode<JwtPayload>(token!!);
-      // Check if token is not expired
-      if (decoded.exp > Date.now() / 1000) {
-        this.router.navigate(['/']).then(r => console.log('Already logged in'));
-      }
+    constructor(private layoutService: LayoutService, private authService: AuthService, private router: Router, private messageService: MessageService) {
+        // Get token from local storage
+        const token = localStorage.getItem('token');
+        // Check if token exists
+        if (token) {
+            const decoded = jwtDecode<JwtPayload>(token!);
+            // Check if token is not expired
+            if (decoded.exp > Date.now() / 1000) {
+                this.router.navigate(['/']).then(r => console.log('Already logged in'));
+            }
+        }
     }
-  }
 
-  login() {
-    this.authService.login(this.emailControl.value!!, this.passwordControl.value!!).subscribe({
-      next: (data) => {
-        // Save token
-        localStorage.setItem('token', data.data!!.token);
-        localStorage.setItem('refreshToken', data.data!!.refreshToken);
-        this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Inicio de sesión exitoso'});
-        setTimeout(() => {
-          this.router.navigate(['/']).then(r => console.log('Navigated to home'));
-        }, 500);
-      },
-      error: (error) => {
-        this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
-        console.log(error);
-      }
-    });
-  }
+    get dark(): boolean {
+        return this.layoutService.config().colorScheme !== 'light';
+    }
 
-  onEnter(event: Event, loginButton: HTMLButtonElement) {
-    loginButton.click();
-  }
+    login() {
+        this.authService.login(this.emailControl.value!, this.passwordControl.value!).subscribe({
+            next: (data) => {
+                // Save token
+                localStorage.setItem('token', data.data!.token);
+                localStorage.setItem('refreshToken', data.data!.refreshToken);
+                this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Inicio de sesión exitoso'});
+                setTimeout(() => {
+                    this.router.navigate(['/']).then(r => console.log('Navigated to home'));
+                }, 500);
+            },
+            error: (error) => {
+                this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
+                console.log(error);
+            }
+        });
+    }
 
-  get dark(): boolean {
-    return this.layoutService.config().colorScheme !== 'light';
-  }
+    onEnter(event: Event, loginButton: HTMLButtonElement) {
+        loginButton.click();
+    }
 }
 

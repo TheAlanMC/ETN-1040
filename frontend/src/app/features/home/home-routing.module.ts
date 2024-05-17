@@ -6,24 +6,24 @@ import {DashboardComponent} from "./components/dashboard/dashboard.component";
 import {RoleGuard} from "../../core/guards/role.guard";
 
 const routes: Routes = [
-  {
-    path: '',
-    children: [
-      {path: '', component: HomePageComponent, canActivate: [AuthGuard]},
-      {
-        path: 'dashboard',
-        component: DashboardComponent,
-        canActivate: [RoleGuard],
-        data: {roles: ['VER DASHBOARD'], breadcrumb: 'Dashboard'}
-      }
-    ]
-  }
+    {
+        path: '',
+        children: [
+            {path: '', component: HomePageComponent, canActivate: [AuthGuard]},
+            {
+                path: 'dashboard',
+                component: DashboardComponent,
+                canActivate: [RoleGuard],
+                data: {roles: ['VER DASHBOARD'], breadcrumb: 'Dashboard'}
+            }
+        ]
+    }
 ];
 
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule]
 })
 export class HomeRoutingModule {
 }

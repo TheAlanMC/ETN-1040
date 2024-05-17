@@ -6,14 +6,14 @@ import {ReportRoutingModule} from "./report-routing.module";
 
 
 @NgModule({
-  declarations: [
-    ProjectReportComponent,
-    TaskReportComponent
-  ],
-  imports: [
-    CommonModule,
-    ReportRoutingModule
-  ]
+    declarations: [
+        ProjectReportComponent,
+        TaskReportComponent
+    ],
+    imports: [
+        CommonModule,
+        ReportRoutingModule
+    ]
 })
 export class ReportModule {
 }

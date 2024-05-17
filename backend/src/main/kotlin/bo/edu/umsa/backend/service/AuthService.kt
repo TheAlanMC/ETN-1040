@@ -20,13 +20,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 
 @Service
-class AuthService @Autowired constructor(
-    private val userRepository: UserRepository,
-    private val groupRepository: GroupRepository,
-    private val roleRepository: RoleRepository,
-    private val emailService: EmailService,
-    private val accountRecoveryRepository: AccountRecoveryRepository
-) {
+class AuthService @Autowired constructor(private val userRepository: UserRepository, private val groupRepository: GroupRepository, private val roleRepository: RoleRepository, private val emailService: EmailService, private val accountRecoveryRepository: AccountRecoveryRepository) {
     companion object {
         val logger: Logger = LoggerFactory.getLogger(AuthController::class.java)
     }
@@ -38,14 +32,11 @@ class AuthService @Autowired constructor(
         }
         logger.info("User ${credentials.email} is trying to authenticate")
         // Verify if the user exists
-        val userEntity: User = userRepository.findByEmailAndStatusIsTrue(credentials.email) ?: throw EtnException(
-            HttpStatus.UNAUTHORIZED, "Error: User not found", "Usuario no encontrado"
-        )
+        val userEntity: User = userRepository.findByEmailAndStatusIsTrue(credentials.email)
+            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: User not found", "Usuario no encontrado")
         val currentPasswordInBCrypt = userEntity.password
         // Verify if the password is correct
-        val verifyResult = BCrypt.verifyer().verify(
-            credentials.password.toCharArray(), currentPasswordInBCrypt
-        )
+        val verifyResult = BCrypt.verifyer().verify(credentials.password.toCharArray(), currentPasswordInBCrypt)
         if (!verifyResult.verified) {
             throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Incorrect password", "Contraseña incorrecta")
         }
@@ -68,9 +59,8 @@ class AuthService @Autowired constructor(
         val email = AuthUtil.getEmailFromAuthToken(token)
         logger.info("User $email is trying to refresh the token")
         // Verify if the user exists
-        val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email!!) ?: throw EtnException(
-            HttpStatus.UNAUTHORIZED, "Error: User not found", "Usuario no encontrado"
-        )
+        val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email!!)
+            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: User not found", "Usuario no encontrado")
         // Get the user roles
         val roleEntities = roleRepository.findAllByEmail(email)
         val roles = roleEntities.map { role -> role.roleName }.toTypedArray()
@@ -88,9 +78,8 @@ class AuthService @Autowired constructor(
         }
         logger.info("User $email is trying to reset the password")
         // Verify if the user exists
-        val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email) ?: throw EtnException(
-            HttpStatus.UNAUTHORIZED, "Error: User not found", "Usuario no encontrado"
-        )
+        val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email)
+            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: User not found", "Usuario no encontrado")
         // Check if user has an active account recovery
         val accountRecoveryEntities = accountRecoveryRepository.findAllByUser_EmailAndStatusIsTrueAndStatusIsTrue(email)
         if (accountRecoveryEntities.isNotEmpty()) {
@@ -112,11 +101,7 @@ class AuthService @Autowired constructor(
         accountRecoveryEntity.expirationDate = java.sql.Timestamp(System.currentTimeMillis() + 900000)
         accountRecoveryRepository.save(accountRecoveryEntity)
         // Send an email to the user with the random code
-        emailService.sendEmail(
-            email,
-            "Reestablecer contraseña",
-            "Su código de recuperación es: $randomCode, este código expirará en 15 minutos"
-        )
+        emailService.sendEmail(email, "Reestablecer contraseña", "Su código de recuperación es: $randomCode, este código expirará en 15 minutos")
     }
 
     fun verification(passwordChangeDto: PasswordChangeDto) {
@@ -130,13 +115,9 @@ class AuthService @Autowired constructor(
         // Verify if the account recovery exists
         val accountRecoveryEntity =
             accountRecoveryRepository.findAllByUser_EmailAndStatusIsTrueAndStatusIsTrue(email).firstOrNull()
-                ?: throw EtnException(
-                    HttpStatus.UNAUTHORIZED, "Error: Account recovery not found", "Recuperación de cuenta no encontrada"
-                )
+                ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Account recovery not found", "Recuperación de cuenta no encontrada")
         // Verify if the hash code is correct
-        val verifyResult = BCrypt.verifyer().verify(
-            code.toCharArray(), accountRecoveryEntity.hashCode
-        )
+        val verifyResult = BCrypt.verifyer().verify(code.toCharArray(), accountRecoveryEntity.hashCode)
         if (!verifyResult.verified) {
             throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Hash code not valid", "Código no válido")
         }
@@ -157,11 +138,7 @@ class AuthService @Autowired constructor(
         }
         // Validate the password is at least 8 characters long
         if (password.length < 8) {
-            throw EtnException(
-                HttpStatus.BAD_REQUEST,
-                "Error: Password must be at least 8 characters long",
-                "La contraseña debe tener al menos 8 caracteres"
-            )
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Password must be at least 8 characters long", "La contraseña debe tener al menos 8 caracteres")
         }
         // Validate that the password and confirm password are the same
         if (password != confirmPassword) {
@@ -169,19 +146,14 @@ class AuthService @Autowired constructor(
         }
         logger.info("User $email is trying to reset the password")
         // Verify if the user exists
-        val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email) ?: throw EtnException(
-            HttpStatus.UNAUTHORIZED, "Error: User not found", "Usuario no encontrado"
-        )
+        val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email)
+            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: User not found", "Usuario no encontrado")
         // Verify if the account recovery exists
         val accountRecoveryEntity =
             accountRecoveryRepository.findAllByUser_EmailAndStatusIsTrueAndStatusIsTrue(email).firstOrNull()
-                ?: throw EtnException(
-                    HttpStatus.UNAUTHORIZED, "Error: Account recovery not found", "Recuperación de cuenta no encontrada"
-                )
+                ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Account recovery not found", "Recuperación de cuenta no encontrada")
         // Verify if the hash code is correct
-        val verifyResult = BCrypt.verifyer().verify(
-            code.toCharArray(), accountRecoveryEntity.hashCode
-        )
+        val verifyResult = BCrypt.verifyer().verify(code.toCharArray(), accountRecoveryEntity.hashCode)
         if (!verifyResult.verified) {
             throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Hash code not valid", "Código no válido")
         }

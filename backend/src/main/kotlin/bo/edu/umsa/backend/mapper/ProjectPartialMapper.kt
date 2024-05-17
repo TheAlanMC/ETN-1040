@@ -4,13 +4,10 @@ import bo.edu.umsa.backend.dto.ProjectPartialDto
 import bo.edu.umsa.backend.entity.Project
 
 class ProjectPartialMapper {
-    companion object{
-        fun entityToDto(project: Project):ProjectPartialDto {
-            return ProjectPartialDto(
-                projectId = project.projectId,
-                projectName = project.projectName,
-                projectMemberIds = project.projectMembers?.filter { it.status }?.mapNotNull { it.user?.userId } ?: emptyList()
-            )
+    companion object {
+        fun entityToDto(project: Project): ProjectPartialDto {
+            return ProjectPartialDto(projectId = project.projectId, projectName = project.projectName, projectMemberIds = project.projectMembers?.filter { it.status }
+                ?.mapNotNull { it.user?.userId } ?: emptyList())
         }
     }
 }

@@ -6,69 +6,69 @@ import {SharedService} from "../../../../core/services/shared.service";
 import {MessageService} from "primeng/api";
 
 @Component({
-  selector: 'app-verification',
-  templateUrl: './verification.component.html',
-  styleUrl: './verification.component.scss',
-  providers: [MessageService]
+    selector: 'app-verification',
+    templateUrl: './verification.component.html',
+    styleUrl: './verification.component.scss',
+    providers: [MessageService]
 })
 export class VerificationComponent implements OnInit {
-  val1!: number;
+    val1!: number;
 
-  val2!: number;
+    val2!: number;
 
-  val3!: number;
+    val3!: number;
 
-  val4!: number;
+    val4!: number;
 
-  email!: string;
+    email!: string;
 
-  constructor(private layoutService: LayoutService, private route: ActivatedRoute, private authService: AuthService, private router: Router, private sharedService: SharedService, private messageService: MessageService) {
-  }
+    constructor(private layoutService: LayoutService, private route: ActivatedRoute, private authService: AuthService, private router: Router, private sharedService: SharedService, private messageService: MessageService) {
+    }
 
-  ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      this.email = this.sharedService.getData('email');
-      if (this.email == null) {
-        console.log('No email found');
-        this.router.navigate(['/auth/login']).then(r => console.log('Redirect to login'));
-      }
-    });
-  }
+    get dark(): boolean {
+        return this.layoutService.config().colorScheme !== 'light';
+    }
 
-  onDigitInput(event: any) {
-    let element;
-    if (event.code !== 'Backspace')
-      if (event.code.includes('Numpad') || event.code.includes('Digit')) {
-        element = event.srcElement.nextElementSibling;
-      }
-    if (event.code === 'Backspace')
-      element = event.srcElement.previousElementSibling;
+    ngOnInit() {
+        this.route.queryParams.subscribe(params => {
+            this.email = this.sharedService.getData('email');
+            if (this.email == null) {
+                console.log('No email found');
+                this.router.navigate(['/auth/login']).then(r => console.log('Redirect to login'));
+            }
+        });
+    }
 
-    if (element == null) return;
-    else element.focus();
-  }
+    onDigitInput(event: any) {
+        let element;
+        if (event.code !== 'Backspace')
+            if (event.code.includes('Numpad') || event.code.includes('Digit')) {
+                element = event.srcElement.nextElementSibling;
+            }
+        if (event.code === 'Backspace')
+            element = event.srcElement.previousElementSibling;
 
-  get dark(): boolean {
-    return this.layoutService.config().colorScheme !== 'light';
-  }
+        if (element == null) return;
+        else element.focus();
+    }
 
-  onVerify() {
-    const code = this.val1.toString() + this.val2.toString() + this.val3.toString() + this.val4.toString();
-    this.authService.verification(this.email, code).subscribe({
-      next: (data) => {
-        this.sharedService.changeData('email', this.email);
-        this.sharedService.changeData('code', code);
-        this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Código verificado'});
-        setTimeout(() => {
-          this.router.navigate(['/auth/new-password']).then(r => console.log('Redirect to new password'));
-        }, 500);
-      },
-      error: (error) => {
-        console.log(error);
-        this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
-      }
-    });
-  }
+    onVerify() {
+        const code = this.val1.toString() + this.val2.toString() + this.val3.toString() + this.val4.toString();
+        this.authService.verification(this.email, code).subscribe({
+            next: (data) => {
+                this.sharedService.changeData('email', this.email);
+                this.sharedService.changeData('code', code);
+                this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Código verificado'});
+                setTimeout(() => {
+                    this.router.navigate(['/auth/new-password']).then(r => console.log('Redirect to new password'));
+                }, 500);
+            },
+            error: (error) => {
+                console.log(error);
+                this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
+            }
+        });
+    }
 
 
 }

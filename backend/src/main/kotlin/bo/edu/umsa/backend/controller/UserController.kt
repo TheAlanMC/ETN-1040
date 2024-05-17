@@ -13,9 +13,7 @@ import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/api/v1/users")
-class UserController @Autowired constructor(
-    private val userService: UserService
-) {
+class UserController @Autowired constructor(private val userService: UserService) {
     companion object {
         val logger: Logger = LoggerFactory.getLogger(UserController::class.java)
     }
@@ -31,13 +29,7 @@ class UserController @Autowired constructor(
     }
 
     @GetMapping
-    fun getUsers(
-        @RequestParam(defaultValue = "userId") sortBy: String,
-        @RequestParam(defaultValue = "asc") sortType: String,
-        @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "10") size: Int,
-        @RequestParam(required = false) keyword: String?
-    ): ResponseEntity<ResponseDto<Page<UserDto>>> {
+    fun getUsers(@RequestParam(defaultValue = "userId") sortBy: String, @RequestParam(defaultValue = "asc") sortType: String, @RequestParam(defaultValue = "0") page: Int, @RequestParam(defaultValue = "10") size: Int, @RequestParam(required = false) keyword: String?): ResponseEntity<ResponseDto<Page<UserDto>>> {
         logger.info("Starting the API call to get the users")
         logger.info("GET /api/v1/users")
         AuthUtil.verifyAuthTokenHasRole("VER USUARIOS")
@@ -47,9 +39,7 @@ class UserController @Autowired constructor(
     }
 
     @GetMapping("/{userId}")
-    fun getUserById(
-        @PathVariable userId: Long
-    ): ResponseEntity<ResponseDto<UserDto>> {
+    fun getUserById(@PathVariable userId: Long): ResponseEntity<ResponseDto<UserDto>> {
         logger.info("Starting the API call to get the user")
         logger.info("GET /api/v1/users/{userId}")
         AuthUtil.verifyAuthTokenHasRole("VER USUARIOS")
@@ -60,9 +50,7 @@ class UserController @Autowired constructor(
 
 
     @PostMapping
-    fun createUser(
-        @RequestBody newUserDto: NewUserDto
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun createUser(@RequestBody newUserDto: NewUserDto): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to create the user")
         logger.info("POST /api/v1/users")
         AuthUtil.verifyAuthTokenHasRole("CREAR USUARIOS")
@@ -72,10 +60,7 @@ class UserController @Autowired constructor(
     }
 
     @PutMapping("/{userId}")
-    fun updateUser(
-        @PathVariable userId: Long,
-        @RequestBody profileDto: ProfileDto
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun updateUser(@PathVariable userId: Long, @RequestBody profileDto: ProfileDto): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the user")
         logger.info("PUT /api/v1/users/{userId}")
         AuthUtil.verifyAuthTokenHasRole("EDITAR USUARIOS")
@@ -85,9 +70,7 @@ class UserController @Autowired constructor(
     }
 
     @DeleteMapping("/{userId}")
-    fun deleteUser(
-        @PathVariable userId: Long
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun deleteUser(@PathVariable userId: Long): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to delete the user")
         logger.info("DELETE /api/v1/users/{userId}")
         AuthUtil.verifyAuthTokenHasRole("EDITAR USUARIOS")
@@ -97,9 +80,7 @@ class UserController @Autowired constructor(
     }
 
     @GetMapping("/{userId}/profile-picture")
-    fun getProfilePicture(
-        @PathVariable userId: Long
-    ): ResponseEntity<ByteArray> {
+    fun getProfilePicture(@PathVariable userId: Long): ResponseEntity<ByteArray> {
         logger.info("Starting the API call to get the profile picture")
         logger.info("GET /api/v1/users/{userId}/profile-picture")
         AuthUtil.verifyAuthTokenHasRole("VER USUARIOS")
@@ -112,9 +93,7 @@ class UserController @Autowired constructor(
     }
 
     @GetMapping("/{userId}/profile-picture/thumbnail")
-    fun getProfilePictureThumbnail(
-        @PathVariable userId: Long
-    ): ResponseEntity<ByteArray> {
+    fun getProfilePictureThumbnail(@PathVariable userId: Long): ResponseEntity<ByteArray> {
         logger.info("Starting the API call to get the profile picture thumbnail")
         logger.info("GET /api/v1/users/{userId}/profile-picture/thumbnail")
         val profilePicture: FileDto = userService.getProfilePictureThumbnail(userId)
@@ -126,10 +105,7 @@ class UserController @Autowired constructor(
     }
 
     @PutMapping("/{userId}/profile-picture")
-    fun updateProfilePicture(
-        @PathVariable userId: Long,
-        @RequestParam("file") file: MultipartFile
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun updateProfilePicture(@PathVariable userId: Long, @RequestParam("file") file: MultipartFile): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the profile picture")
         logger.info("PUT /api/v1/users/{userId}/profile-picture")
         AuthUtil.verifyAuthTokenHasRole("EDITAR USUARIOS")
@@ -140,9 +116,7 @@ class UserController @Autowired constructor(
 
 
     @GetMapping("/{userId}/groups")
-    fun getGroupsByUserId(
-        @PathVariable userId: Long
-    ): ResponseEntity<ResponseDto<List<GroupDto>>> {
+    fun getGroupsByUserId(@PathVariable userId: Long): ResponseEntity<ResponseDto<List<GroupDto>>> {
         logger.info("Starting the API call to get the groups by user id")
         logger.info("GET /api/v1/users/{userId}/groups")
         AuthUtil.verifyAuthTokenHasRole("GESTIONAR ROLES Y PERMISOS")
@@ -152,10 +126,7 @@ class UserController @Autowired constructor(
     }
 
     @PostMapping("/{userId}/groups")
-    fun addGroupsToUser(
-        @PathVariable userId: Long,
-        @RequestBody groupIds: Map<String, List<Long>>
-    ): ResponseEntity<ResponseDto<Nothing>> {
+    fun addGroupsToUser(@PathVariable userId: Long, @RequestBody groupIds: Map<String, List<Long>>): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to add groups to user")
         logger.info("POST /api/v1/users/{userId}/groups")
         AuthUtil.verifyAuthTokenHasRole("GESTIONAR ROLES Y PERMISOS")

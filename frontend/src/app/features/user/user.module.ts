@@ -25,35 +25,35 @@ import {ViewUserComponent} from './components/view-user/view-user.component';
 import {KeyFilterModule} from "primeng/keyfilter";
 
 @NgModule({
-  declarations: [
-    UserListComponent,
-    NewUserComponent,
-    EditUserComponent,
-    ProfileComponent,
-    GroupAndRoleComponent,
-    ViewUserComponent
-  ],
-  imports: [
-    CommonModule,
-    UserRoutingModule,
-    FileUploadModule,
-    InputTextareaModule,
-    ChipsModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ProgressSpinnerModule,
-    ToastModule,
-    RippleModule,
-    SidebarModule,
-    PasswordModule,
-    DialogModule,
-    TableModule,
-    ConfirmDialogModule,
-    DropdownModule,
-    TabViewModule,
-    PickListModule,
-    KeyFilterModule,
-  ]
+    declarations: [
+        UserListComponent,
+        NewUserComponent,
+        EditUserComponent,
+        ProfileComponent,
+        GroupAndRoleComponent,
+        ViewUserComponent
+    ],
+    imports: [
+        CommonModule,
+        UserRoutingModule,
+        FileUploadModule,
+        InputTextareaModule,
+        ChipsModule,
+        FormsModule,
+        ReactiveFormsModule,
+        ProgressSpinnerModule,
+        ToastModule,
+        RippleModule,
+        SidebarModule,
+        PasswordModule,
+        DialogModule,
+        TableModule,
+        ConfirmDialogModule,
+        DropdownModule,
+        TabViewModule,
+        PickListModule,
+        KeyFilterModule,
+    ]
 })
 export class UserModule {
 }

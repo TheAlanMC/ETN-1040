@@ -9,95 +9,97 @@ import {MessageService, SelectItem} from "primeng/api";
 import {Location} from '@angular/common';
 
 @Component({
-  selector: 'app-new-user',
-  templateUrl: './new-user.component.html',
-  styleUrl: './new-user.component.scss',
-  providers: [MessageService]
+    selector: 'app-new-user',
+    templateUrl: './new-user.component.html',
+    styleUrl: './new-user.component.scss',
+    providers: [MessageService]
 })
 export class NewUserComponent implements OnInit {
-  selectedGroupId: number = 0;
+    selectedGroupId: number = 0;
 
-  roles: string[] = [];
-  selectedGroup: SelectItem = {value: ''};
-  groups: SelectItem[] = [];
+    roles: string[] = [];
+    selectedGroup: SelectItem = {value: ''};
+    groups: SelectItem[] = [];
 
-  loadingRoles = false;
+    loadingRoles = false;
 
-  firstNameControl = new FormControl('', [Validators.required]);
-  lastNameControl = new FormControl('', [Validators.required]);
-  emailControl = new FormControl('', [Validators.required, Validators.email]);
-  phoneControl = new FormControl('');
-  descriptionControl = new FormControl('');
+    firstNameControl = new FormControl('', [Validators.required]);
+    lastNameControl = new FormControl('', [Validators.required]);
+    emailControl = new FormControl('', [
+        Validators.required,
+        Validators.email]);
+    phoneControl = new FormControl('');
+    descriptionControl = new FormControl('');
 
-  user: UserDto | null = null;
+    user: UserDto | null = null;
 
-  @ViewChild('fileUpload') fileUpload!: FileUpload;
+    @ViewChild('fileUpload') fileUpload!: FileUpload;
 
-  constructor(private userService: UserService, private groupService: GroupService, private router: Router, private messageService: MessageService, private location: Location) {
-  }
+    constructor(private userService: UserService, private groupService: GroupService, private router: Router, private messageService: MessageService, private location: Location) {
+    }
 
-  ngOnInit() {
-    this.getGroups();
-  }
+    ngOnInit() {
+        this.getGroups();
+    }
 
-  public getGroups() {
-    this.groupService.getGroups().subscribe({
-      next: (data) => {
-        this.groups = data.data!!.map(group => {
-          return {
-            label: group.groupName,
-            value: group.groupId
-          }
+    public getGroups() {
+        this.groupService.getGroups().subscribe({
+            next: (data) => {
+                this.groups = data.data!.map(group => {
+                    return {
+                        label: group.groupName,
+                        value: group.groupId
+                    }
+                });
+            },
+            error: (error) => {
+                console.log(error);
+            }
         });
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    });
-  }
+    }
 
-  public onSelectGroup(event: any) {
-    this.loadingRoles = true;
-    this.groupService.getGroupRoles(event.value).subscribe({
-      next: (data) => {
-        this.roles = data.data!!.map(role => role.roleName);
-        this.selectedGroupId = event.value;
-        this.loadingRoles = false;
-      },
-      error: (error) => {
-        console.log(error);
-        this.loadingRoles = false;
-      }
-    });
-  }
+    public onSelectGroup(event: any) {
+        this.loadingRoles = true;
+        this.groupService.getGroupRoles(event.value).subscribe({
+            next: (data) => {
+                this.roles = data.data!.map(role => role.roleName);
+                this.selectedGroupId = event.value;
+                this.loadingRoles = false;
+            },
+            error: (error) => {
+                console.log(error);
+                this.loadingRoles = false;
+            }
+        });
+    }
 
-  public onClearGroup() {
-    this.roles = [];
-  }
+    public onClearGroup() {
+        this.roles = [];
+    }
 
-  public onSave() {
-    this.userService.createUser(
-      this.selectedGroupId,
-      this.emailControl.value!,
-      this.firstNameControl.value!,
-      this.lastNameControl.value!,
-      this.phoneControl.value!,
-      this.descriptionControl.value!
-    ).subscribe({
-      next: (data) => {
-        this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Usuario creado'});
-        setTimeout(() => {
-          this.router.navigate(['/users']).then(r => console.log('Redirect to users page'));
-        }, 500);
-      },
-      error: (error) => {
-        console.log(error);
-        this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
-      }
-    })
-  }
+    public onSave() {
+        this.userService.createUser(
+            this.selectedGroupId,
+            this.emailControl.value!,
+            this.firstNameControl.value!,
+            this.lastNameControl.value!,
+            this.phoneControl.value!,
+            this.descriptionControl.value!
+        ).subscribe({
+            next: (data) => {
+                this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Usuario creado'});
+                setTimeout(() => {
+                    this.router.navigate(['/users']).then(r => console.log('Redirect to users page'));
+                }, 500);
+            },
+            error: (error) => {
+                console.log(error);
+                this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
+            }
+        })
+    }
 
-  public onCancel() {
-    this.location.back();
-  }
+    public onCancel() {
+        this.location.back();
+    }
 }

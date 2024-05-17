@@ -8,8 +8,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface RoleRepository : JpaRepository<Role, Long> {
 
-    @Query(
-        """
+    @Query("""
             SELECT r.* FROM role r
             JOIN group_role gr ON r.role_id = gr.role_id
             JOIN "group" g ON gr.group_id = g.group_id
@@ -21,13 +20,10 @@ interface RoleRepository : JpaRepository<Role, Long> {
             AND g.status = true
             AND ug.status = true
             AND u.status = true
-        """,
-        nativeQuery = true
-    )
+        """, nativeQuery = true)
     fun findAllByEmail(email: String): List<Role>
 
-    @Query(
-        """
+    @Query("""
             SELECT r.* FROM role r
             JOIN group_role gr ON r.role_id = gr.role_id
             JOIN "group" g ON gr.group_id = g.group_id
@@ -36,20 +32,15 @@ interface RoleRepository : JpaRepository<Role, Long> {
             AND gr.status = true
             AND g.status = true
             ORDER BY r.role_id
-        """,
-        nativeQuery = true
-    )
+        """, nativeQuery = true)
     fun findAllByGroupId(groupId: Long): List<Role>
 
-    @Query(
-        """
+    @Query("""
             SELECT r.* FROM role r
             WHERE r.role_id IN :roleIds
             AND r.status = true
             ORDER BY r.role_id
-        """,
-        nativeQuery = true
-    )
+        """, nativeQuery = true)
     fun findAllByRoleIds(roleIds: List<Long>): List<Role>
 
     fun findAllByStatusIsTrueOrderByRoleId(): List<Role>
