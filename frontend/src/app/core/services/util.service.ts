@@ -19,12 +19,12 @@ export class UtilService {
         return (this.checkIfMobile()) ? url.replace('/backend', ':8080') : url;
     }
 
-    public getHttpOptions(responseType: 'json' | 'blob' = 'json', observeResponse: boolean = false): Object {
+    public getHttpOptions(responseType: 'json' | 'blob' = 'json'): Object {
         const token = localStorage.getItem('token') || '';
         return {
             headers: new HttpHeaders({
                 'Authorization': `Bearer ${token}`
-            }), responseType, observe: observeResponse ? 'response' : 'body'
+            }), responseType
         };
     }
 }

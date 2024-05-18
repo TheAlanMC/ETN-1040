@@ -1,9 +1,11 @@
 package bo.edu.umsa.backend.service
 
 import bo.edu.umsa.backend.dto.FileDto
+import bo.edu.umsa.backend.dto.FilePartialDto
 import bo.edu.umsa.backend.entity.File
 import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.FileMapper
+import bo.edu.umsa.backend.mapper.FilePartialMapper
 import bo.edu.umsa.backend.repository.FileRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -24,17 +26,16 @@ class FileService @Autowired constructor(private val fileRepository: FileReposit
         return FileMapper.entityToDto(fileEntity)
     }
 
-    fun uploadFile(file: MultipartFile): FileDto {
+    fun uploadFile(file: MultipartFile): FilePartialDto {
         logger.info("Uploading the file ${file.originalFilename}")
-        // Validate the file is an image
-
         val fileEntity = File()
         fileEntity.filename = sanitizeFilename(file.originalFilename!!)
         fileEntity.contentType = file.contentType!!
         fileEntity.fileData = file.bytes
+        fileEntity.fileSize = file.size.toInt()
         try {
             if (file.contentType!!.startsWith("image")) {
-                val thumbnailBytes = thumbnailService.createThumbnail(file)
+                val thumbnailBytes = thumbnailService.createThumbnail(file, 100)
                 fileEntity.thumbnail = thumbnailBytes
                 fileEntity.isPicture = true
             }
@@ -44,7 +45,7 @@ class FileService @Autowired constructor(private val fileRepository: FileReposit
 
         // Save the file
         val savedFile: File = fileRepository.save(fileEntity)
-        return FileDto(fileId = savedFile.fileId, filename = file.originalFilename!!, contentType = file.contentType!!, fileData = null, thumbnail = null)
+        return FilePartialMapper.entityToDto(savedFile)
     }
 
     fun getPicture(fileId: Int): FileDto {
@@ -66,13 +67,14 @@ class FileService @Autowired constructor(private val fileRepository: FileReposit
         fileEntity.filename = sanitizeFilename(file.originalFilename!!)
         fileEntity.contentType = file.contentType!!
         fileEntity.fileData = file.bytes
+        fileEntity.fileSize = file.size.toInt()
         fileRepository.save(fileEntity)
     }
 
     fun overwriteThumbnail(thumbnail: MultipartFile, fileId: Int) {
         logger.info("Overwriting the thumbnail with id $fileId")
         // Generate the thumbnail
-        val thumbnailBytes = thumbnailService.createThumbnail(thumbnail)
+        val thumbnailBytes = thumbnailService.createThumbnail(thumbnail,50)
         // Overwrite the thumbnail
         val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId.toLong())
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found", "Archivo no encontrado")

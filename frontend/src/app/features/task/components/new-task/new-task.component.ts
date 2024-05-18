@@ -1,16 +1,14 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
 import {FormControl, Validators} from "@angular/forms";
 import {ProjectDto} from "../../../project/models/project.dto";
-import {UserService} from "../../../../core/services/user.service";
 import {ProjectService} from "../../../../core/services/project.service";
 import {TaskService} from "../../../../core/services/task.service";
 import {MessageService, SelectItem} from "primeng/api";
-import {UserDto} from "../../../user/models/user.dto";
 import {environment} from "../../../../../environments/environment";
 import {UtilService} from '../../../../core/services/util.service';
 import {FileService} from "../../../../core/services/file.service";
 import {FileDto} from "../../../../core/models/file.dto";
-import {ActivatedRoute, Router} from "@angular/router";
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'app-new-task',
@@ -39,8 +37,6 @@ export class NewTaskComponent implements OnInit {
 
     projectItems: SelectItem[] = [];
 
-    users: UserDto[] = [];
-
     today: Date = new Date();
 
     userItems: SelectItem[] = [];
@@ -62,7 +58,7 @@ export class NewTaskComponent implements OnInit {
 
     showProjectDropdown: boolean = false;
 
-    constructor(private userService: UserService, private projectService: ProjectService, private taskService: TaskService, private messageService: MessageService, private utilService: UtilService, private fileService: FileService, private router: Router, private route: ActivatedRoute) {
+    constructor(private projectService: ProjectService, private taskService: TaskService, private messageService: MessageService, private utilService: UtilService, private fileService: FileService, private router: Router) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
@@ -82,7 +78,6 @@ export class NewTaskComponent implements OnInit {
             {label: 'Nivel 10', value: 10},
         ];
         this.getAllProjects();
-        this.getAllUsers();
     }
 
 
@@ -101,16 +96,6 @@ export class NewTaskComponent implements OnInit {
         });
     }
 
-    public getAllUsers() {
-        this.userService.getAllUsers().subscribe({
-            next: (data) => {
-                this.users = data.data!;
-            }, error: (error) => {
-                console.log(error);
-            }
-        });
-    }
-
     public onProjectChange(event: any) {
         this.selectedAssignees = [];
         this.project = this.projects.find(project => project.projectId == this.selectedProject) ?? null;
@@ -118,7 +103,7 @@ export class NewTaskComponent implements OnInit {
             this.taskNameControl.enable();
             this.taskDescriptionControl.enable();
             this.taskDeadlineControl.enable();
-            this.userItems = this.users.filter(user => this.project!.projectMemberIds.includes(user.userId)).map(user => {
+            this.userItems = this.project.projectMembers.map(user => {
                 // Pre-fetch the image
                 const img = new Image();
                 img.src = this.baseUrl + '/' + user.userId + '/profile-picture/thumbnail';
@@ -265,7 +250,6 @@ export class NewTaskComponent implements OnInit {
                 }
             });
         });
-        this.loading = true;
     }
 
     public saveTask() {

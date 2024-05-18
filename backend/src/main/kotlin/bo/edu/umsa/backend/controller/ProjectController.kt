@@ -103,12 +103,11 @@ class ProjectController @Autowired constructor(
         @RequestParam(required = false) statuses: List<String>?,
         @RequestParam(required = false) dateFrom: String?,
         @RequestParam(required = false) dateTo: String?,
-    ): ResponseEntity<ResponseDto<Page<TaskDto>>> {
+    ): ResponseEntity<ResponseDto<Page<TaskPartialDto>>> {
         logger.info("Starting the API call to get the tasks")
         logger.info("GET /api/v1/projects/$projectId/tasks")
         AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
-        val tasks: Page<TaskDto> =
-            projectService.getProjectTasks(projectId, sortBy, sortType, page, size, keyword, statuses, dateFrom, dateTo)
+        val tasks: Page<TaskPartialDto> = projectService.getProjectTasks(projectId, sortBy, sortType, page, size, keyword, statuses, dateFrom, dateTo)
         logger.info("Success: Tasks retrieved")
         return ResponseEntity(ResponseDto(true, "Tareas recuperadas", tasks), HttpStatus.OK)
     }

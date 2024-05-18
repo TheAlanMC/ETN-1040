@@ -28,9 +28,9 @@
 <app-new-task (sidebarVisibleChange)="createSidebarVisible = $event" [projectId]="projectId"
               [sidebarVisible]="createSidebarVisible"></app-new-task>
 <app-edit-task (sidebarVisibleChange)="editSidebarVisible = $event" [sidebarVisible]="editSidebarVisible"
-               [task]="task"></app-edit-task>
+               [taskId]="taskId"></app-edit-task>
 <app-view-task (sidebarVisibleChange)="viewSidebarVisible = $event" [sidebarVisible]="viewSidebarVisible"
-               [task]="task"></app-view-task>
+               [taskId]="taskId"></app-view-task>
 
 <p-dialog #dd *ngIf="selectedTask" [(visible)]="showTaskDialog" [breakpoints]="{'960px': '75vw', '640px': '90vw'}"
           [closable]="true" [draggable]="false" [modal]="true" [resizable]="false" [style]="{width: '32rem'}">
@@ -64,43 +64,43 @@
             </div>
             <div class="flex align-items-center justify-content-between flex-column md:flex-row gap-4 md:gap-0">
                 <p-avatarGroup>
-                    <p-avatar (error)="setImageLoaded(userId, false)"
-                              (load)="setImageLoaded(userId, true)"
-                              *ngFor="let userId of selectedTask.taskAssigneeIds | slice : 0 : 5"
-                              [image]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                    <p-avatar (error)="imgLoaded[user.userId] = false"
+                              (load)="imgLoaded[user.userId] = true"
+                              *ngFor="let user of selectedTask.taskAssignees | slice : 0 : 5"
+                              [image]="imgLoaded[user.userId] ? (baseUrl + '/' + user.userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
                               [style]="{width: '38px', height: '38px'}"
-                              pTooltip="{{getFullName(userId)}}"
+                              pTooltip="{{user.firstName + ' ' + user.lastName}}"
                               shape="circle" size="large"
                               tooltipPosition="top"
                     >
                     </p-avatar>
-                    <p-avatar (click)="responsible.toggle($event)" *ngIf="selectedTask.taskAssigneeIds.length > 5"
+                    <p-avatar (click)="responsible.toggle($event)" *ngIf="selectedTask.taskAssignees.length > 5"
                               [style]="{'background-color':'#D7D7D7', 'color': '#ffffff', 'width': '38px', 'height': '38px', 'cursor': 'pointer'}"
-                              label="+{{selectedTask.taskAssigneeIds.length - 5}}"
+                              label="+{{selectedTask.taskAssignees.length - 5}}"
                               shape="circle" size="large"
                     ></p-avatar>
                 </p-avatarGroup>
                 <p-overlayPanel #responsible [appendTo]="dd">
                     <span class="font-medium text-900 block mb-2">Responsables</span>
                     <ul class="list-none p-0 m-0 flex flex-column gap-3">
-                        <li *ngFor="let userId of selectedTask.taskAssigneeIds" class="flex align-items-center gap-2">
+                        <li *ngFor="let user of selectedTask.taskAssignees" class="flex align-items-center gap-2">
                             <img
-                                    (error)="setImageLoaded(userId, false)"
-                                    (load)="setImageLoaded(userId, true)"
-                                    [src]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                                    (error)="imgLoaded[user.userId] = false"
+                                    (load)="imgLoaded[user.userId] = true"
+                                    [src]="imgLoaded[user.userId] ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
                                     alt="{{userId}}"
                                     class="mr-2"
                                     style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
                             <div>
-                                <span class="font-medium">{{ getFullName(userId) }}</span>
-                                <div class="text-sm text-color-secondary">{{ getEmail(userId) }}</div>
+                                <span class="font-medium">{{ user.firstName + ' ' + user.lastName }}</span>
+                                <div class="text-sm text-color-secondary">{{ user.email }}</div>
                             </div>
                         </li>
                     </ul>
                 </p-overlayPanel>
-                <div *ngIf="selectedTask.taskFileIds|| selectedTask.taskDeadline" class="flex align-items-center gap-3">
-          <span *ngIf="selectedTask.taskFileIds" class="text-900 font-semibold"><i
-                  class="pi pi-paperclip text-700 mr-2"></i>{{ selectedTask.taskFileIds.length }}</span>
+                <div *ngIf="selectedTask.taskFiles|| selectedTask.taskDeadline" class="flex align-items-center gap-3">
+          <span *ngIf="selectedTask.taskFiles" class="text-900 font-semibold"><i
+                  class="pi pi-paperclip text-700 mr-2"></i>{{ selectedTask.taskFiles.length }}</span>
                     <span *ngIf="selectedTask.taskDeadline" class="text-900 font-semibold"><i
                             class="pi pi-clock text-700 mr-2"></i> {{ selectedTask.taskDeadline | date: 'dd/MM/yyyy, HH:mm' }}</span>
                 </div>

@@ -9,7 +9,7 @@ import javax.imageio.ImageIO
 @Service
 class ThumbnailService {
 
-    fun createThumbnail(file: MultipartFile): ByteArray {
+    fun createThumbnail(file: MultipartFile, minVal: Int): ByteArray {
         println("Creating thumbnail for file ${file.originalFilename}")
         val outputStream = ByteArrayOutputStream()
 
@@ -21,15 +21,15 @@ class ThumbnailService {
         val newHeight: Int
 
         if (width <= height) {
-            newWidth = 50
+            newWidth = minVal
             newHeight = (height * (newWidth.toDouble() / width)).toInt()
         } else {
-            newHeight = 50
+            newHeight = minVal
             newWidth = (width * (newHeight.toDouble() / height)).toInt()
         }
 
-        Thumbnails.of(originalImage).size(newWidth, newHeight)
-            .outputFormat(file.originalFilename?.substringAfterLast(".") ?: "png").toOutputStream(outputStream)
+        Thumbnails.of(originalImage).size(newWidth, newHeight).outputFormat(file.originalFilename?.substringAfterLast(".")
+                ?: "png").toOutputStream(outputStream)
         return outputStream.toByteArray()
     }
 }

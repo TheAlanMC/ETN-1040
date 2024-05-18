@@ -1,5 +1,8 @@
 import {TaskStatusDto} from "./task-status.dto";
 import {ProjectDto} from "../../project/models/project.dto";
+import {UserDto} from "../../user/models/user.dto";
+import {FileDto} from "../../../core/models/file.dto";
+import {TaskCommentDto} from "./task-comment.dto";
 
 export interface TaskDto {
     taskId: number;
@@ -9,7 +12,9 @@ export interface TaskDto {
     taskDescription: string;
     taskCreationDate: Date;
     taskDeadline: Date;
+    createdBy: string;
     taskPriority: number;
-    taskAssigneeIds: number[];
-    taskFileIds: number[];
+    taskAssignees: UserDto[];
+    taskFiles: FileDto[];
+    taskComments: TaskCommentDto[];
 }

@@ -60,8 +60,6 @@ export class ProjectTaskCalendarComponent implements OnInit {
 
     project: ProjectDto | null = null;
 
-    users: UserDto[] = [];
-
     statuses: TaskStatusDto[] = [];
 
     statusItems: SelectItem[] = [];
@@ -87,9 +85,9 @@ export class ProjectTaskCalendarComponent implements OnInit {
 
     viewSidebarVisible: boolean = false;
 
-    task: TaskDto | null = null;
-
     deadline: Date = new Date();
+
+    taskId: number = 0;
 
     private searchSubject = new Subject<string>();
 
@@ -142,7 +140,6 @@ export class ProjectTaskCalendarComponent implements OnInit {
             this.projectId = params['id'];
             this.sharedService.changeData('projectId', this.projectId);
             this.getProjectInfo();
-            this.getAllUsers();
             this.getAllStatuses();
             this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
                 this.getData()
@@ -206,21 +203,17 @@ export class ProjectTaskCalendarComponent implements OnInit {
 
     public navigateToCreateTask() {
         this.createSidebarVisible = true
-        // this.router.navigate(['/tasks/create']).then(r => console.log('Navigate to create task'));
     }
 
     public navigateToViewTask(taskId: number) {
         this.viewSidebarVisible = true
-        this.task = this.tasks.find(task => task.taskId === taskId) ?? null;
-        // this.router.navigate(['/tasks/view/' + taskId]).then(r => console.log('Navigate to view task'));
+        this.taskId = taskId
     }
 
     public navigateToEditTask(taskId: number) {
         this.editSidebarVisible = true
-        this.task = this.tasks.find(task => task.taskId === taskId) ?? null;
-        // this.router.navigate(['/tasks/edit/' + taskId]).then(r => console.log('Navigate to edit task'));
+        this.taskId = taskId
     }
-
 
     public onSearch(event: any) {
         this.keyword = event.target.value;
@@ -235,7 +228,7 @@ export class ProjectTaskCalendarComponent implements OnInit {
             next: (data: ResponseDto<PageDto<TaskDto>>) => {
                 this.tasks = data.data!.content;
                 this.tasks.forEach(task => {
-                    task.taskAssigneeIds.forEach(userId => this.fetchUserImage(userId));
+                    task.taskAssignees.forEach((assignee: UserDto) => this.fetchUserImage(assignee.userId));
                 });
                 const events = this.tasks.map(task => {
                     const isTaskOverdue = this.checkIfTaskIsOverdue(task.taskStatus.taskStatusId, task.taskDeadline);
@@ -296,9 +289,9 @@ export class ProjectTaskCalendarComponent implements OnInit {
         this.projectService.getProject(this.projectId).subscribe({
             next: (data) => {
                 this.project = data.data!;
-                this.isOwner = this.project.projectOwnerIds.includes(this.userId);
-                this.isModerator = this.project.projectModeratorIds.includes(this.userId);
-                this.isMember = this.project.projectMemberIds.includes(this.userId);
+                this.isOwner = this.project.projectOwners.find(owner => owner.userId === this.userId) != null;
+                this.isModerator = this.project.projectModerators.find(moderator => moderator.userId === this.userId) != null;
+                this.isMember = this.project.projectMembers.find(member => member.userId === this.userId) != null;
                 this.calendarOptions = {...this.calendarOptions, ...{editable: ((this.isOwner || this.isModerator) && this.canEditTask)}};
             }, error: (error) => {
                 console.log(error);
@@ -306,14 +299,10 @@ export class ProjectTaskCalendarComponent implements OnInit {
         });
     }
 
-    public getAllUsers() {
-        this.userService.getAllUsers().subscribe({
-            next: (data) => {
-                this.users = data.data!;
-            }, error: (error) => {
-                console.log(error);
-            }
-        });
+    public onStatusChange(event: any) {
+        this.selectedStatus = event.value;
+        this.sharedService.changeData('selectedStatus', this.selectedStatus);
+        this.getData();
     }
 
     public getAllStatuses() {
@@ -334,35 +323,6 @@ export class ProjectTaskCalendarComponent implements OnInit {
                 console.log(error);
             }
         });
-    }
-
-    public getImageLoaded(userId: any): boolean {
-        return this.imgLoaded[userId] ?? false;
-    }
-
-    public setImageLoaded(userId: any, value: boolean) {
-        this.imgLoaded[userId] = value;
-    }
-
-    public getFullName(userId: any): string {
-        const user = this.users.find(user => user.userId === userId);
-        return `${user?.firstName} ${user?.lastName}`;
-    }
-
-    public getEmail(userId: any): string {
-        const user = this.users.find(user => user.userId === userId);
-        return user?.email ?? '';
-    }
-
-    public getFullNameFromEmail(email: string): string {
-        const user = this.users.find(user => user.email === email);
-        return `${user?.firstName} ${user?.lastName}`;
-    }
-
-    public onStatusChange(event: any) {
-        this.selectedStatus = event.value;
-        this.sharedService.changeData('selectedStatus', this.selectedStatus);
-        this.getData();
     }
 
     public getPriorityColor(priority: number, maxPriority: number = 10): string {
@@ -478,7 +438,9 @@ export class ProjectTaskCalendarComponent implements OnInit {
 
     public updateTaskDeadline(taskId: number, newTaskDeadline: Date) {
         const task = this.tasks.find(task => task.taskId === Number(taskId));
-        this.taskService.updateTask(task!.taskId, task!.taskName, task!.taskDescription, newTaskDeadline.toISOString(), task!.taskPriority, task!.taskAssigneeIds, task!.taskFileIds).subscribe({
+        const taskAssigneeIds = task!.taskAssignees.map(assignee => assignee.userId);
+        const taskFileIds = task!.taskFiles.map(file => file.fileId);
+        this.taskService.updateTask(task!.taskId, task!.taskName, task!.taskDescription, newTaskDeadline.toISOString(), task!.taskPriority, taskAssigneeIds, taskFileIds).subscribe({
             next: (data: ResponseDto<null>) => {
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Fecha actualizada correctamente'

@@ -101,24 +101,6 @@ export class ProjectTaskDeadlineCardComponent implements OnInit {
         }
     }
 
-    public getImageLoaded(userId: any): boolean {
-        return this.imgLoaded[userId] ?? false;
-    }
-
-    public setImageLoaded(userId: any, value: boolean) {
-        this.imgLoaded[userId] = value;
-    }
-
-    public getFullName(userId: any): string {
-        const user = this.users.find(user => user.userId === userId);
-        return `${user?.firstName} ${user?.lastName}`;
-    }
-
-    public getEmail(userId: any): string {
-        const user = this.users.find(user => user.userId === userId);
-        return user?.email ?? '';
-    }
-
     public getStatusColor(statusId: number): string {
         let color = [
             0,

@@ -1,12 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {ProjectDto} from "../../models/project.dto";
 import {environment} from "../../../../../environments/environment";
-import {UserDto} from "../../../user/models/user.dto";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute} from "@angular/router";
 import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
 import {UtilService} from "../../../../core/services/util.service";
 import {ProjectService} from "../../../../core/services/project.service";
-import {UserService} from "../../../../core/services/user.service";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {ResponseDto} from "../../../../core/models/response.dto";
@@ -53,8 +51,6 @@ export class ProjectTaskListComponent implements OnInit {
 
     project: ProjectDto | null = null;
 
-    users: UserDto[] = [];
-
     statuses: TaskStatusDto[] = [];
 
     statusItems: SelectItem[] = [];
@@ -75,11 +71,11 @@ export class ProjectTaskListComponent implements OnInit {
 
     viewSidebarVisible: boolean = false;
 
-    task: TaskDto | null = null;
+    taskId: number = 0;
 
     private searchSubject = new Subject<string>();
 
-    constructor(private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private utilService: UtilService, private projectService: ProjectService, private userService: UserService, private sharedService: SharedService, private activatedRoute: ActivatedRoute, private taskService: TaskService) {
+    constructor(private confirmationService: ConfirmationService, private messageService: MessageService, private utilService: UtilService, private projectService: ProjectService, private sharedService: SharedService, private activatedRoute: ActivatedRoute, private taskService: TaskService) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage
         const token = localStorage.getItem('token');
@@ -102,7 +98,6 @@ export class ProjectTaskListComponent implements OnInit {
             this.projectId = params['id'];
             this.sharedService.changeData('projectId', this.projectId);
             this.getProjectInfo();
-            this.getAllUsers();
             this.getAllStatuses();
             this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
                 this.getData()
@@ -112,19 +107,16 @@ export class ProjectTaskListComponent implements OnInit {
 
     public navigateToCreateTask() {
         this.createSidebarVisible = true;
-        // this.router.navigate(['/tasks/create']).then(r => console.log('Navigate to create task'));
     }
 
     public navigateToViewTask(taskId: number) {
-      // this.router.navigate(['/tasks/view/' + taskId]).then(r => console.log('Navigate to view task'));
-      this.viewSidebarVisible = true;
-        this.task = this.tasks.find(task => task.taskId === taskId)!;
+        this.viewSidebarVisible = true;
+        this.taskId = taskId;
     }
 
     public navigateToEditTask(taskId: number) {
-        // this.router.navigate(['/tasks/edit/' + taskId]).then(r => console.log('Navigate to edit task'));
         this.editSidebarVisible = true;
-        this.task = this.tasks.find(task => task.taskId === taskId)!;
+        this.taskId = taskId;
     }
 
     public onPageChange(event: any) {
@@ -154,7 +146,7 @@ export class ProjectTaskListComponent implements OnInit {
                 this.tasks = data.data!.content;
                 this.totalElements = data.data!.page.totalElements;
                 this.tasks.forEach(task => {
-                    task.taskAssigneeIds.forEach(userId => this.fetchUserImage(userId));
+                    task.taskAssignees.forEach(assignee => this.fetchUserImage(assignee.userId));
                 });
                 this.isLoading = false;
             }, error: (error) => {
@@ -202,19 +194,9 @@ export class ProjectTaskListComponent implements OnInit {
         this.projectService.getProject(this.projectId).subscribe({
             next: (data) => {
                 this.project = data.data!;
-                this.isOwner = this.project.projectOwnerIds.includes(this.userId);
-                this.isModerator = this.project.projectModeratorIds.includes(this.userId);
-                this.isMember = this.project.projectMemberIds.includes(this.userId);
-            }, error: (error) => {
-                console.log(error);
-            }
-        });
-    }
-
-    public getAllUsers() {
-        this.userService.getAllUsers().subscribe({
-            next: (data) => {
-                this.users = data.data!;
+                this.isOwner = this.project.projectOwners.find(owner => owner.userId === this.userId) != null;
+                this.isModerator = this.project.projectModerators.find(moderator => moderator.userId === this.userId) != null;
+                this.isMember = this.project.projectMembers.find(member => member.userId === this.userId) != null;
             }, error: (error) => {
                 console.log(error);
             }
@@ -239,29 +221,6 @@ export class ProjectTaskListComponent implements OnInit {
                 console.log(error);
             }
         });
-    }
-
-    public getImageLoaded(userId: any): boolean {
-        return this.imgLoaded[userId] ?? false;
-    }
-
-    public setImageLoaded(userId: any, value: boolean) {
-        this.imgLoaded[userId] = value;
-    }
-
-    public getFullName(userId: any): string {
-        const user = this.users.find(user => user.userId === userId);
-        return `${user?.firstName} ${user?.lastName}`;
-    }
-
-    public getEmail(userId: any): string {
-        const user = this.users.find(user => user.userId === userId);
-        return user?.email ?? '';
-    }
-
-    public getFullNameFromEmail(email: string): string {
-        const user = this.users.find(user => user.email === email);
-        return `${user?.firstName} ${user?.lastName}`;
     }
 
     public onStatusChange(event: any) {

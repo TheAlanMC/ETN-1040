@@ -41,35 +41,35 @@
                 <td>{{ project.dateTo | date: 'MM/dd/yyyy' }}</td>
                 <td>
                     <p-avatarGroup>
-                        <p-avatar (error)="setImageLoaded(userId, false)"
-                                  (load)="setImageLoaded(userId, true)"
-                                  *ngFor="let userId of project.projectModeratorIds | slice : 0 : 5"
-                                  [image]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
-                                  pTooltip="{{getFullName(userId)}}"
+                        <p-avatar (error)="imgLoaded[$any(user).userId] = false"
+                                  (load)="imgLoaded[$any(user).userId] = true"
+                                  *ngFor="let user of project.projectModerators | slice : 0 : 5"
+                                  [image]="imgLoaded[$any(user).userId] ? (baseUrl + '/' + $any(user).userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                                  pTooltip="{{$any(user).firstName + ' ' + $any(user).lastName}}"
                                   shape="circle"
                                   size="large" tooltipPosition="top"
                         >
                         </p-avatar>
-                        <p-avatar (click)="collaborator.toggle($event)" *ngIf="project.projectModeratorIds.length > 5"
+                        <p-avatar (click)="collaborator.toggle($event)" *ngIf="project.projectModerators.length > 5"
                                   [style]="{'background-color':'#D7D7D7', 'color': '#ffffff','cursor': 'pointer'}"
-                                  label="+{{project.projectModeratorIds.length - 5}}"
+                                  label="+{{project.projectModerators.length - 5}}"
                                   shape="circle" size="large"></p-avatar>
                     </p-avatarGroup>
                     <p-overlayPanel #collaborator>
                         <span class="font-medium text-900 block mb-2">Colaboradores</span>
                         <ul class="list-none p-0 m-0 flex flex-column gap-3">
-                            <li *ngFor="let userId of project.projectModeratorIds"
+                            <li *ngFor="let user of project.projectModerators"
                                 class="flex align-items-center gap-2">
                                 <img
-                                        (error)="setImageLoaded(userId, false)"
-                                        (load)="setImageLoaded(userId, true)"
-                                        [src]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
-                                        alt="{{userId}}"
+                                        (error)="imgLoaded[user.userId] = false"
+                                        (load)="imgLoaded[user.userId] = true"
+                                        [src]="imgLoaded[user.userId] ? (baseUrl + '/' + user.userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                                        alt="{{user.userId}}"
                                         class="mr-2"
                                         style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
                                 <div>
-                                    <span class="font-medium">{{ getFullName(userId) }}</span>
-                                    <div class="text-sm text-color-secondary">{{ getEmail(userId) }}</div>
+                                    <span class="font-medium"> {{ user.firstName + ' ' + user.lastName }} </span>
+                                    <div class="text-sm text-color-secondary"> {{ user.email }} </div>
                                 </div>
                             </li>
                         </ul>
@@ -77,34 +77,34 @@
                 </td>
                 <td>
                     <p-avatarGroup>
-                        <p-avatar (error)="setImageLoaded(userId, false)"
-                                  (load)="setImageLoaded(userId, true)"
-                                  *ngFor="let userId of project.projectMemberIds | slice : 0 : 5"
-                                  [image]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
-                                  pTooltip="{{getFullName(userId)}}"
+                        <p-avatar (error)="imgLoaded[$any(user).userId] = false"
+                                  (load)="imgLoaded[$any(user).userId] = true"
+                                  *ngFor="let user of project.projectMembers | slice : 0 : 5"
+                                  [image]="imgLoaded[$any(user).userId] ? (baseUrl + '/' + $any(user).userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                                  pTooltip="{{$any(user).firstName + ' ' + $any(user).lastName}}"
                                   shape="circle"
                                   size="large" tooltipPosition="top"
                         >
                         </p-avatar>
-                        <p-avatar (click)="member.toggle($event)" *ngIf="project.projectMemberIds.length > 5"
+                        <p-avatar (click)="member.toggle($event)" *ngIf="project.projectMembers.length > 5"
                                   [style]="{'background-color':'#D7D7D7', 'color': '#ffffff','cursor': 'pointer'}"
-                                  label="+{{project.projectMemberIds.length - 5}}"
+                                  label="+{{project.projectMembers.length - 5}}"
                                   shape="circle" size="large"></p-avatar>
                     </p-avatarGroup>
                     <p-overlayPanel #member>
                         <span class="font-medium text-900 block mb-2">Miembros</span>
                         <ul class="list-none p-0 m-0 flex flex-column gap-3">
-                            <li *ngFor="let userId of project.projectMemberIds" class="flex align-items-center gap-2">
+                            <li *ngFor="let user of project.projectMembers" class="flex align-items-center gap-2">
                                 <img
-                                        (error)="setImageLoaded(userId, false)"
-                                        (load)="setImageLoaded(userId, true)"
-                                        [src]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
-                                        alt="{{userId}}"
+                                        (error)="imgLoaded[user.userId] = false"
+                                        (load)="imgLoaded[user.userId] = true"
+                                        [src]="imgLoaded[user.userId] ? (baseUrl + '/' + user.userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                                        alt="{{user.userId}}"
                                         class="mr-2"
                                         style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
                                 <div>
-                                    <span class="font-medium">{{ getFullName(userId) }}</span>
-                                    <div class="text-sm text-color-secondary">{{ getEmail(userId) }}</div>
+                                    <span class="font-medium">{{ user.firstName + ' ' + user.lastName }}</span>
+                                    <div class="text-sm text-color-secondary"> user.email </div>
                                 </div>
                             </li>
                         </ul>
@@ -120,6 +120,16 @@
                         <button (click)="onDeleteProject(project.projectId)" *ngIf="canEditProject"
                                 class="p-button-rounded p-button p-button-secondary"
                                 icon="pi pi-trash" pButton></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="6">
+                    <div class="flex justify-content-center align-items-center gap-2">
+                        <i class="pi pi-info-circle p-mr-2"></i>
+                        <span>No se encontraron registros</span>
                     </div>
                 </td>
             </tr>

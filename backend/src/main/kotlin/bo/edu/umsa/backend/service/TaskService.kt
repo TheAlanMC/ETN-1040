@@ -1,15 +1,13 @@
 package bo.edu.umsa.backend.service
 
-import bo.edu.umsa.backend.dto.NewTaskDto
-import bo.edu.umsa.backend.dto.TaskCommentDto
-import bo.edu.umsa.backend.dto.TaskDto
-import bo.edu.umsa.backend.dto.TaskStatusDto
+import bo.edu.umsa.backend.dto.*
 import bo.edu.umsa.backend.entity.Task
 import bo.edu.umsa.backend.entity.TaskAssignee
 import bo.edu.umsa.backend.entity.TaskFile
 import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.TaskCommentMapper
 import bo.edu.umsa.backend.mapper.TaskMapper
+import bo.edu.umsa.backend.mapper.TaskPartialMapper
 import bo.edu.umsa.backend.mapper.TaskStatusMapper
 import bo.edu.umsa.backend.repository.*
 import bo.edu.umsa.backend.specification.TaskSpecification
@@ -37,9 +35,8 @@ class TaskService @Autowired constructor(private val fileRepository: FileReposit
         return statuses.map { TaskStatusMapper.entityToDto(it) }
     }
 
-    fun getTasks(sortBy: String, sortType: String, page: Int, size: Int, keyword: String?, statuses: List<String>?, dateFrom: String?, dateTo: String?): Page<TaskDto> {
-        val userId = AuthUtil.getUserIdFromAuthToken()
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+    fun getTasks(sortBy: String, sortType: String, page: Int, size: Int, keyword: String?, statuses: List<String>?, dateFrom: String?, dateTo: String?): Page<TaskPartialDto> {
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         logger.info("Getting the tasks for user $userId")
         // Validate the user exists
         userRepository.findByUserIdAndStatusIsTrue(userId)
@@ -65,25 +62,21 @@ class TaskService @Autowired constructor(private val fileRepository: FileReposit
         }
 
         try {
-            val newDateFrom =
-                if (!dateFrom.isNullOrEmpty()) Timestamp.from(Instant.parse(dateFrom)) else Timestamp.from(Instant.parse("2024-01-01T00:00:00Z"))
-            val newDateTo =
-                if (!dateTo.isNullOrEmpty()) Timestamp.from(Instant.parse(dateTo)) else Timestamp.from(Instant.parse("2050-01-01T00:00:00Z"))
+            val newDateFrom = if (!dateFrom.isNullOrEmpty()) Timestamp.from(Instant.parse(dateFrom)) else Timestamp.from(Instant.parse("2024-01-01T00:00:00Z"))
+            val newDateTo = if (!dateTo.isNullOrEmpty()) Timestamp.from(Instant.parse(dateTo)) else Timestamp.from(Instant.parse("2050-01-01T00:00:00Z"))
             if (newDateFrom.after(newDateTo)) {
-                specification =
-                    specification.and(specification.and(TaskSpecification.dateBetween(newDateFrom, newDateTo)))
+                specification = specification.and(specification.and(TaskSpecification.dateBetween(newDateFrom, newDateTo)))
             }
         } catch (e: Exception) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date format is incorrect", "El formato de fecha es incorrecto")
         }
 
         val taskEntities: Page<Task> = taskRepository.findAll(specification, pageable)
-        return taskEntities.map { TaskMapper.entityToDto(it) }
+        return taskEntities.map { TaskPartialMapper.entityToDto(it) }
     }
 
     fun getTaskById(taskId: Long): TaskDto {
-        val userId = AuthUtil.getUserIdFromAuthToken()
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         logger.info("Getting the task with id $taskId for user $userId")
         // Validate the user exists
         userRepository.findByUserIdAndStatusIsTrue(userId)
@@ -122,16 +115,12 @@ class TaskService @Autowired constructor(private val fileRepository: FileReposit
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one assignee is required", "Se requiere al menos un miembro asignado")
         }
         // Get the project owner id from the token
-        val userId = AuthUtil.getUserIdFromAuthToken()
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         // Validate the project exists
         val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(newTaskDto.projectId.toLong())
             ?: throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project does not exist", "El proyecto no existe")
         // Validate the task deadline is between the project date from and date to
-        if (Timestamp.from(Instant.parse(newTaskDto.taskDeadline))
-                .before(projectEntity.dateFrom) || Timestamp.from(Instant.parse(newTaskDto.taskDeadline))
-                .after(projectEntity.dateTo)
-        ) {
+        if (Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).before(projectEntity.dateFrom) || Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).after(projectEntity.dateTo)) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Task deadline is not between the project date from and date to", "La fecha límite de la tarea no está entre la fecha de inicio y la fecha de finalización del proyecto")
         }
         // Validate the task assignees exist
@@ -209,8 +198,7 @@ class TaskService @Autowired constructor(private val fileRepository: FileReposit
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one assignee is required", "Se requiere al menos un miembro asignado")
         }
         // Get the project owner id from the token
-        val userId = AuthUtil.getUserIdFromAuthToken()
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         // Validate the task exists
         val taskEntity = taskRepository.findByTaskIdAndStatusIsTrue(taskId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task not found", "Tarea no encontrada")
@@ -218,10 +206,7 @@ class TaskService @Autowired constructor(private val fileRepository: FileReposit
         val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(taskEntity.projectId.toLong())
             ?: throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project does not exist", "El proyecto no existe")
         // Validate the task deadline is between the project date from and date to
-        if (Timestamp.from(Instant.parse(newTaskDto.taskDeadline))
-                .before(projectEntity.dateFrom) || Timestamp.from(Instant.parse(newTaskDto.taskDeadline))
-                .after(projectEntity.dateTo)
-        ) {
+        if (Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).before(projectEntity.dateFrom) || Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).after(projectEntity.dateTo)) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Task deadline is not between the project date from and date to", "La fecha límite de la tarea no está entre la fecha de inicio y la fecha de finalización del proyecto")
         }
 
@@ -293,8 +278,7 @@ class TaskService @Autowired constructor(private val fileRepository: FileReposit
 
     fun updateTaskStatus(taskId: Long, taskStatusId: Long) {
         // Get the user id from the token
-        val userId = AuthUtil.getUserIdFromAuthToken()
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         // Validate the task exists
         val taskEntity = taskRepository.findByTaskIdAndStatusIsTrue(taskId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task not found", "Tarea no encontrada")
@@ -312,8 +296,7 @@ class TaskService @Autowired constructor(private val fileRepository: FileReposit
 
     fun deleteTask(taskId: Long) {
         // Get the project owner id from the token
-        val userId = AuthUtil.getUserIdFromAuthToken()
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         // Validate the task exists
         val taskEntity = taskRepository.findByTaskIdAndStatusIsTrue(taskId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task not found", "Tarea no encontrada")
@@ -331,8 +314,7 @@ class TaskService @Autowired constructor(private val fileRepository: FileReposit
     }
 
     fun getTaskComments(taskId: Long): List<TaskCommentDto> {
-        val userId = AuthUtil.getUserIdFromAuthToken()
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         logger.info("Getting the task comments for user $userId")
         // Validate the user exists
         userRepository.findByUserIdAndStatusIsTrue(userId)

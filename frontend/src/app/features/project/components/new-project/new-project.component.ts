@@ -85,11 +85,7 @@ export class NewProjectComponent implements OnInit {
             next: (data) => {
                 this.users = data.data!;
                 this.userItems = data.data!.map(user => {
-                    // Pre-fetch the image
-                    const img = new Image();
-                    img.src = this.baseUrl + '/' + user.userId + '/profile-picture/thumbnail';
-                    img.onload = () => this.imgLoaded[user.userId] = true;
-                    img.onerror = () => this.imgLoaded[user.userId] = false;
+                    this.fetchUserImage(user.userId);
                     return {
                         label: `${user.firstName} ${user.lastName}`,
                         labelSecondary: user.email,
@@ -101,6 +97,13 @@ export class NewProjectComponent implements OnInit {
                 console.log(error);
             }
         });
+    }
+
+    public fetchUserImage(userId: number) {
+        const img = new Image();
+        img.src = this.baseUrl + '/' + userId + '/profile-picture/thumbnail';
+        img.onload = () => this.imgLoaded[userId] = true;
+        img.onerror = () => this.imgLoaded[userId] = false;
     }
 
     public onCancel() {

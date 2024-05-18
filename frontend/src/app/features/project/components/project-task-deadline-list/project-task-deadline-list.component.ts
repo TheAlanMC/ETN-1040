@@ -113,8 +113,9 @@ export class ProjectTaskDeadlineListComponent implements OnInit {
                 break;
         }
         newTaskDeadline.setHours(20, 0, 0, 0);
-        console.log(newTaskDeadline);
-        this.taskService.updateTask(task.taskId, task.taskName, task.taskDescription, newTaskDeadline.toISOString(), task.taskPriority, task.taskAssigneeIds, task.taskFileIds).subscribe({
+        const taskAssigneeIds = task.taskAssignees.map(assignee => assignee.userId);
+        const taskFileIds = task.taskFiles.map(file => file.fileId);
+        this.taskService.updateTask(task.taskId, task.taskName, task.taskDescription, newTaskDeadline.toISOString(), task.taskPriority, taskAssigneeIds, taskFileIds).subscribe({
             next: (data: ResponseDto<null>) => {
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Fecha límite de la tarea actualizada con éxito'

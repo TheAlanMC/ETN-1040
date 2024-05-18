@@ -19,6 +19,9 @@ class File {
     @Column(name = "filename")
     var filename: String = ""
 
+    @Column(name = "file_size")
+    var fileSize: Int = 0
+
     @Column(name = "file_data")
     var fileData: ByteArray = byteArrayOf()
 

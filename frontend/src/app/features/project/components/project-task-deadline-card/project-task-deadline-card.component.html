@@ -24,43 +24,43 @@
     </div>
     <div class="flex align-items-center justify-content-between flex-column md:flex-row gap-4 md:gap-0">
         <p-avatarGroup>
-            <p-avatar (error)="setImageLoaded(userId, false)"
-                      (load)="setImageLoaded(userId, true)"
-                      *ngFor="let userId of card.taskAssigneeIds | slice : 0 : 3"
-                      [image]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+            <p-avatar (error)="imgLoaded[user.userId] = false"
+                      (load)="imgLoaded[user.userId] = true"
+                      *ngFor="let user of card.taskAssignees | slice : 0 : 3"
+                      [image]="imgLoaded[user.userId] ? (baseUrl + '/' + user.userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
                       [style]="{width: '30px', height: '30px'}"
-                      pTooltip="{{getFullName(userId)}}"
+                      pTooltip="{{user.firstName + ' ' + user.lastName}}"
                       shape="circle" size="large"
                       tooltipPosition="top"
             >
             </p-avatar>
-            <p-avatar (click)="responsible.toggle($event)" *ngIf="card.taskAssigneeIds.length > 3"
+            <p-avatar (click)="responsible.toggle($event)" *ngIf="card.taskAssignees.length > 3"
                       [style]="{'background-color':'#D7D7D7', 'color': '#ffffff', 'width': '30px', 'height': '30px', 'font-size': '14px','cursor': 'pointer'}"
-                      label="+{{card.taskAssigneeIds.length - 3}}"
+                      label="+{{card.taskAssignees.length - 3}}"
                       shape="circle" size="large"
             ></p-avatar>
         </p-avatarGroup>
         <p-overlayPanel #responsible>
             <span class="font-medium text-900 block mb-2">Responsables</span>
             <ul class="list-none p-0 m-0 flex flex-column gap-3">
-                <li *ngFor="let userId of card.taskAssigneeIds" class="flex align-items-center gap-2">
+                <li *ngFor="let user of card.taskAssignees" class="flex align-items-center gap-2">
                     <img
-                            (error)="setImageLoaded(userId, false)"
-                            (load)="setImageLoaded(userId, true)"
-                            [src]="getImageLoaded(userId) ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
-                            alt="{{userId}}"
+                            (error)="imgLoaded[user.userId] = false"
+                            (load)="imgLoaded[user.userId] = true"
+                            [src]="imgLoaded[user.userId] ? (baseUrl + '/' + user.userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                            alt="{{user.userId}}"
                             class="mr-2"
                             style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
                     <div>
-                        <span class="font-medium">{{ getFullName(userId) }}</span>
-                        <div class="text-sm text-color-secondary">{{ getEmail(userId) }}</div>
+                        <span class="font-medium">{{ user.firstName + ' ' + user.lastName }}</span>
+                        <div class="text-sm text-color-secondary">{{ user.email }}</div>
                     </div>
                 </li>
             </ul>
         </p-overlayPanel>
-        <div *ngIf="card.taskFileIds|| card.taskDeadline" class="flex align-items-center gap-3">
-      <span *ngIf="card.taskFileIds" class="text-900 font-semibold"><i
-              class="pi pi-paperclip text-700 mr-2"></i>{{ card.taskFileIds.length }}</span>
+        <div *ngIf="card.taskFiles|| card.taskDeadline" class="flex align-items-center gap-3">
+      <span *ngIf="card.taskFiles" class="text-900 font-semibold"><i
+              class="pi pi-paperclip text-700 mr-2"></i>{{ card.taskFiles.length }}</span>
             <span *ngIf="card.taskDeadline" class="text-900 font-semibold"><i
                     class="pi pi-clock text-700 mr-2"></i> {{ card.taskDeadline | date: 'dd/MM/yyyy, HH:mm' }}</span>
         </div>

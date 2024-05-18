@@ -95,24 +95,24 @@ export class EditProjectComponent implements OnInit {
                 this.projectDescriptionControl.setValue(data.data!.projectDescription);
                 this.dateFromControl.setValue(new Date(data.data!.dateFrom).toLocaleDateString('en-GB'));
                 this.dateToControl.setValue(new Date(data.data!.dateTo).toLocaleDateString('en-GB'));
-                this.selectedMembers = data.data!.projectMemberIds.map(member => {
-                    const user = this.users.find(u => u.userId === member);
-                    return {
-                        label: `${user!.firstName} ${user!.lastName}`,
-                        labelSecondary: user!.email,
-                        value: user!.userId,
-                        disabled: (user!.userId === this.userId)
-                    }
-                });
-                this.selectedModerators = data.data!.projectModeratorIds.map(moderator => {
-                    const user = this.users.find(u => u.userId === moderator);
-                    return {
-                        label: `${user!.firstName} ${user!.lastName}`,
-                        labelSecondary: user!.email,
-                        value: user!.userId,
-                        disabled: (user!.userId === this.userId)
-                    }
-                });
+                    this.selectedMembers = data.data!.projectMembers.map(member => {
+                        this.fetchUserImage(member.userId);
+                        return {
+                            label: `${member.firstName} ${member.lastName}`,
+                            labelSecondary: member.email,
+                            value: member.userId,
+                            disabled: (member.userId === this.userId)
+                        }
+                    });
+                    this.selectedModerators = data.data!.projectModerators.map(moderator => {
+                        this.fetchUserImage(moderator.userId);
+                        return {
+                            label: `${moderator.firstName} ${moderator.lastName}`,
+                            labelSecondary: moderator.email,
+                            value: moderator.userId,
+                            disabled: (moderator.userId === this.userId)
+                        }
+                    });
             }, error: (error) => {
                 console.log(error);
             }
@@ -124,11 +124,7 @@ export class EditProjectComponent implements OnInit {
             next: (data) => {
                 this.users = data.data!;
                 this.userItems = data.data!.map(user => {
-                    // Pre-fetch the image
-                    const img = new Image();
-                    img.src = this.baseUrl + '/' + user.userId + '/profile-picture/thumbnail';
-                    img.onload = () => this.imgLoaded[user.userId] = true;
-                    img.onerror = () => this.imgLoaded[user.userId] = false;
+                    this.fetchUserImage(user.userId);
                     return {
                         label: `${user.firstName} ${user.lastName}`,
                         labelSecondary: user.email,
@@ -142,12 +138,18 @@ export class EditProjectComponent implements OnInit {
         });
     }
 
+    public fetchUserImage(userId: number) {
+        const img = new Image();
+        img.src = this.baseUrl + '/' + userId + '/profile-picture/thumbnail';
+        img.onload = () => this.imgLoaded[userId] = true;
+        img.onerror = () => this.imgLoaded[userId] = false;
+    }
+
     public onCancel() {
         this.location.back();
     }
 
     public onSave() {
-        // Convert the date to ISO format
         this.projectService.updateProject(this.projectId, this.projectNameControl.value!, this.projectDescriptionControl.value!, this.dateFromControl.value!, this.dateToControl.value!, this.selectedMembers.map(member => member.value), this.selectedModerators.map(moderator => moderator.value)).subscribe({
             next: (data) => {
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Proyecto actualizado'});

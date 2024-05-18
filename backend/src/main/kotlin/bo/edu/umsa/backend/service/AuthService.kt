@@ -113,9 +113,8 @@ class AuthService @Autowired constructor(private val userRepository: UserReposit
         }
         logger.info("User is trying to verify the hash code")
         // Verify if the account recovery exists
-        val accountRecoveryEntity =
-            accountRecoveryRepository.findAllByUser_EmailAndStatusIsTrueAndStatusIsTrue(email).firstOrNull()
-                ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Account recovery not found", "Recuperación de cuenta no encontrada")
+        val accountRecoveryEntity = accountRecoveryRepository.findAllByUser_EmailAndStatusIsTrueAndStatusIsTrue(email).firstOrNull()
+            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Account recovery not found", "Recuperación de cuenta no encontrada")
         // Verify if the hash code is correct
         val verifyResult = BCrypt.verifyer().verify(code.toCharArray(), accountRecoveryEntity.hashCode)
         if (!verifyResult.verified) {
@@ -149,9 +148,8 @@ class AuthService @Autowired constructor(private val userRepository: UserReposit
         val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email)
             ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: User not found", "Usuario no encontrado")
         // Verify if the account recovery exists
-        val accountRecoveryEntity =
-            accountRecoveryRepository.findAllByUser_EmailAndStatusIsTrueAndStatusIsTrue(email).firstOrNull()
-                ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Account recovery not found", "Recuperación de cuenta no encontrada")
+        val accountRecoveryEntity = accountRecoveryRepository.findAllByUser_EmailAndStatusIsTrueAndStatusIsTrue(email).firstOrNull()
+            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Account recovery not found", "Recuperación de cuenta no encontrada")
         // Verify if the hash code is correct
         val verifyResult = BCrypt.verifyer().verify(code.toCharArray(), accountRecoveryEntity.hashCode)
         if (!verifyResult.verified) {

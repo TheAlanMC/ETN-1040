@@ -3,12 +3,12 @@ package bo.edu.umsa.backend.service
 import bo.edu.umsa.backend.dto.NewProjectDto
 import bo.edu.umsa.backend.dto.ProjectDto
 import bo.edu.umsa.backend.dto.ProjectPartialDto
-import bo.edu.umsa.backend.dto.TaskDto
+import bo.edu.umsa.backend.dto.TaskPartialDto
 import bo.edu.umsa.backend.entity.*
 import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.ProjectMapper
 import bo.edu.umsa.backend.mapper.ProjectPartialMapper
-import bo.edu.umsa.backend.mapper.TaskMapper
+import bo.edu.umsa.backend.mapper.TaskPartialMapper
 import bo.edu.umsa.backend.repository.*
 import bo.edu.umsa.backend.specification.ProjectSpecification
 import bo.edu.umsa.backend.specification.TaskSpecification
@@ -57,8 +57,7 @@ class ProjectService @Autowired constructor(
     fun getProjectById(projectId: Long): ProjectDto {
         logger.info("Getting the project by id $projectId")
         // Get the user id from the token
-        val userId = AuthUtil.getUserIdFromAuthToken()
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         // Validate that the user is the project owner, a project moderator or a project member
         if (projectOwnerRepository.findByProjectIdAndUserIdAndStatusIsTrue(projectId, userId) == null && projectModeratorRepository.findByProjectIdAndUserIdAndStatusIsTrue(projectId, userId) == null && projectMemberRepository.findByProjectIdAndUserIdAndStatusIsTrue(projectId, userId) == null) {
             throw EtnException(HttpStatus.FORBIDDEN, "Error: User is not the project owner or a project moderator", "El usuario no es el propietario del proyecto, un colaborador del proyecto o un miembro del proyecto")
@@ -83,9 +82,7 @@ class ProjectService @Autowired constructor(
         } catch (e: Exception) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date format is incorrect", "El formato de fecha es incorrecto")
         }
-        if (Timestamp.from(Instant.parse(newProjectDto.dateFrom))
-                .after(Timestamp.from(Instant.parse(newProjectDto.dateTo)))
-        ) {
+        if (Timestamp.from(Instant.parse(newProjectDto.dateFrom)).after(Timestamp.from(Instant.parse(newProjectDto.dateTo)))) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date range is incorrect", "El rango de fechas es incorrecto")
         }
         // Validate the project moderators are not empty and valid
@@ -97,8 +94,7 @@ class ProjectService @Autowired constructor(
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one member is required", "Se requiere al menos un miembro del equipo")
         }
         // Get the project owner id from the token
-        val userId = AuthUtil.getUserIdFromAuthToken()
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         // Validate the project moderators exist
         if (userRepository.findAllByUserIdInAndStatusIsTrue(newProjectDto.projectModeratorIds).size != newProjectDto.projectModeratorIds.size) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one moderator is invalid", "Al menos un colaborador es inválido")
@@ -196,8 +192,7 @@ class ProjectService @Autowired constructor(
         if (projectMemberEntities.map { it.userId }.toSet() != projectDto.projectMemberIds.map { it }.toSet()) {
             // Validate that none of the members have been assigned to a task
             val taskEntities = taskRepository.findAllByProjectIdAndStatusIsTrue(projectId)
-            val taskAssigneeEntities =
-                taskAssigneeRepository.findAllByTaskIdInAndStatusIsTrue(taskEntities.map { it.taskId })
+            val taskAssigneeEntities = taskAssigneeRepository.findAllByTaskIdInAndStatusIsTrue(taskEntities.map { it.taskId })
             if (taskAssigneeEntities.isNotEmpty()) {
                 throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one member has been assigned to a task, cannot delete", "Al menos un miembro ha sido asignado a una tarea, no se puede eliminar")
             }
@@ -226,7 +221,7 @@ class ProjectService @Autowired constructor(
         logger.info("Project deleted with id $projectId")
     }
 
-    fun getProjectTasks(projectId: Long, sortBy: String, sortType: String, page: Int, size: Int, keyword: String?, statuses: List<String>?, dateFrom: String?, dateTo: String?): Page<TaskDto> {
+    fun getProjectTasks(projectId: Long, sortBy: String, sortType: String, page: Int, size: Int, keyword: String?, statuses: List<String>?, dateFrom: String?, dateTo: String?): Page<TaskPartialDto> {
         logger.info("Getting the tasks for project $projectId")
         // Validate the project exists
         projectRepository.findByProjectIdAndStatusIsTrue(projectId)
@@ -251,19 +246,16 @@ class ProjectService @Autowired constructor(
         }
 
         try {
-            val newDateFrom =
-                if (!dateFrom.isNullOrEmpty()) Timestamp.from(Instant.parse(dateFrom)) else Timestamp.from(Instant.parse("2024-01-01T00:00:00Z"))
-            val newDateTo =
-                if (!dateTo.isNullOrEmpty()) Timestamp.from(Instant.parse(dateTo)) else Timestamp.from(Instant.parse("2050-01-01T00:00:00Z"))
+            val newDateFrom = if (!dateFrom.isNullOrEmpty()) Timestamp.from(Instant.parse(dateFrom)) else Timestamp.from(Instant.parse("2024-01-01T00:00:00Z"))
+            val newDateTo = if (!dateTo.isNullOrEmpty()) Timestamp.from(Instant.parse(dateTo)) else Timestamp.from(Instant.parse("2050-01-01T00:00:00Z"))
             if (newDateFrom.after(newDateTo)) {
-                specification =
-                    specification.and(specification.and(TaskSpecification.dateBetween(newDateFrom, newDateTo)))
+                specification = specification.and(specification.and(TaskSpecification.dateBetween(newDateFrom, newDateTo)))
             }
         } catch (e: Exception) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date format is incorrect", "El formato de fecha es incorrecto")
         }
 
         val taskEntities: Page<Task> = taskRepository.findAll(specification, pageable)
-        return taskEntities.map { TaskMapper.entityToDto(it) }
+        return taskEntities.map { TaskPartialMapper.entityToDto(it) }
     }
 }

@@ -1,14 +1,12 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
 import {TaskDto} from "../../models/task.dto";
 import {MessageService, SelectItem} from "primeng/api";
 import {UserDto} from "../../../user/models/user.dto";
 import {environment} from "../../../../../environments/environment";
 import {FileDto} from "../../../../core/models/file.dto";
-import {UserService} from "../../../../core/services/user.service";
 import {TaskService} from "../../../../core/services/task.service";
 import {UtilService} from "../../../../core/services/util.service";
 import {FileService} from "../../../../core/services/file.service";
-import {Router} from "@angular/router";
 
 @Component({
     selector: 'app-view-task', templateUrl: './view-task.component.html', styleUrl: './view-task.component.scss'
@@ -16,10 +14,9 @@ import {Router} from "@angular/router";
 export class ViewTaskComponent implements OnInit {
 
     @Input() sidebarVisible: boolean = false;
-    @Input() task: TaskDto | null = null;
+    @Input() taskId: number = 0;
 
     @Output() sidebarVisibleChange = new EventEmitter<boolean>();
-    @ViewChildren('buttonEl') buttonEl!: QueryList<ElementRef>;
     @ViewChildren('buttonOp') buttonOp!: QueryList<ElementRef>;
 
     taskName = '';
@@ -39,21 +36,22 @@ export class ViewTaskComponent implements OnInit {
 
     baseUrl: string = `${environment.API_URL}/api/v1/users`;
 
+    filesBaselUrl: string = `${environment.API_URL}/api/v1/files`;
+
     imgLoaded: { [key: string]: boolean } = {};
-
-    files: any[] = [];
-
-    uploadedFiles: FileDto[] = [];
-
-    newUploadedFiles: FileDto[] = [];
 
     loading: boolean = false;
 
-    objectURLs: any[] = [];
+    task: TaskDto | null = null;
+
+    defaultDisplay: string = 'none';
 
 
-    constructor(private userService: UserService, private taskService: TaskService, private messageService: MessageService, private utilService: UtilService, private fileService: FileService, private router: Router) {
+
+    constructor(private taskService: TaskService, private messageService: MessageService, private utilService: UtilService, private fileService: FileService) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
+        this.defaultDisplay = this.utilService.checkIfMobile() ? 'true' : 'none';
+        this.filesBaselUrl = this.utilService.getApiUrl(this.filesBaselUrl);
     }
 
     ngOnInit() {
@@ -69,123 +67,91 @@ export class ViewTaskComponent implements OnInit {
             {label: 'Nivel 9', value: 9},
             {label: 'Nivel 10', value: 10},
         ];
-        this.getAllUsers();
     }
 
-    public getAllUsers() {
-        this.userService.getAllUsers().subscribe({
+    public onSidebarShow() {
+        this.getTask()
+    }
+
+    public getTask() {
+        this.loading = true;
+        this.taskService.getTask(this.taskId).subscribe({
             next: (data) => {
-                this.users = data.data!;
+                this.task = data.data;
+                this.taskName = this.task!.taskName;
+                this.taskDescription = this.task!.taskDescription;
+                let datePart = new Date(this.task!.taskDeadline).toLocaleDateString('en-GB');
+                let timePart = new Date(this.task!.taskDeadline).toLocaleTimeString('en-GB', {
+                    hour: '2-digit', minute: '2-digit'
+                });
+                this.taskDeadline = `${datePart} ${timePart}`;
+                this.selectedPriority = this.task!.taskPriority;
+                this.selectedAssignees = this.task!.taskAssignees.map(assignee => {
+                    const img = new Image();
+                    img.src = this.baseUrl + '/' + assignee.userId + '/profile-picture/thumbnail';
+                    img.onload = () => this.imgLoaded[assignee.userId] = true;
+                    img.onerror = () => this.imgLoaded[assignee.userId] = false;
+                    return {
+                        label: `${assignee.firstName} ${assignee.lastName}`, labelSecondary: assignee.email, value: assignee.userId,
+                    }
+                });
+                this.userItems = this.task!.project.projectMembers.map(user => {
+                    const img = new Image();
+                    img.src = this.baseUrl + '/' + user.userId + '/profile-picture/thumbnail';
+                    img.onload = () => this.imgLoaded[user.userId] = true;
+                    img.onerror = () => this.imgLoaded[user.userId] = false;
+                    return {
+                        label: `${user.firstName} ${user.lastName}`, labelSecondary: user.email, value: user.userId,
+                    }
+                });
+                this.loading = false;
             }, error: (error) => {
                 console.log(error);
             }
         });
     }
 
-
-    public onSidebarShow() {
-        // Set the form values
-        this.taskName = this.task!.taskName;
-        this.taskDescription = this.task!.taskDescription;
-        let datePart = new Date(this.task!.taskDeadline).toLocaleDateString('en-GB');
-        let timePart = new Date(this.task!.taskDeadline).toLocaleTimeString('en-GB', {
-            hour: '2-digit', minute: '2-digit'
-        });
-        this.taskDeadline = `${datePart} ${timePart}`;
-        this.selectedPriority = this.task!.taskPriority;
-        this.selectedAssignees = this.task!.taskAssigneeIds.map(assignee => {
-            const user = this.users.find(u => u.userId === assignee);
-            return {
-                label: `${user!.firstName} ${user!.lastName}`, labelSecondary: user!.email, value: user!.userId,
-            }
-        });
-        this.userItems = this.users.filter(user => this.task!.project.projectMemberIds.includes(user.userId)).map(user => {
-            // Pre-fetch the image
-            const img = new Image();
-            img.src = this.baseUrl + '/' + user.userId + '/profile-picture/thumbnail';
-            img.onload = () => this.imgLoaded[user.userId] = true;
-            img.onerror = () => this.imgLoaded[user.userId] = false;
-            return {
-                label: `${user.firstName} ${user.lastName}`, labelSecondary: user.email, value: user.userId,
-            }
-        });
-        this.task!.taskFileIds.forEach(fileId => {
-            this.fileService.getFile(fileId).subscribe({
-                next: (data) => {
-                    let fileName = '';
-                    const contentDisposition = data.headers.get('Content-Disposition');
-                    if (contentDisposition) {
-                        const fileNameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-                        const matches = fileNameRegex.exec(contentDisposition);
-                        if (matches != null && matches[1]) {
-                            fileName = matches[1].replace(/['"]/g, '');
-                        }
-                    }
-                    this.files.push(new File([data.body!], fileName, {type: data.headers.get('Content-Type')!}));
-                    this.uploadedFiles.push({
-                        fileId: fileId, filename: fileName, contentType: data.headers.get('Content-Type')!
-                    });
-                }, error: (error) => {
-                    console.log(error);
-                }
-            });
-        });
-    }
-
-    public getObjectURL(file: any): string {
-        if (this.objectURLs[file.name]) {
-            return this.objectURLs[file.name];
-        }
-        const objectURL = URL.createObjectURL(file);
-        this.objectURLs[file.name] = objectURL;
-        return objectURL;
-    }
-
-
     public onClose() {
         this.sidebarVisibleChange.emit(false);
         this.sidebarVisible = false;
+        this.task = null;
         this.taskName = '';
         this.taskDescription = '';
         this.taskDeadline = '';
-        this.selectedAssignees = [];
         this.selectedPriority = {value: ''};
-        this.files = [];
-        this.uploadedFiles = [];
+        this.selectedAssignees = [];
+        this.userItems = [];
         this.loading = false;
     }
 
     public onFileMouseOver(file: any) {
-        this.buttonEl.toArray().forEach(el => {
-            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'flex' : null;
-        })
         this.buttonOp.toArray().forEach(el => {
-            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'flex' : null;
+            Number(el.nativeElement.id) === file.fileId ? el.nativeElement.style.display = 'flex' : null;
         })
     }
 
     public onFileMouseLeave(file: any) {
-        this.buttonEl.toArray().forEach(el => {
-            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'none' : null;
-        })
         this.buttonOp.toArray().forEach(el => {
-            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'none' : null;
+            Number(el.nativeElement.id) === file.fileId ? el.nativeElement.style.display = 'none' : null;
         })
     }
 
-    // public removeFile(file: any) {
-    //     this.files = this.files.filter(f => f !== file);
-    // }
-
-    public downloadFile(file: any) {
-        const url = URL.createObjectURL(file);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = file.name;
-        document.body.appendChild(a);
-        a.click();
-        URL.revokeObjectURL(url);
-        document.body.removeChild(a);
+    public downloadFile(file: FileDto) {
+       this.fileService.getFile(file.fileId).subscribe({
+            next: (data) => {
+                const blob = new Blob([data], {type: file.contentType});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file.filename;
+                document.body.appendChild(a);
+                a.click();
+                URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            }, error: (error) => {
+                console.log(error);
+            }
+        });
     }
 
     public getFileExtension(fileName: string): string {

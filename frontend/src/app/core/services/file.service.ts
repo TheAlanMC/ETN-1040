@@ -16,8 +16,8 @@ export class FileService {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
-    public getFile(fileId: number): Observable<HttpResponse<Blob>> {
-        return this.http.get<HttpResponse<Blob>>(`${this.baseUrl}/${fileId}`, this.utilService.getHttpOptions('blob', true));
+    public getFile(fileId: number): Observable<Blob> {
+        return this.http.get<Blob>(`${this.baseUrl}/${fileId}`, this.utilService.getHttpOptions('blob'));
     }
 
     public uploadFile(file: File): Observable<ResponseDto<FileDto>> {

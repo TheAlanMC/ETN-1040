@@ -96,11 +96,9 @@ class ToolService @Autowired constructor(private val fileRepository: FileReposit
 
     fun assignToolToTask(toolId: Long, taskId: Long) {
         // Get the user id from the token
-        val userId = AuthUtil.getUserIdFromAuthToken()
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         // Validate the task exists
-        taskRepository.findByTaskIdAndStatusIsTrue(taskId)
-            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task not found", "Tarea no encontrada")
+        taskRepository.findByTaskIdAndStatusIsTrue(taskId) ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task not found", "Tarea no encontrada")
         // Validate the tool exists
         toolRepository.findByToolIdAndStatusIsTrue(toolId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Tool not found", "Herramienta no encontrada")

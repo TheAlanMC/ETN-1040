@@ -66,13 +66,13 @@ export class ProjectTaskDeadlineComponent implements OnInit {
     userId: number = 0;
     canAddTask: boolean = false;
     project: ProjectDto | null = null;
-    users: UserDto[] = [];
     isOwner: boolean = false;
     isModerator: boolean = false;
     createSidebarVisible: boolean = false;
     editSidebarVisible: boolean = false;
     viewSidebarVisible: boolean = false;
-    task: TaskDto | null = null;
+    taskId: number = 0;
+
     private searchSubject = new Subject<string>();
 
     constructor(private projectService: ProjectService, private sharedService: SharedService, private activatedRoute: ActivatedRoute, private taskService: TaskService, private utilService: UtilService, private router: Router, private userService: UserService) {
@@ -96,7 +96,6 @@ export class ProjectTaskDeadlineComponent implements OnInit {
             this.projectId = params['id'];
             this.sharedService.changeData('projectId', this.projectId);
             this.getProjectInfo();
-            this.getAllUsers();
             this.getAllStatuses();
             this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
                 this.getData()
@@ -123,7 +122,7 @@ export class ProjectTaskDeadlineComponent implements OnInit {
             next: (data: ResponseDto<PageDto<TaskDto>>) => {
                 this.tasks = data.data!.content;
                 this.tasks.forEach(task => {
-                    task.taskAssigneeIds.forEach(userId => this.fetchUserImage(userId));
+                    task.taskAssignees.forEach((assignee: UserDto) => this.fetchUserImage(assignee.userId));
                 });
                 // Add a new task to the list according to the deadline
                 this.taskLists.forEach(list => {
@@ -167,8 +166,8 @@ export class ProjectTaskDeadlineComponent implements OnInit {
         this.projectService.getProject(this.projectId).subscribe({
             next: (data) => {
                 this.project = data.data!;
-                this.isOwner = this.project.projectOwnerIds.includes(this.userId);
-                this.isModerator = this.project.projectModeratorIds.includes(this.userId);
+                this.isOwner = this.project.projectOwners.find(owner => owner.userId === this.userId) != null;
+                this.isModerator = this.project.projectModerators.find(moderator => moderator.userId === this.userId) != null;
                 this.sharedService.changeData('isOwner', this.isOwner);
                 this.sharedService.changeData('isModerator', this.isModerator);
             }, error: (error) => {
@@ -179,27 +178,15 @@ export class ProjectTaskDeadlineComponent implements OnInit {
 
 
     public onViewCard(event: any) {
-        this.task = event;
+        this.taskId = event.taskId
         this.viewSidebarVisible = true;
-        // this.router.navigate(['/tasks/view/' + this.card.taskId]).then(r => console.log('Navigate to view task'));
     }
 
     public onEditCard(event: any) {
-        this.task = event;
+        this.taskId = event.taskId;
         this.editSidebarVisible = true;
-        // this.router.navigate(['/tasks/edit/' + this.card.taskId]).then(r => console.log('Navigate to edit task'));
     }
 
-
-    public getAllUsers() {
-        this.userService.getAllUsers().subscribe({
-            next: (data) => {
-                this.users = data.data!;
-            }, error: (error) => {
-                console.log(error);
-            }
-        });
-    }
 
     public getAllStatuses() {
         this.taskService.getStatuses().subscribe({
@@ -230,6 +217,5 @@ export class ProjectTaskDeadlineComponent implements OnInit {
 
     public navigateToCreateTask() {
         this.createSidebarVisible = true
-        // this.router.navigate(['/tasks/create']).then(r => console.log('Navigate to create task'));
     }
 }

@@ -28,8 +28,7 @@ class TaskCommentService @Autowired constructor(
     }
 
     fun getCommentById(commentId: Long): TaskCommentDto {
-        val userId = AuthUtil.getUserIdFromAuthToken()
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         logger.info("Getting the comment with id $commentId for user $userId")
         // Validate the user exists
         userRepository.findByUserIdAndStatusIsTrue(userId)
@@ -50,8 +49,7 @@ class TaskCommentService @Autowired constructor(
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Comment is blank", "El comentario está en blanco")
         }
         // Get the user id from the token
-        val userId = AuthUtil.getUserIdFromAuthToken()
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         // Validate the task exists
         val taskEntity = taskRepository.findByTaskIdAndStatusIsTrue(newTaskCommentDto.taskId.toLong())
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task not found", "Tarea no encontrada")
@@ -69,9 +67,8 @@ class TaskCommentService @Autowired constructor(
         }
 
         // Get the comment number
-        val taskCommentNumber =
-            taskCommentRepository.findFirstByTaskIdOrderByCommentNumberDesc(newTaskCommentDto.taskId.toLong())?.commentNumber?.plus(1)
-                ?: 1
+        val taskCommentNumber = taskCommentRepository.findFirstByTaskIdOrderByCommentNumberDesc(newTaskCommentDto.taskId.toLong())?.commentNumber?.plus(1)
+            ?: 1
 
         // Create the comment
         val taskCommentEntity = TaskComment()
@@ -98,8 +95,7 @@ class TaskCommentService @Autowired constructor(
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Comment is blank", "El comentario está en blanco")
         }
         // Get the user id from the token
-        val userId = AuthUtil.getUserIdFromAuthToken()
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         // Validate the comment exists
         val taskCommentEntity = taskCommentRepository.findByTaskCommentIdAndStatusIsTrue(commentId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Comment not found", "Comentario no encontrado")
@@ -123,8 +119,7 @@ class TaskCommentService @Autowired constructor(
         // Delete previous task comment files changing their status to false if they are different
         val taskCommentFileEntities = taskCommentFileRepository.findAllByTaskCommentIdAndStatusIsTrue(commentId)
         // If they are different, update the task comment files
-        if (taskCommentFileEntities.map { it.fileId }.toSet() != newTaskCommentDto.taskCommentFileIds.map { it }
-                .toSet()) {
+        if (taskCommentFileEntities.map { it.fileId }.toSet() != newTaskCommentDto.taskCommentFileIds.map { it }.toSet()) {
             taskCommentFileEntities.forEach {
                 it.status = false
                 taskCommentFileRepository.save(it)
@@ -142,8 +137,7 @@ class TaskCommentService @Autowired constructor(
 
     fun deleteComment(commentId: Long) {
         // Get the user id from the token
-        val userId = AuthUtil.getUserIdFromAuthToken()
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         // Validate the comment exists
         val taskCommentEntity = taskCommentRepository.findByTaskCommentIdAndStatusIsTrue(commentId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Comment not found", "Comentario no encontrado")

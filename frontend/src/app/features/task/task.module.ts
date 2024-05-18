@@ -30,6 +30,7 @@ import {SharedModule} from "../../shared/shared.module";
 import {ToastModule} from "primeng/toast";
 import {TabMenuModule} from "primeng/tabmenu";
 import {ViewAssignedTaskComponent} from './components/view-assigned-task/view-assigned-task.component';
+import {ProgressSpinnerModule} from "primeng/progressspinner";
 
 
 @NgModule({
@@ -70,6 +71,7 @@ import {ViewAssignedTaskComponent} from './components/view-assigned-task/view-as
         SharedModule,
         ToastModule,
         TabMenuModule,
+        ProgressSpinnerModule,
     ]
 })
 export class TaskModule {

@@ -53,7 +53,6 @@ export class ProjectDetailComponent implements OnInit {
     baseUrl: string = `${environment.API_URL}/api/v1/users`;
     imgLoaded: { [key: string]: boolean } = {};
     userId: number = 0;
-    users: UserDto[] = [];
     userItems: SelectItem[] = [];
     // selectedProjectManagers: any[] = [];
     selectedModerators: any[] = [];
@@ -77,7 +76,6 @@ export class ProjectDetailComponent implements OnInit {
     ngOnInit() {
         this.activatedRoute.parent?.params.subscribe(params => {
             this.projectId = params['id'];
-            this.getAllUsers();
             this.getProjectInfo();
         });
     }
@@ -88,22 +86,22 @@ export class ProjectDetailComponent implements OnInit {
                 this.project = data.data!;
                 this.dateFrom = new Date(data.data!.dateFrom).toLocaleDateString('en-GB')
                 this.dateTo = new Date(data.data!.dateTo).toLocaleDateString('en-GB')
-                this.selectedMembers = data.data!.projectMemberIds.map(member => {
-                    const user = this.users.find(u => u.userId === member);
+                this.selectedMembers = data.data!.projectMembers.map(member => {
+                    this.fetchUserImage(member.userId);
                     return {
-                        label: `${user!.firstName} ${user!.lastName}`,
-                        labelSecondary: user!.email,
-                        value: user!.userId,
-                        disabled: (user!.userId === this.userId)
+                        label: `${member.firstName} ${member.lastName}`,
+                        labelSecondary: member.email,
+                        value: member.userId,
+                        disabled: (member.userId === this.userId)
                     }
                 });
-                this.selectedModerators = data.data!.projectModeratorIds.map(moderator => {
-                    const user = this.users.find(u => u.userId === moderator);
+                this.selectedModerators = data.data!.projectModerators.map(moderator => {
+                    this.fetchUserImage(moderator.userId);
                     return {
-                        label: `${user!.firstName} ${user!.lastName}`,
-                        labelSecondary: user!.email,
-                        value: user!.userId,
-                        disabled: (user!.userId === this.userId)
+                        label: `${moderator.firstName} ${moderator.lastName}`,
+                        labelSecondary: moderator.email,
+                        value: moderator.userId,
+                        disabled: (moderator.userId === this.userId)
                     }
                 });
             }, error: (error) => {
@@ -112,27 +110,11 @@ export class ProjectDetailComponent implements OnInit {
         });
     }
 
-    public getAllUsers() {
-        this.userService.getAllUsers().subscribe({
-            next: (data) => {
-                this.users = data.data!;
-                this.userItems = data.data!.map(user => {
-                    // Pre-fetch the image
-                    const img = new Image();
-                    img.src = this.baseUrl + '/' + user.userId + '/profile-picture/thumbnail';
-                    img.onload = () => this.imgLoaded[user.userId] = true;
-                    img.onerror = () => this.imgLoaded[user.userId] = false;
-                    return {
-                        label: `${user.firstName} ${user.lastName}`,
-                        labelSecondary: user.email,
-                        value: user.userId,
-                        disabled: (user.userId === this.userId)
-                    }
-                });
-            }, error: (error) => {
-                console.log(error);
-            }
-        });
+    public fetchUserImage(userId: number) {
+        const img = new Image();
+        img.src = this.baseUrl + '/' + userId + '/profile-picture/thumbnail';
+        img.onload = () => this.imgLoaded[userId] = true;
+        img.onerror = () => this.imgLoaded[userId] = false;
     }
 
     public onBack() {

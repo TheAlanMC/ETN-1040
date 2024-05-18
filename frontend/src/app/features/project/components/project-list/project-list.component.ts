@@ -9,8 +9,6 @@ import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {ResponseDto} from "../../../../core/models/response.dto";
 import {PageDto} from "../../../../core/models/page.dto";
 import {ProjectService} from '../../../../core/services/project.service';
-import {UserService} from "../../../../core/services/user.service";
-import {UserDto} from "../../../user/models/user.dto";
 
 @Component({
     selector: 'app-project-list',
@@ -42,9 +40,7 @@ export class ProjectListComponent implements OnInit {
 
     imgLoaded: { [key: string]: boolean } = {};
 
-    users: UserDto[] = [];
-
-    constructor(private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private utilService: UtilService, private projectService: ProjectService, private userService: UserService) {
+    constructor(private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private utilService: UtilService, private projectService: ProjectService) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage
         const token = localStorage.getItem('token');
@@ -60,7 +56,6 @@ export class ProjectListComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.getAllUsers();
         this.getData();
     }
 
@@ -97,9 +92,9 @@ export class ProjectListComponent implements OnInit {
                 this.projects = data.data!.content;
                 this.totalElements = data.data!.page.totalElements;
                 this.projects.forEach(project => {
-                    project.projectOwnerIds.forEach(userId => this.fetchUserImage(userId));
-                    project.projectModeratorIds.forEach(userId => this.fetchUserImage(userId));
-                    project.projectMemberIds.forEach(userId => this.fetchUserImage(userId));
+                    project.projectOwners.forEach(user => this.fetchUserImage(user.userId));
+                    project.projectModerators.forEach(user => this.fetchUserImage(user.userId));
+                    project.projectMembers.forEach(user => this.fetchUserImage(user.userId));
                 });
                 this.isLoading = false;
             }, error: (error) => {
@@ -142,34 +137,6 @@ export class ProjectListComponent implements OnInit {
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
         });
-    }
-
-    public getAllUsers() {
-        this.userService.getAllUsers().subscribe({
-            next: (data) => {
-                this.users = data.data!;
-            }, error: (error) => {
-                console.log(error);
-            }
-        });
-    }
-
-    public getImageLoaded(userId: any): boolean {
-        return this.imgLoaded[userId] ?? false;
-    }
-
-    public setImageLoaded(userId: any, value: boolean) {
-        this.imgLoaded[userId] = value;
-    }
-
-    public getFullName(userId: any): string {
-        const user = this.users.find(user => user.userId === userId);
-        return `${user?.firstName} ${user?.lastName}`;
-    }
-
-    public getEmail(userId: any): string {
-        const user = this.users.find(user => user.userId === userId);
-        return user?.email ?? '';
     }
 
 }

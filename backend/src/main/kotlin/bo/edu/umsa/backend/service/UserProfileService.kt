@@ -22,8 +22,7 @@ class UserProfileService @Autowired constructor(private val userRepository: User
 
     // Profile
     fun getProfile(): ProfileDto {
-        val userId = AuthUtil.getUserIdFromAuthToken()
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         logger.info("Getting the profile with id $userId")
         // Get the user
         val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
@@ -45,8 +44,7 @@ class UserProfileService @Autowired constructor(private val userRepository: User
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Phone must be a number", "El teléfono debe ser un número")
         }
         // Validate that the profileId is the same as the user's id
-        val userId = AuthUtil.getUserIdFromAuthToken()
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         logger.info("Updating the profile with id $userId")
         // Get the user
         val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
@@ -61,8 +59,7 @@ class UserProfileService @Autowired constructor(private val userRepository: User
 
     // Profile picture
     fun getProfilePicture(): FileDto {
-        val email = AuthUtil.getEmailFromAuthToken()
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val email = AuthUtil.getEmailFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         logger.info("Getting the profile picture of $email")
         // Get the user
         val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email)
@@ -71,8 +68,7 @@ class UserProfileService @Autowired constructor(private val userRepository: User
     }
 
     fun uploadProfilePicture(file: MultipartFile) {
-        val email = AuthUtil.getEmailFromAuthToken()
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val email = AuthUtil.getEmailFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         logger.info("Uploading the profile picture of $email")
         // Get the user
         val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email)
@@ -100,8 +96,7 @@ class UserProfileService @Autowired constructor(private val userRepository: User
         if (passwordChangeDto.password != passwordChangeDto.confirmPassword) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Passwords do not match", "Las contraseñas no coinciden")
         }
-        val email = AuthUtil.getEmailFromAuthToken()
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val email = AuthUtil.getEmailFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         logger.info("Updating the password of $email")
         // Get the user
         val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email)

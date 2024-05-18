@@ -8,7 +8,7 @@ data class ProjectDto(
     val projectDescription: String,
     val dateFrom: Timestamp,
     val dateTo: Timestamp,
-    val projectOwnerIds: List<Int>,
-    val projectModeratorIds: List<Int>,
-    val projectMemberIds: List<Int>,
+    val projectOwners: List<UserPartialDto>,
+    val projectModerators: List<UserPartialDto>,
+    val projectMembers: List<UserPartialDto>,
 )

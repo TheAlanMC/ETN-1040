@@ -118,14 +118,13 @@
                                                         style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
                                                     <div
                                                             style="height: 80px; width: 100%; display: flex; align-items: center; justify-content: center;">
-                                                        <ng-container
-                                                                *ngIf="file.type.startsWith('image'); else nonImageTemplate">
 
-                                                            <img [alt]="file.name" [src]="getObjectURL(file)"
+                                                        <ng-container *ngIf="file.type.startsWith('image'); else nonImageTemplate">
+                                                            <img [alt]="file.name" [src]="file.objectURL"
                                                                  class="px-1"
                                                                  style="object-fit: cover; width: 100%; height: 70px; border-radius: 5px;">
-
                                                         </ng-container>
+
                                                         <ng-template #nonImageTemplate>
                         <span style="display: flex;"><svg fill="none" style="display:block" viewBox="0 0 100 117"
                                                           width="40.32px" xmlns="http://www.w3.org/2000/svg"><path
@@ -151,8 +150,7 @@
                                 x="0"
                                 y="0"></rect><text [attr.x]="getFileDetails(file.name).x" dominant-baseline="middle"
                                                    fill="#fff"
-                                                   style="color:#fff; font-family: &quot;OpenSans-Semibold&quot;, &quot;Open Sans&quot;, Helvetica, Arial, sans-serif;font-weight: 500;font-size: 22px;line-height: 25px;"
-                                                   y="54%">{{ getFileDetails(file.name).extension }}</text></svg></svg></span>
+                                                   style="color:#fff; font-family: OpenSans-Semibold, 'Open Sans', Helvetica, Arial, sans-serif; font-weight: 500; font-size: 22px; line-height: 25px;"                                                   y="54%">{{ getFileDetails(file.name).extension }}</text></svg></svg></span>
                                                         </ng-template>
                                                     </div>
                                                     <div
@@ -168,7 +166,8 @@
                                                     icon="pi pi-times" pButton
                                                     pRipple
                                                     pTooltip="Eliminar archivo"
-                                                    style="top: 0px; display: none;" tooltipPosition="top"
+                                                    style="top: -1px; left:-1px;" tooltipPosition="top"
+                                                    [style.display]="defaultDisplay"
                                                     type="button"></button>
                                             <button #buttonOp (click)="$event.stopPropagation(); downloadFile(file)"
                                                     [id]="file.name"
@@ -176,7 +175,8 @@
                                                     icon="pi pi-download" pButton
                                                     pRipple
                                                     pTooltip="Descargar archivo"
-                                                    style="top: 0px; right: 0px; display: none;" tooltipPosition="top"
+                                                    style="top: -1px; right: -1px;" tooltipPosition="top"
+                                                    [style.display]="defaultDisplay"
                                                     type="button"></button>
                                         </div>
                                     </div>
