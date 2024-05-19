@@ -13,7 +13,13 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 
 @Service
-class ToolService @Autowired constructor(private val fileRepository: FileRepository, private val toolRepository: ToolRepository, private val loanedToolRepository: LoanedToolRepository, private val taskRepository: TaskRepository, private val taskAssigneeRepository: TaskAssigneeRepository) {
+class ToolService @Autowired constructor(
+    private val fileRepository: FileRepository,
+    private val toolRepository: ToolRepository,
+    private val loanedToolRepository: LoanedToolRepository,
+    private val taskRepository: TaskRepository,
+    private val taskAssigneeRepository: TaskAssigneeRepository
+) {
     companion object {
         private val logger = org.slf4j.LoggerFactory.getLogger(ToolService::class.java)
     }
@@ -54,7 +60,10 @@ class ToolService @Autowired constructor(private val fileRepository: FileReposit
         logger.info("Tool created with id ${toolEntity.toolId}")
     }
 
-    fun updateTool(toolId: Long, newToolDto: NewToolDto) {
+    fun updateTool(
+        toolId: Long,
+        newToolDto: NewToolDto
+    ) {
         // Validate the tool code and tool name are not empty
         if (newToolDto.toolCode.isEmpty() || newToolDto.toolName.isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one required field is blank", "Al menos un campo requerido está en blanco")
@@ -94,7 +103,10 @@ class ToolService @Autowired constructor(private val fileRepository: FileReposit
         logger.info("Tool deleted with id $toolId")
     }
 
-    fun assignToolToTask(toolId: Long, taskId: Long) {
+    fun assignToolToTask(
+        toolId: Long,
+        taskId: Long
+    ) {
         // Get the user id from the token
         val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         // Validate the task exists

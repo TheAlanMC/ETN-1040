@@ -49,7 +49,10 @@ class ToolController @Autowired constructor(private val toolService: ToolService
     }
 
     @PutMapping("/{toolId}")
-    fun updateTool(@PathVariable toolId: Long, @RequestBody newToolDto: NewToolDto): ResponseEntity<ResponseDto<Nothing>> {
+    fun updateTool(
+        @PathVariable toolId: Long,
+        @RequestBody newToolDto: NewToolDto
+    ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the tool")
         logger.info("PUT /api/v1/tools/$toolId")
 //        AuthUtil.verifyAuthTokenHasRole("EDITAR HERRAMIENTAS")
@@ -69,7 +72,10 @@ class ToolController @Autowired constructor(private val toolService: ToolService
     }
 
     @PostMapping("/{toolId}/tasks/{taskId}")
-    fun assignToolToTask(@PathVariable toolId: Long, @PathVariable taskId: Long): ResponseEntity<ResponseDto<Nothing>> {
+    fun assignToolToTask(
+        @PathVariable toolId: Long,
+        @PathVariable taskId: Long
+    ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to assign the tool to the task")
         logger.info("POST /api/v1/tools/$toolId/tasks/$taskId")
 //        AuthUtil.verifyAuthTokenHasRole("EDITAR HERRAMIENTAS")

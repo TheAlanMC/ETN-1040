@@ -25,7 +25,15 @@ import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 
 @Service
-class UserService @Autowired constructor(private val assetService: AssetService, private val userRepository: UserRepository, private val groupRepository: GroupRepository, private val fileRepository: FileRepository, private val userGroupRepository: UserGroupRepository, private val fileService: FileService, private val emailService: EmailService) {
+class UserService @Autowired constructor(
+    private val assetService: AssetService,
+    private val userRepository: UserRepository,
+    private val groupRepository: GroupRepository,
+    private val fileRepository: FileRepository,
+    private val userGroupRepository: UserGroupRepository,
+    private val fileService: FileService,
+    private val emailService: EmailService
+) {
     companion object {
         private val logger = org.slf4j.LoggerFactory.getLogger(UserService::class.java)
     }
@@ -36,7 +44,13 @@ class UserService @Autowired constructor(private val assetService: AssetService,
         return userEntities.map { UserPartialMapper.entityToDto(it) }
     }
 
-    fun getUsers(sortBy: String, sortType: String, page: Int, size: Int, keyword: String?): Page<UserDto> {
+    fun getUsers(
+        sortBy: String,
+        sortType: String,
+        page: Int,
+        size: Int,
+        keyword: String?
+    ): Page<UserDto> {
         logger.info("Getting users")
         // Pagination and sorting
         val pageable: Pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortType), sortBy))
@@ -126,7 +140,10 @@ class UserService @Autowired constructor(private val assetService: AssetService,
         emailService.sendEmail(newUserDto.email, "Bienvenido a la plataforma", "Bienvenido ${newUserDto.firstName} ${newUserDto.lastName} a la plataforma del Laboratorio Multimedia.\n" + "Se le asignó el rol de ${groupEntity.groupName}.\n" + "Su contraseña es: $password\n" + "Por favor, cambie su contraseña en su primer inicio de sesión.")
     }
 
-    fun updateUser(userId: Long, profileDto: ProfileDto) {
+    fun updateUser(
+        userId: Long,
+        profileDto: ProfileDto
+    ) {
         // Validate that at least one field is being updated
         if (profileDto.firstName.isBlank() && profileDto.lastName.isBlank() && profileDto.phone.isBlank() && profileDto.description.isBlank()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one field must be updated", "Al menos un campo debe ser actualizado")
@@ -170,7 +187,10 @@ class UserService @Autowired constructor(private val assetService: AssetService,
         return fileService.getPicture(userEntity.filePhotoId)
     }
 
-    fun uploadProfilePicture(userId: Long, file: MultipartFile) {
+    fun uploadProfilePicture(
+        userId: Long,
+        file: MultipartFile
+    ) {
         logger.info("Uploading the profile picture of $userId")
         // Get the user
         val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
@@ -191,7 +211,10 @@ class UserService @Autowired constructor(private val assetService: AssetService,
         return groupEntities.map { GroupMapper.entityToDto(it) }
     }
 
-    fun addGroupsToUser(userId: Long, groupIds: List<Long>) {
+    fun addGroupsToUser(
+        userId: Long,
+        groupIds: List<Long>
+    ) {
         logger.info("Adding groups to the user with id $userId")
         // Get the user
         userRepository.findByUserIdAndStatusIsTrue(userId)

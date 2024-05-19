@@ -1,22 +1,30 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
 import {TaskDto} from "../../models/task.dto";
-import {MessageService, SelectItem} from "primeng/api";
+import {ConfirmationService, MenuItem, MessageService, SelectItem} from "primeng/api";
 import {UserDto} from "../../../user/models/user.dto";
 import {environment} from "../../../../../environments/environment";
 import {FileDto} from "../../../../core/models/file.dto";
 import {TaskService} from "../../../../core/services/task.service";
 import {UtilService} from "../../../../core/services/util.service";
 import {FileService} from "../../../../core/services/file.service";
+import {Router} from "@angular/router";
+import {FormControl, Validators} from "@angular/forms";
+import {jwtDecode} from "jwt-decode";
+import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
+import {TaskCommentService} from "../../../../core/services/task-comment.service";
 
 @Component({
-    selector: 'app-view-task', templateUrl: './view-task.component.html', styleUrl: './view-task.component.scss'
+    selector: 'app-view-task', templateUrl: './view-task.component.html', styleUrl: './view-task.component.scss',
+    providers: [MessageService, ConfirmationService]
 })
 export class ViewTaskComponent implements OnInit {
 
     @Input() sidebarVisible: boolean = false;
     @Input() taskId: number = 0;
+    @Input() isOwner: boolean = false;
 
     @Output() sidebarVisibleChange = new EventEmitter<boolean>();
+    @ViewChildren('buttonEl') buttonEl!: QueryList<ElementRef>;
     @ViewChildren('buttonOp') buttonOp!: QueryList<ElementRef>;
 
     taskName = '';
@@ -26,6 +34,14 @@ export class ViewTaskComponent implements OnInit {
     selectedPriority: any = {value: ''};
 
     priorityItems: SelectItem[] = [];
+
+    selectedStatus: any = {value: ''};
+
+    statusItems: SelectItem[] = [];
+
+    focusedComment: boolean = false;
+
+
 
     users: UserDto[] = [];
 
@@ -46,11 +62,40 @@ export class ViewTaskComponent implements OnInit {
 
     defaultDisplay: string = 'none';
 
+    userId: number = 0;
+    userFullName: string = '';
 
-    constructor(private taskService: TaskService, private messageService: MessageService, private utilService: UtilService, private fileService: FileService) {
+    newCommentControl = new FormControl('');
+
+    menuItems: MenuItem[] = [];
+
+    selectedComment: number = 0;
+
+    uploadedFiles: FileDto[] = [];
+
+    showNewCommentAttachment: boolean = false;
+
+    newCommentFiles: any[] = [];
+
+
+
+    constructor(private taskService: TaskService, private messageService: MessageService, private utilService: UtilService, private fileService: FileService, private router: Router, private taskCommentService: TaskCommentService, private confirmationService: ConfirmationService) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         this.defaultDisplay = this.utilService.checkIfMobile() ? 'true' : 'none';
         this.filesBaselUrl = this.utilService.getApiUrl(this.filesBaselUrl);
+        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
+        const token = localStorage.getItem('token');
+        // Check if token exists
+        if (token) {
+            const decoded = jwtDecode<JwtPayload>(token!);
+            this.userId = decoded.userId;
+            this.userFullName = `${decoded.givenName} ${decoded.familyName}`;
+        }
+
+        this.menuItems = [
+            {label: 'Editar', icon: 'pi pi-pencil', command: () => this.onCommentEdit()},
+            {label: 'Eliminar', icon: 'pi pi-trash', command: () => this.onCommentDelete()}
+        ];
     }
 
     ngOnInit() {
@@ -69,9 +114,21 @@ export class ViewTaskComponent implements OnInit {
     }
 
     public onSidebarShow() {
+        this.getStatuses()
         this.getTask()
     }
 
+    public getStatuses() {
+        this.taskService.getStatuses().subscribe({
+            next: (data) => {
+                this.statusItems = data.data!.map(status => {
+                    return {label: status.taskStatusName, value: status.taskStatusId}
+                });
+            }, error: (error) => {
+                console.log(error);
+            }
+        });
+    }
     public getTask() {
         this.loading = true;
         this.taskService.getTask(this.taskId).subscribe({
@@ -85,6 +142,7 @@ export class ViewTaskComponent implements OnInit {
                 });
                 this.taskDeadline = `${datePart} ${timePart}`;
                 this.selectedPriority = this.task!.taskPriority;
+                this.selectedStatus = this.task!.taskStatus.taskStatusId;
                 this.selectedAssignees = this.task!.taskAssignees.map(assignee => {
                     const img = new Image();
                     img.src = this.baseUrl + '/' + assignee.userId + '/profile-picture/thumbnail';
@@ -120,7 +178,10 @@ export class ViewTaskComponent implements OnInit {
         this.selectedPriority = {value: ''};
         this.selectedAssignees = [];
         this.userItems = [];
+        this.statusItems = [];
         this.loading = false;
+
+        this.onCommentCancel();
     }
 
     public onFileMouseOver(file: any) {
@@ -199,6 +260,161 @@ export class ViewTaskComponent implements OnInit {
         return fileName.length > maxLength ? `${fileName.substring(0, maxLength)}...${fileName.split('.').pop()}` : fileName;
     }
 
+    public onStatusChange(event: any) {
+        const taskStatus = this.statusItems.find(status => status.value === event.value)!;
+        console.log(taskStatus);
+        this.taskService.updateTaskStatus(this.taskId, taskStatus.value, taskStatus.label!).subscribe({
+            next: (data) => {
+                this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Estado de la tarea actualizado correctamente'});
+                setTimeout(() => {
+                    let currentRoute = this.router.url;
+                    this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+                        this.router.navigate([currentRoute]).then(r => console.log('Task status updated'));
+                    });
+                }, 500);
+                this.onClose();
+            }, error: (error) => {
+                console.log(error);
+            }
+        });
 
+
+    }
+
+    public onComment(event: any | null = null) {
+        this.loading = true;
+        if (this.newCommentFiles.length == 0) {
+            this.saveTaskComment();
+            return;
+        }
+        this.newCommentFiles.forEach(file => {
+            this.fileService.uploadFile(file).subscribe({
+                next: (data) => {
+                    this.uploadedFiles.push(data.data!);
+                    if (this.uploadedFiles.length == this.newCommentFiles.length) {
+                        this.saveTaskComment();
+                    }
+                }, error: (error) => {
+                    console.log(error);
+                    this.loading = false;
+                    this.messageService.add({
+                        severity: 'error', summary: 'Error', detail: error.error.message
+                    });
+                }
+            });
+        });
+    }
+
+    public saveTaskComment() {
+        this.taskCommentService.createTaskComment(this.taskId, this.newCommentControl.value!, this.uploadedFiles.map(file => file.fileId)).subscribe({
+            next: (data) => {
+                this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Comentario creado correctamente'});
+                setTimeout(() => {
+                    let currentRoute = this.router.url;
+                    this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+                        this.router.navigate([currentRoute]).then(r => console.log('Task comment created'));
+                    });
+                }, 500);
+                this.onClose();
+            }, error: (error) => {
+                console.log(error);
+                this.loading = false;
+                this.messageService.add({
+                    severity: 'error', summary: 'Error', detail: error.error.message
+                });
+            }
+        });
+    }
+
+    public onCommentCancel() {
+        this.newCommentControl.setValue('');
+        this.focusedComment = false;
+        this.showNewCommentAttachment = false;
+        this.newCommentFiles = [];
+        this.uploadedFiles = [];
+    }
+
+    public onCommentEdit() {
+
+    }
+
+    public onCommentDelete() {
+        this.confirmationService.confirm({
+            key: 'confirmDeleteComment',
+            message: '¿Estás seguro de que deseas eliminar este comentario? Esta acción no se puede deshacer.',
+            header: 'Confirmar',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Sí',
+            rejectLabel: 'No',
+            accept: () => {
+                this.deleteTaskComment(this.selectedComment);
+            },
+        });
+    }
+
+    public deleteTaskComment(commentId: number) {
+        this.taskCommentService.deleteTaskComment(commentId).subscribe({
+            next: (data) => {
+                this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Comentario eliminado correctamente'});
+                setTimeout(() => {
+                    let currentRoute = this.router.url;
+                    this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+                        this.router.navigate([currentRoute]).then(r => console.log('Task comment deleted'));
+                    });
+                }, 500);
+                this.onClose();
+            }, error: (error) => {
+                console.log(error);
+                this.loading = false;
+                this.messageService.add({
+                    severity: 'error', summary: 'Error', detail: error.error.message
+                });
+            }
+        });
+    }
+
+
+    public onButtonClick(event: any) {
+        this.selectedComment = event;
+    }
+
+    public onCommentFocus() {
+        this.focusedComment = true;
+        console.log('focus');
+    }
+
+    public onFileUpload() {
+        this.showNewCommentAttachment = true;
+    }
+
+    public onUpload(event: any) {
+        for (let file of event.files) {
+            if (!this.newCommentFiles.some(f => f.name === file.name)) {
+                this.newCommentFiles.push(file);
+            }
+        }
+    }
+
+    public removeFile(file: any) {
+        this.newCommentFiles = this.newCommentFiles.filter(f => f !== file);
+    }
+
+    public onNewFileMouseOver(file: any) {
+        this.buttonEl.toArray().forEach(el => {
+            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'flex' : null;
+        })
+        this.buttonOp.toArray().forEach(el => {
+            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'flex' : null;
+        })
+    }
+
+    public onNewFileMouseLeave(file: any) {
+        this.buttonEl.toArray().forEach(el => {
+            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'none' : null;
+        })
+        this.buttonOp.toArray().forEach(el => {
+            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'none' : null;
+        })
+    }
 }
 

@@ -1,11 +1,13 @@
 package bo.edu.umsa.backend.service
 
-import bo.edu.umsa.backend.dto.*
+import bo.edu.umsa.backend.dto.NewTaskDto
+import bo.edu.umsa.backend.dto.TaskDto
+import bo.edu.umsa.backend.dto.TaskPartialDto
+import bo.edu.umsa.backend.dto.TaskStatusDto
 import bo.edu.umsa.backend.entity.Task
 import bo.edu.umsa.backend.entity.TaskAssignee
 import bo.edu.umsa.backend.entity.TaskFile
 import bo.edu.umsa.backend.exception.EtnException
-import bo.edu.umsa.backend.mapper.TaskCommentMapper
 import bo.edu.umsa.backend.mapper.TaskMapper
 import bo.edu.umsa.backend.mapper.TaskPartialMapper
 import bo.edu.umsa.backend.mapper.TaskStatusMapper
@@ -24,7 +26,18 @@ import java.sql.Timestamp
 import java.time.Instant
 
 @Service
-class TaskService @Autowired constructor(private val fileRepository: FileRepository, private val projectRepository: ProjectRepository, private val projectOwnerRepository: ProjectOwnerRepository, private val projectModeratorRepository: ProjectModeratorRepository, private val projectMemberRepository: ProjectMemberRepository, private val userRepository: UserRepository, private val taskRepository: TaskRepository, private val taskAssigneeRepository: TaskAssigneeRepository, private val taskFileRepository: TaskFileRepository, private val taskStatusRepository: TaskStatusRepository, private val taskCommentRepository: TaskCommentRepository) {
+class TaskService @Autowired constructor(
+    private val fileRepository: FileRepository,
+    private val projectRepository: ProjectRepository,
+    private val projectOwnerRepository: ProjectOwnerRepository,
+    private val projectModeratorRepository: ProjectModeratorRepository,
+    private val projectMemberRepository: ProjectMemberRepository,
+    private val userRepository: UserRepository,
+    private val taskRepository: TaskRepository,
+    private val taskAssigneeRepository: TaskAssigneeRepository,
+    private val taskFileRepository: TaskFileRepository,
+    private val taskStatusRepository: TaskStatusRepository,
+) {
     companion object {
         private val logger = org.slf4j.LoggerFactory.getLogger(TaskService::class.java)
     }
@@ -35,7 +48,16 @@ class TaskService @Autowired constructor(private val fileRepository: FileReposit
         return statuses.map { TaskStatusMapper.entityToDto(it) }
     }
 
-    fun getTasks(sortBy: String, sortType: String, page: Int, size: Int, keyword: String?, statuses: List<String>?, dateFrom: String?, dateTo: String?): Page<TaskPartialDto> {
+    fun getTasks(
+        sortBy: String,
+        sortType: String,
+        page: Int,
+        size: Int,
+        keyword: String?,
+        statuses: List<String>?,
+        dateFrom: String?,
+        dateTo: String?
+    ): Page<TaskPartialDto> {
         val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         logger.info("Getting the tasks for user $userId")
         // Validate the user exists
@@ -174,7 +196,10 @@ class TaskService @Autowired constructor(private val fileRepository: FileReposit
         logger.info("Task files created for task ${taskEntity.taskId}")
     }
 
-    fun updateTask(taskId: Long, newTaskDto: NewTaskDto) {
+    fun updateTask(
+        taskId: Long,
+        newTaskDto: NewTaskDto
+    ) {
         // Validate the name, description, and deadline are not empty
         if (newTaskDto.taskName.isEmpty() || newTaskDto.taskDescription.isEmpty() || newTaskDto.taskDeadline.isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one required field is blank", "Al menos un campo requerido está en blanco")
@@ -276,7 +301,10 @@ class TaskService @Autowired constructor(private val fileRepository: FileReposit
         logger.info("Task files updated for task $taskId")
     }
 
-    fun updateTaskStatus(taskId: Long, taskStatusId: Long) {
+    fun updateTaskStatus(
+        taskId: Long,
+        taskStatusId: Long
+    ) {
         // Get the user id from the token
         val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         // Validate the task exists
@@ -311,23 +339,5 @@ class TaskService @Autowired constructor(private val fileRepository: FileReposit
         // Delete the task
         taskEntity.status = false
         taskRepository.save(taskEntity)
-    }
-
-    fun getTaskComments(taskId: Long): List<TaskCommentDto> {
-        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
-        logger.info("Getting the task comments for user $userId")
-        // Validate the user exists
-        userRepository.findByUserIdAndStatusIsTrue(userId)
-            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found", "Usuario no encontrado")
-        // Validate the task exists
-        val taskEntity = taskRepository.findByTaskIdAndStatusIsTrue(taskId)
-            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task not found", "Tarea no encontrada")
-        // Validate that the user is the project owner, a project moderator or a project member
-        if (projectOwnerRepository.findByProjectIdAndUserIdAndStatusIsTrue(taskEntity.projectId.toLong(), userId) == null && projectModeratorRepository.findByProjectIdAndUserIdAndStatusIsTrue(taskEntity.projectId.toLong(), userId) == null && projectMemberRepository.findByProjectIdAndUserIdAndStatusIsTrue(taskEntity.projectId.toLong(), userId) == null) {
-            throw EtnException(HttpStatus.FORBIDDEN, "Error: User is not the project owner or a project moderator", "El usuario no es el propietario del proyecto, un colaborador del proyecto o un miembro del proyecto")
-        }
-        // Get the task comments
-        val taskCommentEntities = taskCommentRepository.findAllByTaskIdAndStatusIsTrueOrderByCommentNumberDesc(taskId)
-        return taskCommentEntities.map { TaskCommentMapper.entityToDto(it) }
     }
 }

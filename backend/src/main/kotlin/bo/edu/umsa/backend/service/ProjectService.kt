@@ -44,7 +44,12 @@ class ProjectService @Autowired constructor(
         return projectEntities.map { ProjectPartialMapper.entityToDto(it) }
     }
 
-    fun getProjects(sortBy: String, sortType: String, page: Int, size: Int): Page<ProjectDto> {
+    fun getProjects(
+        sortBy: String,
+        sortType: String,
+        page: Int,
+        size: Int
+    ): Page<ProjectDto> {
         logger.info("Getting the projects")
         // Pagination and sorting
         val pageable: Pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortType), sortBy))
@@ -138,7 +143,10 @@ class ProjectService @Autowired constructor(
         logger.info("Project members created for project ${projectEntity.projectId}")
     }
 
-    fun updateProject(projectId: Long, projectDto: NewProjectDto) {
+    fun updateProject(
+        projectId: Long,
+        projectDto: NewProjectDto
+    ) {
         // Validate the project exists
         val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(projectId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Project not found", "Proyecto no encontrado")
@@ -221,7 +229,17 @@ class ProjectService @Autowired constructor(
         logger.info("Project deleted with id $projectId")
     }
 
-    fun getProjectTasks(projectId: Long, sortBy: String, sortType: String, page: Int, size: Int, keyword: String?, statuses: List<String>?, dateFrom: String?, dateTo: String?): Page<TaskPartialDto> {
+    fun getProjectTasks(
+        projectId: Long,
+        sortBy: String,
+        sortType: String,
+        page: Int,
+        size: Int,
+        keyword: String?,
+        statuses: List<String>?,
+        dateFrom: String?,
+        dateTo: String?
+    ): Page<TaskPartialDto> {
         logger.info("Getting the tasks for project $projectId")
         // Validate the project exists
         projectRepository.findByProjectIdAndStatusIsTrue(projectId)

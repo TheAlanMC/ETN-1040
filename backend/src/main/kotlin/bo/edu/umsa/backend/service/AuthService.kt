@@ -20,7 +20,13 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 
 @Service
-class AuthService @Autowired constructor(private val userRepository: UserRepository, private val groupRepository: GroupRepository, private val roleRepository: RoleRepository, private val emailService: EmailService, private val accountRecoveryRepository: AccountRecoveryRepository) {
+class AuthService @Autowired constructor(
+    private val userRepository: UserRepository,
+    private val groupRepository: GroupRepository,
+    private val roleRepository: RoleRepository,
+    private val emailService: EmailService,
+    private val accountRecoveryRepository: AccountRecoveryRepository
+) {
     companion object {
         val logger: Logger = LoggerFactory.getLogger(AuthController::class.java)
     }

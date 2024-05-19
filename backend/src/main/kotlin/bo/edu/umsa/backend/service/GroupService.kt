@@ -17,7 +17,12 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class GroupService @Autowired constructor(private val groupRepository: GroupRepository, private val roleRepository: RoleRepository, private val groupRoleRepository: GroupRoleRepository, private val userGroupRepository: UserGroupRepository) {
+class GroupService @Autowired constructor(
+    private val groupRepository: GroupRepository,
+    private val roleRepository: RoleRepository,
+    private val groupRoleRepository: GroupRoleRepository,
+    private val userGroupRepository: UserGroupRepository
+) {
     companion object {
         private val logger = org.slf4j.LoggerFactory.getLogger(GroupService::class.java)
     }
@@ -38,7 +43,10 @@ class GroupService @Autowired constructor(private val groupRepository: GroupRepo
         groupRepository.save(groupEntity)
     }
 
-    fun updateGroup(groupId: Long, groupDto: GroupDto) {
+    fun updateGroup(
+        groupId: Long,
+        groupDto: GroupDto
+    ) {
         // Validate that the fields are not empty
         if (groupDto.groupName.isBlank() || groupDto.groupDescription.isBlank()) throw EtnException(HttpStatus.BAD_REQUEST, "Error: Empty fields", "Al menos un campo está vacío")
         logger.info("Updating group")
@@ -72,7 +80,10 @@ class GroupService @Autowired constructor(private val groupRepository: GroupRepo
         return roleEntities.map { RoleMapper.entityToDto(it) }
     }
 
-    fun addRolesToGroup(groupId: Long, roleIds: List<Long>) {
+    fun addRolesToGroup(
+        groupId: Long,
+        roleIds: List<Long>
+    ) {
         logger.info("Adding roles to group with id $groupId")
         // Validate that the group exists
         groupRepository.findByGroupIdAndStatusIsTrue(groupId)

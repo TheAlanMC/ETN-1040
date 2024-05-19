@@ -54,8 +54,4 @@ export class TaskService {
         return this.http.delete<ResponseDto<null>>(`${this.baseUrl}/${taskId}`, this.utilService.getHttpOptions());
     }
 
-    public getTaskComments(taskId: number): Observable<ResponseDto<TaskCommentDto[]>> {
-        return this.http.get<ResponseDto<TaskCommentDto[]>>(`${this.baseUrl}/${taskId}/comments`, this.utilService.getHttpOptions());
-    }
-
 }

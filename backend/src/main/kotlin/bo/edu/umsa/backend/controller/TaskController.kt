@@ -70,7 +70,10 @@ class TaskController @Autowired constructor(
     }
 
     @PutMapping("/{taskId}")
-    fun updateTask(@PathVariable taskId: Long, @RequestBody newTaskDto: NewTaskDto): ResponseEntity<ResponseDto<Nothing>> {
+    fun updateTask(
+        @PathVariable taskId: Long,
+        @RequestBody newTaskDto: NewTaskDto
+    ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the task")
         logger.info("PUT /api/v1/tasks/$taskId")
         AuthUtil.verifyAuthTokenHasRole("EDITAR TAREAS")
@@ -80,7 +83,10 @@ class TaskController @Autowired constructor(
     }
 
     @PutMapping("/{taskId}/status")
-    fun updateTaskStatus(@PathVariable taskId: Long, @RequestBody taskStatusDto: TaskStatusDto): ResponseEntity<ResponseDto<Nothing>> {
+    fun updateTaskStatus(
+        @PathVariable taskId: Long,
+        @RequestBody taskStatusDto: TaskStatusDto
+    ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the task status")
         logger.info("PUT /api/v1/tasks/$taskId/status")
         AuthUtil.verifyAuthTokenHasRoles(listOf("VER TAREAS", "EDITAR TAREAS").toTypedArray())

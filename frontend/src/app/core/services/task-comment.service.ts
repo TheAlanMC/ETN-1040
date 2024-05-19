@@ -9,7 +9,7 @@ import {TaskCommentDto} from "../../features/task/models/task-comment.dto";
 @Injectable({
     providedIn: 'root'
 })
-export class TaskService {
+export class TaskCommentService {
     baseUrl: string = `${environment.API_URL}/api/v1/task-comments`;
 
     constructor(private http: HttpClient, private utilService: UtilService) {

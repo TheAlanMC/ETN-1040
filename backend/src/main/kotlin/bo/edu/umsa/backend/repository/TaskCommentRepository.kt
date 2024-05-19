@@ -7,8 +7,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface TaskCommentRepository : JpaRepository<TaskComment, Long> {
 
-    fun findAllByTaskIdAndStatusIsTrueOrderByCommentNumberDesc(taskId: Long): List<TaskComment>
-
     fun findByTaskCommentIdAndStatusIsTrue(taskCommentId: Long): TaskComment?
 
     fun findFirstByTaskIdOrderByCommentNumberDesc(taskId: Long): TaskComment?

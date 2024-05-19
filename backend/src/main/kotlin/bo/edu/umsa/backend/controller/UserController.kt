@@ -29,7 +29,13 @@ class UserController @Autowired constructor(private val userService: UserService
     }
 
     @GetMapping
-    fun getUsers(@RequestParam(defaultValue = "userId") sortBy: String, @RequestParam(defaultValue = "asc") sortType: String, @RequestParam(defaultValue = "0") page: Int, @RequestParam(defaultValue = "10") size: Int, @RequestParam(required = false) keyword: String?): ResponseEntity<ResponseDto<Page<UserDto>>> {
+    fun getUsers(
+        @RequestParam(defaultValue = "userId") sortBy: String,
+        @RequestParam(defaultValue = "asc") sortType: String,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int,
+        @RequestParam(required = false) keyword: String?
+    ): ResponseEntity<ResponseDto<Page<UserDto>>> {
         logger.info("Starting the API call to get the users")
         logger.info("GET /api/v1/users")
         AuthUtil.verifyAuthTokenHasRole("VER USUARIOS")
@@ -60,7 +66,10 @@ class UserController @Autowired constructor(private val userService: UserService
     }
 
     @PutMapping("/{userId}")
-    fun updateUser(@PathVariable userId: Long, @RequestBody profileDto: ProfileDto): ResponseEntity<ResponseDto<Nothing>> {
+    fun updateUser(
+        @PathVariable userId: Long,
+        @RequestBody profileDto: ProfileDto
+    ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the user")
         logger.info("PUT /api/v1/users/{userId}")
         AuthUtil.verifyAuthTokenHasRole("EDITAR USUARIOS")
@@ -105,7 +114,10 @@ class UserController @Autowired constructor(private val userService: UserService
     }
 
     @PutMapping("/{userId}/profile-picture")
-    fun updateProfilePicture(@PathVariable userId: Long, @RequestParam("file") file: MultipartFile): ResponseEntity<ResponseDto<Nothing>> {
+    fun updateProfilePicture(
+        @PathVariable userId: Long,
+        @RequestParam("file") file: MultipartFile
+    ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the profile picture")
         logger.info("PUT /api/v1/users/{userId}/profile-picture")
         AuthUtil.verifyAuthTokenHasRole("EDITAR USUARIOS")
@@ -126,7 +138,10 @@ class UserController @Autowired constructor(private val userService: UserService
     }
 
     @PostMapping("/{userId}/groups")
-    fun addGroupsToUser(@PathVariable userId: Long, @RequestBody groupIds: Map<String, List<Long>>): ResponseEntity<ResponseDto<Nothing>> {
+    fun addGroupsToUser(
+        @PathVariable userId: Long,
+        @RequestBody groupIds: Map<String, List<Long>>
+    ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to add groups to user")
         logger.info("POST /api/v1/users/{userId}/groups")
         AuthUtil.verifyAuthTokenHasRole("GESTIONAR ROLES Y PERMISOS")

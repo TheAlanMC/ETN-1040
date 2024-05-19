@@ -59,7 +59,7 @@
             </ul>
         </p-overlayPanel>
         <div *ngIf="card.taskFiles|| card.taskDeadline" class="flex align-items-center gap-3">
-      <span *ngIf="card.taskFiles" class="text-900 font-semibold"><i
+      <span *ngIf="card.taskFiles.length>0" class="text-900 font-semibold"><i
               class="pi pi-paperclip text-700 mr-2"></i>{{ card.taskFiles.length }}</span>
             <span *ngIf="card.taskDeadline" class="text-900 font-semibold"><i
                     class="pi pi-clock text-700 mr-2"></i> {{ card.taskDeadline | date: 'dd/MM/yyyy, HH:mm' }}</span>

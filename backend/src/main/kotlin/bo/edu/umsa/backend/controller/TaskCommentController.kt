@@ -42,7 +42,10 @@ class TaskCommentController @Autowired constructor(
     }
 
     @PutMapping("/{commentId}")
-    fun updateComment(@PathVariable commentId: Long, @RequestBody newTaskCommentDto: NewTaskCommentDto): ResponseEntity<ResponseDto<Nothing>> {
+    fun updateComment(
+        @PathVariable commentId: Long,
+        @RequestBody newTaskCommentDto: NewTaskCommentDto
+    ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the comment")
         logger.info("PUT /api/v1/task-comments/$commentId")
         AuthUtil.verifyAuthTokenHasRole("VER TAREAS")

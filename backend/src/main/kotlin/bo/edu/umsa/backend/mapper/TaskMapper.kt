@@ -18,8 +18,7 @@ class TaskMapper {
                 taskPriority = task.taskPriority,
                 taskAssignees = task.taskAssignees?.filter { it.status }?.map { UserPartialMapper.entityToDto(it.user!!) } ?: emptyList(),
                 taskFiles = task.taskFiles?.filter { it.status }?.map { FilePartialMapper.entityToDto(it.file!!) } ?: emptyList(),
-                taskComments = task.taskComments?.filter { it.status }?.map { TaskCommentMapper.entityToDto(it) } ?: emptyList(),
-            )
+                taskComments = task.taskComments?.filter { it.status }?.sortedByDescending { it.commentNumber }?.map { TaskCommentMapper.entityToDto(it) } ?: emptyList()            )
         }
     }
 }

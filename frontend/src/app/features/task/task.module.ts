@@ -31,6 +31,10 @@ import {ToastModule} from "primeng/toast";
 import {TabMenuModule} from "primeng/tabmenu";
 import {ViewAssignedTaskComponent} from './components/view-assigned-task/view-assigned-task.component';
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {TabViewModule} from "primeng/tabview";
+import {AvatarModule} from "primeng/avatar";
+import {TieredMenuModule} from "primeng/tieredmenu";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 
 @NgModule({
@@ -72,6 +76,10 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
         ToastModule,
         TabMenuModule,
         ProgressSpinnerModule,
+        TabViewModule,
+        AvatarModule,
+        TieredMenuModule,
+        ConfirmDialogModule,
     ]
 })
 export class TaskModule {

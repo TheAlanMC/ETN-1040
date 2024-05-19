@@ -89,7 +89,10 @@ class TaskCommentService @Autowired constructor(
         logger.info("Task comment files created for comment ${taskCommentEntity.taskCommentId}")
     }
 
-    fun updateComment(commentId: Long, newTaskCommentDto: NewTaskCommentDto) {
+    fun updateComment(
+        commentId: Long,
+        newTaskCommentDto: NewTaskCommentDto
+    ) {
         // Validate the comment is not empty
         if (newTaskCommentDto.comment.isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Comment is blank", "El comentario está en blanco")

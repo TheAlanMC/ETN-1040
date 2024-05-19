@@ -142,7 +142,9 @@ export class NewTaskComponent implements OnInit {
 
     public onUpload(event: any) {
         for (let file of event.files) {
-            this.files.push(file);
+            if (!this.files.some(f => f.name === file.name)) {
+                this.files.push(file);
+            }
         }
     }
 

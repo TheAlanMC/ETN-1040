@@ -15,7 +15,10 @@ import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 
 @Service
-class UserProfileService @Autowired constructor(private val userRepository: UserRepository, private val fileService: FileService) {
+class UserProfileService @Autowired constructor(
+    private val userRepository: UserRepository,
+    private val fileService: FileService
+) {
     companion object {
         private val logger = org.slf4j.LoggerFactory.getLogger(UserProfileService::class.java)
     }

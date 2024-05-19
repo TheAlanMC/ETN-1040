@@ -30,7 +30,7 @@
 <app-edit-task (sidebarVisibleChange)="editSidebarVisible = $event" [sidebarVisible]="editSidebarVisible"
                [taskId]="taskId"></app-edit-task>
 <app-view-task (sidebarVisibleChange)="viewSidebarVisible = $event" [sidebarVisible]="viewSidebarVisible"
-               [taskId]="taskId"></app-view-task>
+               [taskId]="taskId" [isOwner]="isOwner"></app-view-task>
 
 <p-dialog #dd *ngIf="selectedTask" [(visible)]="showTaskDialog" [breakpoints]="{'960px': '75vw', '640px': '90vw'}"
           [closable]="true" [draggable]="false" [modal]="true" [resizable]="false" [style]="{width: '32rem'}">
@@ -99,7 +99,7 @@
                     </ul>
                 </p-overlayPanel>
                 <div *ngIf="selectedTask.taskFiles|| selectedTask.taskDeadline" class="flex align-items-center gap-3">
-          <span *ngIf="selectedTask.taskFiles" class="text-900 font-semibold"><i
+          <span *ngIf="selectedTask.taskFiles.length>0" class="text-900 font-semibold"><i
                   class="pi pi-paperclip text-700 mr-2"></i>{{ selectedTask.taskFiles.length }}</span>
                     <span *ngIf="selectedTask.taskDeadline" class="text-900 font-semibold"><i
                             class="pi pi-clock text-700 mr-2"></i> {{ selectedTask.taskDeadline | date: 'dd/MM/yyyy, HH:mm' }}</span>

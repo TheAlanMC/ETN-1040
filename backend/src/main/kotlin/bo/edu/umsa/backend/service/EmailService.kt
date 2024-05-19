@@ -18,7 +18,11 @@ class EmailService @Autowired constructor(private val javaMailSender: JavaMailSe
     }
 
     @Async
-    fun sendEmail(to: String?, subject: String?, content: String?) {
+    fun sendEmail(
+        to: String?,
+        subject: String?,
+        content: String?
+    ) {
         // Validate parameters before sending the email
         if (to == null || subject == null || content == null) {
             logger.error("Error: Email not sent. Missing parameters")

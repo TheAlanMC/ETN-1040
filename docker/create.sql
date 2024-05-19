@@ -77,7 +77,7 @@ CREATE TABLE h_task (
     task_description varchar(255)  NOT NULL,
     task_deadline timestamp  NOT NULL,
     task_priority int  NOT NULL,
-    task_statu_id int NOT NULL,
+    task_status_id int NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
     tx_user varchar(100)  NOT NULL,

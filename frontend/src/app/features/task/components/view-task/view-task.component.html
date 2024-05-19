@@ -1,6 +1,14 @@
 <p-toast></p-toast>
+
 <p-sidebar #sidebar (onHide)="onClose()" (onShow)="onSidebarShow()" [(visible)]="sidebarVisible" [baseZIndex]="10000"
            [showCloseIcon]="false" position="right" styleClass="w-full md:w-8 lg:w-6 xl:w-5">
+    <p-confirmDialog [style]="{width: '350px'}" acceptButtonStyleClass="p-button-primary" header="Confirmation"
+                     icon="pi pi-exclamation-triangle"
+                     key="confirmDeleteComment"
+                     message="'¿Estás seguro de que deseas eliminar esta comentario? Esta acción no se puede deshacer.'"
+                     rejectButtonStyleClass="p-button-text"
+                     [appendTo]="sidebar"
+                     [baseZIndex]="10000"></p-confirmDialog>
     <ng-template pTemplate="header">
         <div class="flex pl-3 pr-2 surface-border border-bottom-1 justify-content-between align-items-center w-full">
             <span class="block text-900 font-bold text-xl">Ver Tarea</span>
@@ -64,7 +72,9 @@
                 </div>
                 <div *ngIf="task?.taskFiles!.length > 0" class="col-12 field">
                     <div class="border-1 surface-border border-round field">
-                        <span class="font-semibold text-900 block border-bottom-1 surface-border p-3">Archivos Adjuntos</span>
+                        <span class="font-semibold text-900 block border-bottom-1 surface-border p-3">Archivos Adjuntos
+                                                <span  class="text-900 font-semibold"><i class="pi pi-paperclip text-700 mx-2"></i>{{ task!.taskFiles!.length }}</span>
+                        </span>
                         <p-fileUpload #fileUploader [auto]="true"
                                       [customUpload]="true"
                                       [disabled]="true" [multiple]="true" [showCancelButton]="false"
@@ -156,7 +166,16 @@
                         </p-fileUpload>
                     </div>
                 </div>
+                <div class="col-12 field">
+                    <label class="font-semibold text-900" for="status">Cambiar estado de la tarea</label>
+                    <p-dropdown [(ngModel)]="selectedStatus" [appendTo]="sidebar" [filter]="false"
+                                [options]="statusItems"
+                                (onChange)="onStatusChange($event)"
+                                class="flex-1 w-full"
+                                id=status placeholder="Seleccionar prioridad"></p-dropdown>
+                </div>
                 <div class="col-12">
+                    <label class="font-semibold text-900"></label>
                     <div class="flex flex-column sm:flex-row justify-content-between align-items-center gap-3 py-2">
                         <button (click)="onClose()" [disabled]="loading" class="p-button-primary flex-1 p-button-outlined"
                                 icon="pi pi-arrow-left" label="Volver"
@@ -164,7 +183,261 @@
                     </div>
                 </div>
             </div>
-        </div>
+                <p-tabView orientation="left">
+                    <p-tabPanel header="Comentarios" class="line-height-3 m-0">
+                        <div class="flex border-round mb-4 p-0">
+                            <img
+                                    (error)="imgLoaded[userId] = false"
+                                    (load)="imgLoaded[userId] = true"
+                                    [src]="imgLoaded[userId] ? (baseUrl + '/' + userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                                    alt="{{userId}}"
+                                    style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover;">
+                            <div class="card w-full ml-3 p-4">
+                                <div class="flex justify-content-between align-items-center mb-2">
+                                <textarea type="text" pInputTextarea name="comment" style="resize: none" class="w-full" placeholder="Escribe un comentario..." (keydown.enter)="onComment($event)" [formControl]="newCommentControl" (focus)="onCommentFocus()"></textarea>
+                                 </div>
+                                <div class="grid p-fluid formgrid" *ngIf="showNewCommentAttachment">
+                                    <div class="col-12">
+                                        <div class="border-1 surface-border border-round field">
+                                            <p-fileUpload #fileUploader (onSelect)="onUpload($event)" (onUpload)="onUpload($event)"
+                                                          [auto]="true"
+                                                          [customUpload]="true" [multiple]="true" [showCancelButton]="false"
+                                                          [showUploadButton]="false" maxFileSize="10000000"
+                                                          styleClass="border-1 surface-border surface-card border-round">
+                                                <ng-template pTemplate="content">
+                                                    <div (click)="fileUploader.advancedFileInput.nativeElement.click()"
+                                                         class="h-10rem overflow-y-auto border-round"
+                                                         style="cursor: copy">
+                                                        <div *ngIf="!newCommentFiles.length"
+                                                             class="flex flex-column w-full h-full justify-content-center align-items-center">
+                                                            <i class="pi pi-file text-4xl text-primary"></i>
+                                                            <span class="block font-semibold text-900 text-lg mt-3">Arrastre o seleccione archivos</span>
+                                                        </div>
+                                                        <div *ngIf="newCommentFiles.length" class="flex flex-wrap border-round">
+                                                            <div (mouseenter)="onNewFileMouseOver(file)"
+                                                                 (mouseleave)="onNewFileMouseLeave(file)"
+                                                                 *ngFor="let file of newCommentFiles; let i = index;"
+                                                                 class="h-full relative w-10rem h-10rem border-3 border-transparent border-round hover:bg-primary transition-duration-100 cursor-auto"
+                                                                 style="padding: 1px;">
+                                                                <div class="w-full h-full border-round shadow-2 flex align-items-center justify-content-center"
+                                                                     pTooltip="{{file.name}} - {{file.size | fileSize}}"
+                                                                     tooltipPosition="top">
+                                                                    <div
+                                                                            style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                                                        <div
+                                                                                style="height: 80px; width: 100%; display: flex; align-items: center; justify-content: center;">
+                                                                            <ng-container
+                                                                                    *ngIf="file.type.startsWith('image'); else nonImageTemplate">
+                                                                                <img [alt]="file.name" [src]="file.objectURL" class="px-1"
+                                                                                     style="object-fit: cover; width: 100%; height: 70px; border-radius: 5px;">
+                                                                            </ng-container>
+                                                                            <ng-template #nonImageTemplate>
+                        <span style="display: flex;"><svg fill="none" style="display:block" viewBox="0 0 100 117"
+                                                          width="40.32px" xmlns="http://www.w3.org/2000/svg"><path
+                                clip-rule="evenodd" d="
+				M 0 5
+				c 0 0 0 -4 5 -5
+				H 63
+				l 26 28
+				v 82
+				c 0 0 0 4 -5 5
+				h -79
+				c 0 0 -4 0 -5 -5
+				Z" fill="#e5e8eb" fill-rule="evenodd"></path><path clip-rule="evenodd" d="
+				M 63 0
+			 	L 89 28
+			 	H 66
+			 	C 66 28 63 28 63 25
+			 	V 63
+			 	Z" fill="#535c69" fill-rule="evenodd" opacity="0.3"></path><svg height="33" width="65" x="35"
+                                                                                 xmlns="http://www.w3.org/2000/svg"
+                                                                                 y="53"><rect
+                                [attr.fill]="getFileDetails(file.name).color" height="33" rx="2" ry="2" width="100%"
+                                x="0"
+                                y="0"></rect><text [attr.x]="getFileDetails(file.name).x" dominant-baseline="middle"
+                                                   fill="#fff"
+                                                   style="color:#fff; font-family: OpenSans-Semibold, 'Open Sans', Helvetica, Arial, sans-serif; font-weight: 500; font-size: 22px; line-height: 25px;"
+                                                   y="54%">{{ getFileDetails(file.name).extension }}</text></svg></svg></span>
+                                                                            </ng-template>
+                                                                        </div>
+                                                                        <div
+                                                                                style="overflow: hidden; text-overflow: ellipsis; max-width: 100px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; word-wrap: break-word; overflow-wrap: break-word;">
+                                                                            <p style="font-size: 12px;">{{ getTruncatedFileName(file.name) }}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <button #buttonEl (click)="$event.stopPropagation(); removeFile(file)"
+                                                                        [id]="file.name"
+                                                                        class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
+                                                                        icon="pi pi-times" pButton
+                                                                        pRipple
+                                                                        pTooltip="Eliminar archivo"
+                                                                        style="top: 0px; display: none;" tooltipPosition="top"
+                                                                        type="button"></button>
+                                                                <button #buttonOp (click)="$event.stopPropagation(); downloadFile(file)"
+                                                                        [id]="file.name"
+                                                                        class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
+                                                                        icon="pi pi-download" pButton
+                                                                        pRipple
+                                                                        pTooltip="Descargar archivo"
+                                                                        style="top: 0px; right: 0px; display: none;" tooltipPosition="top"
+                                                                        type="button"></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </ng-template>
+                                            </p-fileUpload>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            <div *ngIf="focusedComment" class="flex justify-content-end align-items-end">
+
+                                <button (click)="onFileUpload()" [disabled]="loading" class="p-button-secondary p-button-outlined mr-3" icon="pi pi-paperclip" pButton pRipple></button>
+                                <button (click)="onComment()" [disabled]="loading" class="p-button-primary p-button-outlined mr-3"
+                                        label="Enviar"
+                                        pButton pRipple>
+                                    <span *ngIf="!loading"></span>
+                                    <i *ngIf="loading" class="pi pi-spin pi-spinner mr-2"></i>
+                                    <i *ngIf="!loading" class="pi pi-send mr-2"></i>
+                                </button>
+                                <button (click)="onCommentCancel()" [disabled]="loading" class="p-button-danger p-button-outlined" icon="pi pi-times" label="Cancelar" pButton pRipple></button>
+                            </div>
+                        </div>
+                            </div>
+                        <div *ngFor="let comment of task.taskComments" class="flex border-round mb-4 p-0">
+                            <img
+                                    (error)="imgLoaded[comment.user.userId] = false"
+                                    (load)="imgLoaded[comment.user.userId] = true"
+                                    [src]="imgLoaded[comment.user.userId] ? (baseUrl + '/' + comment.user.userId + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                                    alt="{{comment.user.userId}}"
+                                    style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover;">
+                            <div class="card w-full ml-3 p-4">
+                                    <div class="flex justify-content-between align-items-center mb-2">
+                                        <div>
+                                            <span class="block text-900 font-semibold">{{comment.user.firstName}} {{comment.user.lastName}}</span>
+                                            <span class="block text-700">{{comment.commentDate | date: 'dd/MM/yyyy HH:mm'}}</span>
+                                        </div>
+                                        <div *ngIf="comment.user.userId === userId">
+                                        <button (click)="onButtonClick(comment.taskCommentId); menu.toggle($event)" class="p-button-rounded p-button-text p-button-secondary p-trigger"
+                                                icon="pi pi-ellipsis-v" pButton
+                                                pRipple
+                                                type="button"></button>
+                                        <p-tieredMenu #menu [model]="menuItems" [popup]="true" appendTo="body"></p-tieredMenu>
+                                        </div>
+                                    </div>
+                                    <span class="block text-900" style="word-break: break-all;">{{comment.comment}}</span>
+                                    <div class="grid p-fluid formgrid" *ngIf="comment.taskCommentFiles.length > 0">
+                                        <div class="col-12">
+                                            <p-fileUpload #fileUploader [auto]="true"
+                                                              [customUpload]="true"
+                                                              [disabled]="true" [multiple]="true" [showCancelButton]="false"
+                                                              [showUploadButton]="false" maxFileSize="10000000"
+                                                              styleClass="border-1 surface-border surface-card border-round">
+                                                    <ng-template pTemplate="content">
+                                                        <div (click)="fileUploader.advancedFileInput.nativeElement.click()"
+                                                             class="h-10rem overflow-y-auto border-round"
+                                                        >
+                                                            <div *ngIf="!comment.taskCommentFiles.length"
+                                                                 class="flex flex-column w-full h-full justify-content-center align-items-center">
+                                                                <i class="pi pi-file-excel text-900 text-4xl"></i>
+                                                                <span class="block font-semibold text-900 text-lg mt-3">No hay archivos adjuntos</span>
+                                                            </div>
+                                                            <div *ngIf="comment.taskCommentFiles.length" class="flex flex-wrap border-round">
+                                                                <div (mouseenter)="onFileMouseOver(file)"
+                                                                     (mouseleave)="onFileMouseLeave(file)"
+                                                                     *ngFor="let file of comment.taskCommentFiles; let i = index;"
+                                                                     class="h-full relative w-10rem h-10rem border-3 border-transparent border-round hover:bg-primary transition-duration-100 cursor-auto"
+                                                                     style="padding: 1px;">
+                                                                    <div class="w-full h-full border-round shadow-2 flex align-items-center justify-content-center"
+                                                                         pTooltip="{{file.filename}} - {{file.fileSize | fileSize}}"
+                                                                         tooltipPosition="top">
+                                                                        <div
+                                                                                style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                                                            <div
+                                                                                    style="height: 80px; width: 100%; display: flex; align-items: center; justify-content: center;">
+                                                                                <ng-container
+                                                                                        *ngIf="file.contentType.startsWith('image'); else nonImageTemplate">
+                                                                                    <img
+                                                                                            (error)="imgLoaded[file.fileId] = false"
+                                                                                            (load)="imgLoaded[file.fileId] = true"
+                                                                                            [alt]="file.fileId"
+                                                                                            [src]="imgLoaded[file.fileId] ? (filesBaselUrl + '/' + file.fileId + '/thumbnail') : 'assets/layout/images/placeholder.png'"
+                                                                                            class="px-1"
+                                                                                            style="object-fit: cover; width: 100%; height: 70px; border-radius: 5px;">
+
+                                                                                </ng-container>
+                                                                                <ng-template #nonImageTemplate>
+                        <span style="display: flex;"><svg fill="none" style="display:block" viewBox="0 0 100 117"
+                                                          width="40.32px" xmlns="http://www.w3.org/2000/svg"><path
+                                clip-rule="evenodd" d="
+				M 0 5
+				c 0 0 0 -4 5 -5
+				H 63
+				l 26 28
+				v 82
+				c 0 0 0 4 -5 5
+				h -79
+				c 0 0 -4 0 -5 -5
+				Z" fill="#e5e8eb" fill-rule="evenodd"></path><path clip-rule="evenodd" d="
+				M 63 0
+			 	L 89 28
+			 	H 66
+			 	C 66 28 63 28 63 25
+			 	V 63
+			 	Z" fill="#535c69" fill-rule="evenodd" opacity="0.3"></path><svg height="33" width="65" x="35"
+                                                                                 xmlns="http://www.w3.org/2000/svg"
+                                                                                 y="53"><rect
+                                [attr.fill]="getFileDetails(file.filename).color" height="33" rx="2" ry="2" width="100%"
+                                x="0"
+                                y="0"></rect><text [attr.x]="getFileDetails(file.filename).x" dominant-baseline="middle"
+                                                   fill="#fff"
+                                                   style="color:#fff; font-family: OpenSans-Semibold, 'Open Sans', Helvetica, Arial, sans-serif; font-weight: 500; font-size: 22px; line-height: 25px;"
+                                                   y="54%">{{ getFileDetails(file.filename).extension }}</text></svg></svg></span>
+                                                                                </ng-template>
+                                                                            </div>
+                                                                            <div
+                                                                                    style="overflow: hidden; text-overflow: ellipsis; max-width: 100px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; word-wrap: break-word; overflow-wrap: break-word;">
+                                                                                <p style="font-size: 12px;">{{ getTruncatedFileName(file.filename) }}</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <button #buttonOp (click)="$event.stopPropagation(); downloadFile(file)"
+                                                                            [id]="file.fileId"
+                                                                            [style.display]="defaultDisplay"
+                                                                            class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
+                                                                            icon="pi pi-download"
+                                                                            pButton
+                                                                            pRipple
+                                                                            pTooltip="Descargar archivo" style="top: -1px; right: -1px;"
+                                                                            tooltipPosition="top"
+                                                                            type="button"></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </ng-template>
+                                                </p-fileUpload>
+                                            <div style="text-align: right;" class="mx-3">
+                                            <span  class="text-900 font-semibold"><i class="pi pi-paperclip text-700 mx-2"></i>{{ comment.taskCommentFiles.length }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+                        </div>
+
+
+                    </p-tabPanel>
+                    <p-tabPanel header="Historial" class="line-height-3 m-0" *ngIf="isOwner">
+                        Aquí Vendrá el Historial de Cambios
+                    </p-tabPanel>
+                </p-tabView>
+            </div>
+
         <div *ngIf="!task">
             <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
                 <p-progressSpinner ariaLabel="Cargando..."></p-progressSpinner>

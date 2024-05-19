@@ -132,7 +132,9 @@ export class ProjectTaskDeadlineComponent implements OnInit {
                         if (list.listId === '1') {
                             return task.taskDeadline && new Date(task.taskDeadline) < new Date();
                         } else if (list.listId === '2') {
-                            return task.taskDeadline && new Date(task.taskDeadline).toDateString() === new Date().toDateString();
+                            let start = new Date();
+                            let end = new Date(new Date().setHours(23, 59, 59, 999));
+                            return task.taskDeadline && new Date(task.taskDeadline) > new Date(start) && new Date(task.taskDeadline) < new Date(end);
                         } else if (list.listId === '3') {
                             let start = new Date(new Date().setDate(new Date().getDate() + 1));
                             start.setHours(0, 0, 0, 0);
