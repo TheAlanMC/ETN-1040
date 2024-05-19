@@ -17,10 +17,7 @@ import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
     selector: 'app-project-task-deadline-list',
     templateUrl: './project-task-deadline-list.component.html',
     styleUrl: './project-task-deadline-list.component.scss',
-    providers: [
-        MessageService,
-        ConfirmationService
-    ]
+    providers: [MessageService, ConfirmationService],
 })
 export class ProjectTaskDeadlineListComponent implements OnInit {
 
@@ -48,7 +45,15 @@ export class ProjectTaskDeadlineListComponent implements OnInit {
     isModerator: boolean = false;
     projectId: number = 0;
 
-    constructor(public parent: ProjectTaskDeadlineComponent, private utilService: UtilService, private router: Router, private taskService: TaskService, private messageService: MessageService, private confirmationService: ConfirmationService, private sharedService: SharedService) {
+    constructor(
+        public parent: ProjectTaskDeadlineComponent,
+        private utilService: UtilService,
+        private router: Router,
+        private taskService: TaskService,
+        private messageService: MessageService,
+        private confirmationService: ConfirmationService,
+        private sharedService: SharedService
+    ) {
         this.isMobileDevice = this.utilService.checkIfMobile();
     }
 
@@ -65,7 +70,10 @@ export class ProjectTaskDeadlineListComponent implements OnInit {
         this.projectId = this.sharedService.getData('projectId')
     }
 
-    public onCardClick(event: Event, card: TaskDto) {
+    public onCardClick(
+        event: Event,
+        card: TaskDto
+    ) {
         const eventTarget = event.target as HTMLElement;
         if (!(eventTarget.classList.contains('p-button-icon') || eventTarget.classList.contains('p-trigger') || eventTarget.classList.contains('p-avatar-text') || eventTarget.classList.contains('ng-star-inserted'))) {
             if (this.taskList.listId) {
@@ -77,21 +85,37 @@ export class ProjectTaskDeadlineListComponent implements OnInit {
     public dropCard(event: CdkDragDrop<TaskDto[]>): void {
         const itemBeingMoved = event.previousContainer.data[event.previousIndex];
         if (event.previousContainer === event.container) {
-            moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+            moveItemInArray(event.container.data,
+                event.previousIndex,
+                event.currentIndex);
         } else {
-            transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
-            this.updateTaskDeadline(itemBeingMoved, event.container.id);
+            transferArrayItem(event.previousContainer.data,
+                event.container.data,
+                event.previousIndex,
+                event.currentIndex);
+            this.updateTaskDeadline(itemBeingMoved,
+                event.container.id);
         }
         // Sort the tasks in the source list
-        event.previousContainer.data.sort((a, b) => new Date(a.taskDeadline).getTime() - new Date(b.taskDeadline).getTime());
+        event.previousContainer.data.sort((
+            a,
+            b
+        ) => new Date(a.taskDeadline).getTime() - new Date(b.taskDeadline).getTime());
 
         // If the item was moved to a different list, sort the tasks in the destination list
         if (event.previousContainer !== event.container) {
-            event.container.data.sort((a, b) => new Date(a.taskDeadline).getTime() - new Date(b.taskDeadline).getTime());
+            event.container.data.sort((
+                a,
+                b
+            ) => new Date(a.taskDeadline).getTime() - new Date(b.taskDeadline).getTime());
         }
     }
 
-    public updateTaskDeadline(task: TaskDto, listId: string, refresh: boolean = false) {
+    public updateTaskDeadline(
+        task: TaskDto,
+        listId: string,
+        refresh: boolean = false
+    ) {
         // Determine the new deadline based on the listId, if 2 set to today, if 3 set to tomorrow, if 4 set to next week, if 5 set two weeks from now
         let newTaskDeadline = new Date();
         switch (listId) {
@@ -112,23 +136,32 @@ export class ProjectTaskDeadlineListComponent implements OnInit {
                 newTaskDeadline.setDate(newTaskDeadline.getDate() + 14);
                 break;
         }
-        newTaskDeadline.setHours(20, 0, 0, 0);
+        newTaskDeadline.setHours(20,
+            0,
+            0,
+            0);
         const taskAssigneeIds = task.taskAssignees.map(assignee => assignee.userId);
         const taskFileIds = task.taskFiles.map(file => file.fileId);
-        this.taskService.updateTask(task.taskId, task.taskName, task.taskDescription, newTaskDeadline.toISOString(), task.taskPriority, taskAssigneeIds, taskFileIds).subscribe({
+        this.taskService.updateTask(task.taskId,
+            task.taskName,
+            task.taskDescription,
+            newTaskDeadline.toISOString(),
+            task.taskPriority,
+            taskAssigneeIds,
+            taskFileIds).subscribe({
             next: (data: ResponseDto<null>) => {
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Fecha límite de la tarea actualizada con éxito'
                 });
                 if (refresh) {
                     setTimeout(() => {
-                        this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
-                            this.router.navigate([
-                                '/projects/view/' + this.projectId + '/task-deadline',
-                                {dummy: Date.now()}
-                            ]).then(r => console.log('Task deadline updated successfully'));
-                        });
-                    }, 500);
+                            this.router.navigateByUrl('/',
+                                {skipLocationChange: true}).then(() => {
+                                this.router.navigate(['/projects/view/' + this.projectId + '/task-deadline',
+                                    {dummy: Date.now()}]).then(r => console.log('Task deadline updated successfully'));
+                            });
+                        },
+                        500);
                 } else {
                     this.taskList.tasks.find(t => t.taskId === task.taskId)!.taskDeadline = newTaskDeadline;
                 }
@@ -152,11 +185,14 @@ export class ProjectTaskDeadlineListComponent implements OnInit {
     }
 
     public onMoveCard(event: any) {
-        this.updateTaskDeadline(event.card, event.listId, true);
+        this.updateTaskDeadline(event.card,
+            event.listId,
+            true);
     }
 
     public onDeleteCard(event: any) {
-        this.onDeleteTask(event.taskId, true);
+        this.onDeleteTask(event.taskId,
+            true);
     }
 
     public onEditCard(event: any) {
@@ -167,7 +203,10 @@ export class ProjectTaskDeadlineListComponent implements OnInit {
         this.viewCard.emit(event);
     }
 
-    public onDeleteTask(taskId: number, refresh: boolean = false) {
+    public onDeleteTask(
+        taskId: number,
+        refresh: boolean = false
+    ) {
         this.confirmationService.confirm({
             key: 'confirmDeleteTask',
             message: '¿Estás seguro de que deseas eliminar esta tarea? Esta acción no se puede deshacer.',
@@ -176,12 +215,16 @@ export class ProjectTaskDeadlineListComponent implements OnInit {
             acceptLabel: 'Sí',
             rejectLabel: 'No',
             accept: () => {
-                this.deleteTask(taskId, refresh);
+                this.deleteTask(taskId,
+                    refresh);
             },
         });
     }
 
-    public deleteTask(taskId: number, refresh: boolean = false) {
+    public deleteTask(
+        taskId: number,
+        refresh: boolean = false
+    ) {
         this.taskService.deleteTask(taskId).subscribe({
             next: (data) => {
                 this.messageService.add({
@@ -190,13 +233,13 @@ export class ProjectTaskDeadlineListComponent implements OnInit {
                 if (refresh) {
                     // Wait 500ms before refreshing the page
                     setTimeout(() => {
-                        this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
-                            this.router.navigate([
-                                '/projects/view/' + this.projectId + '/task-deadline',
-                                {dummy: Date.now()}
-                            ]).then(r => console.log('Task deleted successfully'));
-                        });
-                    }, 500);
+                            this.router.navigateByUrl('/',
+                                {skipLocationChange: true}).then(() => {
+                                this.router.navigate(['/projects/view/' + this.projectId + '/task-deadline',
+                                    {dummy: Date.now()}]).then(r => console.log('Task deleted successfully'));
+                            });
+                        },
+                        500);
                 } else {
                     this.taskList.tasks = this.taskList.tasks.filter(task => task.taskId !== taskId);
                 }

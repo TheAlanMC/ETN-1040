@@ -201,8 +201,12 @@ export class HomePageComponent implements OnInit {
         this.barData = newBarData;
     }
 
-    onGlobalFilter(table: Table, event: Event) {
-        table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+    onGlobalFilter(
+        table: Table,
+        event: Event
+    ) {
+        table.filterGlobal((event.target as HTMLInputElement).value,
+            'contains');
     }
 
 }

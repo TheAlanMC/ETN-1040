@@ -10,7 +10,10 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ProjectRepository : JpaRepository<Project, Long> {
 
-    fun findAll(specification: Specification<Project>, pageable: Pageable): Page<Project>
+    fun findAll(
+        specification: Specification<Project>,
+        pageable: Pageable
+    ): Page<Project>
 
     fun findByProjectIdAndStatusIsTrue(projectId: Long): Project?
 

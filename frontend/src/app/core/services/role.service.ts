@@ -12,12 +12,16 @@ import {UtilService} from "./util.service";
 export class RoleService {
     baseUrl: string = `${environment.API_URL}/api/v1/roles`;
 
-    constructor(private http: HttpClient, private utilService: UtilService) {
+    constructor(
+        private http: HttpClient,
+        private utilService: UtilService
+    ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
     getRoles(): Observable<ResponseDto<RoleDto[]>> {
-        return this.http.get<ResponseDto<RoleDto[]>>(this.baseUrl, this.utilService.getHttpOptions());
+        return this.http.get<ResponseDto<RoleDto[]>>(this.baseUrl,
+            this.utilService.getHttpOptions());
     }
 }
 

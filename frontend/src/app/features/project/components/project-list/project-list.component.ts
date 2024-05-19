@@ -11,10 +11,13 @@ import {PageDto} from "../../../../core/models/page.dto";
 import {ProjectService} from '../../../../core/services/project.service';
 
 @Component({
-    selector: 'app-project-list', templateUrl: './project-list.component.html', styleUrl: './project-list.component.scss', providers: [
+    selector: 'app-project-list',
+    templateUrl: './project-list.component.html',
+    styleUrl: './project-list.component.scss',
+    providers: [
         ConfirmationService,
         MessageService
-    ]
+    ],
 })
 export class ProjectListComponent implements OnInit {
 
@@ -37,7 +40,13 @@ export class ProjectListComponent implements OnInit {
 
     imgLoaded: { [key: string]: boolean } = {};
 
-    constructor(private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private utilService: UtilService, private projectService: ProjectService) {
+    constructor(
+        private router: Router,
+        private confirmationService: ConfirmationService,
+        private messageService: MessageService,
+        private utilService: UtilService,
+        private projectService: ProjectService
+    ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage
         const token = localStorage.getItem('token');
@@ -84,7 +93,10 @@ export class ProjectListComponent implements OnInit {
 
     public getData() {
         this.isLoading = true;
-        this.projectService.getProjects(this.sortBy, this.sortType, this.page, this.size).subscribe({
+        this.projectService.getProjects(this.sortBy,
+            this.sortType,
+            this.page,
+            this.size).subscribe({
             next: (data: ResponseDto<PageDto<ProjectDto>>) => {
                 this.projects = data.data!.content;
                 this.totalElements = data.data!.page.totalElements;

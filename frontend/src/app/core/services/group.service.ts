@@ -14,36 +14,58 @@ import {UtilService} from "./util.service";
 export class GroupService {
     baseUrl: string = `${environment.API_URL}/api/v1/groups`;
 
-    constructor(private http: HttpClient, private utilService: UtilService) {
+    constructor(
+        private http: HttpClient,
+        private utilService: UtilService
+    ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
     getGroups(): Observable<ResponseDto<GroupDto[]>> {
-        return this.http.get<ResponseDto<GroupDto[]>>(this.baseUrl, this.utilService.getHttpOptions());
+        return this.http.get<ResponseDto<GroupDto[]>>(this.baseUrl,
+            this.utilService.getHttpOptions());
     }
 
-    createGroup(groupName: string, groupDescription: string): Observable<ResponseDto<Nullable>> {
-        return this.http.post<ResponseDto<Nullable>>(this.baseUrl, {
-            groupName, groupDescription
-        }, this.utilService.getHttpOptions());
+    createGroup(
+        groupName: string,
+        groupDescription: string
+    ): Observable<ResponseDto<Nullable>> {
+        return this.http.post<ResponseDto<Nullable>>(this.baseUrl,
+            {
+                groupName, groupDescription
+            },
+            this.utilService.getHttpOptions());
     }
 
-    updateGroup(groupId: number, groupName: string, groupDescription: string): Observable<ResponseDto<Nullable>> {
-        return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/${groupId}`, {
-            groupName, groupDescription
-        }, this.utilService.getHttpOptions());
+    updateGroup(
+        groupId: number,
+        groupName: string,
+        groupDescription: string
+    ): Observable<ResponseDto<Nullable>> {
+        return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/${groupId}`,
+            {
+                groupName, groupDescription
+            },
+            this.utilService.getHttpOptions());
     }
 
     deleteGroup(groupId: number): Observable<ResponseDto<Nullable>> {
-        return this.http.delete<ResponseDto<Nullable>>(`${this.baseUrl}/${groupId}`, this.utilService.getHttpOptions());
+        return this.http.delete<ResponseDto<Nullable>>(`${this.baseUrl}/${groupId}`,
+            this.utilService.getHttpOptions());
     }
 
     getGroupRoles(groupId: number): Observable<ResponseDto<RoleDto[]>> {
-        return this.http.get<ResponseDto<RoleDto[]>>(`${this.baseUrl}/${groupId}/roles`, this.utilService.getHttpOptions());
+        return this.http.get<ResponseDto<RoleDto[]>>(`${this.baseUrl}/${groupId}/roles`,
+            this.utilService.getHttpOptions());
     }
 
-    addRolesToGroup(groupId: number, roleIds: number[]): Observable<ResponseDto<Nullable>> {
-        return this.http.post<ResponseDto<Nullable>>(`${this.baseUrl}/${groupId}/roles`, {roleIds}, this.utilService.getHttpOptions());
+    addRolesToGroup(
+        groupId: number,
+        roleIds: number[]
+    ): Observable<ResponseDto<Nullable>> {
+        return this.http.post<ResponseDto<Nullable>>(`${this.baseUrl}/${groupId}/roles`,
+            {roleIds},
+            this.utilService.getHttpOptions());
     }
 }
 

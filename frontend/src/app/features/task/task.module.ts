@@ -35,6 +35,10 @@ import {TabViewModule} from "primeng/tabview";
 import {AvatarModule} from "primeng/avatar";
 import {TieredMenuModule} from "primeng/tieredmenu";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {AvatarGroupModule} from "primeng/avatargroup";
+import {TableModule} from "primeng/table";
+import {TagModule} from "primeng/tag";
+import {CdkDrag, CdkDragHandle, CdkDropList} from "@angular/cdk/drag-drop";
 
 
 @NgModule({
@@ -80,6 +84,12 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
         AvatarModule,
         TieredMenuModule,
         ConfirmDialogModule,
+        AvatarGroupModule,
+        TableModule,
+        TagModule,
+        CdkDrag,
+        CdkDragHandle,
+        CdkDropList,
     ]
 })
 export class TaskModule {

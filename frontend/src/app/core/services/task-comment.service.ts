@@ -12,27 +12,44 @@ import {TaskCommentDto} from "../../features/task/models/task-comment.dto";
 export class TaskCommentService {
     baseUrl: string = `${environment.API_URL}/api/v1/task-comments`;
 
-    constructor(private http: HttpClient, private utilService: UtilService) {
+    constructor(
+        private http: HttpClient,
+        private utilService: UtilService
+    ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
     public getTaskComments(taskId: number): Observable<ResponseDto<TaskCommentDto[]>> {
-        return this.http.get<ResponseDto<TaskCommentDto[]>>(`${this.baseUrl}/${taskId}`, this.utilService.getHttpOptions());
+        return this.http.get<ResponseDto<TaskCommentDto[]>>(`${this.baseUrl}/${taskId}`,
+            this.utilService.getHttpOptions());
     }
 
-    public createTaskComment(taskId: number, comment: string, taskCommentFileIds: number[]): Observable<ResponseDto<null>> {
-        return this.http.post<ResponseDto<null>>(this.baseUrl, {
-            taskId, comment, taskCommentFileIds
-        }, this.utilService.getHttpOptions());
+    public createTaskComment(
+        taskId: number,
+        comment: string,
+        taskCommentFileIds: number[]
+    ): Observable<ResponseDto<null>> {
+        return this.http.post<ResponseDto<null>>(this.baseUrl,
+            {
+                taskId, comment, taskCommentFileIds
+            },
+            this.utilService.getHttpOptions());
     }
 
-    public updateTaskComment(taskCommentId: number, comment: string, taskCommentFileIds: number[]): Observable<ResponseDto<null>> {
-        return this.http.put<ResponseDto<null>>(`${this.baseUrl}/${taskCommentId}`, {
-            comment, taskCommentFileIds
-        }, this.utilService.getHttpOptions());
+    public updateTaskComment(
+        taskCommentId: number,
+        comment: string,
+        taskCommentFileIds: number[]
+    ): Observable<ResponseDto<null>> {
+        return this.http.put<ResponseDto<null>>(`${this.baseUrl}/${taskCommentId}`,
+            {
+                comment, taskCommentFileIds
+            },
+            this.utilService.getHttpOptions());
     }
 
     public deleteTaskComment(taskCommentId: number): Observable<ResponseDto<null>> {
-        return this.http.delete<ResponseDto<null>>(`${this.baseUrl}/${taskCommentId}`, this.utilService.getHttpOptions());
+        return this.http.delete<ResponseDto<null>>(`${this.baseUrl}/${taskCommentId}`,
+            this.utilService.getHttpOptions());
     }
 }

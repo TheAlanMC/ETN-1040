@@ -12,7 +12,10 @@ import org.springframework.stereotype.Repository
 interface TaskRepository : PagingAndSortingRepository<Task, Long>,
     JpaRepository<Task, Long> {
 
-    fun findAll(specification: Specification<Task>, pageable: Pageable): Page<Task>
+    fun findAll(
+        specification: Specification<Task>,
+        pageable: Pageable
+    ): Page<Task>
 
     fun findByTaskIdAndStatusIsTrue(taskId: Long): Task?
 

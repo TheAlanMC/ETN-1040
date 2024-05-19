@@ -13,7 +13,7 @@
     <ng-template pTemplate="content">
         <div class="grid p-fluid formgrid px-3">
             <div *ngIf="showProjectDropdown" class="col-12 field">
-                <label class="font-semibold text-900" for="project"> Proyecto</label>
+                <label class="font-semibold text-900" for="project"> Proyecto <span style="color: red;">*</span></label>
                 <p-dropdown (onChange)="onProjectChange($event)" [(ngModel)]="selectedProject" [appendTo]="sidebar"
                             [filter]="false"
                             [options]="projectItems"

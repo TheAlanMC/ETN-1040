@@ -30,8 +30,7 @@ class CorsConfig {
             "Access-Control-Request-Method",
             "Access-Control-Request-Headers",
         )
-        corsConfiguration.exposedHeaders =
-            listOf("Origin", "Content-Type", "Accept", "Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials", "content-disposition")
+        corsConfiguration.exposedHeaders = listOf("Origin", "Content-Type", "Accept", "Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials", "content-disposition")
         corsConfiguration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE")
         val urlBasedCorsConfigurationSource = UrlBasedCorsConfigurationSource()
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration)

@@ -9,7 +9,10 @@ import {GroupService} from "../../../../core/services/group.service";
 import {Location} from "@angular/common";
 
 @Component({
-    selector: 'app-edit-user', templateUrl: './edit-user.component.html', styleUrl: './edit-user.component.scss', providers: [MessageService]
+    selector: 'app-edit-user',
+    templateUrl: './edit-user.component.html',
+    styleUrl: './edit-user.component.scss',
+    providers: [MessageService],
 })
 export class EditUserComponent implements OnInit {
 
@@ -23,8 +26,10 @@ export class EditUserComponent implements OnInit {
 
     email = '';
 
-    firstNameControl = new FormControl('', [Validators.required]);
-    lastNameControl = new FormControl('', [Validators.required]);
+    firstNameControl = new FormControl('',
+        [Validators.required]);
+    lastNameControl = new FormControl('',
+        [Validators.required]);
     phoneControl = new FormControl('');
     descriptionControl = new FormControl('');
 
@@ -34,7 +39,14 @@ export class EditUserComponent implements OnInit {
 
     @ViewChild('fileUpload') fileUpload!: FileUpload;
 
-    constructor(private activatedRoute: ActivatedRoute, private userService: UserService, private groupService: GroupService, private router: Router, private messageService: MessageService, private location: Location) {
+    constructor(
+        private activatedRoute: ActivatedRoute,
+        private userService: UserService,
+        private groupService: GroupService,
+        private router: Router,
+        private messageService: MessageService,
+        private location: Location
+    ) {
     }
 
     ngOnInit() {
@@ -84,15 +96,20 @@ export class EditUserComponent implements OnInit {
 
     public onSave() {
         this.onUpload();
-        this.userService.updateUser(this.userId, this.firstNameControl.value!, this.lastNameControl.value!, this.phoneControl.value!, this.descriptionControl.value!).subscribe({
+        this.userService.updateUser(this.userId,
+            this.firstNameControl.value!,
+            this.lastNameControl.value!,
+            this.phoneControl.value!,
+            this.descriptionControl.value!).subscribe({
             next: (data) => {
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Usuario actualizado'});
                 setTimeout(() => {
-                    this.router.navigate(['/users']).then(r => {
-                        console.log('Redirect to users page');
-                        window.location.reload();
-                    });
-                }, 500);
+                        this.router.navigate(['/users']).then(r => {
+                            console.log('Redirect to users page');
+                            window.location.reload();
+                        });
+                    },
+                    500);
             }, error: (error) => {
                 console.log(error);
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
@@ -102,7 +119,8 @@ export class EditUserComponent implements OnInit {
 
     public onUpload() {
         if (this.changeProfilePicture) {
-            this.userService.uploadUserProfilePicture(this.userId, this.fileUpload.files[0]).subscribe({
+            this.userService.uploadUserProfilePicture(this.userId,
+                this.fileUpload.files[0]).subscribe({
                 next: (data) => {
                     this.backupProfilePictureUrl = this.profilePictureUrl;
                     this.onCancelSelect();

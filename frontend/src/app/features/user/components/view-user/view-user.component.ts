@@ -15,7 +15,11 @@ export class ViewUserComponent implements OnInit {
 
     user: UserDto | null = null;
 
-    constructor(private activatedRoute: ActivatedRoute, private userService: UserService, private location: Location) {
+    constructor(
+        private activatedRoute: ActivatedRoute,
+        private userService: UserService,
+        private location: Location
+    ) {
     }
 
     ngOnInit() {

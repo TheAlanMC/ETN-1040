@@ -24,7 +24,10 @@
                    placeholder="Seleccionar Estado">
     </p-multiSelect>
 </div>
-<full-calendar [options]="calendarOptions"></full-calendar>
+
+<full-calendar #calendar [options]="calendarOptions">
+</full-calendar>
+
 <app-new-task (sidebarVisibleChange)="createSidebarVisible = $event" [projectId]="projectId"
               [sidebarVisible]="createSidebarVisible"></app-new-task>
 <app-edit-task (sidebarVisibleChange)="editSidebarVisible = $event" [sidebarVisible]="editSidebarVisible"

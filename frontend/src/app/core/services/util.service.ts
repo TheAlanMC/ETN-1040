@@ -16,7 +16,8 @@ export class UtilService {
     }
 
     public getApiUrl(url: string): string {
-        return (this.checkIfMobile()) ? url.replace('/backend', ':8080') : url;
+        return (this.checkIfMobile()) ? url.replace('/backend',
+            ':8080') : url;
     }
 
     public getHttpOptions(responseType: 'json' | 'blob' = 'json'): Object {

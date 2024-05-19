@@ -13,33 +13,52 @@ import {UtilService} from "./util.service";
 export class AuthService {
     baseUrl: string = `${environment.API_URL}/api/v1/auth`;
 
-    constructor(private http: HttpClient, private utilService: UtilService) {
+    constructor(
+        private http: HttpClient,
+        private utilService: UtilService
+    ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
-    public login(email: string, password: string): Observable<ResponseDto<AuthDto>> {
-        return this.http.post<ResponseDto<AuthDto>>(`${this.baseUrl}/login`, {email, password});
+    public login(
+        email: string,
+        password: string
+    ): Observable<ResponseDto<AuthDto>> {
+        return this.http.post<ResponseDto<AuthDto>>(`${this.baseUrl}/login`,
+            {email, password});
     }
 
     public refreshToken(refreshToken: string): Observable<ResponseDto<AuthDto>> {
-        return this.http.post<ResponseDto<AuthDto>>(`${this.baseUrl}/refresh-token`, {refreshToken});
+        return this.http.post<ResponseDto<AuthDto>>(`${this.baseUrl}/refresh-token`,
+            {refreshToken});
     }
 
     public forgotPassword(email: string): Observable<ResponseDto<Nullable>> {
-        return this.http.post<ResponseDto<any>>(`${this.baseUrl}/forgot-password`, {email});
+        return this.http.post<ResponseDto<any>>(`${this.baseUrl}/forgot-password`,
+            {email});
     }
 
-    public verification(email: string, code: string): Observable<ResponseDto<Nullable>> {
-        return this.http.post<ResponseDto<any>>(`${this.baseUrl}/verification`, {email, code});
+    public verification(
+        email: string,
+        code: string
+    ): Observable<ResponseDto<Nullable>> {
+        return this.http.post<ResponseDto<any>>(`${this.baseUrl}/verification`,
+            {email, code});
     }
 
-    public resetPassword(email: string, code: string, password: string, confirmPassword: string): Observable<ResponseDto<Nullable>> {
-        return this.http.post<ResponseDto<any>>(`${this.baseUrl}/reset-password`, {
-            email,
-            code,
-            password,
-            confirmPassword
-        });
+    public resetPassword(
+        email: string,
+        code: string,
+        password: string,
+        confirmPassword: string
+    ): Observable<ResponseDto<Nullable>> {
+        return this.http.post<ResponseDto<any>>(`${this.baseUrl}/reset-password`,
+            {
+                email,
+                code,
+                password,
+                confirmPassword
+            });
     }
 
 

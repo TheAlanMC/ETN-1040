@@ -195,7 +195,8 @@
                                 style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover;">
                         <div class="card w-full ml-3 p-4">
                             <div class="flex justify-content-between align-items-center mb-2">
-                                <textarea (focus)="onCommentFocus()" (keydown.enter)="onComment($event)" [formControl]="newCommentControl" class="w-full" name="comment"
+                                <textarea (focus)="onCommentFocus()" (keydown.enter)="onComment($event)" [formControl]="newCommentControl"
+                                          class="w-full" name="comment"
                                           pInputTextarea placeholder="Escribe un comentario..." style="resize: none"
                                           type="text"></textarea>
                             </div>
@@ -438,7 +439,8 @@
                                 <span class="block text-700">{{ comment.commentDate | date: 'dd/MM/yyyy HH:mm' }}</span>
                             </div>
                             <div class="flex justify-content-between align-items-center mb-2">
-                                <textarea (keydown.enter)="onEditComment($event)" [formControl]="editCommentControl" class="w-full" name="comment" pInputTextarea
+                                <textarea (keydown.enter)="onEditComment($event)" [formControl]="editCommentControl" class="w-full" name="comment"
+                                          pInputTextarea
                                           placeholder="Escribe un comentario..." style="resize: none"
                                           type="text"></textarea>
                             </div>

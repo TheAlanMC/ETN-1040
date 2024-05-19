@@ -10,7 +10,10 @@ const routes: Routes = [
         path: '', children: [
             {path: '', component: HomePageComponent, canActivate: [AuthGuard]},
             {
-                path: 'dashboard', component: DashboardComponent, canActivate: [RoleGuard], data: {roles: ['VER DASHBOARD'], breadcrumb: 'Dashboard'}
+                path: 'dashboard',
+                component: DashboardComponent,
+                canActivate: [RoleGuard],
+                data: {roles: ['VER DASHBOARD'], breadcrumb: 'Dashboard'}
             }
         ]
     }

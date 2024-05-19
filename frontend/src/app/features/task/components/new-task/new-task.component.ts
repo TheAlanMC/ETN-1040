@@ -11,7 +11,10 @@ import {FileDto} from "../../../../core/models/file.dto";
 import {Router} from "@angular/router";
 
 @Component({
-    selector: 'app-new-task', templateUrl: './new-task.component.html', styleUrl: './new-task.component.scss', providers: [MessageService]
+    selector: 'app-new-task',
+    templateUrl: './new-task.component.html',
+    styleUrl: './new-task.component.scss',
+    providers: [MessageService],
 })
 export class NewTaskComponent implements OnInit {
 
@@ -23,9 +26,11 @@ export class NewTaskComponent implements OnInit {
     @ViewChildren('buttonOp') buttonOp!: QueryList<ElementRef>;
 
 
-    taskNameControl = new FormControl('', [Validators.required]);
+    taskNameControl = new FormControl('',
+        [Validators.required]);
     taskDescriptionControl = new FormControl('');
-    taskDeadlineControl = new FormControl('', [Validators.required]);
+    taskDeadlineControl = new FormControl('',
+        [Validators.required]);
     selectedPriority: any = {value: ''};
 
     priorityItems: SelectItem[] = [];
@@ -55,7 +60,14 @@ export class NewTaskComponent implements OnInit {
 
     showProjectDropdown: boolean = false;
 
-    constructor(private projectService: ProjectService, private taskService: TaskService, private messageService: MessageService, private utilService: UtilService, private fileService: FileService, private router: Router) {
+    constructor(
+        private projectService: ProjectService,
+        private taskService: TaskService,
+        private messageService: MessageService,
+        private utilService: UtilService,
+        private fileService: FileService,
+        private router: Router
+    ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
@@ -120,7 +132,8 @@ export class NewTaskComponent implements OnInit {
     public onSidebarShow() {
         if (this.deadline != null) {
             let datePart = new Date(this.deadline!).toLocaleDateString('en-GB');
-            let timePart = new Date(this.deadline!).toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
+            let timePart = new Date(this.deadline!).toLocaleTimeString('en-GB',
+                {hour: '2-digit', minute: '2-digit'});
             this.taskDeadlineControl.setValue(`${datePart} ${timePart}`);
         }
     }
@@ -224,7 +237,8 @@ export class NewTaskComponent implements OnInit {
 
     public getTruncatedFileName(fileName: string): string {
         const maxLength = 20; // Maximum number of characters to show
-        return fileName.length > maxLength ? `${fileName.substring(0, maxLength)}...${fileName.split('.').pop()}` : fileName;
+        return fileName.length > maxLength ? `${fileName.substring(0,
+            maxLength)}...${fileName.split('.').pop()}` : fileName;
     }
 
     public onSave() {
@@ -252,18 +266,26 @@ export class NewTaskComponent implements OnInit {
     }
 
     public saveTask() {
-        this.taskService.createTask(this.selectedProject, this.taskNameControl.value!, this.taskDescriptionControl.value!, this.taskDeadlineControl.value!, this.selectedPriority, this.selectedAssignees.map(assignee => assignee.value), this.uploadedFiles.map(file => file.fileId)).subscribe({
+        this.taskService.createTask(this.selectedProject,
+            this.taskNameControl.value!,
+            this.taskDescriptionControl.value!,
+            this.taskDeadlineControl.value!,
+            this.selectedPriority,
+            this.selectedAssignees.map(assignee => assignee.value),
+            this.uploadedFiles.map(file => file.fileId)).subscribe({
             next: (data) => {
                 this.loading = false;
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Tarea creada con éxito'
                 });
                 setTimeout(() => {
-                    let currentRoute = this.router.url;
-                    this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
-                        this.router.navigate([currentRoute]).then(r => console.log('Task created successfully'));
-                    });
-                }, 500);
+                        let currentRoute = this.router.url;
+                        this.router.navigateByUrl('/',
+                            {skipLocationChange: true}).then(() => {
+                            this.router.navigate([currentRoute]).then(r => console.log('Task created successfully'));
+                        });
+                    },
+                    500);
                 this.onClose();
             }, error: (error) => {
                 console.log(error);

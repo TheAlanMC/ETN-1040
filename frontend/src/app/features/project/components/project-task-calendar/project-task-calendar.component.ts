@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -8,7 +8,7 @@ import {PageDto} from "../../../../core/models/page.dto";
 import {ProjectDto} from "../../models/project.dto";
 import {environment} from "../../../../../environments/environment";
 import {UserDto} from "../../../user/models/user.dto";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute} from "@angular/router";
 import {ConfirmationService, MenuItem, MessageService, SelectItem} from "primeng/api";
 import {UtilService} from "../../../../core/services/util.service";
 import {ProjectService} from "../../../../core/services/project.service";
@@ -19,7 +19,8 @@ import {SharedService} from "../../../../core/services/shared.service";
 import {TaskService} from "../../../../core/services/task.service";
 import {TaskDto} from "../../../task/models/task.dto";
 import {TaskStatusDto} from "../../../task/models/task-status.dto";
-import {debounceTime, Subject} from "rxjs"; // Import Spanish locale
+import {debounceTime, Subject} from "rxjs";
+import {FullCalendarComponent} from "@fullcalendar/angular"; // Import Spanish locale
 
 @Component({
     selector: 'app-project-task-calendar',
@@ -28,16 +29,17 @@ import {debounceTime, Subject} from "rxjs"; // Import Spanish locale
     providers: [
         ConfirmationService,
         MessageService
-    ]
+    ],
 })
-export class ProjectTaskCalendarComponent implements OnInit {
+export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
 
-    events: any[] = [];
+    @ViewChild('calendar') calendarComponent!: FullCalendarComponent;
 
     today: string = '';
 
+
     calendarOptions: any = {
-        initialView: 'dayGridMonth'
+        initialView: 'dayGridMonth',
     };
 
     dateFrom: string = '';
@@ -48,7 +50,7 @@ export class ProjectTaskCalendarComponent implements OnInit {
     canAddTask: boolean = false;
     canEditTask: boolean = false;
 
-    isLoading: boolean = true;
+    isLoading: boolean = false;
 
     baseUrl: string = `${environment.API_URL}/api/v1/users`;
 
@@ -89,9 +91,21 @@ export class ProjectTaskCalendarComponent implements OnInit {
 
     taskId: number = 0;
 
+    rendered: boolean = false;
+
+
     private searchSubject = new Subject<string>();
 
-    constructor(private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private utilService: UtilService, private projectService: ProjectService, private userService: UserService, private sharedService: SharedService, private activatedRoute: ActivatedRoute, private taskService: TaskService) {
+    constructor(
+        private confirmationService: ConfirmationService,
+        private messageService: MessageService,
+        private utilService: UtilService,
+        private projectService: ProjectService,
+        private userService: UserService,
+        private sharedService: SharedService,
+        private activatedRoute: ActivatedRoute,
+        private taskService: TaskService
+    ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage
         const token = localStorage.getItem('token');
@@ -131,14 +145,14 @@ export class ProjectTaskCalendarComponent implements OnInit {
             eventDurationEditable: false,
             locale: esLocale,
             datesSet: (dateInfo: any) => this.onDatesSet(dateInfo),
-            loading: (isLoading: boolean) => this.isLoading = isLoading,
             dateClick: (e: any) => this.onDateClick(e),
             eventClick: (e: any) => this.onEventClick(e),
             eventDrop: (e: any) => this.onEventDrop(e),
         };
         this.activatedRoute.parent?.params.subscribe(params => {
             this.projectId = params['id'];
-            this.sharedService.changeData('projectId', this.projectId);
+            this.sharedService.changeData('projectId',
+                this.projectId);
             this.getProjectInfo();
             this.getAllStatuses();
             this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
@@ -147,9 +161,17 @@ export class ProjectTaskCalendarComponent implements OnInit {
         });
     }
 
+    ngAfterViewInit() {
+        this.rendered = true;
+        this.getAllStatuses();
+    }
+
     public onDatesSet(dateInfo: any) {
-        this.dateFrom = dateInfo.startStr;
-        this.dateTo = dateInfo.endStr;
+        if (this.rendered) {
+            this.dateFrom = dateInfo.startStr;
+            this.dateTo = dateInfo.endStr;
+            this.getData()
+        }
     }
 
     public onEventClick(e: any) {
@@ -161,9 +183,15 @@ export class ProjectTaskCalendarComponent implements OnInit {
     public onDateClick(e: any) {
         if (this.canAddTask && (this.isOwner || this.isModerator)) {
             let currentDate = new Date();
-            currentDate.setHours(0, 0, 0, 0);
+            currentDate.setHours(0,
+                0,
+                0,
+                0);
             let selectedDate = new Date(e.date);
-            selectedDate.setHours(20, 0, 0, 0);
+            selectedDate.setHours(20,
+                0,
+                0,
+                0);
             if (selectedDate > currentDate) {
                 this.deadline = selectedDate;
                 this.navigateToCreateTask();
@@ -180,7 +208,8 @@ export class ProjectTaskCalendarComponent implements OnInit {
             e.revert();
             return;
         }
-        this.updateTaskDeadline(e.event.id, e.event.start);
+        this.updateTaskDeadline(e.event.id,
+            e.event.start);
     }
 
     public generateMenu() {
@@ -217,23 +246,33 @@ export class ProjectTaskCalendarComponent implements OnInit {
 
     public onSearch(event: any) {
         this.keyword = event.target.value;
-        this.sharedService.changeData('keyword', this.keyword);
+        this.sharedService.changeData('keyword',
+            this.keyword);
         this.searchSubject.next(this.keyword);
     }
 
 
     public getData() {
         this.isLoading = true;
-        this.projectService.getProjectTasks(this.projectId, 'taskDeadline', 'asc', 0, 1000, this.keyword, this.selectedStatus.map(status => status.label), this.dateFrom.toString(), this.dateTo.toString(),).subscribe({
+        this.projectService.getProjectTasks(this.projectId,
+            'taskDeadline',
+            'asc',
+            0,
+            1000,
+            this.keyword,
+            this.selectedStatus.map(status => status.label),
+            this.dateFrom.toString(),
+            this.dateTo.toString(),).subscribe({
             next: (data: ResponseDto<PageDto<TaskDto>>) => {
                 this.tasks = data.data!.content;
                 this.tasks.forEach(task => {
                     task.taskAssignees.forEach((assignee: UserDto) => this.fetchUserImage(assignee.userId));
                 });
                 const events = this.tasks.map(task => {
-                    const isTaskOverdue = this.checkIfTaskIsOverdue(task.taskStatus.taskStatusId, task.taskDeadline);
+                    const isTaskOverdue = this.checkIfTaskIsOverdue(task.taskStatus.taskStatusId,
+                        task.taskDeadline);
                     return {
-                        id: task.taskId,
+                        id: task.taskId.toString(),
                         title: (isTaskOverdue ? '⚠️' : '') + task.taskName,
                         start: task.taskDeadline,
                         end: task.taskDeadline,
@@ -241,8 +280,9 @@ export class ProjectTaskCalendarComponent implements OnInit {
                         borderColor: this.getPriorityColor(task.taskPriority),
                     }
                 });
-                this.events = events;
-                this.calendarOptions = {...this.calendarOptions, ...{events: events}};
+                let calendarApi = this.calendarComponent.getApi();
+                calendarApi.removeAllEvents();
+                calendarApi.addEventSource(events);
                 this.isLoading = false;
             }, error: (error) => {
                 console.error(error);
@@ -301,7 +341,8 @@ export class ProjectTaskCalendarComponent implements OnInit {
 
     public onStatusChange(event: any) {
         this.selectedStatus = event.value;
-        this.sharedService.changeData('selectedStatus', this.selectedStatus);
+        this.sharedService.changeData('selectedStatus',
+            this.selectedStatus);
         this.getData();
     }
 
@@ -325,7 +366,10 @@ export class ProjectTaskCalendarComponent implements OnInit {
         });
     }
 
-    public getPriorityColor(priority: number, maxPriority: number = 10): string {
+    public getPriorityColor(
+        priority: number,
+        maxPriority: number = 10
+    ): string {
         // Define the color ranges
         const colorRanges = [
             {
@@ -392,7 +436,10 @@ export class ProjectTaskCalendarComponent implements OnInit {
         // Calculate the ratio of where the priority falls within the range
         const ratio = (priority - range.min) / (range.max - range.min);
         // Interpolate the color
-        const color = range.start.map((start, i) => Math.round(start + ratio * (range.end[i] - start)));
+        const color = range.start.map((
+            start,
+            i
+        ) => Math.round(start + ratio * (range.end[i] - start)));
         // Convert the color to a CSS RGB string
         return `rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.5)`;
     }
@@ -429,18 +476,30 @@ export class ProjectTaskCalendarComponent implements OnInit {
         return `rgb(${color[0]}, ${color[1]}, ${color[2]},0.7)`;
     }
 
-    public checkIfTaskIsOverdue(statusId: number, taskDeadline: Date): boolean {
+    public checkIfTaskIsOverdue(
+        statusId: number,
+        taskDeadline: Date
+    ): boolean {
         if (statusId === 3) {
             return false;
         }
         return new Date(taskDeadline).getTime() < new Date().getTime();
     }
 
-    public updateTaskDeadline(taskId: number, newTaskDeadline: Date) {
+    public updateTaskDeadline(
+        taskId: number,
+        newTaskDeadline: Date
+    ) {
         const task = this.tasks.find(task => task.taskId === Number(taskId));
         const taskAssigneeIds = task!.taskAssignees.map(assignee => assignee.userId);
         const taskFileIds = task!.taskFiles.map(file => file.fileId);
-        this.taskService.updateTask(task!.taskId, task!.taskName, task!.taskDescription, newTaskDeadline.toISOString(), task!.taskPriority, taskAssigneeIds, taskFileIds).subscribe({
+        this.taskService.updateTask(task!.taskId,
+            task!.taskName,
+            task!.taskDescription,
+            newTaskDeadline.toISOString(),
+            task!.taskPriority,
+            taskAssigneeIds,
+            taskFileIds).subscribe({
             next: (data: ResponseDto<null>) => {
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Fecha actualizada correctamente'

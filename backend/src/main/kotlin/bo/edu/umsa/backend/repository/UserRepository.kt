@@ -16,7 +16,10 @@ interface UserRepository : PagingAndSortingRepository<User, Long>,
 
     fun findByUserIdAndStatusIsTrue(userId: Long): User?
 
-    fun findAll(specification: Specification<User>, pageable: Pageable): Page<User>
+    fun findAll(
+        specification: Specification<User>,
+        pageable: Pageable
+    ): Page<User>
 
     fun existsByEmailAndStatusIsTrue(email: String): Boolean
 

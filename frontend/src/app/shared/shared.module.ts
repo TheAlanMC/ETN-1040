@@ -12,25 +12,25 @@ import {TimeAgoPipe} from "../core/pipes/time-ago.pipe";
 import {FileSizePipe} from "../core/pipes/file-size.pipe";
 
 @NgModule({
-  declarations: [
-    ForbiddenComponent,
-    NotFoundComponent,
-    TimeAgoPipe,
-    FileSizePipe
-],
-  exports: [
-    TimeAgoPipe,
-    FileSizePipe
-  ],
-  imports: [
-    CommonModule,
-    SidebarModule,
-    RadioButtonModule,
-    InputSwitchModule,
-    FormsModule,
-    ButtonModule,
-    RouterLink
-  ]
+    declarations: [
+        ForbiddenComponent,
+        NotFoundComponent,
+        TimeAgoPipe,
+        FileSizePipe
+    ],
+    exports: [
+        TimeAgoPipe,
+        FileSizePipe
+    ],
+    imports: [
+        CommonModule,
+        SidebarModule,
+        RadioButtonModule,
+        InputSwitchModule,
+        FormsModule,
+        ButtonModule,
+        RouterLink
+    ]
 })
 export class SharedModule {
 }

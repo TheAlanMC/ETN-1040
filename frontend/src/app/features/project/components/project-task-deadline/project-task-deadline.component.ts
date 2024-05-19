@@ -22,7 +22,7 @@ import {UserDto} from "../../../user/models/user.dto";
     selector: 'app-project-task-deadline',
     templateUrl: './project-task-deadline.component.html',
     styleUrl: './project-task-deadline.component.scss',
-    providers: [MessageService]
+    providers: [MessageService],
 })
 export class ProjectTaskDeadlineComponent implements OnInit {
 
@@ -75,7 +75,15 @@ export class ProjectTaskDeadlineComponent implements OnInit {
 
     private searchSubject = new Subject<string>();
 
-    constructor(private projectService: ProjectService, private sharedService: SharedService, private activatedRoute: ActivatedRoute, private taskService: TaskService, private utilService: UtilService, private router: Router, private userService: UserService) {
+    constructor(
+        private projectService: ProjectService,
+        private sharedService: SharedService,
+        private activatedRoute: ActivatedRoute,
+        private taskService: TaskService,
+        private utilService: UtilService,
+        private router: Router,
+        private userService: UserService
+    ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage
         const token = localStorage.getItem('token');
@@ -94,7 +102,8 @@ export class ProjectTaskDeadlineComponent implements OnInit {
     ngOnInit() {
         this.activatedRoute.parent?.params.subscribe(params => {
             this.projectId = params['id'];
-            this.sharedService.changeData('projectId', this.projectId);
+            this.sharedService.changeData('projectId',
+                this.projectId);
             this.getProjectInfo();
             this.getAllStatuses();
             this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
@@ -105,20 +114,28 @@ export class ProjectTaskDeadlineComponent implements OnInit {
 
     public onSearch(event: any) {
         this.keyword = event.target.value;
-        this.sharedService.changeData('keyword', this.keyword);
+        this.sharedService.changeData('keyword',
+            this.keyword);
         this.searchSubject.next(this.keyword);
     }
 
     public onStatusChange(event: any) {
         this.selectedStatus = event.value;
-        this.sharedService.changeData('selectedStatus', this.selectedStatus);
+        this.sharedService.changeData('selectedStatus',
+            this.selectedStatus);
         this.getData();
     }
 
 
     public getData() {
         this.isLoading = true;
-        this.projectService.getProjectTasks(this.projectId, 'taskDeadline', 'asc', 0, 1000, this.keyword, this.selectedStatus.map(status => status.label)).subscribe({
+        this.projectService.getProjectTasks(this.projectId,
+            'taskDeadline',
+            'asc',
+            0,
+            1000,
+            this.keyword,
+            this.selectedStatus.map(status => status.label)).subscribe({
             next: (data: ResponseDto<PageDto<TaskDto>>) => {
                 this.tasks = data.data!.content;
                 this.tasks.forEach(task => {
@@ -133,23 +150,41 @@ export class ProjectTaskDeadlineComponent implements OnInit {
                             return task.taskDeadline && new Date(task.taskDeadline) < new Date();
                         } else if (list.listId === '2') {
                             let start = new Date();
-                            let end = new Date(new Date().setHours(23, 59, 59, 999));
+                            let end = new Date(new Date().setHours(23,
+                                59,
+                                59,
+                                999));
                             return task.taskDeadline && new Date(task.taskDeadline) > new Date(start) && new Date(task.taskDeadline) < new Date(end);
                         } else if (list.listId === '3') {
                             let start = new Date(new Date().setDate(new Date().getDate() + 1));
-                            start.setHours(0, 0, 0, 0);
+                            start.setHours(0,
+                                0,
+                                0,
+                                0);
                             let end = new Date(new Date().setDate(new Date().getDate() + 6));
-                            end.setHours(23, 59, 59, 999);
+                            end.setHours(23,
+                                59,
+                                59,
+                                999);
                             return task.taskDeadline && new Date(task.taskDeadline) > new Date(start) && new Date(task.taskDeadline) < new Date(end);
                         } else if (list.listId === '4') {
                             let start = new Date(new Date().setDate(new Date().getDate() + 7));
-                            start.setHours(0, 0, 0, 0);
+                            start.setHours(0,
+                                0,
+                                0,
+                                0);
                             let end = new Date(new Date().setDate(new Date().getDate() + 13));
-                            end.setHours(23, 59, 59, 999);
+                            end.setHours(23,
+                                59,
+                                59,
+                                999);
                             return task.taskDeadline && new Date(task.taskDeadline) > new Date(start) && new Date(task.taskDeadline) < new Date(end);
                         } else if (list.listId === '5') {
                             let start = new Date(new Date().setDate(new Date().getDate() + 14));
-                            start.setHours(0, 0, 0, 0);
+                            start.setHours(0,
+                                0,
+                                0,
+                                0);
                             return task.taskDeadline && new Date(task.taskDeadline) > new Date(start);
                         } else {
                             return false;
@@ -170,8 +205,10 @@ export class ProjectTaskDeadlineComponent implements OnInit {
                 this.project = data.data!;
                 this.isOwner = this.project.projectOwners.find(owner => owner.userId === this.userId) != null;
                 this.isModerator = this.project.projectModerators.find(moderator => moderator.userId === this.userId) != null;
-                this.sharedService.changeData('isOwner', this.isOwner);
-                this.sharedService.changeData('isModerator', this.isModerator);
+                this.sharedService.changeData('isOwner',
+                    this.isOwner);
+                this.sharedService.changeData('isModerator',
+                    this.isModerator);
             }, error: (error) => {
                 console.log(error);
             }

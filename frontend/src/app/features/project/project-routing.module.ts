@@ -29,10 +29,16 @@ const routes: Routes = [
                 ]
             },
             {
-                path: 'create', component: NewProjectComponent, canActivate: [RoleGuard], data: {roles: ['CREAR PROYECTOS'], breadcrumb: 'Nuevo'}
+                path: 'create',
+                component: NewProjectComponent,
+                canActivate: [RoleGuard],
+                data: {roles: ['CREAR PROYECTOS'], breadcrumb: 'Nuevo'}
             },
             {
-                path: 'edit/:id', component: EditProjectComponent, canActivate: [RoleGuard], data: {roles: ['EDITAR PROYECTOS'], breadcrumb: 'Editar'}
+                path: 'edit/:id',
+                component: EditProjectComponent,
+                canActivate: [RoleGuard],
+                data: {roles: ['EDITAR PROYECTOS'], breadcrumb: 'Editar'}
             },
         ],
     },

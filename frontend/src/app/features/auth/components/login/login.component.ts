@@ -10,19 +10,26 @@ import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 @Component({
     selector: 'app-login', templateUrl: './login.component.html', styleUrl: './login.component.scss', providers: [
         MessageService,
-        ConfirmationService
-    ]
+        ConfirmationService,
+    ],
 })
 export class LoginComponent {
-    emailControl = new FormControl('', [
-        Validators.required,
-        Validators.email
-    ]);
-    passwordControl = new FormControl('', [Validators.required]);
+    emailControl = new FormControl('',
+        [
+            Validators.required,
+            Validators.email,
+        ]);
+    passwordControl = new FormControl('',
+        [Validators.required]);
 
     // rememberMe: boolean = false;
 
-    constructor(private layoutService: LayoutService, private authService: AuthService, private router: Router, private messageService: MessageService) {
+    constructor(
+        private layoutService: LayoutService,
+        private authService: AuthService,
+        private router: Router,
+        private messageService: MessageService
+    ) {
         // Get token from local storage
         const token = localStorage.getItem('token');
         // Check if token exists
@@ -40,15 +47,19 @@ export class LoginComponent {
     }
 
     login() {
-        this.authService.login(this.emailControl.value!, this.passwordControl.value!).subscribe({
+        this.authService.login(this.emailControl.value!,
+            this.passwordControl.value!).subscribe({
             next: (data) => {
                 // Save token
-                localStorage.setItem('token', data.data!.token);
-                localStorage.setItem('refreshToken', data.data!.refreshToken);
+                localStorage.setItem('token',
+                    data.data!.token);
+                localStorage.setItem('refreshToken',
+                    data.data!.refreshToken);
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Inicio de sesión exitoso'});
                 setTimeout(() => {
-                    this.router.navigate(['/']).then(r => console.log('Navigated to home'));
-                }, 500);
+                        this.router.navigate(['/']).then(r => console.log('Navigated to home'));
+                    },
+                    500);
             }, error: (error) => {
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
                 console.log(error);
@@ -56,7 +67,10 @@ export class LoginComponent {
         });
     }
 
-    onEnter(event: Event, loginButton: HTMLButtonElement) {
+    onEnter(
+        event: Event,
+        loginButton: HTMLButtonElement
+    ) {
         loginButton.click();
     }
 }

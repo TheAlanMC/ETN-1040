@@ -17,10 +17,7 @@ import {TaskCommentService} from "../../../../core/services/task-comment.service
     selector: 'app-view-task',
     templateUrl: './view-task.component.html',
     styleUrl: './view-task.component.scss',
-    providers: [
-        MessageService,
-        ConfirmationService
-    ]
+    providers: [MessageService, ConfirmationService,],
 })
 export class ViewTaskComponent implements OnInit {
 
@@ -92,7 +89,15 @@ export class ViewTaskComponent implements OnInit {
     showEditCommentAttachment: boolean = false;
 
 
-    constructor(private taskService: TaskService, private messageService: MessageService, private utilService: UtilService, private fileService: FileService, private router: Router, private taskCommentService: TaskCommentService, private confirmationService: ConfirmationService) {
+    constructor(
+        private taskService: TaskService,
+        private messageService: MessageService,
+        private utilService: UtilService,
+        private fileService: FileService,
+        private router: Router,
+        private taskCommentService: TaskCommentService,
+        private confirmationService: ConfirmationService
+    ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         this.defaultDisplay = this.utilService.checkIfMobile() ? 'true' : 'none';
         this.filesBaselUrl = this.utilService.getApiUrl(this.filesBaselUrl);
@@ -105,25 +110,15 @@ export class ViewTaskComponent implements OnInit {
             this.userFullName = `${decoded.givenName} ${decoded.familyName}`;
         }
 
-        this.menuItems = [
-            {label: 'Editar', icon: 'pi pi-pencil', command: () => this.onCommentEdit()},
-            {label: 'Eliminar', icon: 'pi pi-trash', command: () => this.onCommentDelete()}
-        ];
+        this.menuItems = [{label: 'Editar', icon: 'pi pi-pencil', command: () => this.onCommentEdit()},
+            {label: 'Eliminar', icon: 'pi pi-trash', command: () => this.onCommentDelete()}];
     }
 
     ngOnInit() {
-        this.priorityItems = [
-            {label: 'Nivel 1', value: 1},
-            {label: 'Nivel 2', value: 2},
-            {label: 'Nivel 3', value: 3},
-            {label: 'Nivel 4', value: 4},
-            {label: 'Nivel 5', value: 5},
-            {label: 'Nivel 6', value: 6},
-            {label: 'Nivel 7', value: 7},
-            {label: 'Nivel 8', value: 8},
-            {label: 'Nivel 9', value: 9},
-            {label: 'Nivel 10', value: 10},
-        ];
+        this.priorityItems = [{label: 'Nivel 1', value: 1}, {label: 'Nivel 2', value: 2}, {label: 'Nivel 3', value: 3},
+            {label: 'Nivel 4', value: 4}, {label: 'Nivel 5', value: 5}, {label: 'Nivel 6', value: 6},
+            {label: 'Nivel 7', value: 7}, {label: 'Nivel 8', value: 8}, {label: 'Nivel 9', value: 9},
+            {label: 'Nivel 10', value: 10},];
     }
 
     public onSidebarShow() {
@@ -151,9 +146,10 @@ export class ViewTaskComponent implements OnInit {
                 this.taskName = this.task!.taskName;
                 this.taskDescription = this.task!.taskDescription;
                 let datePart = new Date(this.task!.taskDeadline).toLocaleDateString('en-GB');
-                let timePart = new Date(this.task!.taskDeadline).toLocaleTimeString('en-GB', {
-                    hour: '2-digit', minute: '2-digit'
-                });
+                let timePart = new Date(this.task!.taskDeadline).toLocaleTimeString('en-GB',
+                    {
+                        hour: '2-digit', minute: '2-digit'
+                    });
                 this.taskDeadline = `${datePart} ${timePart}`;
                 this.selectedPriority = this.task!.taskPriority;
                 this.selectedStatus = this.task!.taskStatus.taskStatusId;
@@ -163,7 +159,9 @@ export class ViewTaskComponent implements OnInit {
                     img.onload = () => this.imgLoaded[assignee.userId] = true;
                     img.onerror = () => this.imgLoaded[assignee.userId] = false;
                     return {
-                        label: `${assignee.firstName} ${assignee.lastName}`, labelSecondary: assignee.email, value: assignee.userId,
+                        label: `${assignee.firstName} ${assignee.lastName}`,
+                        labelSecondary: assignee.email,
+                        value: assignee.userId,
                     }
                 });
                 this.userItems = this.task!.project.projectMembers.map(user => {
@@ -214,7 +212,8 @@ export class ViewTaskComponent implements OnInit {
     public downloadFile(file: FileDto) {
         this.fileService.getFile(file.fileId).subscribe({
             next: (data) => {
-                const blob = new Blob([data], {type: file.contentType});
+                const blob = new Blob([data],
+                    {type: file.contentType});
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
@@ -272,21 +271,30 @@ export class ViewTaskComponent implements OnInit {
 
     public getTruncatedFileName(fileName: string): string {
         const maxLength = 20; // Maximum number of characters to show
-        return fileName.length > maxLength ? `${fileName.substring(0, maxLength)}...${fileName.split('.').pop()}` : fileName;
+        return fileName.length > maxLength ? `${fileName.substring(0,
+            maxLength)}...${fileName.split('.').pop()}` : fileName;
     }
 
     public onStatusChange(event: any) {
         const taskStatus = this.statusItems.find(status => status.value === event.value)!;
         console.log(taskStatus);
-        this.taskService.updateTaskStatus(this.taskId, taskStatus.value, taskStatus.label!).subscribe({
+        this.taskService.updateTaskStatus(this.taskId,
+            taskStatus.value,
+            taskStatus.label!).subscribe({
             next: (data) => {
-                this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Estado de la tarea actualizado correctamente'});
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Éxito',
+                    detail: 'Estado de la tarea actualizado correctamente'
+                });
                 setTimeout(() => {
-                    let currentRoute = this.router.url;
-                    this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
-                        this.router.navigate([currentRoute]).then(r => console.log('Task status updated'));
-                    });
-                }, 500);
+                        let currentRoute = this.router.url;
+                        this.router.navigateByUrl('/',
+                            {skipLocationChange: true}).then(() => {
+                            this.router.navigate([currentRoute]).then(r => console.log('Task status updated'));
+                        });
+                    },
+                    500);
                 this.onClose();
             }, error: (error) => {
                 console.log(error);
@@ -321,15 +329,23 @@ export class ViewTaskComponent implements OnInit {
     }
 
     public saveTaskComment() {
-        this.taskCommentService.createTaskComment(this.taskId, this.newCommentControl.value!, this.uploadedFiles.map(file => file.fileId)).subscribe({
+        this.taskCommentService.createTaskComment(this.taskId,
+            this.newCommentControl.value!,
+            this.uploadedFiles.map(file => file.fileId)).subscribe({
             next: (data) => {
-                this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Comentario creado correctamente'});
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Éxito',
+                    detail: 'Comentario creado correctamente'
+                });
                 setTimeout(() => {
-                    let currentRoute = this.router.url;
-                    this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
-                        this.router.navigate([currentRoute]).then(r => console.log('Task comment created'));
-                    });
-                }, 500);
+                        let currentRoute = this.router.url;
+                        this.router.navigateByUrl('/',
+                            {skipLocationChange: true}).then(() => {
+                            this.router.navigate([currentRoute]).then(r => console.log('Task comment created'));
+                        });
+                    },
+                    500);
                 this.onClose();
             }, error: (error) => {
                 console.log(error);
@@ -393,13 +409,19 @@ export class ViewTaskComponent implements OnInit {
     public deleteTaskComment(commentId: number) {
         this.taskCommentService.deleteTaskComment(commentId).subscribe({
             next: (data) => {
-                this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Comentario eliminado correctamente'});
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Éxito',
+                    detail: 'Comentario eliminado correctamente'
+                });
                 setTimeout(() => {
-                    let currentRoute = this.router.url;
-                    this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
-                        this.router.navigate([currentRoute]).then(r => console.log('Task comment deleted'));
-                    });
-                }, 500);
+                        let currentRoute = this.router.url;
+                        this.router.navigateByUrl('/',
+                            {skipLocationChange: true}).then(() => {
+                            this.router.navigate([currentRoute]).then(r => console.log('Task comment deleted'));
+                        });
+                    },
+                    500);
                 this.onClose();
             }, error: (error) => {
                 console.log(error);
@@ -502,7 +524,8 @@ export class ViewTaskComponent implements OnInit {
         } else {
             this.fileService.getFile(file.id).subscribe({
                 next: (data) => {
-                    const blob = new Blob([data], {type: file.type});
+                    const blob = new Blob([data],
+                        {type: file.type});
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
@@ -541,7 +564,12 @@ export class ViewTaskComponent implements OnInit {
                     }
                 });
             } else {
-                this.editUploadedFiles.push({fileId: file.id, filename: file.name, contentType: file.type, fileSize: file.size});
+                this.editUploadedFiles.push({
+                    fileId: file.id,
+                    filename: file.name,
+                    contentType: file.type,
+                    fileSize: file.size
+                });
                 if (this.editUploadedFiles.length == this.editCommentFiles.length) {
                     this.updateTaskComment();
                 }
@@ -550,15 +578,23 @@ export class ViewTaskComponent implements OnInit {
     }
 
     public updateTaskComment() {
-        this.taskCommentService.updateTaskComment(this.selectedCommentId, this.editCommentControl.value!, this.editUploadedFiles.map(file => file.fileId)).subscribe({
+        this.taskCommentService.updateTaskComment(this.selectedCommentId,
+            this.editCommentControl.value!,
+            this.editUploadedFiles.map(file => file.fileId)).subscribe({
             next: (data) => {
-                this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Comentario actualizado correctamente'});
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Éxito',
+                    detail: 'Comentario actualizado correctamente'
+                });
                 setTimeout(() => {
-                    let currentRoute = this.router.url;
-                    this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
-                        this.router.navigate([currentRoute]).then(r => console.log('Task comment updated'));
-                    });
-                }, 500);
+                        let currentRoute = this.router.url;
+                        this.router.navigateByUrl('/',
+                            {skipLocationChange: true}).then(() => {
+                            this.router.navigate([currentRoute]).then(r => console.log('Task comment updated'));
+                        });
+                    },
+                    500);
                 this.onClose();
             }, error: (error) => {
                 console.log(error);

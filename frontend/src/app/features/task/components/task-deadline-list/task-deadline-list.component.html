@@ -1,1 +1,30 @@
-<p>task-deadline-list works!</p>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '350px'}" acceptButtonStyleClass="p-button-primary" header="Confirmation"
+                 icon="pi pi-exclamation-triangle"
+                 key="confirmDeleteTask"
+                 message="'¿Estás seguro de que deseas eliminar esta tarea? Esta acción no se puede deshacer.'"
+                 rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+<div class="card  md:w-25rem  overflow-hidden p-3">
+    <div class="flex justify-content-between align-items-center w-full  h-3rem">
+    <span class="block text-900 font-semibold mt-4 pl-2 text-lg"
+          style="word-break: break-word;">{{ taskList.title }}</span>
+    </div>
+
+    <div #listEl (cdkDropListDropped)="dropCard($event)" (cdkDropListEntered)="insertHeight($event)"
+         (cdkDropListExited)="removeHeight($event)" [cdkDropListConnectedTo]="getConnectedListIds()"
+         [cdkDropListData]="taskList.tasks" [id]="taskList.listId"
+         cdkDropList class="flex flex-column gap-5 overflow-y-auto  mt-3 scrollable kanban-list"
+         style="min-height:2rem">
+        <app-task-deadline-card (click)="onCardClick($event, task)" (deleteCard)=onDeleteCard($event)
+                                (editCard)="onEditCard($event)"
+                                (moveCard)="onMoveCard($event)" (viewCard)="onViewCard($event)"
+                                *ngFor="let task of taskList.tasks" [card]="task"
+                                [cdkDragDisabled]="isMobileDevice || !((isModerator) && canEditTask)"
+                                [listId]="taskList.listId" [users]="users"
+                                cdkDrag
+                                cdkDragHandle></app-task-deadline-card>
+        <div *ngIf="taskList.tasks.length === 0" class="flex justify-content-center align-items-center h-12rem">
+            <span class="text-900 text-lg font-semibold">No hay tareas</span>
+        </div>
+    </div>
+</div>

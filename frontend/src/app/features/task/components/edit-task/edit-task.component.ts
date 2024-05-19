@@ -11,7 +11,10 @@ import {Router} from "@angular/router";
 import {TaskDto} from "../../models/task.dto";
 
 @Component({
-    selector: 'app-edit-task', templateUrl: './edit-task.component.html', styleUrl: './edit-task.component.scss', providers: [MessageService]
+    selector: 'app-edit-task',
+    templateUrl: './edit-task.component.html',
+    styleUrl: './edit-task.component.scss',
+    providers: [MessageService],
 })
 export class EditTaskComponent implements OnInit {
 
@@ -23,9 +26,11 @@ export class EditTaskComponent implements OnInit {
     @ViewChildren('buttonOp') buttonOp!: QueryList<ElementRef>;
 
 
-    taskNameControl = new FormControl('', [Validators.required]);
+    taskNameControl = new FormControl('',
+        [Validators.required]);
     taskDescriptionControl = new FormControl('');
-    taskDeadlineControl = new FormControl('', [Validators.required]);
+    taskDeadlineControl = new FormControl('',
+        [Validators.required]);
     selectedPriority: any = {value: ''};
 
     priorityItems: SelectItem[] = [];
@@ -56,7 +61,13 @@ export class EditTaskComponent implements OnInit {
     defaultDisplay: string = 'none';
 
 
-    constructor(private taskService: TaskService, private messageService: MessageService, private utilService: UtilService, private fileService: FileService, private router: Router) {
+    constructor(
+        private taskService: TaskService,
+        private messageService: MessageService,
+        private utilService: UtilService,
+        private fileService: FileService,
+        private router: Router
+    ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         this.filesBaselUrl = this.utilService.getApiUrl(this.filesBaselUrl);
         this.defaultDisplay = this.utilService.checkIfMobile() ? 'true' : 'none';
@@ -89,9 +100,10 @@ export class EditTaskComponent implements OnInit {
                 this.taskNameControl.setValue(this.task!.taskName);
                 this.taskDescriptionControl.setValue(this.task!.taskDescription);
                 let datePart = new Date(this.task!.taskDeadline).toLocaleDateString('en-GB');
-                let timePart = new Date(this.task!.taskDeadline).toLocaleTimeString('en-GB', {
-                    hour: '2-digit', minute: '2-digit'
-                });
+                let timePart = new Date(this.task!.taskDeadline).toLocaleTimeString('en-GB',
+                    {
+                        hour: '2-digit', minute: '2-digit'
+                    });
                 this.taskDeadlineControl.setValue(`${datePart} ${timePart}`);
                 this.selectedPriority = this.task!.taskPriority;
                 this.selectedAssignees = this.task!.taskAssignees.map(assignee => {
@@ -100,7 +112,9 @@ export class EditTaskComponent implements OnInit {
                     img.onload = () => this.imgLoaded[assignee.userId] = true;
                     img.onerror = () => this.imgLoaded[assignee.userId] = false;
                     return {
-                        label: `${assignee.firstName} ${assignee.lastName}`, labelSecondary: assignee.email, value: assignee.userId,
+                        label: `${assignee.firstName} ${assignee.lastName}`,
+                        labelSecondary: assignee.email,
+                        value: assignee.userId,
                     }
                 });
                 this.userItems = this.task!.project.projectMembers.map(user => {
@@ -189,7 +203,8 @@ export class EditTaskComponent implements OnInit {
         } else {
             this.fileService.getFile(file.id).subscribe({
                 next: (data) => {
-                    const blob = new Blob([data], {type: file.type});
+                    const blob = new Blob([data],
+                        {type: file.type});
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
@@ -248,7 +263,8 @@ export class EditTaskComponent implements OnInit {
 
     public getTruncatedFileName(fileName: string): string {
         const maxLength = 20; // Maximum number of characters to show
-        return fileName.length > maxLength ? `${fileName.substring(0, maxLength)}...${fileName.split('.').pop()}` : fileName;
+        return fileName.length > maxLength ? `${fileName.substring(0,
+            maxLength)}...${fileName.split('.').pop()}` : fileName;
     }
 
     public onSave() {
@@ -274,7 +290,12 @@ export class EditTaskComponent implements OnInit {
                     }
                 });
             } else {
-                this.uploadedFiles.push({fileId: file.id, filename: file.name, contentType: file.type, fileSize: file.size});
+                this.uploadedFiles.push({
+                    fileId: file.id,
+                    filename: file.name,
+                    contentType: file.type,
+                    fileSize: file.size
+                });
                 if (this.uploadedFiles.length == this.files.length) {
                     this.updateTask();
                 }
@@ -284,20 +305,29 @@ export class EditTaskComponent implements OnInit {
 
     public updateTask() {
         let taskDeadlineDate = new Date(this.task!.taskDeadline);
-        this.taskService.updateTask(this.task!.taskId, this.taskNameControl.value!, this.taskDescriptionControl.value!, (`${taskDeadlineDate.toLocaleDateString('en-GB')} ${taskDeadlineDate.toLocaleTimeString('en-GB', {
-            hour: '2-digit', minute: '2-digit'
-        })}` === this.taskDeadlineControl.value) ? taskDeadlineDate.toISOString() : this.taskDeadlineControl.value!, this.selectedPriority, this.selectedAssignees.map(assignee => assignee.value), this.uploadedFiles.map(file => file.fileId)).subscribe({
+        this.taskService.updateTask(this.task!.taskId,
+            this.taskNameControl.value!,
+            this.taskDescriptionControl.value!,
+            (`${taskDeadlineDate.toLocaleDateString('en-GB')} ${taskDeadlineDate.toLocaleTimeString('en-GB',
+                {
+                    hour: '2-digit', minute: '2-digit'
+                })}` === this.taskDeadlineControl.value) ? taskDeadlineDate.toISOString() : this.taskDeadlineControl.value!,
+            this.selectedPriority,
+            this.selectedAssignees.map(assignee => assignee.value),
+            this.uploadedFiles.map(file => file.fileId)).subscribe({
             next: (data) => {
                 this.loading = false;
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Tarea actualizada correctamente'
                 });
                 setTimeout(() => {
-                    let currentRoute = this.router.url;
-                    this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
-                        this.router.navigate([currentRoute]).then(r => console.log('Task updated successfully'));
-                    });
-                }, 500);
+                        let currentRoute = this.router.url;
+                        this.router.navigateByUrl('/',
+                            {skipLocationChange: true}).then(() => {
+                            this.router.navigate([currentRoute]).then(r => console.log('Task updated successfully'));
+                        });
+                    },
+                    500);
                 this.onClose();
             }, error: (error) => {
                 console.log(error);

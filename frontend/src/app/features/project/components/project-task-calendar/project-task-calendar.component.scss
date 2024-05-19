@@ -1,3 +1,7 @@
+:host ::ng-deep .p-avatar img {
+  object-fit: cover;
+}
+
 @media screen and (max-width: 768px) {
   :host ::ng-deep {
     fc-widget-content .fc-scroller {
@@ -36,9 +40,5 @@
       }
     }
   }
-}
-
-:host ::ng-deep .p-avatar img {
-  object-fit: cover;
 }
 

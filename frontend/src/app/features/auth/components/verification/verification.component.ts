@@ -6,7 +6,10 @@ import {SharedService} from "../../../../core/services/shared.service";
 import {MessageService} from "primeng/api";
 
 @Component({
-    selector: 'app-verification', templateUrl: './verification.component.html', styleUrl: './verification.component.scss', providers: [MessageService]
+    selector: 'app-verification',
+    templateUrl: './verification.component.html',
+    styleUrl: './verification.component.scss',
+    providers: [MessageService],
 })
 export class VerificationComponent implements OnInit {
     val1!: number;
@@ -19,7 +22,14 @@ export class VerificationComponent implements OnInit {
 
     email!: string;
 
-    constructor(private layoutService: LayoutService, private route: ActivatedRoute, private authService: AuthService, private router: Router, private sharedService: SharedService, private messageService: MessageService) {
+    constructor(
+        private layoutService: LayoutService,
+        private route: ActivatedRoute,
+        private authService: AuthService,
+        private router: Router,
+        private sharedService: SharedService,
+        private messageService: MessageService
+    ) {
     }
 
     get dark(): boolean {
@@ -48,14 +58,18 @@ export class VerificationComponent implements OnInit {
 
     onVerify() {
         const code = this.val1.toString() + this.val2.toString() + this.val3.toString() + this.val4.toString();
-        this.authService.verification(this.email, code).subscribe({
+        this.authService.verification(this.email,
+            code).subscribe({
             next: (data) => {
-                this.sharedService.changeData('email', this.email);
-                this.sharedService.changeData('code', code);
+                this.sharedService.changeData('email',
+                    this.email);
+                this.sharedService.changeData('code',
+                    code);
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Código verificado'});
                 setTimeout(() => {
-                    this.router.navigate(['/auth/new-password']).then(r => console.log('Redirect to new password'));
-                }, 500);
+                        this.router.navigate(['/auth/new-password']).then(r => console.log('Redirect to new password'));
+                    },
+                    500);
             }, error: (error) => {
                 console.log(error);
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});

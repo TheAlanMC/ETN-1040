@@ -10,9 +10,13 @@ export class SharedService {
     constructor() {
     }
 
-    changeData(key: string, value: any) {
+    changeData(
+        key: string,
+        value: any
+    ) {
         let currentMap = this.dataMapSource.value;
-        currentMap.set(key, value);
+        currentMap.set(key,
+            value);
         this.dataMapSource.next(currentMap);
     }
 

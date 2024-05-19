@@ -10,7 +10,10 @@ export class RoleGuard implements CanActivate {
     constructor(private router: Router) {
     }
 
-    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree {
+    canActivate(
+        route: ActivatedRouteSnapshot,
+        state: RouterStateSnapshot
+    ): boolean | UrlTree {
         const token = localStorage.getItem('token');
         // Check if token exists
         if (!token) {

@@ -1,1 +1,44 @@
-<p>task-deadline works!</p>
+<div class="flex flex-wrap gap-3 align-items-center justify-content-between mb-3">
+        <span class="p-input-icon-left w-full sm:w-20rem flex-order-0 sm:flex-order-0">
+          <i class="pi pi-search"></i>
+          <input (input)="onSearch($event)" [(ngModel)]="keyword" class="input w-full right-search-input"
+                 pInputText
+                 placeholder="Busqueda Global" type="text">
+        </span>
+    <button (click)="navigateToCreateTask()" *ngIf="canAddTask&&(isModerator)"
+            class="p-button-outlined w-full sm:w-auto flex-order-1 sm:flex-order-1" icon="pi pi-plus-circle"
+            label="Crear Tarea" pButton></button>
+</div>
+<div class="mb-3">
+    <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus"
+                   [options]="statusItems"
+                   [showClear]="true"
+                   [style]="{'width': '100%'}"
+                   class="multiselect-custom" display="chip" optionLabel="label"
+                   placeholder="Seleccionar Estado">
+    </p-multiSelect>
+</div>
+<div *ngIf="!isLoading else loading">
+    <div [cdkDropListData]="taskLists" cdkDropList
+         cdkDropListOrientation="horizontal"
+         class="grid grid-nogutter w-full flex-column md:flex-row flex-nowrap gap-5 lg:overflow-y-hidden overflow-x-auto"
+         id="task-wrapper">
+        <app-task-deadline-list (editCard)="onEditCard($event)" (viewCard)="onViewCard($event)"
+                                *ngFor="let taskList of taskLists; let i = index;" [cdkDragDisabled]="true"
+                                [taskListIds]="taskListIds" [taskList]="taskList"
+                                cdkDrag cdkDragHandle
+                                class="p-kanban-list"></app-task-deadline-list>
+    </div>
+</div>
+<ng-template #loading>
+    <div class="flex justify-content-center align-items-center h-80">
+        <p-progressSpinner></p-progressSpinner>
+    </div>
+</ng-template>
+
+<app-new-task (sidebarVisibleChange)="createSidebarVisible = $event"
+              [sidebarVisible]="createSidebarVisible"></app-new-task>
+<app-edit-task (sidebarVisibleChange)="editSidebarVisible = $event" [sidebarVisible]="editSidebarVisible"
+               [taskId]="taskId"></app-edit-task>
+<app-view-task (sidebarVisibleChange)="viewSidebarVisible = $event"
+               [sidebarVisible]="viewSidebarVisible" [taskId]="taskId"></app-view-task>

@@ -13,7 +13,10 @@ import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {ProjectDto} from "../../models/project.dto";
 
 @Component({
-    selector: 'app-edit-project', templateUrl: './edit-project.component.html', styleUrl: './edit-project.component.scss', providers: [MessageService]
+    selector: 'app-edit-project',
+    templateUrl: './edit-project.component.html',
+    styleUrl: './edit-project.component.scss',
+    providers: [MessageService],
 })
 export class EditProjectComponent implements OnInit {
 
@@ -51,9 +54,12 @@ export class EditProjectComponent implements OnInit {
         ]
     };
 
-    projectNameControl = new FormControl('', [Validators.required]);
-    dateFromControl = new FormControl('', [Validators.required]);
-    dateToControl = new FormControl('', [Validators.required]);
+    projectNameControl = new FormControl('',
+        [Validators.required]);
+    dateFromControl = new FormControl('',
+        [Validators.required]);
+    dateToControl = new FormControl('',
+        [Validators.required]);
     projectDescriptionControl = new FormControl('');
 
     baseUrl: string = `${environment.API_URL}/api/v1/users`;
@@ -68,7 +74,15 @@ export class EditProjectComponent implements OnInit {
     project: ProjectDto | null = null;
 
 
-    constructor(private activatedRoute: ActivatedRoute, private userService: UserService, private messageService: MessageService, private utilService: UtilService, private location: Location, private projectService: ProjectService, private router: Router) {
+    constructor(
+        private activatedRoute: ActivatedRoute,
+        private userService: UserService,
+        private messageService: MessageService,
+        private utilService: UtilService,
+        private location: Location,
+        private projectService: ProjectService,
+        private router: Router
+    ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         const token = localStorage.getItem('token');
         // Check if token exists
@@ -147,12 +161,19 @@ export class EditProjectComponent implements OnInit {
     }
 
     public onSave() {
-        this.projectService.updateProject(this.projectId, this.projectNameControl.value!, this.projectDescriptionControl.value!, this.dateFromControl.value!, this.dateToControl.value!, this.selectedMembers.map(member => member.value), this.selectedModerators.map(moderator => moderator.value)).subscribe({
+        this.projectService.updateProject(this.projectId,
+            this.projectNameControl.value!,
+            this.projectDescriptionControl.value!,
+            this.dateFromControl.value!,
+            this.dateToControl.value!,
+            this.selectedMembers.map(member => member.value),
+            this.selectedModerators.map(moderator => moderator.value)).subscribe({
             next: (data) => {
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Proyecto actualizado'});
                 setTimeout(() => {
-                    this.router.navigate(['/projects']).then(r => console.log('Redirect to projects page'));
-                }, 500);
+                        this.router.navigate(['/projects']).then(r => console.log('Redirect to projects page'));
+                    },
+                    500);
             }, error: (error) => {
                 console.log(error);
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});

@@ -13,10 +13,10 @@ import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 
 @Component({
-    selector: 'app-group-and-role', templateUrl: './group-and-role.component.html', styleUrl: './group-and-role.component.scss', providers: [
-        MessageService,
-        ConfirmationService
-    ]
+    selector: 'app-group-and-role',
+    templateUrl: './group-and-role.component.html',
+    styleUrl: './group-and-role.component.scss',
+    providers: [MessageService, ConfirmationService,],
 })
 export class GroupAndRoleComponent implements OnInit {
 
@@ -33,27 +33,21 @@ export class GroupAndRoleComponent implements OnInit {
 
     roles: RoleDto[] = [];
 
-    sourceGroups: any[] = [
-        {name: 'Seleccione un usuario', code: ''}
-    ];
-    targetGroups: any[] = [
-        {name: 'Seleccione un usuario', code: ''}
-    ];
+    sourceGroups: any[] = [{name: 'Seleccione un usuario', code: ''}];
+    targetGroups: any[] = [{name: 'Seleccione un usuario', code: ''}];
 
-    sourceRoles: any[] = [
-        {name: 'Seleccione un rol', code: ''}
-    ];
-    targetRoles: any[] = [
-        {name: 'Seleccione un rol', code: ''}
-    ];
+    sourceRoles: any[] = [{name: 'Seleccione un rol', code: ''}];
+    targetRoles: any[] = [{name: 'Seleccione un rol', code: ''}];
 
     isPickListDisabled = true;
 
     visibleAddGroup = false
     visibleEditGroup = false
 
-    groupNameControl = new FormControl('', [Validators.required]);
-    groupDescriptionControl = new FormControl('', [Validators.required]);
+    groupNameControl = new FormControl('',
+        [Validators.required]);
+    groupDescriptionControl = new FormControl('',
+        [Validators.required]);
 
     baseUrl: string = `${environment.API_URL}/api/v1/users`;
 
@@ -61,7 +55,14 @@ export class GroupAndRoleComponent implements OnInit {
     userId: number = 0;
     users: UserDto[] = [];
 
-    constructor(private userService: UserService, private confirmationService: ConfirmationService, private groupsService: GroupService, private rolseService: RoleService, private messageService: MessageService, private utilService: UtilService) {
+    constructor(
+        private userService: UserService,
+        private confirmationService: ConfirmationService,
+        private groupsService: GroupService,
+        private rolseService: RoleService,
+        private messageService: MessageService,
+        private utilService: UtilService
+    ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         const token = localStorage.getItem('token');
         // Check if token exists
@@ -152,16 +153,13 @@ export class GroupAndRoleComponent implements OnInit {
     public onClearUser() {
         this.selectedUserId = 0;
         this.selectedUser = {value: ''};
-        this.sourceGroups = [
-            {name: 'Seleccione un usuario', code: ''}
-        ];
-        this.targetGroups = [
-            {name: 'Seleccione un usuario', code: ''}
-        ];
+        this.sourceGroups = [{name: 'Seleccione un usuario', code: ''}];
+        this.targetGroups = [{name: 'Seleccione un usuario', code: ''}];
     }
 
     public saveUserGroups() {
-        this.userService.addUsersToGroup(this.selectedUserId, this.targetGroups.map(group => group.code)).subscribe({
+        this.userService.addUsersToGroup(this.selectedUserId,
+            this.targetGroups.map(group => group.code)).subscribe({
             next: (data) => {
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Grupos asignados correctamente'
@@ -176,11 +174,17 @@ export class GroupAndRoleComponent implements OnInit {
     }
 
     public sortSourceGroups() {
-        this.sourceGroups.sort((a, b) => a.code - b.code);
+        this.sourceGroups.sort((
+            a,
+            b
+        ) => a.code - b.code);
     }
 
     public sortTargetGroups() {
-        this.targetGroups.sort((a, b) => a.code - b.code);
+        this.targetGroups.sort((
+            a,
+            b
+        ) => a.code - b.code);
     }
 
     public onDeleteUser() {
@@ -240,16 +244,13 @@ export class GroupAndRoleComponent implements OnInit {
     public onClearGroup() {
         this.selectedGroup = {value: ''};
         this.selectedGroupId = 0;
-        this.sourceRoles = [
-            {name: 'Seleccione un rol', code: ''}
-        ];
-        this.targetRoles = [
-            {name: 'Seleccione un rol', code: ''}
-        ];
+        this.sourceRoles = [{name: 'Seleccione un rol', code: ''}];
+        this.targetRoles = [{name: 'Seleccione un rol', code: ''}];
     }
 
     public saveGroupRoles() {
-        this.groupsService.addRolesToGroup(this.selectedGroupId, this.targetRoles.map(role => role.code)).subscribe({
+        this.groupsService.addRolesToGroup(this.selectedGroupId,
+            this.targetRoles.map(role => role.code)).subscribe({
             next: (data) => {
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Roles asignados correctamente'
@@ -263,11 +264,17 @@ export class GroupAndRoleComponent implements OnInit {
     }
 
     public sortSourceRoles() {
-        this.sourceRoles.sort((a, b) => a.code - b.code);
+        this.sourceRoles.sort((
+            a,
+            b
+        ) => a.code - b.code);
     }
 
     public sortTargetRoles() {
-        this.targetRoles.sort((a, b) => a.code - b.code);
+        this.targetRoles.sort((
+            a,
+            b
+        ) => a.code - b.code);
     }
 
     public onDeleteGroup() {
@@ -312,7 +319,8 @@ export class GroupAndRoleComponent implements OnInit {
     }
 
     onSaveGroup() {
-        this.groupsService.createGroup(this.groupNameControl.value!, this.groupDescriptionControl.value!).subscribe({
+        this.groupsService.createGroup(this.groupNameControl.value!,
+            this.groupDescriptionControl.value!).subscribe({
             next: (data) => {
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Grupo creado correctamente'
@@ -327,7 +335,9 @@ export class GroupAndRoleComponent implements OnInit {
     }
 
     public onUpdateGroup() {
-        this.groupsService.updateGroup(this.selectedGroupId, this.groupNameControl.value!, this.groupDescriptionControl.value!).subscribe({
+        this.groupsService.updateGroup(this.selectedGroupId,
+            this.groupNameControl.value!,
+            this.groupDescriptionControl.value!).subscribe({
             next: (data) => {
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Grupo actualizado correctamente'

@@ -10,24 +10,21 @@ import {AuthService} from "../../../../core/services/auth.service";
 import {MessageService} from "primeng/api";
 
 @Component({
-    selector: 'app-profile', templateUrl: './profile.component.html', styleUrl: './profile.component.scss', providers: [MessageService]
+    selector: 'app-profile',
+    templateUrl: './profile.component.html',
+    styleUrl: './profile.component.scss',
+    providers: [MessageService],
 })
 export class ProfileComponent implements OnInit {
 
     visibleChangePassword = false
 
-    oldPasswordControl = new FormControl('', [
-        Validators.required,
-        Validators.minLength(8)
-    ]);
-    passwordControl = new FormControl('', [
-        Validators.required,
-        Validators.minLength(8)
-    ]);
-    confirmPasswordControl = new FormControl('', [
-        Validators.required,
-        Validators.minLength(8)
-    ]);
+    oldPasswordControl = new FormControl('',
+        [Validators.required, Validators.minLength(8)]);
+    passwordControl = new FormControl('',
+        [Validators.required, Validators.minLength(8)]);
+    confirmPasswordControl = new FormControl('',
+        [Validators.required, Validators.minLength(8)]);
 
 
     profilePictureUrl: string = 'assets/layout/images/avatar.png';
@@ -38,8 +35,10 @@ export class ProfileComponent implements OnInit {
 
     email = '';
 
-    firstNameControl = new FormControl('', [Validators.required]);
-    lastNameControl = new FormControl('', [Validators.required]);
+    firstNameControl = new FormControl('',
+        [Validators.required]);
+    lastNameControl = new FormControl('',
+        [Validators.required]);
     phoneControl = new FormControl('');
     descriptionControl = new FormControl('');
 
@@ -51,7 +50,12 @@ export class ProfileComponent implements OnInit {
 
     @ViewChild('fileUpload') fileUpload!: FileUpload;
 
-    constructor(private profileService: ProfileService, private authService: AuthService, private router: Router, private messageService: MessageService) {
+    constructor(
+        private profileService: ProfileService,
+        private authService: AuthService,
+        private router: Router,
+        private messageService: MessageService
+    ) {
         // Get token from local storage
         const token = localStorage.getItem('token');
         // Check if token exists
@@ -106,13 +110,17 @@ export class ProfileComponent implements OnInit {
 
     public onSave() {
         this.onUpload();
-        this.profileService.updateProfile(this.firstNameControl.value!, this.lastNameControl.value!, this.phoneControl.value!, this.descriptionControl.value!).subscribe({
+        this.profileService.updateProfile(this.firstNameControl.value!,
+            this.lastNameControl.value!,
+            this.phoneControl.value!,
+            this.descriptionControl.value!).subscribe({
             next: (data) => {
                 this.refreshToken();
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Perfil actualizado'});
                 setTimeout(() => {
-                    this.router.navigate(['/']).then(r => window.location.reload());
-                }, 500);
+                        this.router.navigate(['/']).then(r => window.location.reload());
+                    },
+                    500);
             }, error: (error) => {
                 console.log(error);
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
@@ -137,8 +145,10 @@ export class ProfileComponent implements OnInit {
         const refreshToken = localStorage.getItem('refreshToken') || '';
         this.authService.refreshToken(refreshToken).subscribe({
             next: (data) => {
-                localStorage.setItem('token', data.data!.token);
-                localStorage.setItem('refreshToken', data.data!.refreshToken);
+                localStorage.setItem('token',
+                    data.data!.token);
+                localStorage.setItem('refreshToken',
+                    data.data!.refreshToken);
             }, error: (error) => {
                 console.log(error);
             }
@@ -146,7 +156,9 @@ export class ProfileComponent implements OnInit {
     }
 
     onSubmit() {
-        this.profileService.changePassword(this.oldPasswordControl.value!, this.passwordControl.value!, this.confirmPasswordControl.value!).subscribe({
+        this.profileService.changePassword(this.oldPasswordControl.value!,
+            this.passwordControl.value!,
+            this.confirmPasswordControl.value!).subscribe({
             next: (data) => {
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Contraseña actualizada'});
                 this.visibleChangePassword = false;

@@ -59,8 +59,7 @@ class AuthUtil(@Autowired jwtConfig: JwtConfig) {
         fun verifyIsRefreshToken(jwtToken: String?) {
             if (jwtToken == null) throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Missing refresh token", "Token de refresco faltante")
             try {
-                val isRefresh =
-                    JWT.require(Algorithm.HMAC256(jwtSecret)).build().verify(jwtToken).getClaim("refresh").asBoolean()
+                val isRefresh = JWT.require(Algorithm.HMAC256(jwtSecret)).build().verify(jwtToken).getClaim("refresh").asBoolean()
                 if (!isRefresh) throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Invalid refresh token", "Token de refresco inválido")
             } catch (e: JWTVerificationException) {
                 throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Invalid refresh token", "Token de refresco inválido")
@@ -74,8 +73,7 @@ class AuthUtil(@Autowired jwtConfig: JwtConfig) {
         fun verifyAuthTokenHasRole(role: String) {
             val jwtToken = getAuthToken()
             verifyIsAuthToken(jwtToken)
-            val roles = JWT.require(Algorithm.HMAC256(jwtSecret)).build().verify(jwtToken).getClaim("roles")
-                .asList(String::class.java)
+            val roles = JWT.require(Algorithm.HMAC256(jwtSecret)).build().verify(jwtToken).getClaim("roles").asList(String::class.java)
             if (!roles.contains(role)) {
                 throw EtnException(HttpStatus.FORBIDDEN, "Error: User is not authorized to perform this action", "El usuario no está autorizado para realizar esta acción")
             }
@@ -84,28 +82,20 @@ class AuthUtil(@Autowired jwtConfig: JwtConfig) {
         fun verifyAuthTokenHasRoles(roles: Array<String>) {
             val jwtToken = getAuthToken()
             verifyIsAuthToken(jwtToken)
-            val userRoles = JWT.require(Algorithm.HMAC256(jwtSecret)).build().verify(jwtToken).getClaim("roles")
-                .asList(String::class.java)
+            val userRoles = JWT.require(Algorithm.HMAC256(jwtSecret)).build().verify(jwtToken).getClaim("roles").asList(String::class.java)
             if (!roles.any { userRoles.contains(it) }) {
                 throw EtnException(HttpStatus.FORBIDDEN, "Error: User is not authorized to perform this action", "El usuario no está autorizado para realizar esta acción")
             }
         }
 
-        fun generateAuthAndRefreshToken(userEntity: User, roles: Array<String>, groups: Array<String>): AuthResDto {
+        fun generateAuthAndRefreshToken(
+            userEntity: User,
+            roles: Array<String>,
+            groups: Array<String>
+        ): AuthResDto {
             val algorithm = Algorithm.HMAC256(jwtSecret)
-            val jwtToken =
-                JWT.create().withIssuer(jwtIssuer).withSubject(userEntity.email).withArrayClaim("groups", groups)
-                    .withArrayClaim("roles", roles).withClaim("refresh", false).withClaim("userId", userEntity.userId)
-                    .withClaim("email", userEntity.email)
-                    .withClaim("name", userEntity.firstName + " " + userEntity.lastName)
-                    .withClaim("givenName", userEntity.firstName).withClaim("familyName", userEntity.lastName)
-                    .withIssuedAt(Date.from(Instant.now()))
-                    .withExpiresAt(Date.from(Instant.now().plusSeconds(jwtExpirationTime.toLong()))).sign(algorithm)
-            val refreshToken =
-                JWT.create().withIssuer(jwtIssuer).withSubject(userEntity.email).withClaim("refresh", true)
-                    .withIssuedAt(Date.from(Instant.now()))
-                    .withExpiresAt(Date.from(Instant.now().plusSeconds((jwtExpirationTime * 2).toLong())))
-                    .sign(algorithm)
+            val jwtToken = JWT.create().withIssuer(jwtIssuer).withSubject(userEntity.email).withArrayClaim("groups", groups).withArrayClaim("roles", roles).withClaim("refresh", false).withClaim("userId", userEntity.userId).withClaim("email", userEntity.email).withClaim("name", userEntity.firstName + " " + userEntity.lastName).withClaim("givenName", userEntity.firstName).withClaim("familyName", userEntity.lastName).withIssuedAt(Date.from(Instant.now())).withExpiresAt(Date.from(Instant.now().plusSeconds(jwtExpirationTime.toLong()))).sign(algorithm)
+            val refreshToken = JWT.create().withIssuer(jwtIssuer).withSubject(userEntity.email).withClaim("refresh", true).withIssuedAt(Date.from(Instant.now())).withExpiresAt(Date.from(Instant.now().plusSeconds((jwtExpirationTime * 2).toLong()))).sign(algorithm)
             return AuthResDto(jwtToken, refreshToken)
         }
 

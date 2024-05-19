@@ -12,10 +12,13 @@ import {environment} from "../../../../../environments/environment";
 import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
-    selector: 'app-user-list', templateUrl: './user-list.component.html', styleUrl: './user-list.component.scss', providers: [
+    selector: 'app-user-list',
+    templateUrl: './user-list.component.html',
+    styleUrl: './user-list.component.scss',
+    providers: [
         ConfirmationService,
-        MessageService
-    ]
+        MessageService,
+    ],
 })
 export class UserListComponent implements OnInit {
 
@@ -44,7 +47,13 @@ export class UserListComponent implements OnInit {
     private searchSubject = new Subject<string>();
 
 
-    constructor(private userService: UserService, private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private utilService: UtilService) {
+    constructor(
+        private userService: UserService,
+        private router: Router,
+        private confirmationService: ConfirmationService,
+        private messageService: MessageService,
+        private utilService: UtilService
+    ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage
         const token = localStorage.getItem('token');
@@ -95,7 +104,11 @@ export class UserListComponent implements OnInit {
 
     public getData() {
         this.isLoading = true;
-        this.userService.getUsers(this.sortBy, this.sortType, this.page, this.size, this.keyword).subscribe({
+        this.userService.getUsers(this.sortBy,
+            this.sortType,
+            this.page,
+            this.size,
+            this.keyword).subscribe({
             next: (data: ResponseDto<PageDto<UserDto>>) => {
                 this.users = data.data!.content;
                 this.totalElements = data.data!.page.totalElements;

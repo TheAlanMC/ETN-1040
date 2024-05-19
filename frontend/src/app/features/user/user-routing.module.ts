@@ -16,13 +16,22 @@ const routes: Routes = [
         path: 'users', children: [
             {path: '', component: UserListComponent, canActivate: [RoleGuard], data: {roles: ['VER USUARIOS']}},
             {
-                path: 'create', component: NewUserComponent, canActivate: [RoleGuard], data: {roles: ['CREAR USUARIOS'], breadcrumb: 'Nuevo'}
+                path: 'create',
+                component: NewUserComponent,
+                canActivate: [RoleGuard],
+                data: {roles: ['CREAR USUARIOS'], breadcrumb: 'Nuevo'}
             },
             {
-                path: 'view/:id', component: ViewUserComponent, canActivate: [RoleGuard], data: {roles: ['VER USUARIOS'], breadcrumb: 'Ver'}
+                path: 'view/:id',
+                component: ViewUserComponent,
+                canActivate: [RoleGuard],
+                data: {roles: ['VER USUARIOS'], breadcrumb: 'Ver'}
             },
             {
-                path: 'edit/:id', component: EditUserComponent, canActivate: [RoleGuard], data: {roles: ['EDITAR USUARIOS'], breadcrumb: 'Editar'}
+                path: 'edit/:id',
+                component: EditUserComponent,
+                canActivate: [RoleGuard],
+                data: {roles: ['EDITAR USUARIOS'], breadcrumb: 'Editar'}
             },
             {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard], data: {breadcrumb: 'Perfil'}},
             {

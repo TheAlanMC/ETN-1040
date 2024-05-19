@@ -10,7 +10,10 @@ export class ErrorInterceptor implements HttpInterceptor {
     constructor(private router: Router) {
     }
 
-    intercept(request: HttpRequest<any>, next: HttpHandler) {
+    intercept(
+        request: HttpRequest<any>,
+        next: HttpHandler
+    ) {
         return next.handle(request).pipe(catchError((error: HttpErrorResponse) => {
             //this.showMessage(`Error: ${error.status} - ${error.error.message}`);
             if (error.status === 404) {
