@@ -3,7 +3,6 @@ import {environment} from "../../../../../environments/environment";
 import {SelectItem} from "primeng/api";
 import {ProjectDto} from "../../models/project.dto";
 import {ActivatedRoute, Router} from "@angular/router";
-import {UserService} from "../../../../core/services/user.service";
 import {UtilService} from "../../../../core/services/util.service";
 import {ProjectService} from "../../../../core/services/project.service";
 import {jwtDecode} from "jwt-decode";

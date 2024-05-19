@@ -29,8 +29,8 @@
               [sidebarVisible]="createSidebarVisible"></app-new-task>
 <app-edit-task (sidebarVisibleChange)="editSidebarVisible = $event" [sidebarVisible]="editSidebarVisible"
                [taskId]="taskId"></app-edit-task>
-<app-view-task (sidebarVisibleChange)="viewSidebarVisible = $event" [sidebarVisible]="viewSidebarVisible"
-               [taskId]="taskId" [isOwner]="isOwner"></app-view-task>
+<app-view-task (sidebarVisibleChange)="viewSidebarVisible = $event" [isOwner]="isOwner"
+               [sidebarVisible]="viewSidebarVisible" [taskId]="taskId"></app-view-task>
 
 <p-dialog #dd *ngIf="selectedTask" [(visible)]="showTaskDialog" [breakpoints]="{'960px': '75vw', '640px': '90vw'}"
           [closable]="true" [draggable]="false" [modal]="true" [resizable]="false" [style]="{width: '32rem'}">

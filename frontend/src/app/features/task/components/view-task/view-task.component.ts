@@ -8,14 +8,19 @@ import {TaskService} from "../../../../core/services/task.service";
 import {UtilService} from "../../../../core/services/util.service";
 import {FileService} from "../../../../core/services/file.service";
 import {Router} from "@angular/router";
-import {FormControl, Validators} from "@angular/forms";
+import {FormControl} from "@angular/forms";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {TaskCommentService} from "../../../../core/services/task-comment.service";
 
 @Component({
-    selector: 'app-view-task', templateUrl: './view-task.component.html', styleUrl: './view-task.component.scss',
-    providers: [MessageService, ConfirmationService]
+    selector: 'app-view-task',
+    templateUrl: './view-task.component.html',
+    styleUrl: './view-task.component.scss',
+    providers: [
+        MessageService,
+        ConfirmationService
+    ]
 })
 export class ViewTaskComponent implements OnInit {
 
@@ -42,7 +47,6 @@ export class ViewTaskComponent implements OnInit {
     focusedComment: boolean = false;
 
 
-
     users: UserDto[] = [];
 
     today: Date = new Date();
@@ -67,9 +71,11 @@ export class ViewTaskComponent implements OnInit {
 
     newCommentControl = new FormControl('');
 
+    editCommentControl = new FormControl('');
+
     menuItems: MenuItem[] = [];
 
-    selectedComment: number = 0;
+    selectedCommentId: number = 0;
 
     uploadedFiles: FileDto[] = [];
 
@@ -77,6 +83,13 @@ export class ViewTaskComponent implements OnInit {
 
     newCommentFiles: any[] = [];
 
+    editComment: boolean = false;
+
+    editCommentFiles: any[] = [];
+
+    editUploadedFiles: FileDto[] = [];
+
+    showEditCommentAttachment: boolean = false;
 
 
     constructor(private taskService: TaskService, private messageService: MessageService, private utilService: UtilService, private fileService: FileService, private router: Router, private taskCommentService: TaskCommentService, private confirmationService: ConfirmationService) {
@@ -129,6 +142,7 @@ export class ViewTaskComponent implements OnInit {
             }
         });
     }
+
     public getTask() {
         this.loading = true;
         this.taskService.getTask(this.taskId).subscribe({
@@ -182,6 +196,7 @@ export class ViewTaskComponent implements OnInit {
         this.loading = false;
 
         this.onCommentCancel();
+        this.onEditCommentCancel();
     }
 
     public onFileMouseOver(file: any) {
@@ -334,8 +349,31 @@ export class ViewTaskComponent implements OnInit {
         this.uploadedFiles = [];
     }
 
-    public onCommentEdit() {
+    public onEditCommentCancel() {
+        this.editCommentControl.setValue('');
+        this.showEditCommentAttachment = false;
+        this.editComment = false;
+        this.selectedCommentId = 0;
+        this.editCommentFiles = [];
+        this.editUploadedFiles = [];
+    }
 
+    public onCommentEdit() {
+        this.editComment = true;
+        const comment = this.task!.taskComments.find(comment => comment.taskCommentId === this.selectedCommentId)!;
+        comment.taskCommentFiles.forEach(file => {
+            this.editCommentFiles.push({
+                id: file.fileId,
+                name: file.filename,
+                size: file.fileSize,
+                type: file.contentType,
+                objectURL: (file.contentType.includes('image') ? `${this.filesBaselUrl}/${file.fileId}/thumbnail` : null)
+            });
+        });
+        if (this.editCommentFiles.length > 0) {
+            this.showEditCommentAttachment = true;
+        }
+        this.editCommentControl.setValue(comment.comment);
     }
 
     public onCommentDelete() {
@@ -347,7 +385,7 @@ export class ViewTaskComponent implements OnInit {
             acceptLabel: 'Sí',
             rejectLabel: 'No',
             accept: () => {
-                this.deleteTaskComment(this.selectedComment);
+                this.deleteTaskComment(this.selectedCommentId);
             },
         });
     }
@@ -373,18 +411,22 @@ export class ViewTaskComponent implements OnInit {
         });
     }
 
-
     public onButtonClick(event: any) {
-        this.selectedComment = event;
+        this.selectedCommentId = event;
+        this.editComment = false;
+        this.editCommentFiles = [];
     }
 
     public onCommentFocus() {
         this.focusedComment = true;
-        console.log('focus');
     }
 
     public onFileUpload() {
         this.showNewCommentAttachment = true;
+    }
+
+    public onEditFileUpload() {
+        this.showEditCommentAttachment = true;
     }
 
     public onUpload(event: any) {
@@ -415,6 +457,117 @@ export class ViewTaskComponent implements OnInit {
         this.buttonOp.toArray().forEach(el => {
             el.nativeElement.id === file.name ? el.nativeElement.style.display = 'none' : null;
         })
+    }
+
+    public onEditFileMouseOver(file: any) {
+        this.buttonEl.toArray().forEach(el => {
+            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'flex' : null;
+        })
+        this.buttonOp.toArray().forEach(el => {
+            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'flex' : null;
+        })
+    }
+
+    public onEditFileMouseLeave(file: any) {
+        this.buttonEl.toArray().forEach(el => {
+            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'none' : null;
+        })
+        this.buttonOp.toArray().forEach(el => {
+            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'none' : null;
+        })
+    }
+
+    public onEditUpload(event: any) {
+        for (let file of event.files) {
+            if (!this.editCommentFiles.some(f => f.name === file.name)) {
+                this.editCommentFiles.push(file);
+            }
+        }
+    }
+
+    public removeEditFile(file: any) {
+        this.editCommentFiles = this.editCommentFiles.filter(f => f !== file);
+    }
+
+    public downloadEditFile(file: any) {
+        if (file.id === undefined) {
+            const url = URL.createObjectURL(file);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = file.name;
+            document.body.appendChild(a);
+            a.click();
+            URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } else {
+            this.fileService.getFile(file.id).subscribe({
+                next: (data) => {
+                    const blob = new Blob([data], {type: file.type});
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = file.name;
+                    document.body.appendChild(a);
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                }, error: (error) => {
+                    console.log(error);
+                }
+            });
+        }
+    }
+
+    public onEditComment(event: any | null = null) {
+        this.loading = true;
+        if (this.editCommentFiles.length == 0) {
+            this.updateTaskComment();
+            return;
+        }
+        this.editCommentFiles.forEach(file => {
+            if (file.id === undefined) {
+                this.fileService.uploadFile(file).subscribe({
+                    next: (data) => {
+                        this.editUploadedFiles.push(data.data!);
+                        if (this.editUploadedFiles.length == this.editCommentFiles.length) {
+                            this.updateTaskComment();
+                        }
+                    }, error: (error) => {
+                        console.log(error);
+                        this.loading = false;
+                        this.messageService.add({
+                            severity: 'error', summary: 'Error', detail: error.error.message
+                        });
+                    }
+                });
+            } else {
+                this.editUploadedFiles.push({fileId: file.id, filename: file.name, contentType: file.type, fileSize: file.size});
+                if (this.editUploadedFiles.length == this.editCommentFiles.length) {
+                    this.updateTaskComment();
+                }
+            }
+        });
+    }
+
+    public updateTaskComment() {
+        this.taskCommentService.updateTaskComment(this.selectedCommentId, this.editCommentControl.value!, this.editUploadedFiles.map(file => file.fileId)).subscribe({
+            next: (data) => {
+                this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Comentario actualizado correctamente'});
+                setTimeout(() => {
+                    let currentRoute = this.router.url;
+                    this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+                        this.router.navigate([currentRoute]).then(r => console.log('Task comment updated'));
+                    });
+                }, 500);
+                this.onClose();
+            }, error: (error) => {
+                console.log(error);
+                this.loading = false;
+                this.messageService.add({
+                    severity: 'error', summary: 'Error', detail: error.error.message
+                });
+            }
+        });
     }
 }
 
