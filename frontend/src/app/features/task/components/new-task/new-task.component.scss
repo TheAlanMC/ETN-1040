@@ -1,6 +1,7 @@
 :host ::ng-deep {
   .p-fileupload {
     padding: 0;
+    border: 0 none;
 
     .p-fileupload-buttonbar {
       display: none;
@@ -8,6 +9,7 @@
 
     .p-fileupload-content {
       border: 0 none;
+      padding: 1rem;
     }
 
     .p-fileupload-row {

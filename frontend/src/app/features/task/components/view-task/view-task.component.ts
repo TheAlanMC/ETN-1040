@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
 import {TaskDto} from "../../models/task.dto";
 import {MessageService, SelectItem} from "primeng/api";
 import {UserDto} from "../../../user/models/user.dto";
@@ -45,7 +45,6 @@ export class ViewTaskComponent implements OnInit {
     task: TaskDto | null = null;
 
     defaultDisplay: string = 'none';
-
 
 
     constructor(private taskService: TaskService, private messageService: MessageService, private utilService: UtilService, private fileService: FileService) {
@@ -137,7 +136,7 @@ export class ViewTaskComponent implements OnInit {
     }
 
     public downloadFile(file: FileDto) {
-       this.fileService.getFile(file.fileId).subscribe({
+        this.fileService.getFile(file.fileId).subscribe({
             next: (data) => {
                 const blob = new Blob([data], {type: file.contentType});
                 const url = URL.createObjectURL(blob);

@@ -11,10 +11,7 @@ import {FileDto} from "../../../../core/models/file.dto";
 import {Router} from "@angular/router";
 
 @Component({
-    selector: 'app-new-task',
-    templateUrl: './new-task.component.html',
-    styleUrl: './new-task.component.scss',
-    providers: [MessageService]
+    selector: 'app-new-task', templateUrl: './new-task.component.html', styleUrl: './new-task.component.scss', providers: [MessageService]
 })
 export class NewTaskComponent implements OnInit {
 

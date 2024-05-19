@@ -24,8 +24,7 @@ import {KeyFilterModule} from "primeng/keyfilter";
         ForgotPasswordComponent,
         NewPasswordComponent,
         VerificationComponent
-    ],
-    imports: [
+    ], imports: [
         CommonModule,
         AuthRoutingModule,
         ReactiveFormsModule,

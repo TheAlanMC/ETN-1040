@@ -4,9 +4,7 @@ import {Table} from "primeng/table";
 import {debounceTime, Subscription} from "rxjs";
 
 @Component({
-    selector: 'app-home-page',
-    templateUrl: './home-page.component.html',
-    styleUrl: './home-page.component.scss'
+    selector: 'app-home-page', templateUrl: './home-page.component.html', styleUrl: './home-page.component.scss'
 })
 export class HomePageComponent implements OnInit {
     knobValue: number = 90;
@@ -27,9 +25,7 @@ export class HomePageComponent implements OnInit {
 
     cols: any[] = [];
 
-    constructor(
-        private layoutService: LayoutService
-    ) {
+    constructor(private layoutService: LayoutService) {
         this.subscription = this.layoutService.configUpdate$
             .pipe(debounceTime(25))
             .subscribe((config) => {
@@ -40,9 +36,7 @@ export class HomePageComponent implements OnInit {
     ngOnInit(): void {
         this.weeks = [
             {
-                label: 'Last Week',
-                value: 0,
-                data: [
+                label: 'Last Week', value: 0, data: [
                     [
                         65,
                         59,
@@ -50,7 +44,8 @@ export class HomePageComponent implements OnInit {
                         81,
                         56,
                         55,
-                        40],
+                        40
+                    ],
                     [
                         28,
                         48,
@@ -58,13 +53,12 @@ export class HomePageComponent implements OnInit {
                         19,
                         86,
                         27,
-                        90],
+                        90
+                    ],
                 ],
             },
             {
-                label: 'This Week',
-                value: 1,
-                data: [
+                label: 'This Week', value: 1, data: [
                     [
                         35,
                         19,
@@ -72,7 +66,8 @@ export class HomePageComponent implements OnInit {
                         61,
                         16,
                         55,
-                        30],
+                        30
+                    ],
                     [
                         48,
                         78,
@@ -80,7 +75,8 @@ export class HomePageComponent implements OnInit {
                         29,
                         76,
                         77,
-                        10],
+                        10
+                    ],
                 ],
             },
         ];
@@ -99,11 +95,8 @@ export class HomePageComponent implements OnInit {
     async initCharts() {
         const documentStyle = getComputedStyle(document.documentElement);
         const textColor = documentStyle.getPropertyValue('--text-color');
-        const textColorSecondary = documentStyle.getPropertyValue(
-            '--text-color-secondary'
-        );
-        const surfaceBorder =
-            documentStyle.getPropertyValue('--surface-border');
+        const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
+        const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
 
         this.barData = {
             labels: [
@@ -113,20 +106,18 @@ export class HomePageComponent implements OnInit {
                 'THU',
                 'FRI',
                 'SAT',
-                'SUN'],
-            datasets: [
+                'SUN'
+            ], datasets: [
                 {
                     label: 'Revenue',
-                    backgroundColor:
-                        documentStyle.getPropertyValue('--primary-500'),
+                    backgroundColor: documentStyle.getPropertyValue('--primary-500'),
                     barThickness: 12,
                     borderRadius: 12,
                     data: this.selectedWeek.data[0],
                 },
                 {
                     label: 'Profit',
-                    backgroundColor:
-                        documentStyle.getPropertyValue('--primary-200'),
+                    backgroundColor: documentStyle.getPropertyValue('--primary-200'),
                     barThickness: 12,
                     borderRadius: 12,
                     data: this.selectedWeek.data[1],
@@ -138,19 +129,18 @@ export class HomePageComponent implements OnInit {
             labels: [
                 'Electronics',
                 'Fashion',
-                'Household'],
-            datasets: [
+                'Household'
+            ], datasets: [
                 {
                     data: [
                         300,
                         50,
-                        100],
-                    backgroundColor: [
+                        100
+                    ], backgroundColor: [
                         documentStyle.getPropertyValue('--primary-700'),
                         documentStyle.getPropertyValue('--primary-400'),
                         documentStyle.getPropertyValue('--primary-100'),
-                    ],
-                    hoverBackgroundColor: [
+                    ], hoverBackgroundColor: [
                         documentStyle.getPropertyValue('--primary-600'),
                         documentStyle.getPropertyValue('--primary-300'),
                         documentStyle.getPropertyValue('--primary-200'),
@@ -162,40 +152,28 @@ export class HomePageComponent implements OnInit {
         this.barOptions = {
             animation: {
                 duration: 0,
-            },
-            plugins: {
+            }, plugins: {
                 legend: {
                     labels: {
-                        color: textColor,
-                        usePointStyle: true,
-                        font: {
+                        color: textColor, usePointStyle: true, font: {
                             weight: 700,
-                        },
-                        padding: 28,
-                    },
-                    position: 'bottom',
+                        }, padding: 28,
+                    }, position: 'bottom',
                 },
-            },
-            scales: {
+            }, scales: {
                 x: {
                     ticks: {
-                        color: textColorSecondary,
-                        font: {
+                        color: textColorSecondary, font: {
                             weight: 500,
                         },
+                    }, grid: {
+                        display: false, drawBorder: false,
                     },
-                    grid: {
-                        display: false,
-                        drawBorder: false,
-                    },
-                },
-                y: {
+                }, y: {
                     ticks: {
                         color: textColorSecondary,
-                    },
-                    grid: {
-                        color: surfaceBorder,
-                        drawBorder: false,
+                    }, grid: {
+                        color: surfaceBorder, drawBorder: false,
                     },
                 },
             },
@@ -204,18 +182,13 @@ export class HomePageComponent implements OnInit {
         this.pieOptions = {
             animation: {
                 duration: 0,
-            },
-            plugins: {
+            }, plugins: {
                 legend: {
                     labels: {
-                        color: textColor,
-                        usePointStyle: true,
-                        font: {
+                        color: textColor, usePointStyle: true, font: {
                             weight: 700,
-                        },
-                        padding: 28,
-                    },
-                    position: 'bottom',
+                        }, padding: 28,
+                    }, position: 'bottom',
                 },
             },
         };
@@ -229,10 +202,7 @@ export class HomePageComponent implements OnInit {
     }
 
     onGlobalFilter(table: Table, event: Event) {
-        table.filterGlobal(
-            (event.target as HTMLInputElement).value,
-            'contains'
-        );
+        table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
 
 }

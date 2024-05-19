@@ -13,12 +13,10 @@ import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 
 @Component({
-    selector: 'app-group-and-role',
-    templateUrl: './group-and-role.component.html',
-    styleUrl: './group-and-role.component.scss',
-    providers: [
+    selector: 'app-group-and-role', templateUrl: './group-and-role.component.html', styleUrl: './group-and-role.component.scss', providers: [
         MessageService,
-        ConfirmationService]
+        ConfirmationService
+    ]
 })
 export class GroupAndRoleComponent implements OnInit {
 
@@ -96,8 +94,7 @@ export class GroupAndRoleComponent implements OnInit {
                         disabled: (user.userId === this.userId)
                     }
                 });
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
             }
         });
@@ -109,12 +106,10 @@ export class GroupAndRoleComponent implements OnInit {
                 this.groups = data.data!;
                 this.groupItems = data.data!.map(group => {
                     return {
-                        label: group.groupName,
-                        value: group.groupId
+                        label: group.groupName, value: group.groupId
                     }
                 });
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
             }
         });
@@ -124,8 +119,7 @@ export class GroupAndRoleComponent implements OnInit {
         this.rolseService.getRoles().subscribe({
             next: (data) => {
                 this.roles = data.data!;
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
             }
         });
@@ -140,21 +134,16 @@ export class GroupAndRoleComponent implements OnInit {
                 this.selectedUserId = event.value;
                 this.targetGroups = data.data!.map(group => {
                     return {
-                        name: group.groupName,
-                        code: group.groupId
+                        name: group.groupName, code: group.groupId
                     }
                 });
-                this.sourceGroups = this.groups.filter(
-                    group => data.data!.findIndex(userGroup => userGroup.groupId === group.groupId) === -1
-                ).map(group => {
+                this.sourceGroups = this.groups.filter(group => data.data!.findIndex(userGroup => userGroup.groupId === group.groupId) === -1).map(group => {
                     return {
-                        name: group.groupName,
-                        code: group.groupId
+                        name: group.groupName, code: group.groupId
                     }
                 });
                 this.isPickListDisabled = false;
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
             }
         });
@@ -175,14 +164,11 @@ export class GroupAndRoleComponent implements OnInit {
         this.userService.addUsersToGroup(this.selectedUserId, this.targetGroups.map(group => group.code)).subscribe({
             next: (data) => {
                 this.messageService.add({
-                    severity: 'success',
-                    summary: 'Éxito',
-                    detail: 'Grupos asignados correctamente'
+                    severity: 'success', summary: 'Éxito', detail: 'Grupos asignados correctamente'
                 });
                 this.selectedUser = {value: ''};
                 this.onClearUser();
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
@@ -215,15 +201,12 @@ export class GroupAndRoleComponent implements OnInit {
         this.userService.deleteUser(this.selectedUserId).subscribe({
             next: (data) => {
                 this.messageService.add({
-                    severity: 'success',
-                    summary: 'Éxito',
-                    detail: 'Usuario eliminado correctamente'
+                    severity: 'success', summary: 'Éxito', detail: 'Usuario eliminado correctamente'
                 });
                 this.selectedUser = {value: ''};
                 this.onClearUser();
                 this.getAllUsers();
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
@@ -239,21 +222,16 @@ export class GroupAndRoleComponent implements OnInit {
                 this.selectedGroupId = event.value;
                 this.targetRoles = data.data!.map(role => {
                     return {
-                        name: role.roleName,
-                        code: role.roleId
+                        name: role.roleName, code: role.roleId
                     }
                 });
-                this.sourceRoles = this.roles.filter(
-                    role => data.data!.findIndex(userRole => userRole.roleId === role.roleId) === -1
-                ).map(role => {
+                this.sourceRoles = this.roles.filter(role => data.data!.findIndex(userRole => userRole.roleId === role.roleId) === -1).map(role => {
                     return {
-                        name: role.roleName,
-                        code: role.roleId
+                        name: role.roleName, code: role.roleId
                     }
                 });
                 this.isPickListDisabled = false;
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
             }
         });
@@ -274,13 +252,10 @@ export class GroupAndRoleComponent implements OnInit {
         this.groupsService.addRolesToGroup(this.selectedGroupId, this.targetRoles.map(role => role.code)).subscribe({
             next: (data) => {
                 this.messageService.add({
-                    severity: 'success',
-                    summary: 'Éxito',
-                    detail: 'Roles asignados correctamente'
+                    severity: 'success', summary: 'Éxito', detail: 'Roles asignados correctamente'
                 });
                 this.onClearGroup();
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
@@ -313,14 +288,11 @@ export class GroupAndRoleComponent implements OnInit {
         this.groupsService.deleteGroup(this.selectedGroupId).subscribe({
             next: (data) => {
                 this.messageService.add({
-                    severity: 'success',
-                    summary: 'Éxito',
-                    detail: 'Grupo eliminado correctamente'
+                    severity: 'success', summary: 'Éxito', detail: 'Grupo eliminado correctamente'
                 });
                 this.onClearGroup();
                 this.getGroups();
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
@@ -343,14 +315,11 @@ export class GroupAndRoleComponent implements OnInit {
         this.groupsService.createGroup(this.groupNameControl.value!, this.groupDescriptionControl.value!).subscribe({
             next: (data) => {
                 this.messageService.add({
-                    severity: 'success',
-                    summary: 'Éxito',
-                    detail: 'Grupo creado correctamente'
+                    severity: 'success', summary: 'Éxito', detail: 'Grupo creado correctamente'
                 });
                 this.visibleAddGroup = false;
                 this.getGroups();
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
@@ -361,15 +330,12 @@ export class GroupAndRoleComponent implements OnInit {
         this.groupsService.updateGroup(this.selectedGroupId, this.groupNameControl.value!, this.groupDescriptionControl.value!).subscribe({
             next: (data) => {
                 this.messageService.add({
-                    severity: 'success',
-                    summary: 'Éxito',
-                    detail: 'Grupo actualizado correctamente'
+                    severity: 'success', summary: 'Éxito', detail: 'Grupo actualizado correctamente'
                 });
                 this.visibleEditGroup = false;
                 this.getGroups();
                 this.onClearGroup();
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }

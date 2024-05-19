@@ -7,20 +7,20 @@ import {SharedService} from "../../../../core/services/shared.service";
 import {FormControl, Validators} from "@angular/forms";
 
 @Component({
-    selector: 'app-new-password',
-    templateUrl: './new-password.component.html',
-    styleUrl: './new-password.component.scss',
-    providers: [
+    selector: 'app-new-password', templateUrl: './new-password.component.html', styleUrl: './new-password.component.scss', providers: [
         MessageService,
-        ConfirmationService]
+        ConfirmationService
+    ]
 })
 export class NewPasswordComponent implements OnInit {
     passwordControl = new FormControl('', [
         Validators.required,
-        Validators.minLength(8)]);
+        Validators.minLength(8)
+    ]);
     confirmPasswordControl = new FormControl('', [
         Validators.required,
-        Validators.minLength(8)]);
+        Validators.minLength(8)
+    ]);
 
     constructor(private layoutService: LayoutService, private authService: AuthService, private router: Router, private messageService: MessageService, private sharedService: SharedService) {
     }
@@ -43,8 +43,7 @@ export class NewPasswordComponent implements OnInit {
                 setTimeout(() => {
                     this.router.navigate(['/auth/login']).then(r => console.log('Redirect to login'));
                 }, 500);
-            },
-            error: (error) => {
+            }, error: (error) => {
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
                 console.log(error);
             }

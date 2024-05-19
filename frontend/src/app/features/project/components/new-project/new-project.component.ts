@@ -12,10 +12,7 @@ import {ProjectService} from "../../../../core/services/project.service";
 import {Router} from "@angular/router";
 
 @Component({
-    selector: 'app-new-project',
-    templateUrl: './new-project.component.html',
-    styleUrl: './new-project.component.scss',
-    providers: [MessageService]
+    selector: 'app-new-project', templateUrl: './new-project.component.html', styleUrl: './new-project.component.scss', providers: [MessageService]
 })
 export class NewProjectComponent implements OnInit {
 

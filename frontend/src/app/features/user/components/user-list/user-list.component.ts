@@ -12,12 +12,10 @@ import {environment} from "../../../../../environments/environment";
 import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
-    selector: 'app-user-list',
-    templateUrl: './user-list.component.html',
-    styleUrl: './user-list.component.scss',
-    providers: [
+    selector: 'app-user-list', templateUrl: './user-list.component.html', styleUrl: './user-list.component.scss', providers: [
         ConfirmationService,
-        MessageService]
+        MessageService
+    ]
 })
 export class UserListComponent implements OnInit {
 
@@ -104,8 +102,7 @@ export class UserListComponent implements OnInit {
                 this.isLoading = false
                 // Filter the users to remove the current user
                 // this.users = this.users.filter(user => user.userId !== this.userId);
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.error(error);
             }
         });
@@ -136,12 +133,9 @@ export class UserListComponent implements OnInit {
             next: (data) => {
                 this.getData();
                 this.messageService.add({
-                    severity: 'success',
-                    summary: 'Éxito',
-                    detail: 'Usuario eliminado correctamente'
+                    severity: 'success', summary: 'Éxito', detail: 'Usuario eliminado correctamente'
                 });
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.error(error);
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }

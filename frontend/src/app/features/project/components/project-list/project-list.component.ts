@@ -11,10 +11,7 @@ import {PageDto} from "../../../../core/models/page.dto";
 import {ProjectService} from '../../../../core/services/project.service';
 
 @Component({
-    selector: 'app-project-list',
-    templateUrl: './project-list.component.html',
-    styleUrl: './project-list.component.scss',
-    providers: [
+    selector: 'app-project-list', templateUrl: './project-list.component.html', styleUrl: './project-list.component.scss', providers: [
         ConfirmationService,
         MessageService
     ]

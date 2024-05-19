@@ -5,9 +5,7 @@ import {UserService} from "../../../../core/services/user.service";
 import {Location} from "@angular/common";
 
 @Component({
-    selector: 'app-view-user',
-    templateUrl: './view-user.component.html',
-    styleUrl: './view-user.component.scss',
+    selector: 'app-view-user', templateUrl: './view-user.component.html', styleUrl: './view-user.component.scss',
 })
 export class ViewUserComponent implements OnInit {
 
@@ -30,8 +28,7 @@ export class ViewUserComponent implements OnInit {
         this.userService.getUserProfilePicture(this.userId).subscribe({
             next: (data) => {
                 this.profilePictureUrl = URL.createObjectURL(data);
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
             }
         });
@@ -41,8 +38,7 @@ export class ViewUserComponent implements OnInit {
         this.userService.getUser(this.userId).subscribe({
             next: (data) => {
                 this.user = data.data;
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
             }
         });

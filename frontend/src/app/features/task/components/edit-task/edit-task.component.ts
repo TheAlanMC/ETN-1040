@@ -4,7 +4,6 @@ import {MessageService, SelectItem} from "primeng/api";
 import {UserDto} from "../../../user/models/user.dto";
 import {environment} from "../../../../../environments/environment";
 import {FileDto} from "../../../../core/models/file.dto";
-import {UserService} from "../../../../core/services/user.service";
 import {TaskService} from "../../../../core/services/task.service";
 import {UtilService} from "../../../../core/services/util.service";
 import {FileService} from "../../../../core/services/file.service";

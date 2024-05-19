@@ -13,10 +13,7 @@ import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {ProjectDto} from "../../models/project.dto";
 
 @Component({
-    selector: 'app-edit-project',
-    templateUrl: './edit-project.component.html',
-    styleUrl: './edit-project.component.scss',
-    providers: [MessageService]
+    selector: 'app-edit-project', templateUrl: './edit-project.component.html', styleUrl: './edit-project.component.scss', providers: [MessageService]
 })
 export class EditProjectComponent implements OnInit {
 
@@ -95,24 +92,24 @@ export class EditProjectComponent implements OnInit {
                 this.projectDescriptionControl.setValue(data.data!.projectDescription);
                 this.dateFromControl.setValue(new Date(data.data!.dateFrom).toLocaleDateString('en-GB'));
                 this.dateToControl.setValue(new Date(data.data!.dateTo).toLocaleDateString('en-GB'));
-                    this.selectedMembers = data.data!.projectMembers.map(member => {
-                        this.fetchUserImage(member.userId);
-                        return {
-                            label: `${member.firstName} ${member.lastName}`,
-                            labelSecondary: member.email,
-                            value: member.userId,
-                            disabled: (member.userId === this.userId)
-                        }
-                    });
-                    this.selectedModerators = data.data!.projectModerators.map(moderator => {
-                        this.fetchUserImage(moderator.userId);
-                        return {
-                            label: `${moderator.firstName} ${moderator.lastName}`,
-                            labelSecondary: moderator.email,
-                            value: moderator.userId,
-                            disabled: (moderator.userId === this.userId)
-                        }
-                    });
+                this.selectedMembers = data.data!.projectMembers.map(member => {
+                    this.fetchUserImage(member.userId);
+                    return {
+                        label: `${member.firstName} ${member.lastName}`,
+                        labelSecondary: member.email,
+                        value: member.userId,
+                        disabled: (member.userId === this.userId)
+                    }
+                });
+                this.selectedModerators = data.data!.projectModerators.map(moderator => {
+                    this.fetchUserImage(moderator.userId);
+                    return {
+                        label: `${moderator.firstName} ${moderator.lastName}`,
+                        labelSecondary: moderator.email,
+                        value: moderator.userId,
+                        disabled: (moderator.userId === this.userId)
+                    }
+                });
             }, error: (error) => {
                 console.log(error);
             }

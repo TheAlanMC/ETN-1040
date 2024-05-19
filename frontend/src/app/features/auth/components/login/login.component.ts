@@ -8,17 +8,16 @@ import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 
 @Component({
-    selector: 'app-login',
-    templateUrl: './login.component.html',
-    styleUrl: './login.component.scss',
-    providers: [
+    selector: 'app-login', templateUrl: './login.component.html', styleUrl: './login.component.scss', providers: [
         MessageService,
-        ConfirmationService]
+        ConfirmationService
+    ]
 })
 export class LoginComponent {
     emailControl = new FormControl('', [
         Validators.required,
-        Validators.email]);
+        Validators.email
+    ]);
     passwordControl = new FormControl('', [Validators.required]);
 
     // rememberMe: boolean = false;
@@ -50,8 +49,7 @@ export class LoginComponent {
                 setTimeout(() => {
                     this.router.navigate(['/']).then(r => console.log('Navigated to home'));
                 }, 500);
-            },
-            error: (error) => {
+            }, error: (error) => {
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
                 console.log(error);
             }

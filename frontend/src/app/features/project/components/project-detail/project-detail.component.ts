@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {environment} from "../../../../../environments/environment";
-import {UserDto} from "../../../user/models/user.dto";
 import {SelectItem} from "primeng/api";
 import {ProjectDto} from "../../models/project.dto";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -11,9 +10,7 @@ import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 
 @Component({
-    selector: 'app-project-detail',
-    templateUrl: './project-detail.component.html',
-    styleUrl: './project-detail.component.scss'
+    selector: 'app-project-detail', templateUrl: './project-detail.component.html', styleUrl: './project-detail.component.scss'
 })
 export class ProjectDetailComponent implements OnInit {
     projectId: number = 0;

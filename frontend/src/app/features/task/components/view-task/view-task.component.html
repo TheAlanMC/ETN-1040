@@ -10,61 +10,61 @@
                     type="button"></button>
         </div>
     </ng-template>
-    <ng-template pTemplate="content" >
-        <div class="grid p-fluid formgrid px-3">
-            <div class="col-12 field">
-                <label class="font-semibold text-900" for="title">Título de la tarea</label>
-                <input [(ngModel)]="taskName" [readonly]="true" class="w-full" id="title" name="title"
-                       pInputText
-                       placeholder="Título de la tarea" type="text">
-            </div>
-            <div class="col-12 field">
-                <label class="font-semibold text-900" for="description">Descripción de la tarea</label>
-                <textarea [(ngModel)]="taskDescription" [readonly]="true" [rows]="3" class="w-full"
-                          id="description"
-                          name="description"
-                          pInputTextarea placeholder="Description de la tarea"
-                          style="resize: none" type="text"></textarea>
-            </div>
-            <div class="col-12 lg:col-6 field">
-                <label class="font-semibold text-900" for="deadline">Fecha límite</label>
-                <p-calendar [(ngModel)]="taskDeadline" [appendTo]="sidebar" [disabled]="true"
-                            [minDate]="today"
-                            [readonlyInput]="true" [showIcon]="true"
-                            [showSeconds]="false" [showTime]="true" dateFormat="dd/mm/yy" id="deadline"
-                            placeholder="Fecha límite"></p-calendar>
-            </div>
-            <div class="col-12 lg:col-6 field">
-                <label class="font-semibold text-900" for="priority">Prioridad</label>
-                <p-dropdown [(ngModel)]="selectedPriority" [appendTo]="sidebar" [disabled]="!task" [filter]="false"
-                            [options]="priorityItems" [readonly]="true"
-                            id=priority placeholder="Seleccionar prioridad"></p-dropdown>
-            </div>
-            <div class="col-12 field">
-                <div class="border-1 surface-border border-round field">
-                    <span class="font-semibold text-900 block border-bottom-1 surface-border p-3">Responsables</span>
-                    <div class="p-3">
-                        <div *ngIf="selectedAssignees.length > 0" class="auto-flex align-items-center field">
-                            <p-chips [(ngModel)]="selectedAssignees" [disabled]="true" class="chips-custom">
-                                <ng-template let-item pTemplate="item">
-                                    <img
-                                            (error)="imgLoaded[item.value] = false"
-                                            (load)="imgLoaded[item.value] = true"
-                                            [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
-                                            alt="{{item.value}}"
-                                            class="mr-1"
-                                            style="width: 25px; height: 25px; border-radius: 50%; object-fit: cover;">
-                                    <span class="ml-1">{{ item.label }}</span>
-                                </ng-template>
-                            </p-chips>
+    <ng-template pTemplate="content">
+        <div *ngIf="task">
+            <div class="grid p-fluid formgrid px-3">
+                <div class="col-12 field">
+                    <label class="font-semibold text-900" for="title">Título de la tarea</label>
+                    <input [(ngModel)]="taskName" [readonly]="true" class="w-full" id="title" name="title"
+                           pInputText
+                           placeholder="Título de la tarea" type="text">
+                </div>
+                <div class="col-12 field">
+                    <label class="font-semibold text-900" for="description">Descripción de la tarea</label>
+                    <textarea [(ngModel)]="taskDescription" [readonly]="true" [rows]="3" class="w-full"
+                              id="description"
+                              name="description"
+                              pInputTextarea placeholder="Description de la tarea"
+                              style="resize: none" type="text"></textarea>
+                </div>
+                <div class="col-12 lg:col-6 field">
+                    <label class="font-semibold text-900" for="deadline">Fecha límite</label>
+                    <p-calendar [(ngModel)]="taskDeadline" [appendTo]="sidebar" [disabled]="true"
+                                [minDate]="today"
+                                [readonlyInput]="true" [showIcon]="true"
+                                [showSeconds]="false" [showTime]="true" dateFormat="dd/mm/yy" id="deadline"
+                                placeholder="Fecha límite"></p-calendar>
+                </div>
+                <div class="col-12 lg:col-6 field">
+                    <label class="font-semibold text-900" for="priority">Prioridad</label>
+                    <p-dropdown [(ngModel)]="selectedPriority" [appendTo]="sidebar" [disabled]="!task" [filter]="false"
+                                [options]="priorityItems" [readonly]="true"
+                                id=priority placeholder="Seleccionar prioridad"></p-dropdown>
+                </div>
+                <div class="col-12 field">
+                    <div class="border-1 surface-border border-round field">
+                        <span class="font-semibold text-900 block border-bottom-1 surface-border p-3">Responsables</span>
+                        <div class="p-3">
+                            <div *ngIf="selectedAssignees.length > 0" class="auto-flex align-items-center field">
+                                <p-chips [(ngModel)]="selectedAssignees" [disabled]="true" class="chips-custom">
+                                    <ng-template let-item pTemplate="item">
+                                        <img
+                                                (error)="imgLoaded[item.value] = false"
+                                                (load)="imgLoaded[item.value] = true"
+                                                [src]="imgLoaded[item.value] ? (baseUrl + '/' + item.value + '/profile-picture/thumbnail') : 'assets/layout/images/avatar_thumbnail.png'"
+                                                alt="{{item.value}}"
+                                                class="mr-1"
+                                                style="width: 25px; height: 25px; border-radius: 50%; object-fit: cover;">
+                                        <span class="ml-1">{{ item.label }}</span>
+                                    </ng-template>
+                                </p-chips>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-12 field">
-                <div class="border-1 surface-border border-round field">
-                    <span class="font-semibold text-900 block border-bottom-1 surface-border p-3">Archivos Adjuntos</span>
-                    <div class="p-3">
+                <div *ngIf="task?.taskFiles!.length > 0" class="col-12 field">
+                    <div class="border-1 surface-border border-round field">
+                        <span class="font-semibold text-900 block border-bottom-1 surface-border p-3">Archivos Adjuntos</span>
                         <p-fileUpload #fileUploader [auto]="true"
                                       [customUpload]="true"
                                       [disabled]="true" [multiple]="true" [showCancelButton]="false"
@@ -72,7 +72,7 @@
                                       styleClass="border-1 surface-border surface-card border-round">
                             <ng-template pTemplate="content">
                                 <div (click)="fileUploader.advancedFileInput.nativeElement.click()"
-                                     class="h-15rem overflow-y-auto py-3 border-round"
+                                     class="h-10rem overflow-y-auto border-round"
                                 >
                                     <div *ngIf="!task?.taskFiles?.length"
                                          class="flex flex-column w-full h-full justify-content-center align-items-center">
@@ -83,7 +83,7 @@
                                         <div (mouseenter)="onFileMouseOver(file)"
                                              (mouseleave)="onFileMouseLeave(file)"
                                              *ngFor="let file of task?.taskFiles; let i = index;"
-                                             class="h-full relative w-9rem h-10rem border-3 border-transparent border-round hover:bg-primary transition-duration-100 cursor-auto"
+                                             class="h-full relative w-10rem h-10rem border-3 border-transparent border-round hover:bg-primary transition-duration-100 cursor-auto"
                                              style="padding: 1px;">
                                             <div class="w-full h-full border-round shadow-2 flex align-items-center justify-content-center"
                                                  pTooltip="{{file.filename}} - {{file.fileSize | fileSize}}"
@@ -97,10 +97,10 @@
                                                             <img
                                                                     (error)="imgLoaded[file.fileId] = false"
                                                                     (load)="imgLoaded[file.fileId] = true"
-                                                                    [src]="imgLoaded[file.fileId] ? (filesBaselUrl + '/' + file.fileId + '/thumbnail') : 'assets/layout/images/placeholder.png'"
                                                                     [alt]="file.fileId"
-                                                                 class="px-1"
-                                                                 style="object-fit: cover; width: 100%; height: 70px; border-radius: 5px;">
+                                                                    [src]="imgLoaded[file.fileId] ? (filesBaselUrl + '/' + file.fileId + '/thumbnail') : 'assets/layout/images/placeholder.png'"
+                                                                    class="px-1"
+                                                                    style="object-fit: cover; width: 100%; height: 70px; border-radius: 5px;">
 
                                                         </ng-container>
                                                         <ng-template #nonImageTemplate>
@@ -128,7 +128,8 @@
                                 x="0"
                                 y="0"></rect><text [attr.x]="getFileDetails(file.filename).x" dominant-baseline="middle"
                                                    fill="#fff"
-                                                   style="color:#fff; font-family: OpenSans-Semibold, 'Open Sans', Helvetica, Arial, sans-serif; font-weight: 500; font-size: 22px; line-height: 25px;"                                                   y="54%">{{ getFileDetails(file.filename).extension }}</text></svg></svg></span>
+                                                   style="color:#fff; font-family: OpenSans-Semibold, 'Open Sans', Helvetica, Arial, sans-serif; font-weight: 500; font-size: 22px; line-height: 25px;"
+                                                   y="54%">{{ getFileDetails(file.filename).extension }}</text></svg></svg></span>
                                                         </ng-template>
                                                     </div>
                                                     <div
@@ -140,12 +141,13 @@
 
                                             <button #buttonOp (click)="$event.stopPropagation(); downloadFile(file)"
                                                     [id]="file.fileId"
-                                                    class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
-                                                    icon="pi pi-download" pButton
-                                                    pRipple
-                                                    pTooltip="Descargar archivo"
-                                                    style="top: -1px; right: -1px;" tooltipPosition="top"
                                                     [style.display]="defaultDisplay"
+                                                    class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
+                                                    icon="pi pi-download"
+                                                    pButton
+                                                    pRipple
+                                                    pTooltip="Descargar archivo" style="top: -1px; right: -1px;"
+                                                    tooltipPosition="top"
                                                     type="button"></button>
                                         </div>
                                     </div>
@@ -154,15 +156,19 @@
                         </p-fileUpload>
                     </div>
                 </div>
-            </div>
-            <div class="col-12">
-                <div class="flex flex-column sm:flex-row justify-content-between align-items-center gap-3 py-2">
-                    <button (click)="onClose()" [disabled]="loading" class="p-button-primary flex-1 p-button-outlined"
-                            icon="pi pi-arrow-left" label="Volver"
-                            pButton pRipple></button>
+                <div class="col-12">
+                    <div class="flex flex-column sm:flex-row justify-content-between align-items-center gap-3 py-2">
+                        <button (click)="onClose()" [disabled]="loading" class="p-button-primary flex-1 p-button-outlined"
+                                icon="pi pi-arrow-left" label="Volver"
+                                pButton pRipple></button>
+                    </div>
                 </div>
             </div>
         </div>
-
+        <div *ngIf="!task">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+                <p-progressSpinner ariaLabel="Cargando..."></p-progressSpinner>
+            </div>
+        </div>
     </ng-template>
 </p-sidebar>

@@ -9,8 +9,7 @@ import {ReportRoutingModule} from "./report-routing.module";
     declarations: [
         ProjectReportComponent,
         TaskReportComponent
-    ],
-    imports: [
+    ], imports: [
         CommonModule,
         ReportRoutingModule
     ]

@@ -32,8 +32,7 @@ import {KeyFilterModule} from "primeng/keyfilter";
         ProfileComponent,
         GroupAndRoleComponent,
         ViewUserComponent
-    ],
-    imports: [
+    ], imports: [
         CommonModule,
         UserRoutingModule,
         FileUploadModule,

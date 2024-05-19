@@ -7,8 +7,7 @@ import {VerificationComponent} from "./components/verification/verification.comp
 
 const routes: Routes = [
     {
-        path: 'auth',
-        children: [
+        path: 'auth', children: [
             {path: 'login', component: LoginComponent},
             {path: 'forgot-password', component: ForgotPasswordComponent},
             {path: 'verification', component: VerificationComponent},
@@ -19,8 +18,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
+    imports: [RouterModule.forChild(routes)], exports: [RouterModule]
 })
 export class AuthRoutingModule {
 }

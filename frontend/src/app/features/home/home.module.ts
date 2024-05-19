@@ -16,8 +16,7 @@ import {RatingModule} from "primeng/rating";
     declarations: [
         HomePageComponent,
         DashboardComponent
-    ],
-    imports: [
+    ], imports: [
         CommonModule,
         HomeRoutingModule,
         KnobModule,

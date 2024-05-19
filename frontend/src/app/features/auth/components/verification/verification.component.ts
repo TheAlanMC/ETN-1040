@@ -6,10 +6,7 @@ import {SharedService} from "../../../../core/services/shared.service";
 import {MessageService} from "primeng/api";
 
 @Component({
-    selector: 'app-verification',
-    templateUrl: './verification.component.html',
-    styleUrl: './verification.component.scss',
-    providers: [MessageService]
+    selector: 'app-verification', templateUrl: './verification.component.html', styleUrl: './verification.component.scss', providers: [MessageService]
 })
 export class VerificationComponent implements OnInit {
     val1!: number;
@@ -41,15 +38,12 @@ export class VerificationComponent implements OnInit {
 
     onDigitInput(event: any) {
         let element;
-        if (event.code !== 'Backspace')
-            if (event.code.includes('Numpad') || event.code.includes('Digit')) {
-                element = event.srcElement.nextElementSibling;
-            }
-        if (event.code === 'Backspace')
-            element = event.srcElement.previousElementSibling;
+        if (event.code !== 'Backspace') if (event.code.includes('Numpad') || event.code.includes('Digit')) {
+            element = event.srcElement.nextElementSibling;
+        }
+        if (event.code === 'Backspace') element = event.srcElement.previousElementSibling;
 
-        if (element == null) return;
-        else element.focus();
+        if (element == null) return; else element.focus();
     }
 
     onVerify() {
@@ -62,8 +56,7 @@ export class VerificationComponent implements OnInit {
                 setTimeout(() => {
                     this.router.navigate(['/auth/new-password']).then(r => console.log('Redirect to new password'));
                 }, 500);
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }

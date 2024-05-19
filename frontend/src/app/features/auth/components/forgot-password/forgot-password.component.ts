@@ -7,17 +7,16 @@ import {FormControl, Validators} from "@angular/forms";
 import {SharedService} from "../../../../core/services/shared.service";
 
 @Component({
-    selector: 'app-forgot-password',
-    templateUrl: './forgot-password.component.html',
-    styleUrl: './forgot-password.component.scss',
-    providers: [
+    selector: 'app-forgot-password', templateUrl: './forgot-password.component.html', styleUrl: './forgot-password.component.scss', providers: [
         MessageService,
-        ConfirmationService]
+        ConfirmationService
+    ]
 })
 export class ForgotPasswordComponent {
     emailControl = new FormControl('', [
         Validators.required,
-        Validators.email]);
+        Validators.email
+    ]);
 
     constructor(private layoutService: LayoutService, private authService: AuthService, private router: Router, private messageService: MessageService, private sharedService: SharedService) {
     }
@@ -34,8 +33,7 @@ export class ForgotPasswordComponent {
                 setTimeout(() => {
                     this.router.navigate(['/auth/verification']).then(r => console.log('Navigated to home'));
                 }, 500);
-            },
-            error: (error) => {
+            }, error: (error) => {
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
                 console.log(error);
             }

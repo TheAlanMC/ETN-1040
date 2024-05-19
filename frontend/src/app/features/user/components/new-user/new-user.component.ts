@@ -9,10 +9,7 @@ import {MessageService, SelectItem} from "primeng/api";
 import {Location} from '@angular/common';
 
 @Component({
-    selector: 'app-new-user',
-    templateUrl: './new-user.component.html',
-    styleUrl: './new-user.component.scss',
-    providers: [MessageService]
+    selector: 'app-new-user', templateUrl: './new-user.component.html', styleUrl: './new-user.component.scss', providers: [MessageService]
 })
 export class NewUserComponent implements OnInit {
     selectedGroupId: number = 0;
@@ -27,7 +24,8 @@ export class NewUserComponent implements OnInit {
     lastNameControl = new FormControl('', [Validators.required]);
     emailControl = new FormControl('', [
         Validators.required,
-        Validators.email]);
+        Validators.email
+    ]);
     phoneControl = new FormControl('');
     descriptionControl = new FormControl('');
 
@@ -47,12 +45,10 @@ export class NewUserComponent implements OnInit {
             next: (data) => {
                 this.groups = data.data!.map(group => {
                     return {
-                        label: group.groupName,
-                        value: group.groupId
+                        label: group.groupName, value: group.groupId
                     }
                 });
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
             }
         });
@@ -65,8 +61,7 @@ export class NewUserComponent implements OnInit {
                 this.roles = data.data!.map(role => role.roleName);
                 this.selectedGroupId = event.value;
                 this.loadingRoles = false;
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
                 this.loadingRoles = false;
             }
@@ -78,21 +73,13 @@ export class NewUserComponent implements OnInit {
     }
 
     public onSave() {
-        this.userService.createUser(
-            this.selectedGroupId,
-            this.emailControl.value!,
-            this.firstNameControl.value!,
-            this.lastNameControl.value!,
-            this.phoneControl.value!,
-            this.descriptionControl.value!
-        ).subscribe({
+        this.userService.createUser(this.selectedGroupId, this.emailControl.value!, this.firstNameControl.value!, this.lastNameControl.value!, this.phoneControl.value!, this.descriptionControl.value!).subscribe({
             next: (data) => {
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Usuario creado'});
                 setTimeout(() => {
                     this.router.navigate(['/users']).then(r => console.log('Redirect to users page'));
                 }, 500);
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }

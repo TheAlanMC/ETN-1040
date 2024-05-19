@@ -16,10 +16,7 @@ import {TaskStatusDto} from "../../../task/models/task-status.dto";
 import {debounceTime, Subject} from "rxjs";
 
 @Component({
-    selector: 'app-project-task-list',
-    templateUrl: './project-task-list.component.html',
-    styleUrl: './project-task-list.component.scss',
-    providers: [
+    selector: 'app-project-task-list', templateUrl: './project-task-list.component.html', styleUrl: './project-task-list.component.scss', providers: [
         ConfirmationService,
         MessageService
     ]

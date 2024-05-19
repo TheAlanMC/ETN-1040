@@ -10,10 +10,7 @@ import {AuthService} from "../../../../core/services/auth.service";
 import {MessageService} from "primeng/api";
 
 @Component({
-    selector: 'app-profile',
-    templateUrl: './profile.component.html',
-    styleUrl: './profile.component.scss',
-    providers: [MessageService]
+    selector: 'app-profile', templateUrl: './profile.component.html', styleUrl: './profile.component.scss', providers: [MessageService]
 })
 export class ProfileComponent implements OnInit {
 
@@ -21,13 +18,16 @@ export class ProfileComponent implements OnInit {
 
     oldPasswordControl = new FormControl('', [
         Validators.required,
-        Validators.minLength(8)]);
+        Validators.minLength(8)
+    ]);
     passwordControl = new FormControl('', [
         Validators.required,
-        Validators.minLength(8)]);
+        Validators.minLength(8)
+    ]);
     confirmPasswordControl = new FormControl('', [
         Validators.required,
-        Validators.minLength(8)]);
+        Validators.minLength(8)
+    ]);
 
 
     profilePictureUrl: string = 'assets/layout/images/avatar.png';
@@ -73,8 +73,7 @@ export class ProfileComponent implements OnInit {
             next: (data) => {
                 this.profilePictureUrl = URL.createObjectURL(data);
                 this.backupProfilePictureUrl = URL.createObjectURL(data);
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
             }
         });
@@ -88,8 +87,7 @@ export class ProfileComponent implements OnInit {
                 this.lastNameControl.setValue(this.profile?.lastName ?? '');
                 this.phoneControl.setValue(this.profile?.phone ?? '');
                 this.descriptionControl.setValue(this.profile?.description ?? '');
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
             }
         });
@@ -108,20 +106,14 @@ export class ProfileComponent implements OnInit {
 
     public onSave() {
         this.onUpload();
-        this.profileService.updateProfile(
-            this.firstNameControl.value!,
-            this.lastNameControl.value!,
-            this.phoneControl.value!,
-            this.descriptionControl.value!
-        ).subscribe({
+        this.profileService.updateProfile(this.firstNameControl.value!, this.lastNameControl.value!, this.phoneControl.value!, this.descriptionControl.value!).subscribe({
             next: (data) => {
                 this.refreshToken();
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Perfil actualizado'});
                 setTimeout(() => {
                     this.router.navigate(['/']).then(r => window.location.reload());
                 }, 500);
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
@@ -134,8 +126,7 @@ export class ProfileComponent implements OnInit {
                 next: (data) => {
                     this.backupProfilePictureUrl = this.profilePictureUrl;
                     this.onCancelSelect();
-                },
-                error: (error) => {
+                }, error: (error) => {
                     console.log(error);
                 }
             });
@@ -148,8 +139,7 @@ export class ProfileComponent implements OnInit {
             next: (data) => {
                 localStorage.setItem('token', data.data!.token);
                 localStorage.setItem('refreshToken', data.data!.refreshToken);
-            },
-            error: (error) => {
+            }, error: (error) => {
                 console.log(error);
             }
         });
@@ -160,8 +150,7 @@ export class ProfileComponent implements OnInit {
             next: (data) => {
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Contraseña actualizada'});
                 this.visibleChangePassword = false;
-            },
-            error: (error) => {
+            }, error: (error) => {
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
                 console.log(error);
             }
