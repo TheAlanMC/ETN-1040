@@ -99,7 +99,7 @@ export class TaskCalendarComponent implements OnInit, AfterViewInit {
                 this.canAddTask = true;
                 this.isModerator = true;
             }
-            if (decoded.roles.includes('EDITAR PROYECTOS')) {
+            if (decoded.roles.includes('EDITAR TAREAS')) {
                 this.canEditTask = true;
                 this.isModerator = true;
             }

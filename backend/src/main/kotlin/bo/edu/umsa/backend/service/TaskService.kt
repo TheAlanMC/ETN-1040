@@ -1,13 +1,12 @@
 package bo.edu.umsa.backend.service
 
-import bo.edu.umsa.backend.dto.NewTaskDto
-import bo.edu.umsa.backend.dto.TaskDto
-import bo.edu.umsa.backend.dto.TaskPartialDto
-import bo.edu.umsa.backend.dto.TaskStatusDto
+import bo.edu.umsa.backend.dto.*
 import bo.edu.umsa.backend.entity.Task
 import bo.edu.umsa.backend.entity.TaskAssignee
 import bo.edu.umsa.backend.entity.TaskFile
+import bo.edu.umsa.backend.entity.TaskHistory
 import bo.edu.umsa.backend.exception.EtnException
+import bo.edu.umsa.backend.mapper.TaskHistoryMapper
 import bo.edu.umsa.backend.mapper.TaskMapper
 import bo.edu.umsa.backend.mapper.TaskPartialMapper
 import bo.edu.umsa.backend.mapper.TaskStatusMapper
@@ -35,6 +34,7 @@ class TaskService @Autowired constructor(
     private val userRepository: UserRepository,
     private val taskRepository: TaskRepository,
     private val taskAssigneeRepository: TaskAssigneeRepository,
+    private val taskHistoryRepository: TaskHistoryRepository,
     private val taskFileRepository: TaskFileRepository,
     private val taskStatusRepository: TaskStatusRepository,
 ) {
@@ -194,6 +194,26 @@ class TaskService @Autowired constructor(
             taskFileRepository.save(taskFileEntity)
         }
         logger.info("Task files created for task ${taskEntity.taskId}")
+
+        // Create the task history
+        val taskHistoryEntity = TaskHistory()
+        taskHistoryEntity.taskId = taskEntity.taskId
+        taskHistoryEntity.userId = userId.toInt()
+        taskHistoryEntity.fieldName = TaskHistoryType.TAREA
+        taskHistoryEntity.previousValue = ""
+        taskHistoryEntity.newValue = "Tarea creada"
+        taskHistoryRepository.save(taskHistoryEntity)
+
+        // Create the task history for the assignees
+        val taskAssigneeEntities = TaskHistory()
+        taskAssigneeEntities.taskId = taskEntity.taskId
+        taskAssigneeEntities.userId = userId.toInt()
+        taskAssigneeEntities.fieldName = TaskHistoryType.RESPONSABLE
+        taskAssigneeEntities.previousValue = ""
+        // Get the assignee names
+        val assigneeNames = userRepository.findAllByUserIdInAndStatusIsTrue(newTaskDto.taskAssigneeIds).map { it.firstName + " " + it.lastName }
+        taskAssigneeEntities.newValue = assigneeNames.joinToString(", ")
+        taskHistoryRepository.save(taskAssigneeEntities)
     }
 
     fun updateTask(
@@ -255,6 +275,9 @@ class TaskService @Autowired constructor(
             }
         }
 
+        val originalTasKEntity = taskRepository.findByTaskIdAndStatusIsTrue(taskId)!!
+        val originalAssignees = taskAssigneeRepository.findAllByTaskIdAndStatusIsTrue(taskId).map { it.userId }
+
         logger.info("Updating the task with id $taskId")
         // Update the task
         taskEntity.taskName = newTaskDto.taskName
@@ -299,6 +322,41 @@ class TaskService @Autowired constructor(
             }
         }
         logger.info("Task files updated for task $taskId")
+
+        // Create the task history
+        // If the deadline has changed
+        if (originalTasKEntity.taskDeadline != taskEntity.taskDeadline) {
+            val taskHistoryEntity = TaskHistory()
+            taskHistoryEntity.taskId = taskEntity.taskId
+            taskHistoryEntity.userId = userId.toInt()
+            taskHistoryEntity.fieldName = TaskHistoryType.FECHA_LIMITE
+            taskHistoryEntity.previousValue = originalTasKEntity.taskDeadline.toString()
+            taskHistoryEntity.newValue = taskEntity.taskDeadline.toString()
+            taskHistoryRepository.save(taskHistoryEntity)
+        }
+        // If the priority has changed
+        if (originalTasKEntity.taskPriority != taskEntity.taskPriority) {
+            val taskHistoryEntity = TaskHistory()
+            taskHistoryEntity.taskId = taskEntity.taskId
+            taskHistoryEntity.userId = userId.toInt()
+            taskHistoryEntity.fieldName = TaskHistoryType.PRIORIDAD
+            taskHistoryEntity.previousValue = originalTasKEntity.taskPriority.toString()
+            taskHistoryEntity.newValue = taskEntity.taskPriority.toString()
+            taskHistoryRepository.save(taskHistoryEntity)
+        }
+        // If the assignees have changed
+        if (originalAssignees.toSet() != newTaskDto.taskAssigneeIds.map { it }.toSet()) {
+            val taskHistoryEntity = TaskHistory()
+            taskHistoryEntity.taskId = taskEntity.taskId
+            taskHistoryEntity.userId = userId.toInt()
+            taskHistoryEntity.fieldName = TaskHistoryType.RESPONSABLE
+            val assignedNames = userRepository.findAllByUserIdInAndStatusIsTrue(originalAssignees).map { it.firstName + " " + it.lastName }
+            taskHistoryEntity.previousValue = assignedNames.joinToString(", ")
+            // Get the assignee names
+            val assigneeNames = userRepository.findAllByUserIdInAndStatusIsTrue(newTaskDto.taskAssigneeIds).map { it.firstName + " " + it.lastName }
+            taskHistoryEntity.newValue = assigneeNames.joinToString(", ")
+            taskHistoryRepository.save(taskHistoryEntity)
+        }
     }
 
     fun updateTaskStatus(
@@ -311,15 +369,30 @@ class TaskService @Autowired constructor(
         val taskEntity = taskRepository.findByTaskIdAndStatusIsTrue(taskId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task not found", "Tarea no encontrada")
         // Validate the task status exists
-        taskStatusRepository.findByTaskStatusIdAndStatusIsTrue(taskStatusId)
+        val taskStatusEntity = taskStatusRepository.findByTaskStatusIdAndStatusIsTrue(taskStatusId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task status not found", "Estado de la tarea no encontrado")
+        // Validate the task status is not the same as the current status
+        if (taskEntity.taskStatusId == taskStatusId.toInt()) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Task status is the same as the current status", "El estado de la tarea es el mismo que el estado actual")
+        }
         // Validate that the user is the project owner, a project moderator or a project member
         if (projectOwnerRepository.findByProjectIdAndUserIdAndStatusIsTrue(taskEntity.projectId.toLong(), userId) == null && projectModeratorRepository.findByProjectIdAndUserIdAndStatusIsTrue(taskEntity.projectId.toLong(), userId) == null && projectMemberRepository.findByProjectIdAndUserIdAndStatusIsTrue(taskEntity.projectId.toLong(), userId) == null) {
             throw EtnException(HttpStatus.FORBIDDEN, "Error: User is not the project owner or a project moderator", "El usuario no es el propietario del proyecto o un colaborador del proyecto")
         }
+
+        val originalTaskStatusId = taskEntity.taskStatusId
         // Update the task status
         taskEntity.taskStatusId = taskStatusId.toInt()
         taskRepository.save(taskEntity)
+
+        // Create the task history
+        val taskHistoryEntity = TaskHistory()
+        taskHistoryEntity.taskId = taskEntity.taskId
+        taskHistoryEntity.userId = userId.toInt()
+        taskHistoryEntity.fieldName = TaskHistoryType.ESTADO
+        taskHistoryEntity.previousValue = taskStatusRepository.findByTaskStatusIdAndStatusIsTrue(originalTaskStatusId.toLong())!!.taskStatusName
+        taskHistoryEntity.newValue = taskStatusRepository.findByTaskStatusIdAndStatusIsTrue(taskStatusId)!!.taskStatusName
+        taskHistoryRepository.save(taskHistoryEntity)
     }
 
     fun deleteTask(taskId: Long) {
@@ -338,6 +411,52 @@ class TaskService @Autowired constructor(
         }
         // Delete the task
         taskEntity.status = false
+        taskRepository.save(taskEntity)
+    }
+
+    fun getTaskHistory(taskId: Long): List<TaskHistoryDto> {
+        // Get the user id from the token
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        // Validate the task exists
+        val taskEntity = taskRepository.findByTaskIdAndStatusIsTrue(taskId)
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task not found", "Tarea no encontrada")
+        // Validate that the user is the project owner, a project moderator or a project member
+        if (projectOwnerRepository.findByProjectIdAndUserIdAndStatusIsTrue(taskEntity.projectId.toLong(), userId) == null && projectModeratorRepository.findByProjectIdAndUserIdAndStatusIsTrue(taskEntity.projectId.toLong(), userId) == null && projectMemberRepository.findByProjectIdAndUserIdAndStatusIsTrue(taskEntity.projectId.toLong(), userId) == null) {
+            throw EtnException(HttpStatus.FORBIDDEN, "Error: User is not the project owner or a project moderator", "El usuario no es el propietario del proyecto o un colaborador del proyecto")
+        }
+        // Get the task history
+        val taskHistoryEntities = taskHistoryRepository.findAllByTaskIdAndStatusIsTrueOrderByTaskHistoryIdDesc(taskId)
+        return taskHistoryEntities.map { TaskHistoryMapper.entityToDto(it) }
+    }
+
+    fun createTaskFeedback(
+        taskId: Long,
+        newTaskFeedbackDto: NewTaskFeedbackDto
+    ) {
+        // Validate the rating is between 1 and 5
+        if (newTaskFeedbackDto.rating < 1 || newTaskFeedbackDto.rating > 5) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Rating must be between 1 and 5", "La calificación debe estar entre 1 y 5")
+        }
+        // Get the user id from the token
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        // Validate the task exists
+        val taskEntity = taskRepository.findByTaskIdAndStatusIsTrue(taskId)
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task not found", "Tarea no encontrada")
+        // Validate that the user is the project owner, a project moderator or a project member
+        if (projectOwnerRepository.findByProjectIdAndUserIdAndStatusIsTrue(taskEntity.projectId.toLong(), userId) == null && projectModeratorRepository.findByProjectIdAndUserIdAndStatusIsTrue(taskEntity.projectId.toLong(), userId) == null && projectMemberRepository.findByProjectIdAndUserIdAndStatusIsTrue(taskEntity.projectId.toLong(), userId) == null) {
+            throw EtnException(HttpStatus.FORBIDDEN, "Error: User is not the project owner or a project moderator", "El usuario no es el propietario del proyecto o un colaborador del proyecto")
+        }
+        // Validate the task status is 3
+        if (taskEntity.taskStatusId != 3) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Task status is not completed", "La tarea no está completada")
+        }
+        // Validate the task feedback does not exist
+        if (taskEntity.feedback.isNotEmpty() && taskEntity.rating != 0) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Task feedback already exists", "La retroalimentación de la tarea ya existe")
+        }
+        // Add the rating and feedback to the task
+        taskEntity.rating = newTaskFeedbackDto.rating
+        taskEntity.feedback = newTaskFeedbackDto.feedback
         taskRepository.save(taskEntity)
     }
 }

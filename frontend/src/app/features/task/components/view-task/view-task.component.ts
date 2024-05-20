@@ -12,6 +12,7 @@ import {FormControl} from "@angular/forms";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {TaskCommentService} from "../../../../core/services/task-comment.service";
+import {TaskHistoryDto} from "../../models/task-history.dto";
 
 @Component({
     selector: 'app-view-task',
@@ -32,6 +33,11 @@ export class ViewTaskComponent implements OnInit {
     taskName = '';
     taskDescription = '';
     taskDeadline = '';
+    taskFeedback = '';
+    taskRating = 0;
+
+    taskRatingControl = new FormControl('');
+    taskFeedbackControl = new FormControl('');
 
     selectedPriority: any = {value: ''};
 
@@ -42,6 +48,9 @@ export class ViewTaskComponent implements OnInit {
     statusItems: SelectItem[] = [];
 
     focusedComment: boolean = false;
+
+    taskHistory: TaskHistoryDto[] = [];
+
 
 
     users: UserDto[] = [];
@@ -88,6 +97,8 @@ export class ViewTaskComponent implements OnInit {
 
     showEditCommentAttachment: boolean = false;
 
+    visibleAddFeedback: boolean = false;
+
 
     constructor(
         private taskService: TaskService,
@@ -124,6 +135,19 @@ export class ViewTaskComponent implements OnInit {
     public onSidebarShow() {
         this.getStatuses()
         this.getTask()
+        this.getHistory()
+    }
+
+    public getHistory() {
+        if(this.isOwner){
+            this.taskService.getTaskHistory(this.taskId).subscribe({
+                next: (data) => {
+                    this.taskHistory = data.data!;
+                }, error: (error) => {
+                    console.log(error);
+                }
+            });
+        }
     }
 
     public getStatuses() {
@@ -145,6 +169,8 @@ export class ViewTaskComponent implements OnInit {
                 this.task = data.data;
                 this.taskName = this.task!.taskName;
                 this.taskDescription = this.task!.taskDescription;
+                this.taskFeedback = this.task!.feedback;
+                this.taskRating = this.task!.rating;
                 let datePart = new Date(this.task!.taskDeadline).toLocaleDateString('en-GB');
                 let timePart = new Date(this.task!.taskDeadline).toLocaleTimeString('en-GB',
                     {
@@ -192,6 +218,12 @@ export class ViewTaskComponent implements OnInit {
         this.userItems = [];
         this.statusItems = [];
         this.loading = false;
+
+        this.taskRating = 0;
+        this.taskFeedback = '';
+
+        this.taskRatingControl.setValue('');
+        this.taskFeedbackControl.setValue('');
 
         this.onCommentCancel();
         this.onEditCommentCancel();
@@ -277,7 +309,27 @@ export class ViewTaskComponent implements OnInit {
 
     public onStatusChange(event: any) {
         const taskStatus = this.statusItems.find(status => status.value === event.value)!;
-        console.log(taskStatus);
+        this.confirmationService.confirm({
+            key: 'confirmStatusChange',
+            message: `¿Estás seguro de que deseas cambiar el estado de la tarea a ${taskStatus.label}?`,
+            header: 'Confirmar',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Sí',
+            rejectLabel: 'No',
+            accept: () => {
+                if (this.task!.taskStatus.taskStatusId !== 3 && event.value !== 3) {
+                    this.updateTaskStatus(taskStatus);
+                } else {
+                    this.visibleAddFeedback = true;
+                }
+            },
+            reject: () => {
+                this.selectedStatus = this.task!.taskStatus.taskStatusId;
+            }
+        });
+    }
+
+    public updateTaskStatus(taskStatus: any, addFeedback: boolean = false) {
         this.taskService.updateTaskStatus(this.taskId,
             taskStatus.value,
             taskStatus.label!).subscribe({
@@ -287,20 +339,23 @@ export class ViewTaskComponent implements OnInit {
                     summary: 'Éxito',
                     detail: 'Estado de la tarea actualizado correctamente'
                 });
-                setTimeout(() => {
-                        let currentRoute = this.router.url;
-                        this.router.navigateByUrl('/',
-                            {skipLocationChange: true}).then(() => {
-                            this.router.navigate([currentRoute]).then(r => console.log('Task status updated'));
-                        });
-                    },
-                    500);
-                this.onClose();
+                if (addFeedback) {
+                   this.createTaskFeedback();
+                } else {
+                    setTimeout(() => {
+                            let currentRoute = this.router.url;
+                            this.router.navigateByUrl('/',
+                                {skipLocationChange: true}).then(() => {
+                                this.router.navigate([currentRoute]).then(r => console.log('Task status updated'));
+                            });
+                        },
+                        500);
+                    this.onClose();
+                }
             }, error: (error) => {
                 console.log(error);
             }
         });
-
 
     }
 
@@ -592,6 +647,44 @@ export class ViewTaskComponent implements OnInit {
                         this.router.navigateByUrl('/',
                             {skipLocationChange: true}).then(() => {
                             this.router.navigate([currentRoute]).then(r => console.log('Task comment updated'));
+                        });
+                    },
+                    500);
+                this.onClose();
+            }, error: (error) => {
+                console.log(error);
+                this.loading = false;
+                this.messageService.add({
+                    severity: 'error', summary: 'Error', detail: error.error.message
+                });
+            }
+        });
+    }
+
+    public onAddFeedbackCancel() {
+        this.visibleAddFeedback = false
+        this.selectedStatus = this.task!.taskStatus.taskStatusId;
+    }
+
+    public onAddFeedback() {
+        this.updateTaskStatus({value: 3, label: 'FINALIZADO'}, true);
+    }
+
+    public createTaskFeedback() {
+        this.taskService.createTaskFeedback(this.taskId, Number(this.taskRatingControl.value), this.taskFeedbackControl.value!).subscribe({
+            next: (data) => {
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Éxito',
+                    detail: 'Retroalimentación de la tarea creada correctamente'
+                });
+
+                this.visibleAddFeedback = false;
+                setTimeout(() => {
+                        let currentRoute = this.router.url;
+                        this.router.navigateByUrl('/',
+                            {skipLocationChange: true}).then(() => {
+                            this.router.navigate([currentRoute]).then(r => console.log('Task feedback created'));
                         });
                     },
                     500);

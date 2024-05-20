@@ -105,13 +105,26 @@ class TaskController @Autowired constructor(
         return ResponseEntity(ResponseDto(true, "La tarea se ha eliminado", null), HttpStatus.OK)
     }
 
-//    @GetMapping("/{taskId}/comments")
-//    fun getComments(@PathVariable taskId: Long): ResponseEntity<ResponseDto<List<TaskCommentDto>>> {
-//        logger.info("Starting the API call to get the comments of the task")
-//        logger.info("GET /api/v1/tasks/$taskId/comments")
-//        AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
-//        val comments: List<TaskCommentDto> = taskService.getTaskComments(taskId)
-//        logger.info("Success: Comments retrieved")
-//        return ResponseEntity(ResponseDto(true, "Comentarios recuperados", comments), HttpStatus.OK)
-//    }
+    @GetMapping("/{taskId}/history/all")
+    fun getTaskHistory(@PathVariable taskId: Long): ResponseEntity<ResponseDto<List<TaskHistoryDto>>> {
+        logger.info("Starting the API call to get the task history")
+        logger.info("GET /api/v1/tasks/$taskId/history/all")
+        AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
+        val taskHistory: List<TaskHistoryDto> = taskService.getTaskHistory(taskId)
+        logger.info("Success: Task history retrieved")
+        return ResponseEntity(ResponseDto(true, "Historial de la tarea recuperado", taskHistory), HttpStatus.OK)
+    }
+
+    @PostMapping("/{taskId}/feedback")
+    fun createTaskFeedback(
+        @PathVariable taskId: Long,
+        @RequestBody newTaskFeedbackDto: NewTaskFeedbackDto
+    ): ResponseEntity<ResponseDto<Nothing>> {
+        logger.info("Starting the API call to create the task feedback")
+        logger.info("POST /api/v1/tasks/$taskId/feedback")
+        AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
+        taskService.createTaskFeedback(taskId, newTaskFeedbackDto)
+        logger.info("Success: Task feedback created")
+        return ResponseEntity(ResponseDto(true, "El feedback de la tarea se ha creado", null), HttpStatus.CREATED)
+    }
 }

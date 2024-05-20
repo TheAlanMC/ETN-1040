@@ -43,6 +43,7 @@ VALUES  (1, 1, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'
         (1, 11, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         (1, 12, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         (1, 13, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost');
+
 -- Group Role - Docente
 INSERT INTO "group_role" (group_id, role_id, status, tx_date, tx_user, tx_host)
 VALUES  (2, 1, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
@@ -52,10 +53,12 @@ VALUES  (2, 1, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'
         (2, 7, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         (2, 9, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         (2, 10, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost');
+
 -- Group Role - Auxiliar
 INSERT INTO "group_role" (group_id, role_id, status, tx_date, tx_user, tx_host)
 VALUES  (3, 2, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         (3, 5, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost');
+        
 -- Task Status
 INSERT INTO "task_status" (task_status_name, status, tx_date, tx_user, tx_host)
 VALUES  ('PENDIENTE', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),

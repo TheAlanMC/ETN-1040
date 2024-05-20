@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2024-05-13 04:24:54.018
+-- Last modification date: 2024-05-19 22:51:14.743
 
 -- tables
 -- Table: account_recovery
@@ -20,6 +20,7 @@ CREATE TABLE file (
     file_id serial  NOT NULL,
     content_type varchar(255)  NOT NULL,
     filename varchar(255)  NOT NULL,
+    file_size int  NOT NULL,
     file_data bytea  NOT NULL,
     is_picture boolean  NOT NULL,
     thumbnail bytea  NOT NULL,
@@ -52,94 +53,6 @@ CREATE TABLE group_role (
     tx_user varchar(100)  NOT NULL,
     tx_host varchar(100)  NOT NULL,
     CONSTRAINT group_role_pk PRIMARY KEY (group_role_id)
-);
-
--- Table: h_loaned_tool
-CREATE TABLE h_loaned_tool (
-    h_loaned_tool_id serial  NOT NULL,
-    loaned_tool_id int  NOT NULL,
-    task_id int  NOT NULL,
-    tool_id int  NOT NULL,
-    user_id int  NOT NULL,
-    status boolean  NOT NULL,
-    tx_date timestamp  NOT NULL,
-    tx_user varchar(100)  NOT NULL,
-    tx_host varchar(100)  NOT NULL,
-    CONSTRAINT h_loaned_tool_pk PRIMARY KEY (h_loaned_tool_id)
-);
-
--- Table: h_task
-CREATE TABLE h_task (
-    h_task_id serial  NOT NULL,
-    task_id int  NOT NULL,
-    project_id int  NOT NULL,
-    task_name varchar(100)  NOT NULL,
-    task_description varchar(255)  NOT NULL,
-    task_deadline timestamp  NOT NULL,
-    task_priority int  NOT NULL,
-    task_status_id int NOT NULL,
-    status boolean  NOT NULL,
-    tx_date timestamp  NOT NULL,
-    tx_user varchar(100)  NOT NULL,
-    tx_host varchar(100)  NOT NULL,
-    CONSTRAINT h_task_pk PRIMARY KEY (h_task_id)
-);
-
--- Table: h_task_assignee
-CREATE TABLE h_task_assignee (
-    h_task_assignee_id serial  NOT NULL,
-    task_assignee_id int  NOT NULL,
-    task_id int  NOT NULL,
-    user_id int  NOT NULL,
-    status boolean  NOT NULL,
-    tx_date timestamp  NOT NULL,
-    tx_user varchar(100)  NOT NULL,
-    tx_host varchar(100)  NOT NULL,
-    CONSTRAINT h_task_assignee_pk PRIMARY KEY (h_task_assignee_id)
-);
-
--- Table: h_task_comment
-CREATE TABLE h_task_comment (
-    h_task_comment_id serial  NOT NULL,
-    task_comment_id int  NOT NULL,
-    task_id int  NOT NULL,
-    user_id int  NOT NULL,
-    comment_number int  NOT NULL,
-    comment varchar(255)  NOT NULL,
-    status boolean  NOT NULL,
-    tx_date timestamp  NOT NULL,
-    tx_user varchar(100)  NOT NULL,
-    tx_host varchar(100)  NOT NULL,
-    CONSTRAINT h_task_comment_pk PRIMARY KEY (h_task_comment_id)
-);
-
--- Table: h_task_comment_file
-CREATE TABLE h_task_comment_file (
-    h_task_comment_file_id serial  NOT NULL,
-    task_comment_file_id int  NOT NULL,
-    task_comment_id int  NOT NULL,
-    file_id int  NOT NULL,
-    status boolean  NOT NULL,
-    tx_date timestamp  NOT NULL,
-    tx_user varchar(100)  NOT NULL,
-    tx_host varchar(100)  NOT NULL,
-    CONSTRAINT h_task_comment_file_pk PRIMARY KEY (h_task_comment_file_id)
-);
-
--- Table: h_tool
-CREATE TABLE h_tool (
-    h_tool_id serial  NOT NULL,
-    tool_id int  NOT NULL,
-    file_photo_id int  NOT NULL,
-    tool_code varchar(50)  NOT NULL,
-    tool_name varchar(50)  NOT NULL,
-    tool_description varchar(255)  NOT NULL,
-    available boolean  NOT NULL,
-    status boolean  NOT NULL,
-    tx_date timestamp  NOT NULL,
-    tx_user varchar(100)  NOT NULL,
-    tx_host varchar(100)  NOT NULL,
-    CONSTRAINT h_tool_pk PRIMARY KEY (h_tool_id)
 );
 
 -- Table: loaned_tool
@@ -239,6 +152,8 @@ CREATE TABLE task (
     task_description varchar(255)  NOT NULL,
     task_deadline timestamp  NOT NULL,
     task_priority int  NOT NULL,
+    rating int  NOT NULL,
+    feedback varchar(255)  NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
     tx_user varchar(100)  NOT NULL,
@@ -296,17 +211,19 @@ CREATE TABLE task_file (
     CONSTRAINT task_file_pk PRIMARY KEY (task_file_id)
 );
 
--- Table: task_review
-CREATE TABLE task_review (
-    task_review_id serial  NOT NULL,
+-- Table: task_history
+CREATE TABLE task_history (
+    task_history_id serial  NOT NULL,
     task_id int  NOT NULL,
-    rating int  NOT NULL,
-    comment varchar(255)  NOT NULL,
+    user_id int  NOT NULL,
+    field_name varchar(100)  NOT NULL,
+    previous_value varchar(100)  NOT NULL,
+    new_value varchar(100)  NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
     tx_user varchar(100)  NOT NULL,
     tx_host varchar(100)  NOT NULL,
-    CONSTRAINT task_review_pk PRIMARY KEY (task_review_id)
+    CONSTRAINT task_history_pk PRIMARY KEY (task_history_id)
 );
 
 -- Table: task_status
@@ -534,18 +451,26 @@ ALTER TABLE task_file ADD CONSTRAINT task_file_task
     INITIALLY IMMEDIATE
 ;
 
--- Reference: task_project (table: task)
-ALTER TABLE task ADD CONSTRAINT task_project
-    FOREIGN KEY (project_id)
-    REFERENCES project (project_id)  
+-- Reference: task_history_task (table: task_history)
+ALTER TABLE task_history ADD CONSTRAINT task_history_task
+    FOREIGN KEY (task_id)
+    REFERENCES task (task_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: task_review_task (table: task_review)
-ALTER TABLE task_review ADD CONSTRAINT task_review_task
-    FOREIGN KEY (task_id)
-    REFERENCES task (task_id)  
+-- Reference: task_history_user (table: task_history)
+ALTER TABLE task_history ADD CONSTRAINT task_history_user
+    FOREIGN KEY (user_id)
+    REFERENCES "user" (user_id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: task_project (table: task)
+ALTER TABLE task ADD CONSTRAINT task_project
+    FOREIGN KEY (project_id)
+    REFERENCES project (project_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
@@ -591,3 +516,4 @@ ALTER TABLE user_group ADD CONSTRAINT user_group_user
 ;
 
 -- End of file.
+

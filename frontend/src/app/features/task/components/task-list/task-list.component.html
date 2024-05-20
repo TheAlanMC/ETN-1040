@@ -142,4 +142,4 @@
 
 <app-new-task (sidebarVisibleChange)="createSidebarVisible = $event" [sidebarVisible]="createSidebarVisible"></app-new-task>
 <app-edit-task (sidebarVisibleChange)="editSidebarVisible = $event" [sidebarVisible]="editSidebarVisible" [taskId]="taskId"></app-edit-task>
-<app-view-task (sidebarVisibleChange)="viewSidebarVisible = $event" [sidebarVisible]="viewSidebarVisible" [taskId]="taskId"></app-view-task>
+<app-view-task (sidebarVisibleChange)="viewSidebarVisible = $event" [sidebarVisible]="viewSidebarVisible" [taskId]="taskId" [isOwner]="isModerator"></app-view-task>

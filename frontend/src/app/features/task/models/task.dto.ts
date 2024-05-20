@@ -14,6 +14,8 @@ export interface TaskDto {
     taskDeadline: Date;
     createdBy: string;
     taskPriority: number;
+    rating: number;
+    feedback: string;
     taskAssignees: UserDto[];
     taskFiles: FileDto[];
     taskComments: TaskCommentDto[];

@@ -12,6 +12,8 @@ data class TaskDto(
     val taskDeadline: Timestamp,
     val createdBy: String,
     val taskPriority: Int,
+    val rating: Int,
+    val feedback: String,
     val taskAssignees: List<UserPartialDto>,
     val taskFiles: List<FilePartialDto>,
     val taskComments: List<TaskCommentDto>,

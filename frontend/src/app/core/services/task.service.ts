@@ -7,6 +7,7 @@ import {UtilService} from "./util.service";
 import {TaskStatusDto} from "../../features/task/models/task-status.dto";
 import {PageDto} from "../models/page.dto";
 import {TaskDto} from "../../features/task/models/task.dto";
+import {TaskHistoryDto} from "../../features/task/models/task-history.dto";
 
 @Injectable({
     providedIn: 'root'
@@ -95,4 +96,20 @@ export class TaskService {
             this.utilService.getHttpOptions());
     }
 
+    public createTaskFeedback(
+        taskId: number,
+        rating: number,
+        feedback: string
+    ): Observable<ResponseDto<null>> {
+        return this.http.post<ResponseDto<null>>(`${this.baseUrl}/${taskId}/feedback`,
+            {
+                rating, feedback
+            },
+            this.utilService.getHttpOptions());
+    }
+
+    public getTaskHistory(taskId: number): Observable<ResponseDto<TaskHistoryDto[]>> {
+        return this.http.get<ResponseDto<TaskHistoryDto[]>>(`${this.baseUrl}/${taskId}/history/all`,
+            this.utilService.getHttpOptions());
+    }
 }

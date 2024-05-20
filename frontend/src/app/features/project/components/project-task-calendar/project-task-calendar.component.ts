@@ -114,7 +114,7 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
             if (decoded.roles.includes('CREAR TAREAS')) {
                 this.canAddTask = true;
             }
-            if (decoded.roles.includes('EDITAR PROYECTOS')) {
+            if (decoded.roles.includes('EDITAR TAREAS')) {
                 this.canEditTask = true;
             }
             this.userId = decoded.userId;

@@ -39,6 +39,8 @@ import {AvatarGroupModule} from "primeng/avatargroup";
 import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {CdkDrag, CdkDragHandle, CdkDropList} from "@angular/cdk/drag-drop";
+import {RatingModule} from "primeng/rating";
+import {PasswordModule} from "primeng/password";
 
 
 @NgModule({
@@ -90,6 +92,8 @@ import {CdkDrag, CdkDragHandle, CdkDropList} from "@angular/cdk/drag-drop";
         CdkDrag,
         CdkDragHandle,
         CdkDropList,
+        RatingModule,
+        PasswordModule,
     ]
 })
 export class TaskModule {

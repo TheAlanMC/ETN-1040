@@ -31,6 +31,12 @@ class Task {
     @Column(name = "task_priority")
     var taskPriority: Int = 0
 
+    @Column(name = "rating")
+    var rating: Int = 0
+
+    @Column(name = "feedback")
+    var feedback: String = ""
+
     @Column(name = "status")
     var status: Boolean = true
 
@@ -55,9 +61,8 @@ class Task {
     @OneToMany(mappedBy = "task")
     var taskFiles: List<TaskFile>? = null
 
-    @OneToMany
-    @JoinColumn(name = "task_id", insertable = false, updatable = false)
-    var taskReviews: List<TaskReview>? = null
+    @OneToMany(mappedBy = "task")
+    var taskHistories: List<TaskHistory>? = null
 
     @ManyToOne
     @JoinColumn(name = "task_status_id", insertable = false, updatable = false)
@@ -66,6 +71,5 @@ class Task {
     @ManyToOne
     @JoinColumn(name = "project_id", insertable = false, updatable = false)
     var project: Project? = null
-
 
 }
