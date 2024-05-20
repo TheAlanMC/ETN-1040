@@ -167,20 +167,24 @@
                                         </div>
 
                                         <button #buttonEl (click)="$event.stopPropagation(); removeFile(file)"
+
                                                 [id]="file.name"
                                                 class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
                                                 icon="pi pi-times" pButton
                                                 pRipple
                                                 pTooltip="Eliminar archivo"
-                                                style="top: 0px; display: none;" tooltipPosition="top"
+                                                style="top: -1px; left:-1px;" tooltipPosition="top"
+                                                [style.display]="defaultDisplay"
                                                 type="button"></button>
                                         <button #buttonOp (click)="$event.stopPropagation(); downloadFile(file)"
+
                                                 [id]="file.name"
                                                 class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
                                                 icon="pi pi-download" pButton
                                                 pRipple
                                                 pTooltip="Descargar archivo"
-                                                style="top: 0px; right: 0px; display: none;" tooltipPosition="top"
+                                                style="top: -1px; right: -1px;" tooltipPosition="top"
+                                                [style.display]="defaultDisplay"
                                                 type="button"></button>
                                     </div>
                                 </div>

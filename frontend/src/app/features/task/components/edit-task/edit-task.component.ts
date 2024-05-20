@@ -9,6 +9,8 @@ import {UtilService} from "../../../../core/services/util.service";
 import {FileService} from "../../../../core/services/file.service";
 import {Router} from "@angular/router";
 import {TaskDto} from "../../models/task.dto";
+import {Directory, Filesystem} from "@capacitor/filesystem";
+import {FileOpener} from "@capacitor-community/file-opener";
 
 @Component({
     selector: 'app-edit-task',
@@ -60,6 +62,7 @@ export class EditTaskComponent implements OnInit {
 
     defaultDisplay: string = 'none';
 
+    isMobile: boolean = false;
 
     constructor(
         private taskService: TaskService,
@@ -71,21 +74,14 @@ export class EditTaskComponent implements OnInit {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         this.filesBaselUrl = this.utilService.getApiUrl(this.filesBaselUrl);
         this.defaultDisplay = this.utilService.checkIfMobile() ? 'true' : 'none';
+        this.isMobile = this.utilService.checkIfMobile();
     }
 
     ngOnInit() {
-        this.priorityItems = [
-            {label: 'Nivel 1', value: 1},
-            {label: 'Nivel 2', value: 2},
-            {label: 'Nivel 3', value: 3},
-            {label: 'Nivel 4', value: 4},
-            {label: 'Nivel 5', value: 5},
-            {label: 'Nivel 6', value: 6},
-            {label: 'Nivel 7', value: 7},
-            {label: 'Nivel 8', value: 8},
-            {label: 'Nivel 9', value: 9},
-            {label: 'Nivel 10', value: 10},
-        ];
+        this.priorityItems = [{label: 'Nivel 1', value: 1}, {label: 'Nivel 2', value: 2}, {label: 'Nivel 3', value: 3},
+            {label: 'Nivel 4', value: 4}, {label: 'Nivel 5', value: 5}, {label: 'Nivel 6', value: 6},
+            {label: 'Nivel 7', value: 7}, {label: 'Nivel 8', value: 8}, {label: 'Nivel 9', value: 9},
+            {label: 'Nivel 10', value: 10},];
     }
 
     public onSidebarShow() {
@@ -169,6 +165,9 @@ export class EditTaskComponent implements OnInit {
     }
 
     public onFileMouseOver(file: any) {
+        if (this.isMobile) {
+            return;
+        }
         this.buttonEl.toArray().forEach(el => {
             el.nativeElement.id === file.name ? el.nativeElement.style.display = 'flex' : null;
         })
@@ -178,6 +177,9 @@ export class EditTaskComponent implements OnInit {
     }
 
     public onFileMouseLeave(file: any) {
+        if (this.isMobile) {
+            return;
+        }
         this.buttonEl.toArray().forEach(el => {
             el.nativeElement.id === file.name ? el.nativeElement.style.display = 'none' : null;
         })
@@ -192,27 +194,63 @@ export class EditTaskComponent implements OnInit {
 
     public downloadFile(file: any) {
         if (file.id === undefined) {
-            const url = URL.createObjectURL(file);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = file.name;
-            document.body.appendChild(a);
-            a.click();
-            URL.revokeObjectURL(url);
-            document.body.removeChild(a);
+            if (!this.isMobile) {
+                const url = URL.createObjectURL(file);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file.name;
+                document.body.appendChild(a);
+                a.click();
+                URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } else {
+                const reader = new FileReader();
+                reader.onloadend = async () => {
+                    const base64Data = reader.result as string;
+                    const savedFile = await Filesystem.writeFile({
+                        path: file.name, data: base64Data, directory: Directory.Documents,
+                    });
+                    const fileOpenerOptions = {
+                        filePath: savedFile.uri, contentType: file.type, openWithDefault: true,
+                    };
+                    await FileOpener.open(fileOpenerOptions);
+
+                };
+                reader.readAsDataURL(file);
+            }
         } else {
             this.fileService.getFile(file.id).subscribe({
                 next: (data) => {
                     const blob = new Blob([data],
                         {type: file.type});
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = file.name;
-                    document.body.appendChild(a);
-                    a.click();
-                    URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
+                    if (!this.isMobile) {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = file.name
+                        document.body.appendChild(a);
+                        a.click();
+                        URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                    } else {
+                        const reader = new FileReader();
+                        reader.onloadend = async () => {
+                            const base64Data = reader.result as string;
+                            const savedFile = await Filesystem.writeFile({
+                                path: file.name,
+                                data: base64Data,
+                                directory: Directory.Documents,
+                            });
+                            const fileOpenerOptions = {
+                                filePath: savedFile.uri,
+                                contentType: file.type,
+                                openWithDefault: true,
+                            };
+                            await FileOpener.open(fileOpenerOptions);
+
+                        };
+                        reader.readAsDataURL(blob);
+                    }
                 }, error: (error) => {
                     console.log(error);
                 }
@@ -291,10 +329,7 @@ export class EditTaskComponent implements OnInit {
                 });
             } else {
                 this.uploadedFiles.push({
-                    fileId: file.id,
-                    filename: file.name,
-                    contentType: file.type,
-                    fileSize: file.size
+                    fileId: file.id, filename: file.name, contentType: file.type, fileSize: file.size
                 });
                 if (this.uploadedFiles.length == this.files.length) {
                     this.updateTask();

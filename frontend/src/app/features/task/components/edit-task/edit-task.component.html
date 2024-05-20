@@ -162,6 +162,7 @@
                                             </div>
 
                                             <button #buttonEl (click)="$event.stopPropagation(); removeFile(file)"
+
                                                     [id]="file.name"
                                                     [style.display]="defaultDisplay"
                                                     class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
@@ -172,6 +173,7 @@
                                                     tooltipPosition="top"
                                                     type="button"></button>
                                             <button #buttonOp (click)="$event.stopPropagation(); downloadFile(file)"
+
                                                     [id]="file.name"
                                                     [style.display]="defaultDisplay"
                                                     class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"

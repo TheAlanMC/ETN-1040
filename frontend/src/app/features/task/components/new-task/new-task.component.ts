@@ -9,6 +9,9 @@ import {UtilService} from '../../../../core/services/util.service';
 import {FileService} from "../../../../core/services/file.service";
 import {FileDto} from "../../../../core/models/file.dto";
 import {Router} from "@angular/router";
+import {Directory, Filesystem} from "@capacitor/filesystem";
+import {Share} from "@capacitor/share";
+import {FileOpener} from "@capacitor-community/file-opener";
 
 @Component({
     selector: 'app-new-task',
@@ -60,6 +63,11 @@ export class NewTaskComponent implements OnInit {
 
     showProjectDropdown: boolean = false;
 
+    defaultDisplay: string = 'none';
+
+    isMobile: boolean = false;
+
+
     constructor(
         private projectService: ProjectService,
         private taskService: TaskService,
@@ -69,6 +77,8 @@ export class NewTaskComponent implements OnInit {
         private router: Router
     ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
+        this.defaultDisplay = this.utilService.checkIfMobile() ? 'true' : 'none';
+        this.isMobile = this.utilService.checkIfMobile();
     }
 
     ngOnInit() {
@@ -162,6 +172,9 @@ export class NewTaskComponent implements OnInit {
     }
 
     public onFileMouseOver(file: any) {
+        if (this.isMobile) {
+            return;
+        }
         this.buttonEl.toArray().forEach(el => {
             el.nativeElement.id === file.name ? el.nativeElement.style.display = 'flex' : null;
         })
@@ -171,6 +184,9 @@ export class NewTaskComponent implements OnInit {
     }
 
     public onFileMouseLeave(file: any) {
+        if (this.isMobile) {
+            return;
+        }
         this.buttonEl.toArray().forEach(el => {
             el.nativeElement.id === file.name ? el.nativeElement.style.display = 'none' : null;
         })
@@ -184,14 +200,34 @@ export class NewTaskComponent implements OnInit {
     }
 
     public downloadFile(file: any) {
-        const url = URL.createObjectURL(file);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = file.name;
-        document.body.appendChild(a);
-        a.click();
-        URL.revokeObjectURL(url);
-        document.body.removeChild(a);
+        if (!this.isMobile) {
+            const url = URL.createObjectURL(file);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = file.name;
+            document.body.appendChild(a);
+            a.click();
+            URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } else {
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                const base64Data = reader.result as string;
+                const savedFile = await Filesystem.writeFile({
+                    path: file.name,
+                    data: base64Data,
+                    directory: Directory.Documents,
+                });
+                        const fileOpenerOptions = {
+            filePath: savedFile.uri,
+            contentType: file.type,
+            openWithDefault: true,
+        };
+        await FileOpener.open(fileOpenerOptions);
+                
+            };
+            reader.readAsDataURL(file);
+        }
     }
 
     public getFileExtension(fileName: string): string {

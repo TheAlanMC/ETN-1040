@@ -13,6 +13,8 @@ import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {TaskCommentService} from "../../../../core/services/task-comment.service";
 import {TaskHistoryDto} from "../../models/task-history.dto";
+import {Directory, Filesystem} from "@capacitor/filesystem";
+import {FileOpener} from "@capacitor-community/file-opener";
 
 @Component({
     selector: 'app-view-task',
@@ -50,7 +52,6 @@ export class ViewTaskComponent implements OnInit {
     focusedComment: boolean = false;
 
     taskHistory: TaskHistoryDto[] = [];
-
 
 
     users: UserDto[] = [];
@@ -99,6 +100,8 @@ export class ViewTaskComponent implements OnInit {
 
     visibleAddFeedback: boolean = false;
 
+    isMobile: boolean = false;
+
 
     constructor(
         private taskService: TaskService,
@@ -111,6 +114,7 @@ export class ViewTaskComponent implements OnInit {
     ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         this.defaultDisplay = this.utilService.checkIfMobile() ? 'true' : 'none';
+        this.isMobile = this.utilService.checkIfMobile();
         this.filesBaselUrl = this.utilService.getApiUrl(this.filesBaselUrl);
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         const token = localStorage.getItem('token');
@@ -139,7 +143,7 @@ export class ViewTaskComponent implements OnInit {
     }
 
     public getHistory() {
-        if(this.isOwner){
+        if (this.isOwner) {
             this.taskService.getTaskHistory(this.taskId).subscribe({
                 next: (data) => {
                     this.taskHistory = data.data!;
@@ -230,12 +234,18 @@ export class ViewTaskComponent implements OnInit {
     }
 
     public onFileMouseOver(file: any) {
+        if (this.isMobile) {
+            return;
+        }
         this.buttonOp.toArray().forEach(el => {
             Number(el.nativeElement.id) === file.fileId ? el.nativeElement.style.display = 'flex' : null;
         })
     }
 
     public onFileMouseLeave(file: any) {
+        if (this.isMobile) {
+            return;
+        }
         this.buttonOp.toArray().forEach(el => {
             Number(el.nativeElement.id) === file.fileId ? el.nativeElement.style.display = 'none' : null;
         })
@@ -246,14 +256,34 @@ export class ViewTaskComponent implements OnInit {
             next: (data) => {
                 const blob = new Blob([data],
                     {type: file.contentType});
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = file.filename;
-                document.body.appendChild(a);
-                a.click();
-                URL.revokeObjectURL(url);
-                document.body.removeChild(a);
+                if (!this.isMobile) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = file.filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    const reader = new FileReader();
+                    reader.onloadend = async () => {
+                        const base64Data = reader.result as string;
+                        const savedFile = await Filesystem.writeFile({
+                            path: file.filename,
+                            data: base64Data,
+                            directory: Directory.Documents,
+                        });
+                        const fileOpenerOptions = {
+                            filePath: savedFile.uri,
+                            contentType: file.contentType,
+                            openWithDefault: true,
+                        };
+                        await FileOpener.open(fileOpenerOptions);
+
+                    };
+                    reader.readAsDataURL(blob);
+                }
             }, error: (error) => {
                 console.log(error);
             }
@@ -329,7 +359,10 @@ export class ViewTaskComponent implements OnInit {
         });
     }
 
-    public updateTaskStatus(taskStatus: any, addFeedback: boolean = false) {
+    public updateTaskStatus(
+        taskStatus: any,
+        addFeedback: boolean = false
+    ) {
         this.taskService.updateTaskStatus(this.taskId,
             taskStatus.value,
             taskStatus.label!).subscribe({
@@ -340,7 +373,7 @@ export class ViewTaskComponent implements OnInit {
                     detail: 'Estado de la tarea actualizado correctamente'
                 });
                 if (addFeedback) {
-                   this.createTaskFeedback();
+                    this.createTaskFeedback();
                 } else {
                     setTimeout(() => {
                             let currentRoute = this.router.url;
@@ -519,6 +552,9 @@ export class ViewTaskComponent implements OnInit {
     }
 
     public onNewFileMouseOver(file: any) {
+        if (this.isMobile) {
+            return;
+        }
         this.buttonEl.toArray().forEach(el => {
             el.nativeElement.id === file.name ? el.nativeElement.style.display = 'flex' : null;
         })
@@ -528,6 +564,9 @@ export class ViewTaskComponent implements OnInit {
     }
 
     public onNewFileMouseLeave(file: any) {
+        if (this.isMobile) {
+            return;
+        }
         this.buttonEl.toArray().forEach(el => {
             el.nativeElement.id === file.name ? el.nativeElement.style.display = 'none' : null;
         })
@@ -537,6 +576,9 @@ export class ViewTaskComponent implements OnInit {
     }
 
     public onEditFileMouseOver(file: any) {
+        if (this.isMobile) {
+            return;
+        }
         this.buttonEl.toArray().forEach(el => {
             el.nativeElement.id === file.name ? el.nativeElement.style.display = 'flex' : null;
         })
@@ -546,6 +588,9 @@ export class ViewTaskComponent implements OnInit {
     }
 
     public onEditFileMouseLeave(file: any) {
+        if (this.isMobile) {
+            return;
+        }
         this.buttonEl.toArray().forEach(el => {
             el.nativeElement.id === file.name ? el.nativeElement.style.display = 'none' : null;
         })
@@ -567,28 +612,69 @@ export class ViewTaskComponent implements OnInit {
     }
 
     public downloadEditFile(file: any) {
+        console.log(file)
         if (file.id === undefined) {
-            const url = URL.createObjectURL(file);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = file.name;
-            document.body.appendChild(a);
-            a.click();
-            URL.revokeObjectURL(url);
-            document.body.removeChild(a);
+            if (!this.isMobile) {
+                const url = URL.createObjectURL(file);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file.name;
+                document.body.appendChild(a);
+                a.click();
+                URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } else {
+                const reader = new FileReader();
+                reader.onloadend = async () => {
+                    const base64Data = reader.result as string;
+                    const savedFile = await Filesystem.writeFile({
+                        path: file.name,
+                        data: base64Data,
+                        directory: Directory.Documents,
+                    });
+                    const fileOpenerOptions = {
+                        filePath: savedFile.uri,
+                        contentType: file.type,
+                        openWithDefault: true,
+                    };
+                    await FileOpener.open(fileOpenerOptions);
+
+                };
+                reader.readAsDataURL(file);
+            }
         } else {
             this.fileService.getFile(file.id).subscribe({
                 next: (data) => {
                     const blob = new Blob([data],
                         {type: file.type});
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = file.name;
-                    document.body.appendChild(a);
-                    a.click();
-                    URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
+                    if (!this.isMobile) {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = file.name
+                        document.body.appendChild(a);
+                        a.click();
+                        URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                    } else {
+                        const reader = new FileReader();
+                        reader.onloadend = async () => {
+                            const base64Data = reader.result as string;
+                            const savedFile = await Filesystem.writeFile({
+                                path: file.name,
+                                data: base64Data,
+                                directory: Directory.Documents,
+                            });
+                            const fileOpenerOptions = {
+                                filePath: savedFile.uri,
+                                contentType: file.type,
+                                openWithDefault: true,
+                            };
+                            await FileOpener.open(fileOpenerOptions);
+
+                        };
+                        reader.readAsDataURL(blob);
+                    }
                 }, error: (error) => {
                     console.log(error);
                 }
@@ -667,11 +753,14 @@ export class ViewTaskComponent implements OnInit {
     }
 
     public onAddFeedback() {
-        this.updateTaskStatus({value: 3, label: 'FINALIZADO'}, true);
+        this.updateTaskStatus({value: 3, label: 'FINALIZADO'},
+            true);
     }
 
     public createTaskFeedback() {
-        this.taskService.createTaskFeedback(this.taskId, Number(this.taskRatingControl.value), this.taskFeedbackControl.value!).subscribe({
+        this.taskService.createTaskFeedback(this.taskId,
+            Number(this.taskRatingControl.value),
+            this.taskFeedbackControl.value!).subscribe({
             next: (data) => {
                 this.messageService.add({
                     severity: 'success',

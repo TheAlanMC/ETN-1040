@@ -159,6 +159,7 @@
                                             </div>
 
                                             <button #buttonOp (click)="$event.stopPropagation(); downloadFile(file)"
+
                                                     [id]="file.fileId"
                                                     [style.display]="defaultDisplay"
                                                     class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
@@ -293,20 +294,24 @@
                                                             </div>
 
                                                             <button #buttonEl (click)="$event.stopPropagation(); removeFile(file)"
+
                                                                     [id]="file.name"
                                                                     class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
                                                                     icon="pi pi-times" pButton
                                                                     pRipple
-                                                                    pTooltip="Eliminar archivo"
-                                                                    style="top: 0px; display: none;" tooltipPosition="top"
+                                                                    pTooltip="Eliminar archivo" style="top: -1px; left:-1px;"
+                                                                    tooltipPosition="top"
+                                                                    [style.display]="defaultDisplay"
                                                                     type="button"></button>
                                                             <button #buttonOp (click)="$event.stopPropagation(); downloadFile(file)"
+
                                                                     [id]="file.name"
                                                                     class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
                                                                     icon="pi pi-download" pButton
                                                                     pRipple
-                                                                    pTooltip="Descargar archivo"
-                                                                    style="top: 0px; right: 0px; display: none;" tooltipPosition="top"
+                                                                    pTooltip="Descargar archivo" style="top: -1px; right: -1px;"
+                                                                    [style.display]="defaultDisplay"
+                                                                    tooltipPosition="top"
                                                                     type="button"></button>
                                                         </div>
                                                     </div>
@@ -433,6 +438,7 @@
                                                         </div>
 
                                                         <button #buttonOp (click)="$event.stopPropagation(); downloadFile(file)"
+
                                                                 [id]="file.fileId"
                                                                 [style.display]="defaultDisplay"
                                                                 class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
@@ -539,6 +545,7 @@
                                                             </div>
 
                                                             <button #buttonEl (click)="$event.stopPropagation(); removeEditFile(file)"
+
                                                                     [id]="file.name"
                                                                     [style.display]="defaultDisplay"
                                                                     class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
@@ -549,6 +556,7 @@
                                                                     tooltipPosition="top"
                                                                     type="button"></button>
                                                             <button #buttonOp (click)="$event.stopPropagation(); downloadEditFile(file)"
+
                                                                     [id]="file.name"
                                                                     [style.display]="defaultDisplay"
                                                                     class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
@@ -571,7 +579,7 @@
                                         icon="pi pi-paperclip" pButton pRipple></button>
                                 <button (click)="onEditComment()" [disabled]="loading" class="p-button-primary p-button-outlined mr-3"
                                         label="Enviar"
-                                        pButton pRipple>
+                                        pButton pRipple >
                                     <span *ngIf="!loading"></span>
                                     <i *ngIf="loading" class="pi pi-spin pi-spinner mr-2"></i>
                                     <i *ngIf="!loading" class="pi pi-send mr-2"></i>
