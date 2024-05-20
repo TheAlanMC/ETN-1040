@@ -10,7 +10,6 @@ import {FileService} from "../../../../core/services/file.service";
 import {FileDto} from "../../../../core/models/file.dto";
 import {Router} from "@angular/router";
 import {Directory, Filesystem} from "@capacitor/filesystem";
-import {Share} from "@capacitor/share";
 import {FileOpener} from "@capacitor-community/file-opener";
 
 @Component({
@@ -218,13 +217,13 @@ export class NewTaskComponent implements OnInit {
                     data: base64Data,
                     directory: Directory.Documents,
                 });
-                        const fileOpenerOptions = {
-            filePath: savedFile.uri,
-            contentType: file.type,
-            openWithDefault: true,
-        };
-        await FileOpener.open(fileOpenerOptions);
-                
+                const fileOpenerOptions = {
+                    filePath: savedFile.uri,
+                    contentType: file.type,
+                    openWithDefault: true,
+                };
+                await FileOpener.open(fileOpenerOptions);
+
             };
             reader.readAsDataURL(file);
         }

@@ -176,27 +176,28 @@
                         </p-fileUpload>
                     </div>
                 </div>
-                <div class="col-12 field" *ngIf="task.taskStatus.taskStatusId!==3">
-                        <label class="font-semibold text-900" for="status">Cambiar estado de la tarea</label>
-                        <p-dropdown (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus" [appendTo]="sidebar"
-                                    [filter]="false"
-                                    [options]="statusItems"
-                                    class="flex-1 w-full"
-                                    id=status placeholder="Seleccionar prioridad"></p-dropdown>
+                <div *ngIf="task.taskStatus.taskStatusId!==3" class="col-12 field">
+                    <label class="font-semibold text-900" for="status">Cambiar estado de la tarea</label>
+                    <p-dropdown (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus" [appendTo]="sidebar"
+                                [filter]="false"
+                                [options]="statusItems"
+                                class="flex-1 w-full"
+                                id=status placeholder="Seleccionar prioridad"></p-dropdown>
                 </div>
 
-                    <div class="col-12 field" *ngIf="task.taskStatus.taskStatusId===3">
-                        <div class="flex align-items-center justify-content-between mb-3">
-                            <label class="font-semibold text-900" for="feedback">Reseña de la tarea</label>
-                            <p-rating [ngModel]="taskRating" [readonly]="true" [cancel]="false" [iconOnStyle]="{'fontSize':'12px'}"  [iconOffStyle]="{'fontSize':'12px'}" [disabled]="true" ></p-rating>
-                        </div>
-                        <textarea [(ngModel)]="taskFeedback" [readonly]="true" [rows]="2" class="w-full"
-                                  id="feedback"
-                                  name="description"
-                                  pInputTextarea placeholder="Reseña de la tarea"
-                                  style="resize: none" type="text"
-                                  *ngIf="task.feedback.length > 0"></textarea>
+                <div *ngIf="task.taskStatus.taskStatusId===3" class="col-12 field">
+                    <div class="flex align-items-center justify-content-between mb-3">
+                        <label class="font-semibold text-900" for="feedback">Reseña de la tarea</label>
+                        <p-rating [cancel]="false" [disabled]="true" [iconOffStyle]="{'fontSize':'12px'}" [iconOnStyle]="{'fontSize':'12px'}"
+                                  [ngModel]="taskRating" [readonly]="true"></p-rating>
                     </div>
+                    <textarea *ngIf="task.feedback.length > 0" [(ngModel)]="taskFeedback" [readonly]="true" [rows]="2"
+                              class="w-full"
+                              id="feedback"
+                              name="description" pInputTextarea
+                              placeholder="Reseña de la tarea" style="resize: none"
+                              type="text"></textarea>
+                </div>
                 <div class="col-12">
                     <label class="font-semibold text-900"></label>
                     <div class="flex flex-column sm:flex-row justify-content-between align-items-center gap-3 py-2">
@@ -296,21 +297,21 @@
                                                             <button #buttonEl (click)="$event.stopPropagation(); removeFile(file)"
 
                                                                     [id]="file.name"
-                                                                    class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
-                                                                    icon="pi pi-times" pButton
-                                                                    pRipple
-                                                                    pTooltip="Eliminar archivo" style="top: -1px; left:-1px;"
-                                                                    tooltipPosition="top"
                                                                     [style.display]="defaultDisplay"
+                                                                    class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem" icon="pi pi-times"
+                                                                    pButton
+                                                                    pRipple pTooltip="Eliminar archivo"
+                                                                    style="top: -1px; left:-1px;"
+                                                                    tooltipPosition="top"
                                                                     type="button"></button>
                                                             <button #buttonOp (click)="$event.stopPropagation(); downloadFile(file)"
 
                                                                     [id]="file.name"
-                                                                    class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
-                                                                    icon="pi pi-download" pButton
-                                                                    pRipple
-                                                                    pTooltip="Descargar archivo" style="top: -1px; right: -1px;"
                                                                     [style.display]="defaultDisplay"
+                                                                    class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem" icon="pi pi-download"
+                                                                    pButton
+                                                                    pRipple pTooltip="Descargar archivo"
+                                                                    style="top: -1px; right: -1px;"
                                                                     tooltipPosition="top"
                                                                     type="button"></button>
                                                         </div>
@@ -579,7 +580,7 @@
                                         icon="pi pi-paperclip" pButton pRipple></button>
                                 <button (click)="onEditComment()" [disabled]="loading" class="p-button-primary p-button-outlined mr-3"
                                         label="Enviar"
-                                        pButton pRipple >
+                                        pButton pRipple>
                                     <span *ngIf="!loading"></span>
                                     <i *ngIf="loading" class="pi pi-spin pi-spinner mr-2"></i>
                                     <i *ngIf="!loading" class="pi pi-send mr-2"></i>
@@ -592,7 +593,7 @@
 
 
                 </p-tabPanel>
-                <p-tabPanel class="line-height-3 m-0 small-font" header="Historial" *ngIf="isOwner">
+                <p-tabPanel *ngIf="isOwner" class="line-height-3 m-0 small-font" header="Historial">
                     <p-table [value]="taskHistory">
                         <ng-template pTemplate="header">
                             <tr>
@@ -602,7 +603,7 @@
                                 <th>Actualización</th>
                             </tr>
                         </ng-template>
-                        <ng-template pTemplate="body" let-history>
+                        <ng-template let-history pTemplate="body">
                             <tr>
                                 <td>{{ history.createdDate | date: 'dd/MM/yyyy HH:mm' }}</td>
                                 <td>{{ history.createdBy.firstName }} {{ history.createdBy.lastName }}</td>
@@ -623,15 +624,16 @@
     </ng-template>
 </p-sidebar>
 
-<p-dialog [(visible)]="visibleAddFeedback" [draggable]="false" [modal]="true" [resizable]="false"
-          header="Agregar reseña" [style]="{width: '30rem'}" [baseZIndex]="10000">
+<p-dialog [(visible)]="visibleAddFeedback" [baseZIndex]="10000" [draggable]="false" [modal]="true"
+          [resizable]="false" [style]="{width: '30rem'}" header="Agregar reseña">
     <div class="mb-3">
         <span class="text-600 font-medium">Por favor, califica el trabajo realizado</span>
     </div>
     <div class="flex flex-column mb-3">
         <div class="flex align-items-center justify-content-between mb-3">
             <label class="font-semibold text-900 field" for="givenFeedback">Reseña de la tarea</label>
-            <p-rating [cancel]="false" [iconOnStyle]="{'fontSize':'12px'}"  [iconOffStyle]="{'fontSize':'12px'}" [disabled]="false" [formControl]="taskRatingControl" [autofocus]="false"></p-rating>
+            <p-rating [autofocus]="false" [cancel]="false" [disabled]="false" [formControl]="taskRatingControl"
+                      [iconOffStyle]="{'fontSize':'12px'}" [iconOnStyle]="{'fontSize':'12px'}"></p-rating>
         </div>
         <textarea [formControl]="taskFeedbackControl" [rows]="2" class="w-full" id="givenFeedback" name="description"
                   pInputTextarea placeholder="Reseña de la tarea"
