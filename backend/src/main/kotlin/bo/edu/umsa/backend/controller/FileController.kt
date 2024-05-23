@@ -43,7 +43,7 @@ class FileController @Autowired constructor(private val fileService: FileService
         return ResponseEntity(fileDto.thumbnail, headers, HttpStatus.OK)
     }
 
-    @PostMapping()
+    @PostMapping
     fun uploadFile(@RequestParam("file") file: MultipartFile): ResponseEntity<ResponseDto<FilePartialDto>> {
         logger.info("Starting the API call to upload a file")
         logger.info("POST /api/v1/files")

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.stereotype.Repository
+import java.sql.Timestamp
 
 @Repository
 interface TaskRepository : PagingAndSortingRepository<Task, Long>,
@@ -20,5 +21,10 @@ interface TaskRepository : PagingAndSortingRepository<Task, Long>,
     fun findByTaskIdAndStatusIsTrue(taskId: Long): Task?
 
     fun findAllByProjectIdAndStatusIsTrue(projectId: Long): List<Task>
+
+    fun findAllByTaskDueDateBetweenAndTaskEndDateIsNullAndStatusIsTrueOrderByTaskDueDate(
+        startDate: Timestamp,
+        endDate: Timestamp
+    ): List<Task>
 
 }

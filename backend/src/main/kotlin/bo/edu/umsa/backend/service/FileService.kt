@@ -7,6 +7,7 @@ import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.FileMapper
 import bo.edu.umsa.backend.mapper.FilePartialMapper
 import bo.edu.umsa.backend.repository.FileRepository
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -18,7 +19,7 @@ class FileService @Autowired constructor(
     private val thumbnailService: ThumbnailService
 ) {
     companion object {
-        private val logger = org.slf4j.LoggerFactory.getLogger(FileService::class.java)
+        private val logger = LoggerFactory.getLogger(FileService::class.java)
     }
 
     fun getFile(fileId: Long): FileDto {

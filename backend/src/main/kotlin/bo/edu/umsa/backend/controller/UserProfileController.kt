@@ -23,9 +23,9 @@ class UserProfileController @Autowired constructor(private val userProfileServic
     fun getProfile(): ResponseEntity<ResponseDto<ProfileDto>> {
         logger.info("Starting the API call to get the profile")
         logger.info("GET /api/v1/users/profile")
-        val profileDto: ProfileDto = userProfileService.getProfile()
+        val profile: ProfileDto = userProfileService.getProfile()
         logger.info("Success: Profile retrieved")
-        return ResponseEntity(ResponseDto(true, "Perfil recuperado", profileDto), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true, "Perfil recuperado", profile), HttpStatus.OK)
     }
 
     @PutMapping

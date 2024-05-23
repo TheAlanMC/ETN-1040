@@ -26,7 +26,7 @@ class ProjectController @Autowired constructor(
         logger.info("GET /api/v1/projects/all")
         AuthUtil.verifyAuthTokenHasRoles(listOf("VER TAREAS", "CREAR TAREAS", "EDITAR TAREAS").toTypedArray())
         val projects: List<ProjectPartialDto> = projectService.getAllProjects()
-        logger.info("Success: Projects retrieved")
+        logger.info("Success: All projects retrieved")
         return ResponseEntity(ResponseDto(true, "Proyectos recuperados", projects), HttpStatus.OK)
     }
 

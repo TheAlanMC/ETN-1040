@@ -52,6 +52,8 @@ class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     var userGroups: List<UserGroup>? = null
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    var firebaseTokens: List<FirebaseToken>? = null
 
 }
 

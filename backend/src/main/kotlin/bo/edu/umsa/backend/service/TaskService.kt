@@ -1,15 +1,13 @@
 package bo.edu.umsa.backend.service
 
 import bo.edu.umsa.backend.dto.*
-import bo.edu.umsa.backend.entity.Task
-import bo.edu.umsa.backend.entity.TaskAssignee
-import bo.edu.umsa.backend.entity.TaskFile
-import bo.edu.umsa.backend.entity.TaskHistory
+import bo.edu.umsa.backend.entity.*
 import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.*
 import bo.edu.umsa.backend.repository.*
 import bo.edu.umsa.backend.specification.TaskSpecification
 import bo.edu.umsa.backend.util.AuthUtil
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -17,6 +15,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpStatus
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
 import java.time.Instant
@@ -35,9 +34,13 @@ class TaskService @Autowired constructor(
     private val taskFileRepository: TaskFileRepository,
     private val taskPriorityRepository: TaskPriorityRepository,
     private val taskStatusRepository: TaskStatusRepository,
+    private val emailService: EmailService,
+    private val firebaseMessagingService: FirebaseMessagingService,
+    private val firebaseTokenRepository: FirebaseTokenRepository,
+    private val notificationRepository: NotificationRepository
 ) {
     companion object {
-        private val logger = org.slf4j.LoggerFactory.getLogger(TaskService::class.java)
+        private val logger = LoggerFactory.getLogger(TaskService::class.java)
     }
 
     fun getAllStatuses(): List<TaskStatusDto> {
@@ -115,7 +118,7 @@ class TaskService @Autowired constructor(
 
     fun createTask(newTaskDto: NewTaskDto) {
         // Validate the name, description, and dueDate are not empty
-        if (newTaskDto.taskName.isEmpty() || newTaskDto.taskDueDate.isEmpty()) {
+        if (newTaskDto.taskName.trim().isEmpty() || newTaskDto.taskDueDate.trim().isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one required field is blank", "Al menos un campo requerido está en blanco")
         }
         // Validate the dates have the correct format
@@ -208,15 +211,42 @@ class TaskService @Autowired constructor(
         taskHistoryRepository.save(taskHistoryEntity)
 
         // Create the task history for the assignees
-        val taskAssigneeEntities = TaskHistory()
-        taskAssigneeEntities.taskId = taskEntity.taskId
-        taskAssigneeEntities.userId = userId.toInt()
-        taskAssigneeEntities.fieldName = TaskHistoryType.RESPONSABLE
-        taskAssigneeEntities.previousValue = ""
+        val taskHistoryAssigneeEntities = TaskHistory()
+        taskHistoryAssigneeEntities.taskId = taskEntity.taskId
+        taskHistoryAssigneeEntities.userId = userId.toInt()
+        taskHistoryAssigneeEntities.fieldName = TaskHistoryType.RESPONSABLE
+        taskHistoryAssigneeEntities.previousValue = ""
+
         // Get the assignee names
         val assigneeNames = userRepository.findAllByUserIdInAndStatusIsTrue(newTaskDto.taskAssigneeIds).map { it.firstName + " " + it.lastName }
-        taskAssigneeEntities.newValue = assigneeNames.joinToString(", ")
-        taskHistoryRepository.save(taskAssigneeEntities)
+        taskHistoryAssigneeEntities.newValue = assigneeNames.joinToString(", ")
+        taskHistoryRepository.save(taskHistoryAssigneeEntities)
+
+        // Send the notification to the assignees
+        val taskAssigneeEntities = taskAssigneeRepository.findAllByTaskIdAndStatusIsTrue(taskEntity.taskId.toLong())
+        taskAssigneeEntities.forEach { taskAssigneeEntity ->
+            val assigneeEmail = taskAssigneeEntity.user!!.email
+            val assigneeTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong()).map { it.firebaseToken }
+            val assigneeMessageTittle = "Nueva tarea asignada"
+            val assigneeMessageBody = "Se le ha asignado la tarea ${taskEntity.taskName} en el proyecto ${projectEntity.projectName}"
+            val notificationEntity = Notification()
+            notificationEntity.messageTitle = assigneeMessageTittle
+            notificationEntity.messageBody = assigneeMessageBody
+            notificationEntity.userId = taskAssigneeEntity.userId
+            notificationRepository.save(notificationEntity)
+            emailService.sendEmail(assigneeEmail, assigneeMessageTittle, assigneeMessageBody)
+            assigneeTokens.forEach { token ->
+                try {
+                    firebaseMessagingService.sendNotification(token, assigneeMessageTittle, assigneeMessageBody)
+                } catch (e: Exception) {
+                    logger.error("Error sending notification to token $token, assignee")
+                    // Disable the token
+                    val firebaseTokenEntity = firebaseTokenRepository.findByFirebaseTokenAndStatusIsTrue(token) ?: return
+                    firebaseTokenEntity.status = false
+                    firebaseTokenRepository.save(firebaseTokenEntity)
+                }
+            }
+        }
     }
 
     fun updateTask(
@@ -224,7 +254,7 @@ class TaskService @Autowired constructor(
         newTaskDto: NewTaskDto
     ) {
         // Validate the name, description, and dueDate are not empty
-        if (newTaskDto.taskName.isEmpty() || newTaskDto.taskDescription.isEmpty()) {
+        if (newTaskDto.taskName.trim().isEmpty() || newTaskDto.taskDescription.trim().isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one required field is blank", "Al menos un campo requerido está en blanco")
         }
         // Validate the dates have the correct format
@@ -362,6 +392,33 @@ class TaskService @Autowired constructor(
             taskHistoryEntity.newValue = assigneeNames.joinToString(", ")
             taskHistoryRepository.save(taskHistoryEntity)
         }
+
+        // Send the notification to the assignees if the assignees have changed
+        if (originalAssignees.toSet() != newTaskDto.taskAssigneeIds.map { it }.toSet()) {
+            taskAssigneeEntities.forEach { taskAssigneeEntity ->
+                val assigneeEmail = taskAssigneeEntity.user!!.email
+                val assigneeTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong()).map { it.firebaseToken }
+                val assigneeMessageTittle = "Tarea reasignada"
+                val assigneeMessageBody = "Se le ha reasignado la tarea ${taskEntity.taskName} en el proyecto ${projectEntity.projectName}"
+                val notificationEntity = Notification()
+                notificationEntity.messageTitle = assigneeMessageTittle
+                notificationEntity.messageBody = assigneeMessageBody
+                notificationEntity.userId = taskAssigneeEntity.userId
+                notificationRepository.save(notificationEntity)
+                emailService.sendEmail(assigneeEmail, assigneeMessageTittle, assigneeMessageBody)
+                assigneeTokens.forEach { token ->
+                    try {
+                        firebaseMessagingService.sendNotification(token, assigneeMessageTittle, assigneeMessageBody)
+                    } catch (e: Exception) {
+                        logger.error("Error sending notification to token $token, assignee")
+                        // Disable the token
+                        val firebaseTokenEntity = firebaseTokenRepository.findByFirebaseTokenAndStatusIsTrue(token) ?: return
+                        firebaseTokenEntity.status = false
+                        firebaseTokenRepository.save(firebaseTokenEntity)
+                    }
+                }
+            }
+        }
     }
 
     fun updateTaskStatus(
@@ -398,6 +455,63 @@ class TaskService @Autowired constructor(
         taskHistoryEntity.previousValue = taskStatusRepository.findByTaskStatusIdAndStatusIsTrue(originalTaskStatusId.toLong())!!.taskStatusName
         taskHistoryEntity.newValue = taskStatusRepository.findByTaskStatusIdAndStatusIsTrue(taskStatusId)!!.taskStatusName
         taskHistoryRepository.save(taskHistoryEntity)
+
+        // Notify the project owner and moderators if the task status is completed
+        if (taskStatusId.toInt() == 3) {
+            val projectOwnerEntities = projectOwnerRepository.findAllByProjectIdAndStatusIsTrue(taskEntity.projectId.toLong())
+            val projectModeratorEntities = projectModeratorRepository.findAllByProjectIdAndStatusIsTrue(taskEntity.projectId.toLong())
+            projectOwnerEntities.forEach { projectOwnerEntity ->
+                logger.info("Sending notification to project owner ${projectOwnerEntity.user!!.email}")
+                val projectName = projectOwnerEntity.project!!.projectName
+                val ownerEmail = projectOwnerEntity.user!!.email
+                val ownerTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong()).map { it.firebaseToken }
+                val ownerMessageTittle = "Tarea completada"
+                val ownerMessageBody = "La tarea ${taskEntity.taskName} en el proyecto $projectName ha sido completada"
+                val notificationEntity = Notification()
+                notificationEntity.messageTitle = ownerMessageTittle
+                notificationEntity.messageBody = ownerMessageBody
+                notificationEntity.userId = projectOwnerEntity.userId
+                notificationRepository.save(notificationEntity)
+                emailService.sendEmail(ownerEmail, ownerMessageTittle, ownerMessageBody)
+                ownerTokens.forEach { token ->
+                    try {
+                        firebaseMessagingService.sendNotification(token, ownerMessageTittle, ownerMessageBody)
+                    } catch (e: Exception) {
+                        logger.error("Error sending notification to token $token, owner")
+                        // Disable the token
+                        val firebaseTokenEntity = firebaseTokenRepository.findByFirebaseTokenAndStatusIsTrue(token) ?: return
+                        firebaseTokenEntity.status = false
+                        firebaseTokenRepository.save(firebaseTokenEntity)
+                    }
+                }
+            }
+
+            projectModeratorEntities.forEach { projectModeratorEntity ->
+                logger.info("Sending notification to project moderator ${projectModeratorEntity.user!!.email}")
+                val projectName = projectModeratorEntity.project!!.projectName
+                val moderatorEmail = projectModeratorEntity.user!!.email
+                val moderatorTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong()).map { it.firebaseToken }
+                val moderatorMessageTittle = "Tarea completada"
+                val moderatorMessageBody = "La tarea ${taskEntity.taskName} en el proyecto $projectName ha sido completada"
+                val notificationEntity = Notification()
+                notificationEntity.messageTitle = moderatorMessageTittle
+                notificationEntity.messageBody = moderatorMessageBody
+                notificationEntity.userId = projectModeratorEntity.userId
+                notificationRepository.save(notificationEntity)
+                emailService.sendEmail(moderatorEmail, moderatorMessageTittle, moderatorMessageBody)
+                moderatorTokens.forEach { token ->
+                    try {
+                        firebaseMessagingService.sendNotification(token, moderatorMessageTittle, moderatorMessageBody)
+                    } catch (e: Exception) {
+                        logger.error("Error sending notification to token $token, moderator")
+                        // Disable the token
+                        val firebaseTokenEntity = firebaseTokenRepository.findByFirebaseTokenAndStatusIsTrue(token) ?: return
+                        firebaseTokenEntity.status = false
+                        firebaseTokenRepository.save(firebaseTokenEntity)
+                    }
+                }
+            }
+        }
     }
 
     fun deleteTask(taskId: Long) {
@@ -464,5 +578,40 @@ class TaskService @Autowired constructor(
         taskEntity.taskRating = newTaskFeedbackDto.taskRating
         taskEntity.taskRatingComment = newTaskFeedbackDto.taskRatingComment
         taskRepository.save(taskEntity)
+    }
+
+    @Scheduled(cron = "0 0 21 * * *")
+    fun sendNotification() {
+        val secondsToAdd: Long = 60 * 60 * 24 // 24 hours
+        val taskEntities = taskRepository.findAllByTaskDueDateBetweenAndTaskEndDateIsNullAndStatusIsTrueOrderByTaskDueDate(Timestamp.from(Instant.now()), Timestamp.from(Instant.now().plusSeconds(secondsToAdd)))
+
+        val taskAssigneeEntities = taskAssigneeRepository.findAllByTaskIdInAndStatusIsTrue(taskEntities.map { it.taskId })
+
+        taskAssigneeEntities.forEach { taskAssigneeEntity ->
+            logger.info("Sending notification to project assignee ${taskAssigneeEntity.user!!.email}")
+            val projectName = taskAssigneeEntity.task!!.project!!.projectName
+            val assigneeEmail = taskAssigneeEntity.user!!.email
+            val assigneeTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong()).map { it.firebaseToken }
+            val assigneeMessageTittle = "Tarea por finalizar"
+            val assigneeMessageBody = "La tarea: '${taskAssigneeEntity.task!!.taskName}' en el proyecto: '$projectName' está por finalizar en las próximas 24 horas. Por favor, complete la tarea."
+            val notificationEntity = Notification()
+            notificationEntity.messageTitle = assigneeMessageTittle
+            notificationEntity.messageBody = assigneeMessageBody
+            notificationEntity.userId = taskAssigneeEntity.userId
+            notificationRepository.save(notificationEntity)
+            emailService.sendEmail(assigneeEmail, assigneeMessageTittle, assigneeMessageBody)
+            assigneeTokens.forEach { token ->
+                try {
+                    firebaseMessagingService.sendNotification(token, assigneeMessageTittle, assigneeMessageBody)
+                } catch (e: Exception) {
+                    logger.error("Error sending notification to token $token")
+                    // Disable the token
+                    val firebaseTokenEntity = firebaseTokenRepository.findByFirebaseTokenAndStatusIsTrue(token) ?: return
+                    firebaseTokenEntity.status = false
+                    firebaseTokenRepository.save(firebaseTokenEntity)
+                }
+            }
+        }
+
     }
 }

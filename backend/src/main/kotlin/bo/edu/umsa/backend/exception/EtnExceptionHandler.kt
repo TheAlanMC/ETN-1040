@@ -1,7 +1,6 @@
-package bo.edu.umsa.backend.config
+package bo.edu.umsa.backend.exception
 
 import bo.edu.umsa.backend.dto.ResponseDto
-import bo.edu.umsa.backend.exception.EtnException
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice

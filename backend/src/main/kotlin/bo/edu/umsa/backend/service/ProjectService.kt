@@ -10,6 +10,7 @@ import bo.edu.umsa.backend.repository.*
 import bo.edu.umsa.backend.specification.ProjectSpecification
 import bo.edu.umsa.backend.specification.TaskSpecification
 import bo.edu.umsa.backend.util.AuthUtil
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpStatus
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
 import java.time.Instant
@@ -30,9 +32,13 @@ class ProjectService @Autowired constructor(
     private val projectMemberRepository: ProjectMemberRepository,
     private val taskRepository: TaskRepository,
     private val taskAssigneeRepository: TaskAssigneeRepository,
+    private val emailService: EmailService,
+    private val firebaseMessagingService: FirebaseMessagingService,
+    private val firebaseTokenRepository: FirebaseTokenRepository,
+    private val notificationRepository: NotificationRepository
 ) {
     companion object {
-        private val logger = org.slf4j.LoggerFactory.getLogger(ProjectService::class.java)
+        private val logger = LoggerFactory.getLogger(ProjectService::class.java)
     }
 
     fun getAllProjects(): List<ProjectPartialDto> {
@@ -86,14 +92,13 @@ class ProjectService @Autowired constructor(
 
     fun createProject(newProjectDto: NewProjectDto) {
         // Validate the name is not empty
-        if (newProjectDto.projectName.isEmpty() || newProjectDto.projectDateFrom.isEmpty() || newProjectDto.projectDateTo.isEmpty() || newProjectDto.projectObjective.isEmpty()) {
+        if (newProjectDto.projectName.trim().isEmpty() || newProjectDto.projectDateFrom.trim().isEmpty() || newProjectDto.projectDateTo.trim().isEmpty() || newProjectDto.projectObjective.trim().isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one required field is blank", "Al menos un campo requerido está en blanco")
         }
         // Validate the dates have the correct format
         try {
             val dateFrom = Timestamp.from(Instant.parse(newProjectDto.projectDateFrom))
             val dateTo = Timestamp.from(Instant.parse(newProjectDto.projectDateTo))
-            logger.info("Date from: $dateFrom, Date to: $dateTo")
         } catch (e: Exception) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date format is incorrect", "El formato de fecha es incorrecto")
         }
@@ -159,14 +164,13 @@ class ProjectService @Autowired constructor(
         projectDto: NewProjectDto
     ) {
         // Validate the name is not empty
-        if (projectDto.projectName.isEmpty() || projectDto.projectDateFrom.isEmpty() || projectDto.projectDateTo.isEmpty() || projectDto.projectObjective.isEmpty()) {
+        if (projectDto.projectName.trim().isEmpty() || projectDto.projectDateFrom.trim().isEmpty() || projectDto.projectDateTo.trim().isEmpty() || projectDto.projectObjective.trim().isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one required field is blank", "Al menos un campo requerido está en blanco")
         }
         // Validate the dates have the correct format
         try {
             val dateFrom = Timestamp.from(Instant.parse(projectDto.projectDateFrom))
             val dateTo = Timestamp.from(Instant.parse(projectDto.projectDateTo))
-            logger.info("Date from: $dateFrom, Date to: $dateTo")
         } catch (e: Exception) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date format is incorrect", "El formato de fecha es incorrecto")
         }
@@ -268,7 +272,7 @@ class ProjectService @Autowired constructor(
 
     fun closeProject(projectId: Long, closeProjectDto: CloseProjectDto) {
         // Validate the close message is not empty
-        if (closeProjectDto.projectCloseMessage.isEmpty()) {
+        if (closeProjectDto.projectCloseMessage.trim().isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Close message is required", "Se requiere un mensaje de cierre")
         }
         // Validate the project exists
@@ -345,5 +349,67 @@ class ProjectService @Autowired constructor(
 
         val taskEntities: Page<Task> = taskRepository.findAll(specification, pageable)
         return taskEntities.map { TaskPartialMapper.entityToDto(it) }
+    }
+
+    @Scheduled(cron = "0 0 20 * * *")
+    fun sendNotification() {
+        // find all project wich PROJECT END DATE IS in the next 24 hours
+        logger.info("Starting sending notifications")
+        val secondsToAdd: Long = 60 * 60 * 24 // 24 hours
+        val projectEntities = projectRepository.findAllByProjectDateToBetweenAndProjectEndDateIsNullAndStatusIsTrueOrderByProjectDateTo(Timestamp.from(Instant.now()), Timestamp.from(Instant.now().plusSeconds(secondsToAdd)))
+
+        val projectOwnerEntities = projectOwnerRepository.findAllByProjectIdInAndStatusIsTrue(projectEntities.map { it.projectId })
+        val projectModeratorEntities = projectModeratorRepository.findAllByProjectIdInAndStatusIsTrue(projectEntities.map { it.projectId })
+
+        projectOwnerEntities.forEach { projectOwnerEntity ->
+            logger.info("Sending notification to project owner ${projectOwnerEntity.user!!.email}")
+            val projectName = projectOwnerEntity.project!!.projectName
+            val ownerEmail = projectOwnerEntity.user!!.email
+            val ownerTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong()).map { it.firebaseToken }
+            val ownerMessageTittle = "Proyecto por finalizar"
+            val ownerMessageBody = "El proyecto: '$projectName' en el que participas como propietario está por finalizar en las próximas 24 horas. Por favor, asegúrate de que todas las tareas estén completadas."
+            val notificationEntity = Notification()
+            notificationEntity.messageTitle = ownerMessageTittle
+            notificationEntity.messageBody = ownerMessageBody
+            notificationEntity.userId = projectOwnerEntity.userId
+            notificationRepository.save(notificationEntity)
+            emailService.sendEmail(ownerEmail, ownerMessageTittle, ownerMessageBody)
+            ownerTokens.forEach { token ->
+                try {
+                    firebaseMessagingService.sendNotification(token, ownerMessageTittle, ownerMessageBody)
+                } catch (e: Exception) {
+                    logger.error("Error sending notification to token $token, owner")
+                    // Disable the token
+                    val firebaseTokenEntity = firebaseTokenRepository.findByFirebaseTokenAndStatusIsTrue(token) ?: return
+                    firebaseTokenEntity.status = false
+                    firebaseTokenRepository.save(firebaseTokenEntity)
+                }
+            }
+        }
+
+        projectModeratorEntities.forEach { projectModeratorEntity ->
+            logger.info("Sending notification to project moderator ${projectModeratorEntity.user!!.email}")
+            val projectName = projectModeratorEntity.project!!.projectName
+            val moderatorEmail = projectModeratorEntity.user!!.email
+            val moderatorTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong()).map { it.firebaseToken }
+            val moderatorMessageTittle = "Proyecto por finalizar"
+            val moderatorMessageBody = "El proyecto: '$projectName' en el que participas como colaborador está por finalizar en las próximas 24 horas. Por favor, asegúrate de que todas las tareas estén completadas."
+            val notificationEntity = Notification()
+            notificationEntity.messageTitle = moderatorMessageTittle
+            notificationEntity.messageBody = moderatorMessageBody
+            notificationEntity.userId = projectModeratorEntity.userId
+            emailService.sendEmail(moderatorEmail, moderatorMessageTittle, moderatorMessageBody)
+            moderatorTokens.forEach { token ->
+                try {
+                    firebaseMessagingService.sendNotification(token, moderatorMessageTittle, moderatorMessageBody)
+                } catch (e: Exception) {
+                    logger.error("Error sending notification to token $token, moderator")
+                    // Disable the token
+                    val firebaseTokenEntity = firebaseTokenRepository.findByFirebaseTokenAndStatusIsTrue(token) ?: return
+                    firebaseTokenEntity.status = false
+                    firebaseTokenRepository.save(firebaseTokenEntity)
+                }
+            }
+        }
     }
 }

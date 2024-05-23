@@ -1,18 +1,14 @@
 package bo.edu.umsa.backend.service
 
 import bo.edu.umsa.backend.dto.NewReplacedPartDto
-import bo.edu.umsa.backend.dto.NewTaskCommentDto
 import bo.edu.umsa.backend.dto.ReplacedPartDto
-import bo.edu.umsa.backend.dto.TaskCommentDto
 import bo.edu.umsa.backend.entity.ReplacedPart
 import bo.edu.umsa.backend.entity.ReplacedPartFile
-import bo.edu.umsa.backend.entity.TaskComment
-import bo.edu.umsa.backend.entity.TaskCommentFile
 import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.ReplacedPartMapper
-import bo.edu.umsa.backend.mapper.TaskCommentMapper
 import bo.edu.umsa.backend.repository.*
 import bo.edu.umsa.backend.util.AuthUtil
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -26,12 +22,10 @@ class ReplacedPartService @Autowired constructor(
     private val userRepository: UserRepository,
     private val taskRepository: TaskRepository,
     private val replacedPartRepository: ReplacedPartRepository,
-    private val replacedPartFileRepository: ReplacedPartFileRepository,
-    private val taskCommentRepository: TaskCommentRepository,
-    private val taskCommentFileRepository: TaskCommentFileRepository,
+    private val replacedPartFileRepository: ReplacedPartFileRepository
 ) {
     companion object {
-        private val logger = org.slf4j.LoggerFactory.getLogger(ReplacedPartService::class.java)
+        private val logger = LoggerFactory.getLogger(ReplacedPartService::class.java)
     }
 
     fun getReplacedPartById(replacedPartId: Long): ReplacedPartDto {
@@ -48,7 +42,7 @@ class ReplacedPartService @Autowired constructor(
 
     fun createReplacedPart(newReplacedPartDto: NewReplacedPartDto) {
         // Validate the replaced part is not empty
-        if (newReplacedPartDto.replacedPartDescription.isEmpty()) {
+        if (newReplacedPartDto.replacedPartDescription.trim().isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Replaced part is blank", "El reemplazo está en blanco")
         }
         // Get the user id from the token
@@ -89,7 +83,7 @@ class ReplacedPartService @Autowired constructor(
         newReplacedPartDto: NewReplacedPartDto
     ) {
         // Validate the replaced part is not empty
-        if (newReplacedPartDto.replacedPartDescription.isEmpty()) {
+        if (newReplacedPartDto.replacedPartDescription.trim().isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Replaced part is blank", "El reemplazo está en blanco")
         }
         // Get the user id from the token

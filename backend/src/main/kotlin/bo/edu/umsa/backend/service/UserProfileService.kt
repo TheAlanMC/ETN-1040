@@ -9,6 +9,7 @@ import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.ProfileMapper
 import bo.edu.umsa.backend.repository.UserRepository
 import bo.edu.umsa.backend.util.AuthUtil
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -20,7 +21,7 @@ class UserProfileService @Autowired constructor(
     private val fileService: FileService
 ) {
     companion object {
-        private val logger = org.slf4j.LoggerFactory.getLogger(UserProfileService::class.java)
+        private val logger = LoggerFactory.getLogger(UserProfileService::class.java)
     }
 
     // Profile
@@ -43,7 +44,7 @@ class UserProfileService @Autowired constructor(
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Firstname and lastname cannot be blank", "Nombre y apellido no pueden estar en blanco")
         }
         // Phone must be a number
-        if (!profileDto.phone.isBlank() && !profileDto.phone.matches(Regex("\\d+"))) {
+        if (profileDto.phone.isNotBlank() && !profileDto.phone.matches(Regex("\\d+"))) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Phone must be a number", "El teléfono debe ser un número")
         }
         // Validate that the profileId is the same as the user's id
@@ -62,19 +63,19 @@ class UserProfileService @Autowired constructor(
 
     // Profile picture
     fun getProfilePicture(): FileDto {
-        val email = AuthUtil.getEmailFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
-        logger.info("Getting the profile picture of $email")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        logger.info("Getting the profile picture of $userId")
         // Get the user
-        val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email)
+        val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found", "Usuario no encontrado")
         return fileService.getPicture(userEntity.filePhotoId)
     }
 
     fun uploadProfilePicture(file: MultipartFile) {
-        val email = AuthUtil.getEmailFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
-        logger.info("Uploading the profile picture of $email")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        logger.info("Uploading the profile picture of $userId")
         // Get the user
-        val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email)
+        val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found", "Usuario no encontrado")
         // Update the same file
         fileService.overwritePicture(file, userEntity.filePhotoId)
@@ -99,10 +100,10 @@ class UserProfileService @Autowired constructor(
         if (passwordChangeDto.password != passwordChangeDto.confirmPassword) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Passwords do not match", "Las contraseñas no coinciden")
         }
-        val email = AuthUtil.getEmailFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
-        logger.info("Updating the password of $email")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        logger.info("Updating the password of $userId")
         // Get the user
-        val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email)
+        val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found", "Usuario no encontrado")
         // Compare the old password
         if (!BCrypt.verifyer().verify(passwordChangeDto.oldPassword.toCharArray(), userEntity.password).verified) {

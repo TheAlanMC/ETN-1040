@@ -1,8 +1,9 @@
 package bo.edu.umsa.backend.controller
 
-import bo.edu.umsa.backend.dto.*
+import bo.edu.umsa.backend.dto.NewReplacedPartDto
+import bo.edu.umsa.backend.dto.ReplacedPartDto
+import bo.edu.umsa.backend.dto.ResponseDto
 import bo.edu.umsa.backend.service.ReplacedPartService
-import bo.edu.umsa.backend.service.TaskCommentService
 import bo.edu.umsa.backend.util.AuthUtil
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,7 +31,7 @@ class ReplacedPartController @Autowired constructor(
         return ResponseEntity(ResponseDto(true, "Reemplazo recuperado", replacedPart), HttpStatus.OK)
     }
 
-    @PostMapping("/{replacedPartId}")
+    @PostMapping
     fun createReplacedPart(@RequestBody newReplacedPartDto: NewReplacedPartDto): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to create the replaced part")
         logger.info("POST /api/v1/replaced-parts")

@@ -24,7 +24,8 @@ class AuthService @Autowired constructor(
     private val groupRepository: GroupRepository,
     private val roleRepository: RoleRepository,
     private val emailService: EmailService,
-    private val accountRecoveryRepository: AccountRecoveryRepository
+    private val accountRecoveryRepository: AccountRecoveryRepository,
+    private val firebaseMessagingService: FirebaseMessagingService
 ) {
     companion object {
         val logger: Logger = LoggerFactory.getLogger(AuthController::class.java)
@@ -90,12 +91,12 @@ class AuthService @Autowired constructor(
         if (email.isBlank()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Empty fields", "Al menos un campo está vacío")
         }
-        logger.info("User $email is trying to reset the password")
+        logger.info("User $email is trying to reset the password, sending an email with the code")
         // Verify if the user exists
         val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email)
             ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: User not found", "Usuario no encontrado")
         // Check if user has an active account recovery
-        val accountRecoveryEntities = accountRecoveryRepository.findAllByUser_EmailAndStatusIsTrueAndStatusIsTrue(email)
+        val accountRecoveryEntities = accountRecoveryRepository.findAllByUserEmailAndStatusIsTrueAndStatusIsTrue(email)
         if (accountRecoveryEntities.isNotEmpty()) {
             // Disable all the active account recoveries
             accountRecoveryEntities.forEach { accountRecoveryEntity ->
@@ -127,7 +128,7 @@ class AuthService @Autowired constructor(
         }
         logger.info("User is trying to verify the hash code")
         // Verify if the account recovery exists
-        val accountRecoveryEntity = accountRecoveryRepository.findAllByUser_EmailAndStatusIsTrueAndStatusIsTrue(email).firstOrNull()
+        val accountRecoveryEntity = accountRecoveryRepository.findAllByUserEmailAndStatusIsTrueAndStatusIsTrue(email).firstOrNull()
             ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Account recovery not found", "Recuperación de cuenta no encontrada")
         // Verify if the hash code is correct
         val verifyResult = BCrypt.verifyer().verify(code.toCharArray(), accountRecoveryEntity.hashCode)
@@ -162,7 +163,7 @@ class AuthService @Autowired constructor(
         val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email)
             ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: User not found", "Usuario no encontrado")
         // Verify if the account recovery exists
-        val accountRecoveryEntity = accountRecoveryRepository.findAllByUser_EmailAndStatusIsTrueAndStatusIsTrue(email).firstOrNull()
+        val accountRecoveryEntity = accountRecoveryRepository.findAllByUserEmailAndStatusIsTrueAndStatusIsTrue(email).firstOrNull()
             ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Account recovery not found", "Recuperación de cuenta no encontrada")
         // Verify if the hash code is correct
         val verifyResult = BCrypt.verifyer().verify(code.toCharArray(), accountRecoveryEntity.hashCode)

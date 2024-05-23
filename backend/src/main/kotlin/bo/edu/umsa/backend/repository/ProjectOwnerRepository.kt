@@ -6,6 +6,11 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ProjectOwnerRepository : JpaRepository<ProjectOwner, Long> {
+
+    fun findAllByProjectIdAndStatusIsTrue(projectId: Long): List<ProjectOwner>
+
+    fun findAllByProjectIdInAndStatusIsTrue(projectIds: List<Int>): List<ProjectOwner>
+
     fun findByProjectIdAndUserIdAndStatusIsTrue(
         projectId: Long,
         userId: Long
@@ -14,4 +19,5 @@ interface ProjectOwnerRepository : JpaRepository<ProjectOwner, Long> {
     fun findAllByUserIdAndStatusIsTrue(
         userId: Long
     ): List<ProjectOwner>
+
 }

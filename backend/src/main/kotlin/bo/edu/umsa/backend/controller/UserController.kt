@@ -24,7 +24,7 @@ class UserController @Autowired constructor(private val userService: UserService
         logger.info("GET /api/v1/users/all")
         AuthUtil.verifyAuthTokenHasRoles(listOf("GESTIONAR ROLES Y PERMISOS", "CREAR PROYECTOS", "EDITAR PROYECTOS").toTypedArray())
         val users: List<UserPartialDto> = userService.getAllUsers()
-        logger.info("Success: Users retrieved")
+        logger.info("Success: All users retrieved")
         return ResponseEntity(ResponseDto(true, "Usuarios recuperados", users), HttpStatus.OK)
     }
 

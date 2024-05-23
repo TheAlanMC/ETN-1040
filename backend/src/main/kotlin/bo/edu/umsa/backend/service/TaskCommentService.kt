@@ -8,6 +8,7 @@ import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.TaskCommentMapper
 import bo.edu.umsa.backend.repository.*
 import bo.edu.umsa.backend.util.AuthUtil
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -24,7 +25,7 @@ class TaskCommentService @Autowired constructor(
     private val taskCommentFileRepository: TaskCommentFileRepository,
 ) {
     companion object {
-        private val logger = org.slf4j.LoggerFactory.getLogger(TaskCommentService::class.java)
+        private val logger = LoggerFactory.getLogger(TaskCommentService::class.java)
     }
 
     fun getCommentById(commentId: Long): TaskCommentDto {
@@ -45,7 +46,7 @@ class TaskCommentService @Autowired constructor(
 
     fun createComment(newTaskCommentDto: NewTaskCommentDto) {
         // Validate the comment is not empty
-        if (newTaskCommentDto.taskComment.isEmpty()) {
+        if (newTaskCommentDto.taskComment.trim().isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Comment is blank", "El comentario está en blanco")
         }
         // Get the user id from the token
@@ -94,7 +95,7 @@ class TaskCommentService @Autowired constructor(
         newTaskCommentDto: NewTaskCommentDto
     ) {
         // Validate the comment is not empty
-        if (newTaskCommentDto.taskComment.isEmpty()) {
+        if (newTaskCommentDto.taskComment.trim().isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Comment is blank", "El comentario está en blanco")
         }
         // Get the user id from the token

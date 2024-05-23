@@ -14,6 +14,7 @@ import bo.edu.umsa.backend.repository.GroupRepository
 import bo.edu.umsa.backend.repository.UserGroupRepository
 import bo.edu.umsa.backend.repository.UserRepository
 import bo.edu.umsa.backend.specification.UserSpecification
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -35,7 +36,7 @@ class UserService @Autowired constructor(
     private val emailService: EmailService
 ) {
     companion object {
-        private val logger = org.slf4j.LoggerFactory.getLogger(UserService::class.java)
+        private val logger = LoggerFactory.getLogger(UserService::class.java)
     }
 
     fun getAllUsers(): List<UserPartialDto> {
@@ -87,7 +88,7 @@ class UserService @Autowired constructor(
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Invalid email format", "Formato de correo inválido")
         }
         // Phone must be a number
-        if (!newUserDto.phone.isBlank() && !newUserDto.phone.matches(Regex("\\d+"))) {
+        if (newUserDto.phone.isNotBlank() && !newUserDto.phone.matches(Regex("\\d+"))) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Phone must be a number", "El teléfono debe ser un número")
         }
         // Validate that the group exists
@@ -153,7 +154,7 @@ class UserService @Autowired constructor(
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Firstname and lastname cannot be blank", "Nombre y apellido no pueden estar en blanco")
         }
         // Phone must be a number
-        if (!profileDto.phone.isBlank() && !profileDto.phone.matches(Regex("\\d+"))) {
+        if (profileDto.phone.isNotBlank() && !profileDto.phone.matches(Regex("\\d+"))) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Phone must be a number", "El teléfono debe ser un número")
         }
         logger.info("Updating the user with id $userId")

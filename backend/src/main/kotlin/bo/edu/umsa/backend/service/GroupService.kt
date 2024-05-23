@@ -11,6 +11,7 @@ import bo.edu.umsa.backend.repository.GroupRepository
 import bo.edu.umsa.backend.repository.GroupRoleRepository
 import bo.edu.umsa.backend.repository.RoleRepository
 import bo.edu.umsa.backend.repository.UserGroupRepository
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -24,7 +25,7 @@ class GroupService @Autowired constructor(
     private val userGroupRepository: UserGroupRepository
 ) {
     companion object {
-        private val logger = org.slf4j.LoggerFactory.getLogger(GroupService::class.java)
+        private val logger = LoggerFactory.getLogger(GroupService::class.java)
     }
 
     fun getGroups(): List<GroupDto> {

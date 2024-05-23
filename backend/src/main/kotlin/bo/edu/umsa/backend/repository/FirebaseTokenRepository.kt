@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface FirebaseTokenRepository : JpaRepository<FirebaseToken, Long> {
     fun findByFirebaseTokenAndStatusIsTrue(firebaseToken: String): FirebaseToken?
+
+    fun findAllByUserIdAndStatusIsTrue(userId: Long): List<FirebaseToken>
 }

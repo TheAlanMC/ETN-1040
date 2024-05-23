@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ProjectModeratorRepository : JpaRepository<ProjectModerator, Long> {
     fun findAllByProjectIdAndStatusIsTrue(projectId: Long): List<ProjectModerator>
+
+    fun findAllByProjectIdInAndStatusIsTrue(projectIds: List<Int>): List<ProjectModerator>
+
     fun findByProjectIdAndUserIdAndStatusIsTrue(
         projectId: Long,
         userId: Long
@@ -15,4 +18,5 @@ interface ProjectModeratorRepository : JpaRepository<ProjectModerator, Long> {
     fun findAllByUserIdAndStatusIsTrue(
         userId: Long
     ): List<ProjectModerator>
+
 }

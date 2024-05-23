@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
+import java.sql.Timestamp
 
 @Repository
 interface ProjectRepository : JpaRepository<Project, Long> {
@@ -18,5 +19,10 @@ interface ProjectRepository : JpaRepository<Project, Long> {
     fun findByProjectIdAndStatusIsTrue(projectId: Long): Project?
 
     fun findAllByProjectIdInAndStatusIsTrueOrderByProjectIdDesc(projectIds: List<Int>): List<Project>
+
+    fun findAllByProjectDateToBetweenAndProjectEndDateIsNullAndStatusIsTrueOrderByProjectDateTo(
+        startDate: Timestamp,
+        endDate: Timestamp
+    ): List<Project>
 
 }
