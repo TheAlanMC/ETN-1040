@@ -6,30 +6,15 @@ import jakarta.persistence.*
 import java.sql.Timestamp
 
 @Entity
-@Table(name = "file", schema = "public")
-class File {
+@Table(name = "task_priority", schema = "public")
+class TaskPriority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "file_id")
-    var fileId: Int = 0
+    @Column(name = "task_priority_id")
+    var taskPriorityId: Int = 0
 
-    @Column(name = "content_type")
-    var contentType: String = ""
-
-    @Column(name = "file_name")
-    var fileName: String = ""
-
-    @Column(name = "file_size")
-    var fileSize: Int = 0
-
-    @Column(name = "file_data")
-    var fileData: ByteArray = byteArrayOf()
-
-    @Column(name = "is_picture")
-    var isPicture: Boolean = false
-
-    @Column(name = "thumbnail")
-    var thumbnail: ByteArray = byteArrayOf()
+    @Column(name = "task_priority_name")
+    var taskPriorityName: String = ""
 
     @Column(name = "status")
     var status: Boolean = true
@@ -43,4 +28,6 @@ class File {
     @Column(name = "tx_host")
     var txHost: String = HttpUtil.getRequestHost() ?: "localhost"
 
+    @OneToMany(mappedBy = "taskStatus")
+    var tasks: List<Task>? = null
 }

@@ -142,7 +142,7 @@ class TaskService @Autowired constructor(
         val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(newTaskDto.projectId.toLong())
             ?: throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project does not exist", "El proyecto no existe")
         // Validate the task deadline is between the project date from and date to
-        if (Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).before(projectEntity.dateFrom) || Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).after(projectEntity.dateTo)) {
+        if (Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).before(projectEntity.projectDateFrom) || Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).after(projectEntity.projectDateTo)) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Task deadline is not between the project date from and date to", "La fecha límite de la tarea no está entre la fecha de inicio y la fecha de finalización del proyecto")
         }
         // Validate the task assignees exist
@@ -251,7 +251,7 @@ class TaskService @Autowired constructor(
         val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(taskEntity.projectId.toLong())
             ?: throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project does not exist", "El proyecto no existe")
         // Validate the task deadline is between the project date from and date to
-        if (Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).before(projectEntity.dateFrom) || Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).after(projectEntity.dateTo)) {
+        if (Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).before(projectEntity.projectDateFrom) || Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).after(projectEntity.projectDateTo)) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Task deadline is not between the project date from and date to", "La fecha límite de la tarea no está entre la fecha de inicio y la fecha de finalización del proyecto")
         }
 

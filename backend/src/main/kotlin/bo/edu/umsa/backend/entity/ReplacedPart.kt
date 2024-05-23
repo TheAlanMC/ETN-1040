@@ -6,21 +6,18 @@ import jakarta.persistence.*
 import java.sql.Timestamp
 
 @Entity
-@Table(name = "loaned_tool", schema = "public")
-class LoanedTool {
+@Table(name = "replaced_part", schema = "public")
+class ReplacedPart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "loaned_tool_id")
-    var loanedToolId: Int = 0
+    @Column(name = "replaced_part_id")
+    var replacedPartId: Int = 0
 
     @Column(name = "task_id")
     var taskId: Int = 0
 
-    @Column(name = "user_id")
-    var userId: Int = 0
-
-    @Column(name = "tool_id")
-    var toolId: Int = 0
+    @Column(name = "replaced_part_description")
+    var replacedPartDescription: String = ""
 
     @Column(name = "status")
     var status: Boolean = true
@@ -38,11 +35,6 @@ class LoanedTool {
     @JoinColumn(name = "task_id", insertable = false, updatable = false)
     var task: Task? = null
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    var user: User? = null
-
-    @ManyToOne
-    @JoinColumn(name = "tool_id", insertable = false, updatable = false)
-    var tool: Tool? = null
+    @OneToMany(mappedBy = "replacedPart")
+    var replacedPartFiles: List<ReplacedPartFile>? = null
 }

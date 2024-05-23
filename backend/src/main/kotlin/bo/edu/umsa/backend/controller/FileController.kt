@@ -26,7 +26,7 @@ class FileController @Autowired constructor(private val fileService: FileService
         val fileDto: FileDto = fileService.getFile(fileId)
         val headers = HttpHeaders()
         headers.contentType = MediaType.parseMediaType(fileDto.contentType)
-        headers.contentDisposition = ContentDisposition.parse("inline; filename=${fileDto.filename}")
+        headers.contentDisposition = ContentDisposition.parse("inline; filename=${fileDto.fileName}")
         logger.info("Success: File retrieved")
         return ResponseEntity(fileDto.fileData, headers, HttpStatus.OK)
     }
@@ -38,7 +38,7 @@ class FileController @Autowired constructor(private val fileService: FileService
         val fileDto: FileDto = fileService.getPicture(fileId.toInt())
         val headers = HttpHeaders()
         headers.contentType = MediaType.parseMediaType(fileDto.contentType)
-        headers.contentDisposition = ContentDisposition.parse("inline; filename=${fileDto.filename}")
+        headers.contentDisposition = ContentDisposition.parse("inline; filename=${fileDto.fileName}")
         logger.info("Success: Thumbnail retrieved")
         return ResponseEntity(fileDto.thumbnail, headers, HttpStatus.OK)
     }

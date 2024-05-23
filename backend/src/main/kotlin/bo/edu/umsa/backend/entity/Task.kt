@@ -19,23 +19,26 @@ class Task {
     @Column(name = "task_status_id")
     var taskStatusId: Int = 0
 
+    @Column(name = "task_priority_id")
+    var taskPriorityId: Int = 0
+
     @Column(name = "task_name")
     var taskName: String = ""
 
     @Column(name = "task_description")
     var taskDescription: String = ""
 
-    @Column(name = "task_deadline")
-    var taskDeadline: Timestamp = Timestamp(System.currentTimeMillis())
+    @Column(name = "task_due_date")
+    var taskDueDate: Timestamp = Timestamp(System.currentTimeMillis())
 
-    @Column(name = "task_priority")
-    var taskPriority: Int = 0
+    @Column(name = "task_end_date")
+    var taskEndDate: Timestamp = Timestamp(System.currentTimeMillis())
 
-    @Column(name = "rating")
-    var rating: Int = 0
+    @Column(name = "task_rating")
+    var taskRating: Int = 0
 
-    @Column(name = "feedback")
-    var feedback: String = ""
+    @Column(name = "task_rating_comment")
+    var taskRatingComment: String = ""
 
     @Column(name = "status")
     var status: Boolean = true
@@ -56,17 +59,21 @@ class Task {
     var taskComments: List<TaskComment>? = null
 
     @OneToMany(mappedBy = "task")
-    var loanedTools: List<LoanedTool>? = null
-
-    @OneToMany(mappedBy = "task")
     var taskFiles: List<TaskFile>? = null
 
     @OneToMany(mappedBy = "task")
     var taskHistories: List<TaskHistory>? = null
 
+    @OneToMany(mappedBy = "task")
+    var replacedParts: List<ReplacedPart>? = null
+
     @ManyToOne
     @JoinColumn(name = "task_status_id", insertable = false, updatable = false)
     var taskStatus: TaskStatus? = null
+
+    @ManyToOne
+    @JoinColumn(name = "task_priority_id", insertable = false, updatable = false)
+    var taskPriority: TaskPriority? = null
 
     @ManyToOne
     @JoinColumn(name = "project_id", insertable = false, updatable = false)

@@ -8,7 +8,7 @@ class FileMapper {
         fun entityToDto(file: File): FileDto {
             return FileDto(
                 fileId = file.fileId,
-                filename = file.filename,
+                fileName = file.fileName,
                 contentType = file.contentType,
                 fileData = file.fileData,
                 thumbnail = file.thumbnail,

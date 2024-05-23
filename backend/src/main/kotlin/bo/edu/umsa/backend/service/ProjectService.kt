@@ -114,8 +114,8 @@ class ProjectService @Autowired constructor(
         val projectEntity = Project()
         projectEntity.projectName = newProjectDto.projectName
         projectEntity.projectDescription = newProjectDto.projectDescription
-        projectEntity.dateFrom = Timestamp.from(Instant.parse(newProjectDto.dateFrom))
-        projectEntity.dateTo = Timestamp.from(Instant.parse(newProjectDto.dateTo))
+        projectEntity.projectDateFrom = Timestamp.from(Instant.parse(newProjectDto.dateFrom))
+        projectEntity.projectDateTo = Timestamp.from(Instant.parse(newProjectDto.dateTo))
         projectRepository.save(projectEntity)
         logger.info("Project created with id ${projectEntity.projectId}")
 

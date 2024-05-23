@@ -96,7 +96,7 @@ class UserController @Autowired constructor(private val userService: UserService
         val profilePicture: FileDto = userService.getProfilePicture(userId)
         val headers = HttpHeaders()
         headers.contentType = MediaType.parseMediaType(profilePicture.contentType)
-        headers.contentDisposition = ContentDisposition.parse("inline; filename=${profilePicture.filename}")
+        headers.contentDisposition = ContentDisposition.parse("inline; filename=${profilePicture.fileName}")
         UserProfileController.logger.info("Success: Profile picture retrieved")
         return ResponseEntity(profilePicture.fileData, headers, HttpStatus.OK)
     }
@@ -108,7 +108,7 @@ class UserController @Autowired constructor(private val userService: UserService
         val profilePicture: FileDto = userService.getProfilePictureThumbnail(userId)
         val headers = HttpHeaders()
         headers.contentType = MediaType.parseMediaType(profilePicture.contentType)
-        headers.contentDisposition = ContentDisposition.parse("inline; filename=${profilePicture.filename}")
+        headers.contentDisposition = ContentDisposition.parse("inline; filename=${profilePicture.fileName}")
         logger.info("Success: Profile picture thumbnail retrieved")
         return ResponseEntity(profilePicture.thumbnail, headers, HttpStatus.OK)
     }

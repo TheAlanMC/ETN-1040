@@ -64,15 +64,10 @@ INSERT INTO "task_status" (task_status_name, status, tx_date, tx_user, tx_host)
 VALUES  ('PENDIENTE', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         ('EN PROCESO', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         ('FINALIZADO', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost');
-        
--- Funciones de Herramientas
--- INSERT INTO "role" (role_name, role_description, status, tx_date, tx_user, tx_host)
--- VALUES
---         ('VER HERRAMIENTAS', 'Ver herramientas del Laboratorio Multimedia', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
---         ('CREAR HERRAMIENTAS', 'Crear herramientas en el Laboratorio Multimedia', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
---         ('EDITAR HERRAMIENTAS', 'Editar herramientas en el Laboratorio Multimedia', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost');
 
--- INSERT INTO "group_role" (group_id, role_id, status, tx_date, tx_user, tx_host)
--- VALUES  (1, 14, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
---         (1, 15, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
---         (1, 15, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost');
+-- Task Priority
+INSERT INTO "task_priority" (task_priority_name, status, tx_date, tx_user, tx_host)
+VALUES  ('BAJA', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
+        ('MEDIA', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
+        ('ALTA', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost');
+        

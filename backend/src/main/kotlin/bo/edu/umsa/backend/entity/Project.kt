@@ -19,11 +19,20 @@ class Project {
     @Column(name = "project_description", columnDefinition = "TEXT")
     var projectDescription: String = ""
 
-    @Column(name = "date_from")
-    var dateFrom: Timestamp = Timestamp(System.currentTimeMillis())
+    @Column(name = "project_objective")
+    var projectObjective: String = ""
 
-    @Column(name = "date_to")
-    var dateTo: Timestamp = Timestamp(System.currentTimeMillis())
+    @Column(name = "project_close_message")
+    var projectCloseMessage: String = ""
+
+    @Column(name = "project_date_from")
+    var projectDateFrom: Timestamp = Timestamp(System.currentTimeMillis())
+
+    @Column(name = "project_date_to")
+    var projectDateTo: Timestamp = Timestamp(System.currentTimeMillis())
+
+    @Column(name = "project_end_date")
+    var projectEndDate: Timestamp = Timestamp(System.currentTimeMillis())
 
     @Column(name = "status")
     var status: Boolean = true

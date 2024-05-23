@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2024-05-19 22:51:14.743
+-- Last modification date: 2024-05-22 04:11:53.056
 
 -- tables
 -- Table: account_recovery
@@ -19,7 +19,7 @@ CREATE TABLE account_recovery (
 CREATE TABLE file (
     file_id serial  NOT NULL,
     content_type varchar(255)  NOT NULL,
-    filename varchar(255)  NOT NULL,
+    file_name varchar(255)  NOT NULL,
     file_size int  NOT NULL,
     file_data bytea  NOT NULL,
     is_picture boolean  NOT NULL,
@@ -29,6 +29,18 @@ CREATE TABLE file (
     tx_user varchar(100)  NOT NULL,
     tx_host varchar(100)  NOT NULL,
     CONSTRAINT file_pk PRIMARY KEY (file_id)
+);
+
+-- Table: firebase_token
+CREATE TABLE firebase_token (
+    firebase_token_id serial  NOT NULL,
+    user_id int  NOT NULL,
+    firebase_token varchar(255)  NOT NULL,
+    status boolean  NOT NULL,
+    tx_date timestamp  NOT NULL,
+    tx_user varchar(100)  NOT NULL,
+    tx_host varchar(100)  NOT NULL,
+    CONSTRAINT firebase_token_pk PRIMARY KEY (firebase_token_id)
 );
 
 -- Table: group
@@ -55,24 +67,12 @@ CREATE TABLE group_role (
     CONSTRAINT group_role_pk PRIMARY KEY (group_role_id)
 );
 
--- Table: loaned_tool
-CREATE TABLE loaned_tool (
-    loaned_tool_id serial  NOT NULL,
-    task_id int  NOT NULL,
-    tool_id int  NOT NULL,
-    user_id int  NOT NULL,
-    status boolean  NOT NULL,
-    tx_date timestamp  NOT NULL,
-    tx_user varchar(100)  NOT NULL,
-    tx_host varchar(100)  NOT NULL,
-    CONSTRAINT loaned_tool_pk PRIMARY KEY (loaned_tool_id)
-);
-
 -- Table: notification
 CREATE TABLE notification (
     notification_id serial  NOT NULL,
     user_id int  NOT NULL,
-    message varchar(255)  NOT NULL,
+    message_tittle varchar(100)  NOT NULL,
+    message_body varchar(255)  NOT NULL,
     sent_date timestamp  NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
@@ -81,13 +81,41 @@ CREATE TABLE notification (
     CONSTRAINT notification_pk PRIMARY KEY (notification_id)
 );
 
+-- Table: part_replaced
+CREATE TABLE part_replaced (
+    part_replaced_id serial  NOT NULL,
+    task_id int  NOT NULL,
+    replacement_details varchar(255)  NOT NULL,
+    replacement_date timestamp  NOT NULL,
+    status boolean  NOT NULL,
+    tx_date timestamp  NOT NULL,
+    tx_user varchar(100)  NOT NULL,
+    tx_host varchar(100)  NOT NULL,
+    CONSTRAINT part_replaced_pk PRIMARY KEY (part_replaced_id)
+);
+
+-- Table: part_replaced_file
+CREATE TABLE part_replaced_file (
+    part_replaced_file_id serial  NOT NULL,
+    part_replaced_id int  NOT NULL,
+    file_id int  NOT NULL,
+    status boolean  NOT NULL,
+    tx_date timestamp  NOT NULL,
+    tx_user varchar(100)  NOT NULL,
+    tx_host varchar(100)  NOT NULL,
+    CONSTRAINT part_replaced_file_pk PRIMARY KEY (part_replaced_file_id)
+);
+
 -- Table: project
 CREATE TABLE project (
     project_id serial  NOT NULL,
     project_name varchar(100)  NOT NULL,
     project_description text  NOT NULL,
-    date_from timestamp  NOT NULL,
-    date_to timestamp  NOT NULL,
+    project_objective varchar(255)  NOT NULL,
+    project_close_message varchar(255)  NOT NULL,
+    project_date_from timestamp  NOT NULL,
+    project_date_to timestamp  NOT NULL,
+    project_end_date timestamp  NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
     tx_user varchar(100)  NOT NULL,
@@ -148,12 +176,13 @@ CREATE TABLE task (
     task_id serial  NOT NULL,
     project_id int  NOT NULL,
     task_status_id int  NOT NULL,
+    task_priority_id int  NOT NULL,
     task_name varchar(100)  NOT NULL,
     task_description varchar(255)  NOT NULL,
     task_deadline timestamp  NOT NULL,
-    task_priority int  NOT NULL,
-    rating int  NOT NULL,
-    feedback varchar(255)  NOT NULL,
+    task_end_date int  NOT NULL,
+    task_rating int  NOT NULL,
+    task_feedback varchar(255)  NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
     tx_user varchar(100)  NOT NULL,
@@ -179,7 +208,7 @@ CREATE TABLE task_comment (
     task_id int  NOT NULL,
     user_id int  NOT NULL,
     comment_number int  NOT NULL,
-    comment varchar(255)  NOT NULL,
+    task_comment varchar(255)  NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
     tx_user varchar(100)  NOT NULL,
@@ -226,6 +255,17 @@ CREATE TABLE task_history (
     CONSTRAINT task_history_pk PRIMARY KEY (task_history_id)
 );
 
+-- Table: task_priority
+CREATE TABLE task_priority (
+    task_priority_id serial  NOT NULL,
+    task_priority_name varchar(50)  NOT NULL,
+    status boolean  NOT NULL,
+    tx_date timestamp  NOT NULL,
+    tx_user varchar(100)  NOT NULL,
+    tx_host varchar(100)  NOT NULL,
+    CONSTRAINT task_priority_pk PRIMARY KEY (task_priority_id)
+);
+
 -- Table: task_status
 CREATE TABLE task_status (
     task_status_id serial  NOT NULL,
@@ -235,21 +275,6 @@ CREATE TABLE task_status (
     tx_user varchar(100)  NOT NULL,
     tx_host varchar(100)  NOT NULL,
     CONSTRAINT task_status_pk PRIMARY KEY (task_status_id)
-);
-
--- Table: tool
-CREATE TABLE tool (
-    tool_id serial  NOT NULL,
-    file_photo_id int  NOT NULL,
-    tool_code varchar(50)  NOT NULL,
-    tool_name varchar(50)  NOT NULL,
-    tool_description varchar(255)  NOT NULL,
-    available boolean  NOT NULL,
-    status boolean  NOT NULL,
-    tx_date timestamp  NOT NULL,
-    tx_user varchar(100)  NOT NULL,
-    tx_host varchar(100)  NOT NULL,
-    CONSTRAINT tool_pk PRIMARY KEY (tool_id)
 );
 
 -- Table: user
@@ -291,6 +316,14 @@ ALTER TABLE account_recovery ADD CONSTRAINT account_recovery_user
     INITIALLY IMMEDIATE
 ;
 
+-- Reference: firebase_token_user (table: firebase_token)
+ALTER TABLE firebase_token ADD CONSTRAINT firebase_token_user
+    FOREIGN KEY (user_id)
+    REFERENCES "user" (user_id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
 -- Reference: group_role_group (table: group_role)
 ALTER TABLE group_role ADD CONSTRAINT group_role_group
     FOREIGN KEY (group_id)
@@ -307,34 +340,34 @@ ALTER TABLE group_role ADD CONSTRAINT group_role_role
     INITIALLY IMMEDIATE
 ;
 
--- Reference: loaned_tool_task (table: loaned_tool)
-ALTER TABLE loaned_tool ADD CONSTRAINT loaned_tool_task
-    FOREIGN KEY (task_id)
-    REFERENCES task (task_id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: loaned_tool_tool (table: loaned_tool)
-ALTER TABLE loaned_tool ADD CONSTRAINT loaned_tool_tool
-    FOREIGN KEY (tool_id)
-    REFERENCES tool (tool_id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: loaned_tool_user (table: loaned_tool)
-ALTER TABLE loaned_tool ADD CONSTRAINT loaned_tool_user
-    FOREIGN KEY (user_id)
-    REFERENCES "user" (user_id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
 -- Reference: notification_user (table: notification)
 ALTER TABLE notification ADD CONSTRAINT notification_user
     FOREIGN KEY (user_id)
     REFERENCES "user" (user_id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: part_replaced_file_file (table: part_replaced_file)
+ALTER TABLE part_replaced_file ADD CONSTRAINT part_replaced_file_file
+    FOREIGN KEY (file_id)
+    REFERENCES file (file_id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: part_replaced_file_part_replaced (table: part_replaced_file)
+ALTER TABLE part_replaced_file ADD CONSTRAINT part_replaced_file_part_replaced
+    FOREIGN KEY (part_replaced_id)
+    REFERENCES part_replaced (part_replaced_id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: part_replaced_task (table: part_replaced)
+ALTER TABLE part_replaced ADD CONSTRAINT part_replaced_task
+    FOREIGN KEY (task_id)
+    REFERENCES task (task_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
@@ -475,18 +508,18 @@ ALTER TABLE task ADD CONSTRAINT task_project
     INITIALLY IMMEDIATE
 ;
 
--- Reference: task_task_status (table: task)
-ALTER TABLE task ADD CONSTRAINT task_task_status
-    FOREIGN KEY (task_status_id)
-    REFERENCES task_status (task_status_id)  
+-- Reference: task_task_priority (table: task)
+ALTER TABLE task ADD CONSTRAINT task_task_priority
+    FOREIGN KEY (task_priority_id)
+    REFERENCES task_priority (task_priority_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: tool_file (table: tool)
-ALTER TABLE tool ADD CONSTRAINT tool_file
-    FOREIGN KEY (file_photo_id)
-    REFERENCES file (file_id)  
+-- Reference: task_task_status (table: task)
+ALTER TABLE task ADD CONSTRAINT task_task_status
+    FOREIGN KEY (task_status_id)
+    REFERENCES task_status (task_status_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;

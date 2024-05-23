@@ -46,7 +46,7 @@ class UserProfileController @Autowired constructor(private val userProfileServic
         val profilePicture: FileDto = userProfileService.getProfilePicture()
         val headers = HttpHeaders()
         headers.contentType = MediaType.parseMediaType(profilePicture.contentType)
-        headers.contentDisposition = ContentDisposition.parse("inline; filename=${profilePicture.filename}")
+        headers.contentDisposition = ContentDisposition.parse("inline; filename=${profilePicture.fileName}")
         logger.info("Success: Profile picture retrieved")
         return ResponseEntity(profilePicture.fileData, headers, HttpStatus.OK)
     }

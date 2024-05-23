@@ -8,7 +8,7 @@ class FilePartialMapper {
         fun entityToDto(file: File): FilePartialDto {
             return FilePartialDto(
                 fileId = file.fileId,
-                filename = file.filename,
+                fileName = file.fileName,
                 contentType = file.contentType,
                 fileSize = file.fileSize,
             )

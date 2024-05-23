@@ -6,30 +6,18 @@ import jakarta.persistence.*
 import java.sql.Timestamp
 
 @Entity
-@Table(name = "file", schema = "public")
-class File {
+@Table(name = "replaced_part_file", schema = "public")
+class ReplacedPartFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "replaced_part_file_id")
+    var replacedPartFileId: Int = 0
+
+    @Column(name = "replaced_part_id")
+    var replacedPartId: Int = 0
+
     @Column(name = "file_id")
     var fileId: Int = 0
-
-    @Column(name = "content_type")
-    var contentType: String = ""
-
-    @Column(name = "file_name")
-    var fileName: String = ""
-
-    @Column(name = "file_size")
-    var fileSize: Int = 0
-
-    @Column(name = "file_data")
-    var fileData: ByteArray = byteArrayOf()
-
-    @Column(name = "is_picture")
-    var isPicture: Boolean = false
-
-    @Column(name = "thumbnail")
-    var thumbnail: ByteArray = byteArrayOf()
 
     @Column(name = "status")
     var status: Boolean = true
@@ -42,5 +30,13 @@ class File {
 
     @Column(name = "tx_host")
     var txHost: String = HttpUtil.getRequestHost() ?: "localhost"
+
+    @ManyToOne
+    @JoinColumn(name = "replaced_part_id", insertable = false, updatable = false)
+    var replacedPart: ReplacedPart? = null
+
+    @ManyToOne
+    @JoinColumn(name = "file_id", insertable = false, updatable = false)
+    var file: File? = null
 
 }

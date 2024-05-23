@@ -103,7 +103,7 @@ class UserService @Autowired constructor(
         val avatarThumbnailByteArray = assetService.readPhotoToByteArray("avatar_thumbnail.png")
         // Create the file
         val fileEntity = File()
-        fileEntity.filename = "avatar.png"
+        fileEntity.fileName = "avatar.png"
         fileEntity.contentType = "image/png"
         fileEntity.fileData = avatarByteArray
         fileEntity.isPicture = true
