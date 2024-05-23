@@ -52,7 +52,6 @@ class User {
     @OneToMany(mappedBy = "user")
     var userGroups: List<UserGroup>? = null
 
-    @OneToMany(mappedBy = "user")
-    var accountRecoveries: List<AccountRecovery>? = null
+
 }
 

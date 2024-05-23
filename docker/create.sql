@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2024-05-22 04:11:53.056
+-- Last modification date: 2024-05-23 03:18:17.881
 
 -- tables
 -- Table: account_recovery
@@ -73,37 +73,11 @@ CREATE TABLE notification (
     user_id int  NOT NULL,
     message_tittle varchar(100)  NOT NULL,
     message_body varchar(255)  NOT NULL,
-    sent_date timestamp  NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
     tx_user varchar(100)  NOT NULL,
     tx_host varchar(100)  NOT NULL,
     CONSTRAINT notification_pk PRIMARY KEY (notification_id)
-);
-
--- Table: part_replaced
-CREATE TABLE part_replaced (
-    part_replaced_id serial  NOT NULL,
-    task_id int  NOT NULL,
-    replacement_details varchar(255)  NOT NULL,
-    replacement_date timestamp  NOT NULL,
-    status boolean  NOT NULL,
-    tx_date timestamp  NOT NULL,
-    tx_user varchar(100)  NOT NULL,
-    tx_host varchar(100)  NOT NULL,
-    CONSTRAINT part_replaced_pk PRIMARY KEY (part_replaced_id)
-);
-
--- Table: part_replaced_file
-CREATE TABLE part_replaced_file (
-    part_replaced_file_id serial  NOT NULL,
-    part_replaced_id int  NOT NULL,
-    file_id int  NOT NULL,
-    status boolean  NOT NULL,
-    tx_date timestamp  NOT NULL,
-    tx_user varchar(100)  NOT NULL,
-    tx_host varchar(100)  NOT NULL,
-    CONSTRAINT part_replaced_file_pk PRIMARY KEY (part_replaced_file_id)
 );
 
 -- Table: project
@@ -115,7 +89,7 @@ CREATE TABLE project (
     project_close_message varchar(255)  NOT NULL,
     project_date_from timestamp  NOT NULL,
     project_date_to timestamp  NOT NULL,
-    project_end_date timestamp  NOT NULL,
+    project_end_date timestamp  NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
     tx_user varchar(100)  NOT NULL,
@@ -159,6 +133,30 @@ CREATE TABLE project_owner (
     CONSTRAINT project_owner_pk PRIMARY KEY (project_owner_id)
 );
 
+-- Table: replaced_part
+CREATE TABLE replaced_part (
+    replaced_part_id serial  NOT NULL,
+    task_id int  NOT NULL,
+    replaced_part_description varchar(255)  NOT NULL,
+    status boolean  NOT NULL,
+    tx_date timestamp  NOT NULL,
+    tx_user varchar(100)  NOT NULL,
+    tx_host varchar(100)  NOT NULL,
+    CONSTRAINT replaced_part_pk PRIMARY KEY (replaced_part_id)
+);
+
+-- Table: replaced_part_file
+CREATE TABLE replaced_part_file (
+    replaced_part_file_id serial  NOT NULL,
+    replaced_part_id int  NOT NULL,
+    file_id int  NOT NULL,
+    status boolean  NOT NULL,
+    tx_date timestamp  NOT NULL,
+    tx_user varchar(100)  NOT NULL,
+    tx_host varchar(100)  NOT NULL,
+    CONSTRAINT replaced_part_file_pk PRIMARY KEY (replaced_part_file_id)
+);
+
 -- Table: role
 CREATE TABLE role (
     role_id serial  NOT NULL,
@@ -179,10 +177,10 @@ CREATE TABLE task (
     task_priority_id int  NOT NULL,
     task_name varchar(100)  NOT NULL,
     task_description varchar(255)  NOT NULL,
-    task_deadline timestamp  NOT NULL,
-    task_end_date int  NOT NULL,
+    task_due_date timestamp  NOT NULL,
+    task_end_date timestamp  NULL,
     task_rating int  NOT NULL,
-    task_feedback varchar(255)  NOT NULL,
+    task_rating_comment varchar(255)  NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
     tx_user varchar(100)  NOT NULL,
@@ -207,7 +205,7 @@ CREATE TABLE task_comment (
     task_comment_id serial  NOT NULL,
     task_id int  NOT NULL,
     user_id int  NOT NULL,
-    comment_number int  NOT NULL,
+    task_comment_number int  NOT NULL,
     task_comment varchar(255)  NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
@@ -348,24 +346,16 @@ ALTER TABLE notification ADD CONSTRAINT notification_user
     INITIALLY IMMEDIATE
 ;
 
--- Reference: part_replaced_file_file (table: part_replaced_file)
-ALTER TABLE part_replaced_file ADD CONSTRAINT part_replaced_file_file
+-- Reference: part_replaced_file_file (table: replaced_part_file)
+ALTER TABLE replaced_part_file ADD CONSTRAINT part_replaced_file_file
     FOREIGN KEY (file_id)
     REFERENCES file (file_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: part_replaced_file_part_replaced (table: part_replaced_file)
-ALTER TABLE part_replaced_file ADD CONSTRAINT part_replaced_file_part_replaced
-    FOREIGN KEY (part_replaced_id)
-    REFERENCES part_replaced (part_replaced_id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: part_replaced_task (table: part_replaced)
-ALTER TABLE part_replaced ADD CONSTRAINT part_replaced_task
+-- Reference: part_replaced_task (table: replaced_part)
+ALTER TABLE replaced_part ADD CONSTRAINT part_replaced_task
     FOREIGN KEY (task_id)
     REFERENCES task (task_id)  
     NOT DEFERRABLE 
@@ -416,6 +406,14 @@ ALTER TABLE project_member ADD CONSTRAINT project_team_project
 ALTER TABLE project_member ADD CONSTRAINT project_team_user
     FOREIGN KEY (user_id)
     REFERENCES "user" (user_id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: replaced_part_file_replaced_part (table: replaced_part_file)
+ALTER TABLE replaced_part_file ADD CONSTRAINT replaced_part_file_replaced_part
+    FOREIGN KEY (replaced_part_id)
+    REFERENCES replaced_part (replaced_part_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;

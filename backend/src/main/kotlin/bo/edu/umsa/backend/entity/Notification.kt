@@ -6,24 +6,21 @@ import jakarta.persistence.*
 import java.sql.Timestamp
 
 @Entity
-@Table(name = "task_comment", schema = "public")
-class TaskComment {
+@Table(name = "notification", schema = "public")
+class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "task_comment_id")
-    var taskCommentId: Int = 0
-
-    @Column(name = "task_id")
-    var taskId: Int = 0
+    @Column(name = "notification_id")
+    var notificationId: Int = 0
 
     @Column(name = "user_id")
     var userId: Int = 0
 
-    @Column(name = "task_comment_number")
-    var taskCommentNumber: Int = 0
+    @Column(name = "message_title")
+    var messageTitle: String = ""
 
-    @Column(name = "task_comment")
-    var taskComment: String = ""
+    @Column(name = "message_body")
+    var messageBody: String = ""
 
     @Column(name = "status")
     var status: Boolean = true
@@ -38,13 +35,6 @@ class TaskComment {
     var txHost: String = HttpUtil.getRequestHost() ?: "localhost"
 
     @ManyToOne
-    @JoinColumn(name = "task_id", insertable = false, updatable = false)
-    var task: Task? = null
-
-    @ManyToOne
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     var user: User? = null
-
-    @OneToMany(mappedBy = "taskComment")
-    var taskCommentFiles: List<TaskCommentFile>? = null
 }

@@ -76,18 +76,18 @@ class ProjectService @Autowired constructor(
 
     fun createProject(newProjectDto: NewProjectDto) {
         // Validate the name is not empty
-        if (newProjectDto.projectName.isEmpty() || newProjectDto.dateFrom.isEmpty() || newProjectDto.dateTo.isEmpty()) {
+        if (newProjectDto.projectName.isEmpty() || newProjectDto.projectDateFrom.isEmpty() || newProjectDto.projectDateTo.isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one required field is blank", "Al menos un campo requerido está en blanco")
         }
         // Validate the dates have the correct format
         try {
-            val dateFrom = Timestamp.from(Instant.parse(newProjectDto.dateFrom))
-            val dateTo = Timestamp.from(Instant.parse(newProjectDto.dateTo))
+            val dateFrom = Timestamp.from(Instant.parse(newProjectDto.projectDateFrom))
+            val dateTo = Timestamp.from(Instant.parse(newProjectDto.projectDateTo))
             logger.info("Date from: $dateFrom, Date to: $dateTo")
         } catch (e: Exception) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date format is incorrect", "El formato de fecha es incorrecto")
         }
-        if (Timestamp.from(Instant.parse(newProjectDto.dateFrom)).after(Timestamp.from(Instant.parse(newProjectDto.dateTo)))) {
+        if (Timestamp.from(Instant.parse(newProjectDto.projectDateFrom)).after(Timestamp.from(Instant.parse(newProjectDto.projectDateTo)))) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date range is incorrect", "El rango de fechas es incorrecto")
         }
         // Validate the project moderators are not empty and valid
@@ -114,8 +114,8 @@ class ProjectService @Autowired constructor(
         val projectEntity = Project()
         projectEntity.projectName = newProjectDto.projectName
         projectEntity.projectDescription = newProjectDto.projectDescription
-        projectEntity.projectDateFrom = Timestamp.from(Instant.parse(newProjectDto.dateFrom))
-        projectEntity.projectDateTo = Timestamp.from(Instant.parse(newProjectDto.dateTo))
+        projectEntity.projectDateFrom = Timestamp.from(Instant.parse(newProjectDto.projectDateFrom))
+        projectEntity.projectDateTo = Timestamp.from(Instant.parse(newProjectDto.projectDateTo))
         projectRepository.save(projectEntity)
         logger.info("Project created with id ${projectEntity.projectId}")
 

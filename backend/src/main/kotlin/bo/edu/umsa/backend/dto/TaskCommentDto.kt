@@ -5,8 +5,8 @@ import java.sql.Timestamp
 data class TaskCommentDto(
     val taskCommentId: Int,
     val user: UserPartialDto,
-    val commentNumber: Int,
-    val comment: String,
-    val commentDate: Timestamp,
+    val taskCommentNumber: Int,
+    val taskComment: String,
+    val txDate: Timestamp,
     val taskCommentFiles: List<FilePartialDto>,
 )

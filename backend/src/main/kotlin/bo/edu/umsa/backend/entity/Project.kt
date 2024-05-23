@@ -32,7 +32,7 @@ class Project {
     var projectDateTo: Timestamp = Timestamp(System.currentTimeMillis())
 
     @Column(name = "project_end_date")
-    var projectEndDate: Timestamp = Timestamp(System.currentTimeMillis())
+    var projectEndDate: Timestamp? = null
 
     @Column(name = "status")
     var status: Boolean = true

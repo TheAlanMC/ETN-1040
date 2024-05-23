@@ -32,7 +32,7 @@ class Task {
     var taskDueDate: Timestamp = Timestamp(System.currentTimeMillis())
 
     @Column(name = "task_end_date")
-    var taskEndDate: Timestamp = Timestamp(System.currentTimeMillis())
+    var taskEndDate: Timestamp? = null
 
     @Column(name = "task_rating")
     var taskRating: Int = 0

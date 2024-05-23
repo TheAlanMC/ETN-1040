@@ -9,8 +9,8 @@ class TaskCommentMapper {
             return TaskCommentDto(
                 taskCommentId = taskComment.taskCommentId,
                 user = UserPartialMapper.entityToDto(taskComment.user!!),
-                commentNumber = taskComment.commentNumber,
-                comment = taskComment.comment,
+                taskCommentNumber = taskComment.commentNumber,
+                taskComment = taskComment.comment,
                 commentDate = taskComment.txDate,
                 taskCommentFiles = taskComment.taskCommentFiles?.filter { it.status }?.map { FilePartialMapper.entityToDto(it.file!!) }
                     ?: emptyList(),

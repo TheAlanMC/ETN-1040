@@ -4,14 +4,14 @@ import java.sql.Timestamp
 
 data class TaskDto(
     val taskId: Int,
-    val taskStatus: TaskStatusDto,
     val project: ProjectPartialDto,
+    val taskStatus: TaskStatusDto,
+    val taskPriority: TaskPriorityDto,
     val taskName: String,
     val taskDescription: String,
     val taskCreationDate: Timestamp,
-    val taskDeadline: Timestamp,
+    val taskDueDate: Timestamp,
     val createdBy: String,
-    val taskPriority: Int,
     val rating: Int,
     val feedback: String,
     val taskAssignees: List<UserPartialDto>,
