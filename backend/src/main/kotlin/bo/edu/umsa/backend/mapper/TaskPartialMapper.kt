@@ -9,11 +9,12 @@ class TaskPartialMapper {
             return TaskPartialDto(
                 taskId = task.taskId,
                 taskStatus = TaskStatusMapper.entityToDto(task.taskStatus!!),
+                taskPriority = TaskPriorityMapper.entityToDto(task.taskPriority!!),
                 taskName = task.taskName,
                 taskDescription = task.taskDescription,
-                taskCreationDate = task.txDate,
-                taskDeadline = task.taskDeadline,
-                taskPriority = task.taskPriority,
+                taskDueDate = task.taskDueDate,
+                taskEndDate = task.taskEndDate,
+                txDate = task.txDate,
                 taskAssignees = task.taskAssignees?.filter { it.status }?.map { UserPartialMapper.entityToDto(it.user!!) } ?: emptyList(),
                 taskFiles = task.taskFiles?.filter { it.status }?.map { FilePartialMapper.entityToDto(it.file!!) } ?: emptyList(),
             )

@@ -9,5 +9,5 @@ interface TaskCommentRepository : JpaRepository<TaskComment, Long> {
 
     fun findByTaskCommentIdAndStatusIsTrue(taskCommentId: Long): TaskComment?
 
-    fun findFirstByTaskIdOrderByCommentNumberDesc(taskId: Long): TaskComment?
+    fun findFirstByTaskIdOrderByTaskCommentNumberDesc(taskId: Long): TaskComment?
 }

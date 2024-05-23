@@ -35,6 +35,6 @@ class ReplacedPart {
     @JoinColumn(name = "task_id", insertable = false, updatable = false)
     var task: Task? = null
 
-    @OneToMany(mappedBy = "replacedPart")
+    @OneToMany(mappedBy = "replacedPart", fetch = FetchType.LAZY)
     var replacedPartFiles: List<ReplacedPartFile>? = null
 }

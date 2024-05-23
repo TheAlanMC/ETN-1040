@@ -6,10 +6,7 @@ import bo.edu.umsa.backend.entity.TaskAssignee
 import bo.edu.umsa.backend.entity.TaskFile
 import bo.edu.umsa.backend.entity.TaskHistory
 import bo.edu.umsa.backend.exception.EtnException
-import bo.edu.umsa.backend.mapper.TaskHistoryMapper
-import bo.edu.umsa.backend.mapper.TaskMapper
-import bo.edu.umsa.backend.mapper.TaskPartialMapper
-import bo.edu.umsa.backend.mapper.TaskStatusMapper
+import bo.edu.umsa.backend.mapper.*
 import bo.edu.umsa.backend.repository.*
 import bo.edu.umsa.backend.specification.TaskSpecification
 import bo.edu.umsa.backend.util.AuthUtil
@@ -36,6 +33,7 @@ class TaskService @Autowired constructor(
     private val taskAssigneeRepository: TaskAssigneeRepository,
     private val taskHistoryRepository: TaskHistoryRepository,
     private val taskFileRepository: TaskFileRepository,
+    private val taskPriorityRepository: TaskPriorityRepository,
     private val taskStatusRepository: TaskStatusRepository,
 ) {
     companion object {
@@ -46,6 +44,12 @@ class TaskService @Autowired constructor(
         logger.info("Getting all task statuses")
         val statuses = taskStatusRepository.findAllByStatusIsTrueOrderByTaskStatusId()
         return statuses.map { TaskStatusMapper.entityToDto(it) }
+    }
+
+    fun getAllPriorities(): List<TaskPriorityDto> {
+        logger.info("Getting all task priorities")
+        val priorities = taskPriorityRepository.findAllByStatusIsTrueOrderByTaskPriorityId()
+        return priorities.map { TaskPriorityMapper.entityToDto(it) }
     }
 
     fun getTasks(
@@ -71,11 +75,7 @@ class TaskService @Autowired constructor(
         specification = specification.and(specification.and(TaskSpecification.taskAssignee(userId.toInt())))
 
         if (!keyword.isNullOrEmpty() && keyword.isNotBlank()) {
-            specification = if (keyword.toIntOrNull() != null) {
-                specification.and(specification.and(TaskSpecification.taskPriority(keyword)))
-            } else {
-                specification.and(specification.and(TaskSpecification.taskKeyword(keyword)))
-            }
+            specification = specification.and(specification.and(TaskSpecification.taskKeyword(keyword)))
         }
 
         if (!statuses.isNullOrEmpty()) {
@@ -114,24 +114,23 @@ class TaskService @Autowired constructor(
     }
 
     fun createTask(newTaskDto: NewTaskDto) {
-        // Validate the name, description, and deadline are not empty
-        if (newTaskDto.taskName.isEmpty() || newTaskDto.taskDescription.isEmpty() || newTaskDto.taskDeadline.isEmpty()) {
+        // Validate the name, description, and dueDate are not empty
+        if (newTaskDto.taskName.isEmpty() || newTaskDto.taskDueDate.isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one required field is blank", "Al menos un campo requerido está en blanco")
         }
         // Validate the dates have the correct format
         try {
-            val deadline = Timestamp.from(Instant.parse(newTaskDto.taskDeadline))
-            logger.info("Deadline: $deadline")
+            Timestamp.from(Instant.parse(newTaskDto.taskDueDate))
         } catch (e: Exception) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date format is incorrect", "El formato de fecha es incorrecto")
         }
-        if (Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).before(Timestamp.from(Instant.now()))) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Deadline is in the past", "La fecha límite está en el pasado")
+        if (Timestamp.from(Instant.parse(newTaskDto.taskDueDate)).before(Timestamp.from(Instant.now()))) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: DueDate is in the past", "La fecha límite está en el pasado")
         }
-        // Validate the task priority is between 1 and 10
-        if (newTaskDto.taskPriority < 1 || newTaskDto.taskPriority > 10) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Task priority must be between 1 and 10", "La prioridad de la tarea debe estar entre 1 y 10")
-        }
+        // Validate the task priority exists
+        taskPriorityRepository.findByTaskPriorityIdAndStatusIsTrue(newTaskDto.taskPriorityId.toLong())
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task priority not found", "Prioridad de la tarea no encontrada")
+
         // Validate the task assignees are not empty
         if (newTaskDto.taskAssigneeIds.isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one assignee is required", "Se requiere al menos un miembro asignado")
@@ -141,9 +140,13 @@ class TaskService @Autowired constructor(
         // Validate the project exists
         val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(newTaskDto.projectId.toLong())
             ?: throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project does not exist", "El proyecto no existe")
-        // Validate the task deadline is between the project date from and date to
-        if (Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).before(projectEntity.projectDateFrom) || Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).after(projectEntity.projectDateTo)) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Task deadline is not between the project date from and date to", "La fecha límite de la tarea no está entre la fecha de inicio y la fecha de finalización del proyecto")
+        // Validate the project is not closed
+        if (projectEntity.projectEndDate != null) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project is closed", "El proyecto está cerrado")
+        }
+        // Validate the task dueDate is between the project date from and date to
+        if (Timestamp.from(Instant.parse(newTaskDto.taskDueDate)).before(projectEntity.projectDateFrom) || Timestamp.from(Instant.parse(newTaskDto.taskDueDate)).after(projectEntity.projectDateTo)) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Task dueDate is not between the project date from and date to", "La fecha límite de la tarea no está entre la fecha de inicio y la fecha de finalización del proyecto")
         }
         // Validate the task assignees exist
         if (userRepository.findAllByUserIdInAndStatusIsTrue(newTaskDto.taskAssigneeIds).size != newTaskDto.taskAssigneeIds.size) {
@@ -169,11 +172,11 @@ class TaskService @Autowired constructor(
         // Create the task
         val taskEntity = Task()
         taskEntity.projectId = newTaskDto.projectId
-        taskEntity.taskStatusId = 1 // Default status is "To Do" or "Pendiente"
+        taskEntity.taskStatusId = 1
+        taskEntity.taskPriorityId = newTaskDto.taskPriorityId
         taskEntity.taskName = newTaskDto.taskName
         taskEntity.taskDescription = newTaskDto.taskDescription
-        taskEntity.taskDeadline = Timestamp.from(Instant.parse(newTaskDto.taskDeadline))
-        taskEntity.taskPriority = newTaskDto.taskPriority
+        taskEntity.taskDueDate = Timestamp.from(Instant.parse(newTaskDto.taskDueDate))
         taskRepository.save(taskEntity)
         logger.info("Task created with id ${taskEntity.taskId}")
 
@@ -220,51 +223,53 @@ class TaskService @Autowired constructor(
         taskId: Long,
         newTaskDto: NewTaskDto
     ) {
-        // Validate the name, description, and deadline are not empty
-        if (newTaskDto.taskName.isEmpty() || newTaskDto.taskDescription.isEmpty() || newTaskDto.taskDeadline.isEmpty()) {
+        // Validate the name, description, and dueDate are not empty
+        if (newTaskDto.taskName.isEmpty() || newTaskDto.taskDescription.isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one required field is blank", "Al menos un campo requerido está en blanco")
         }
         // Validate the dates have the correct format
         try {
-            val deadline = Timestamp.from(Instant.parse(newTaskDto.taskDeadline))
-            logger.info("Deadline: $deadline")
+            Timestamp.from(Instant.parse(newTaskDto.taskDueDate))
         } catch (e: Exception) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date format is incorrect", "El formato de fecha es incorrecto")
         }
-        if (Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).before(Timestamp.from(Instant.now()))) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Deadline is in the past", "La fecha límite está en el pasado")
+        if (Timestamp.from(Instant.parse(newTaskDto.taskDueDate)).before(Timestamp.from(Instant.now()))) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: DueDate is in the past", "La fecha límite está en el pasado")
         }
-        // Validate the task priority is between 1 and 10
-        if (newTaskDto.taskPriority < 1 || newTaskDto.taskPriority > 10) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Task priority must be between 1 and 10", "La prioridad de la tarea debe estar entre 1 y 10")
-        }
+        // Validate the task exists
+        val taskEntity = taskRepository.findByTaskIdAndStatusIsTrue(taskId)
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task not found", "Tarea no encontrada")
+        // Validate the task priority exists
+        taskPriorityRepository.findByTaskPriorityIdAndStatusIsTrue(newTaskDto.taskPriorityId.toLong())
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task priority not found", "Prioridad de la tarea no encontrada")
+
         // Validate the task assignees are not empty
         if (newTaskDto.taskAssigneeIds.isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one assignee is required", "Se requiere al menos un miembro asignado")
         }
         // Get the project owner id from the token
         val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
-        // Validate the task exists
-        val taskEntity = taskRepository.findByTaskIdAndStatusIsTrue(taskId)
-            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task not found", "Tarea no encontrada")
         // Validate the project exists
-        val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(taskEntity.projectId.toLong())
+        val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(newTaskDto.projectId.toLong())
             ?: throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project does not exist", "El proyecto no existe")
-        // Validate the task deadline is between the project date from and date to
-        if (Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).before(projectEntity.projectDateFrom) || Timestamp.from(Instant.parse(newTaskDto.taskDeadline)).after(projectEntity.projectDateTo)) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Task deadline is not between the project date from and date to", "La fecha límite de la tarea no está entre la fecha de inicio y la fecha de finalización del proyecto")
+        // Validate the project is not closed
+        if (projectEntity.projectEndDate != null) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project is closed", "El proyecto está cerrado")
         }
-
+        // Validate the task dueDate is between the project date from and date to
+        if (Timestamp.from(Instant.parse(newTaskDto.taskDueDate)).before(projectEntity.projectDateFrom) || Timestamp.from(Instant.parse(newTaskDto.taskDueDate)).after(projectEntity.projectDateTo)) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Task dueDate is not between the project date from and date to", "La fecha límite de la tarea no está entre la fecha de inicio y la fecha de finalización del proyecto")
+        }
         // Validate the task assignees exist
         if (userRepository.findAllByUserIdInAndStatusIsTrue(newTaskDto.taskAssigneeIds).size != newTaskDto.taskAssigneeIds.size) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one assignee is invalid", "Al menos un miembro asignado es inválido")
         }
         // Validate that the user is the project owner or a project moderator
-        if (projectOwnerRepository.findByProjectIdAndUserIdAndStatusIsTrue(taskEntity.projectId.toLong(), userId) == null && projectModeratorRepository.findByProjectIdAndUserIdAndStatusIsTrue(taskEntity.projectId.toLong(), userId) == null) {
+        if (projectOwnerRepository.findByProjectIdAndUserIdAndStatusIsTrue(newTaskDto.projectId.toLong(), userId) == null && projectModeratorRepository.findByProjectIdAndUserIdAndStatusIsTrue(newTaskDto.projectId.toLong(), userId) == null) {
             throw EtnException(HttpStatus.FORBIDDEN, "Error: User is not the project owner or a project moderator", "El usuario no es el propietario del proyecto o un colaborador del proyecto")
         }
         // Validate the assignees are project members
-        if (projectMemberRepository.findAllByProjectIdAndUserIdInAndStatusIsTrue(taskEntity.projectId.toLong(), newTaskDto.taskAssigneeIds).size != newTaskDto.taskAssigneeIds.size) {
+        if (projectMemberRepository.findAllByProjectIdAndUserIdInAndStatusIsTrue(newTaskDto.projectId.toLong(), newTaskDto.taskAssigneeIds).size != newTaskDto.taskAssigneeIds.size) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one assignee is not a project member", "Al menos un miembro asignado no es un miembro del proyecto")
         }
         // Validate that the task file ids are valid
@@ -282,8 +287,8 @@ class TaskService @Autowired constructor(
         // Update the task
         taskEntity.taskName = newTaskDto.taskName
         taskEntity.taskDescription = newTaskDto.taskDescription
-        taskEntity.taskDeadline = Timestamp.from(Instant.parse(newTaskDto.taskDeadline))
-        taskEntity.taskPriority = newTaskDto.taskPriority
+        taskEntity.taskDueDate = Timestamp.from(Instant.parse(newTaskDto.taskDueDate))
+        taskEntity.taskPriorityId = newTaskDto.taskPriorityId
         taskRepository.save(taskEntity)
         logger.info("Task updated with id $taskId")
 
@@ -324,24 +329,24 @@ class TaskService @Autowired constructor(
         logger.info("Task files updated for task $taskId")
 
         // Create the task history
-        // If the deadline has changed
-        if (originalTasKEntity.taskDeadline != taskEntity.taskDeadline) {
+        // If the dueDate has changed
+        if (originalTasKEntity.taskDueDate != taskEntity.taskDueDate) {
             val taskHistoryEntity = TaskHistory()
             taskHistoryEntity.taskId = taskEntity.taskId
             taskHistoryEntity.userId = userId.toInt()
             taskHistoryEntity.fieldName = TaskHistoryType.FECHA_LIMITE
-            taskHistoryEntity.previousValue = originalTasKEntity.taskDeadline.toString()
-            taskHistoryEntity.newValue = taskEntity.taskDeadline.toString()
+            taskHistoryEntity.previousValue = originalTasKEntity.taskDueDate.toString()
+            taskHistoryEntity.newValue = taskEntity.taskDueDate.toString()
             taskHistoryRepository.save(taskHistoryEntity)
         }
         // If the priority has changed
-        if (originalTasKEntity.taskPriority != taskEntity.taskPriority) {
+        if (originalTasKEntity.taskPriorityId != taskEntity.taskPriorityId) {
             val taskHistoryEntity = TaskHistory()
             taskHistoryEntity.taskId = taskEntity.taskId
             taskHistoryEntity.userId = userId.toInt()
             taskHistoryEntity.fieldName = TaskHistoryType.PRIORIDAD
-            taskHistoryEntity.previousValue = originalTasKEntity.taskPriority.toString()
-            taskHistoryEntity.newValue = taskEntity.taskPriority.toString()
+            taskHistoryEntity.previousValue = originalTasKEntity.taskPriority!!.taskPriorityName
+            taskHistoryEntity.newValue = taskEntity.taskPriority!!.taskPriorityName
             taskHistoryRepository.save(taskHistoryEntity)
         }
         // If the assignees have changed
@@ -369,7 +374,7 @@ class TaskService @Autowired constructor(
         val taskEntity = taskRepository.findByTaskIdAndStatusIsTrue(taskId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task not found", "Tarea no encontrada")
         // Validate the task status exists
-        val taskStatusEntity = taskStatusRepository.findByTaskStatusIdAndStatusIsTrue(taskStatusId)
+        taskStatusRepository.findByTaskStatusIdAndStatusIsTrue(taskStatusId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task status not found", "Estado de la tarea no encontrado")
         // Validate the task status is not the same as the current status
         if (taskEntity.taskStatusId == taskStatusId.toInt()) {
@@ -434,7 +439,7 @@ class TaskService @Autowired constructor(
         newTaskFeedbackDto: NewTaskFeedbackDto
     ) {
         // Validate the rating is between 1 and 5
-        if (newTaskFeedbackDto.rating < 1 || newTaskFeedbackDto.rating > 5) {
+        if (newTaskFeedbackDto.taskRating < 1 || newTaskFeedbackDto.taskRating > 5) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Rating must be between 1 and 5", "La calificación debe estar entre 1 y 5")
         }
         // Get the user id from the token
@@ -450,13 +455,14 @@ class TaskService @Autowired constructor(
         if (taskEntity.taskStatusId != 3) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Task status is not completed", "La tarea no está completada")
         }
-        // Validate the task feedback does not exist
-        if (taskEntity.feedback.isNotEmpty() && taskEntity.rating != 0) {
+        // Validate the task rating and comment are not empty
+        if (taskEntity.taskRatingComment.isNotEmpty() && taskEntity.taskRating != 0) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Task feedback already exists", "La retroalimentación de la tarea ya existe")
         }
         // Add the rating and feedback to the task
-        taskEntity.rating = newTaskFeedbackDto.rating
-        taskEntity.feedback = newTaskFeedbackDto.feedback
+        taskEntity.taskEndDate = Timestamp.from(Instant.now())
+        taskEntity.taskRating = newTaskFeedbackDto.taskRating
+        taskEntity.taskRatingComment = newTaskFeedbackDto.taskRatingComment
         taskRepository.save(taskEntity)
     }
 }

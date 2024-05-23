@@ -45,6 +45,6 @@ class TaskComment {
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     var user: User? = null
 
-    @OneToMany(mappedBy = "taskComment")
+    @OneToMany(mappedBy = "taskComment", fetch = FetchType.LAZY)
     var taskCommentFiles: List<TaskCommentFile>? = null
 }

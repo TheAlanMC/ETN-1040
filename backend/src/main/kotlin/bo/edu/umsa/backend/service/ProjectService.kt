@@ -1,9 +1,6 @@
 package bo.edu.umsa.backend.service
 
-import bo.edu.umsa.backend.dto.NewProjectDto
-import bo.edu.umsa.backend.dto.ProjectDto
-import bo.edu.umsa.backend.dto.ProjectPartialDto
-import bo.edu.umsa.backend.dto.TaskPartialDto
+import bo.edu.umsa.backend.dto.*
 import bo.edu.umsa.backend.entity.*
 import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.ProjectMapper
@@ -39,8 +36,16 @@ class ProjectService @Autowired constructor(
     }
 
     fun getAllProjects(): List<ProjectPartialDto> {
-        logger.info("Getting all users")
-        val projectEntities = projectRepository.findAllByStatusIsTrueOrderByProjectIdDesc()
+        logger.info("Getting all projects")
+        // Check if the user is owner, moderator or member of the project
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val projectOwnerEntities = projectOwnerRepository.findAllByUserIdAndStatusIsTrue(userId)
+        val projectModeratorEntities = projectModeratorRepository.findAllByUserIdAndStatusIsTrue(userId)
+        // Get the projects where the user is owner, moderator or member
+        val projectEntities = projectRepository.findAllByProjectIdInAndStatusIsTrueOrderByProjectIdDesc(
+            projectOwnerEntities.map { it.projectId } +
+                    projectModeratorEntities.map { it.projectId }
+        )
         return projectEntities.map { ProjectPartialMapper.entityToDto(it) }
     }
 
@@ -48,15 +53,20 @@ class ProjectService @Autowired constructor(
         sortBy: String,
         sortType: String,
         page: Int,
-        size: Int
-    ): Page<ProjectDto> {
+        size: Int,
+        keyword: String?,
+        ): Page<ProjectPartialDto> {
         logger.info("Getting the projects")
         // Pagination and sorting
         val pageable: Pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortType), sortBy))
         var specification: Specification<Project> = Specification.where(null)
         specification = specification.and(specification.and(ProjectSpecification.statusIsTrue()))
+
+        if (!keyword.isNullOrEmpty() && keyword.isNotBlank()) {
+            specification = specification.and(specification.and(ProjectSpecification.projectKeyword(keyword)))
+        }
         val projectEntities: Page<Project> = projectRepository.findAll(specification, pageable)
-        return projectEntities.map { ProjectMapper.entityToDto(it) }
+        return projectEntities.map { ProjectPartialMapper.entityToDto(it) }
     }
 
     fun getProjectById(projectId: Long): ProjectDto {
@@ -76,7 +86,7 @@ class ProjectService @Autowired constructor(
 
     fun createProject(newProjectDto: NewProjectDto) {
         // Validate the name is not empty
-        if (newProjectDto.projectName.isEmpty() || newProjectDto.projectDateFrom.isEmpty() || newProjectDto.projectDateTo.isEmpty()) {
+        if (newProjectDto.projectName.isEmpty() || newProjectDto.projectDateFrom.isEmpty() || newProjectDto.projectDateTo.isEmpty() || newProjectDto.projectObjective.isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one required field is blank", "Al menos un campo requerido está en blanco")
         }
         // Validate the dates have the correct format
@@ -114,6 +124,7 @@ class ProjectService @Autowired constructor(
         val projectEntity = Project()
         projectEntity.projectName = newProjectDto.projectName
         projectEntity.projectDescription = newProjectDto.projectDescription
+        projectEntity.projectObjective = newProjectDto.projectObjective
         projectEntity.projectDateFrom = Timestamp.from(Instant.parse(newProjectDto.projectDateFrom))
         projectEntity.projectDateTo = Timestamp.from(Instant.parse(newProjectDto.projectDateTo))
         projectRepository.save(projectEntity)
@@ -147,12 +158,27 @@ class ProjectService @Autowired constructor(
         projectId: Long,
         projectDto: NewProjectDto
     ) {
+        // Validate the name is not empty
+        if (projectDto.projectName.isEmpty() || projectDto.projectDateFrom.isEmpty() || projectDto.projectDateTo.isEmpty() || projectDto.projectObjective.isEmpty()) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one required field is blank", "Al menos un campo requerido está en blanco")
+        }
+        // Validate the dates have the correct format
+        try {
+            val dateFrom = Timestamp.from(Instant.parse(projectDto.projectDateFrom))
+            val dateTo = Timestamp.from(Instant.parse(projectDto.projectDateTo))
+            logger.info("Date from: $dateFrom, Date to: $dateTo")
+        } catch (e: Exception) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date format is incorrect", "El formato de fecha es incorrecto")
+        }
+        if (Timestamp.from(Instant.parse(projectDto.projectDateFrom)).after(Timestamp.from(Instant.parse(projectDto.projectDateTo)))) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date range is incorrect", "El rango de fechas es incorrecto")
+        }
         // Validate the project exists
         val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(projectId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Project not found", "Proyecto no encontrado")
-        // Validate the project name is not empty
-        if (projectDto.projectName.isEmpty()) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project name is required", "Se requiere el nombre del proyecto")
+        // Validate the project is not closed
+        if (projectEntity.projectEndDate != null) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project is closed", "El proyecto está cerrado")
         }
         // Validate the project moderators are not empty and valid
         if (projectDto.projectModeratorIds.isEmpty()) {
@@ -170,10 +196,12 @@ class ProjectService @Autowired constructor(
         if (userRepository.findAllByUserIdInAndStatusIsTrue(projectDto.projectMemberIds).size != projectDto.projectMemberIds.size) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one member is invalid", "Al menos un miembro es inválido")
         }
-
         // Update the project
         projectEntity.projectName = projectDto.projectName
         projectEntity.projectDescription = projectDto.projectDescription
+        projectEntity.projectObjective = projectDto.projectObjective
+        projectEntity.projectDateFrom = Timestamp.from(Instant.parse(projectDto.projectDateFrom))
+        projectEntity.projectDateTo = Timestamp.from(Instant.parse(projectDto.projectDateTo))
         projectRepository.save(projectEntity)
         logger.info("Project updated with id $projectId")
 
@@ -223,10 +251,51 @@ class ProjectService @Autowired constructor(
         // Validate the project exists
         val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(projectId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Project not found", "Proyecto no encontrado")
+        // Validate the project does not have tasks
+        val taskEntities = taskRepository.findAllByProjectIdAndStatusIsTrue(projectId)
+        if (taskEntities.isNotEmpty()) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project has tasks", "El proyecto tiene tareas")
+        }
+        // Validate the project is not closed
+        if (projectEntity.projectEndDate != null) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project is closed", "El proyecto está cerrado")
+        }
         // Delete the project changing its status to false
         projectEntity.status = false
         projectRepository.save(projectEntity)
         logger.info("Project deleted with id $projectId")
+    }
+
+    fun closeProject(projectId: Long, closeProjectDto: CloseProjectDto) {
+        // Validate the close message is not empty
+        if (closeProjectDto.projectCloseMessage.isEmpty()) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Close message is required", "Se requiere un mensaje de cierre")
+        }
+        // Validate the project exists
+        val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(projectId)
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Project not found", "Proyecto no encontrado")
+        // Validate the project is not closed
+        if (projectEntity.projectEndDate != null) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project is closed", "El proyecto está cerrado")
+        }
+        // Validate the project does not have uncompleted tasks, by checking the status of the tasks
+        val taskEntities = taskRepository.findAllByProjectIdAndStatusIsTrue(projectId)
+        if (taskEntities.isEmpty()) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project has no tasks", "El proyecto no tiene tareas")
+        }
+        if (taskEntities.map { it.taskStatus!!.taskStatusId != 3 }.isNotEmpty()) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project has uncompleted tasks", "El proyecto tiene tareas incompletas")
+        }
+        // Validate the project owner or a project moderator is closing the project
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        if (projectOwnerRepository.findByProjectIdAndUserIdAndStatusIsTrue(projectId, userId) == null && projectModeratorRepository.findByProjectIdAndUserIdAndStatusIsTrue(projectId, userId) == null) {
+            throw EtnException(HttpStatus.FORBIDDEN, "Error: User is not the project owner or a project moderator", "El usuario no es el propietario del proyecto o un moderador del proyecto")
+        }
+        // Close the project
+        projectEntity.projectEndDate = Timestamp.from(Instant.now())
+        projectEntity.projectCloseMessage = closeProjectDto.projectCloseMessage
+        projectRepository.save(projectEntity)
+        logger.info("Project closed with id $projectId")
     }
 
     fun getProjectTasks(
@@ -237,6 +306,7 @@ class ProjectService @Autowired constructor(
         size: Int,
         keyword: String?,
         statuses: List<String>?,
+        priorities: List<String>?,
         dateFrom: String?,
         dateTo: String?
     ): Page<TaskPartialDto> {
@@ -251,16 +321,16 @@ class ProjectService @Autowired constructor(
         specification = specification.and(specification.and(TaskSpecification.projectId(projectId.toInt())))
 
         if (!keyword.isNullOrEmpty() && keyword.isNotBlank()) {
-            specification = if (keyword.toIntOrNull() != null) {
-                specification.and(specification.and(TaskSpecification.taskPriority(keyword)))
-            } else {
-                specification.and(specification.and(TaskSpecification.taskKeyword(keyword)))
-            }
+            specification = specification.and(specification.and(TaskSpecification.taskKeyword(keyword)))
         }
 
         if (!statuses.isNullOrEmpty()) {
             val currentDate = if (statuses.contains("VENCIDO")) Timestamp.from(Instant.now()) else null
             specification = specification.and(TaskSpecification.taskStatuses(statuses, currentDate))
+        }
+
+        if (!priorities.isNullOrEmpty()) {
+            specification = specification.and(specification.and(TaskSpecification.taskPriorities(priorities)))
         }
 
         try {

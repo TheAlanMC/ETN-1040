@@ -6,12 +6,10 @@ import bo.edu.umsa.backend.dto.AuthReqDto
 import bo.edu.umsa.backend.dto.AuthResDto
 import bo.edu.umsa.backend.dto.PasswordChangeDto
 import bo.edu.umsa.backend.entity.AccountRecovery
+import bo.edu.umsa.backend.entity.FirebaseToken
 import bo.edu.umsa.backend.entity.User
 import bo.edu.umsa.backend.exception.EtnException
-import bo.edu.umsa.backend.repository.AccountRecoveryRepository
-import bo.edu.umsa.backend.repository.GroupRepository
-import bo.edu.umsa.backend.repository.RoleRepository
-import bo.edu.umsa.backend.repository.UserRepository
+import bo.edu.umsa.backend.repository.*
 import bo.edu.umsa.backend.util.AuthUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -21,6 +19,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class AuthService @Autowired constructor(
+    private val firebaseTokenRepository: FirebaseTokenRepository,
     private val userRepository: UserRepository,
     private val groupRepository: GroupRepository,
     private val roleRepository: RoleRepository,
@@ -46,13 +45,22 @@ class AuthService @Autowired constructor(
         if (!verifyResult.verified) {
             throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Incorrect password", "Contraseña incorrecta")
         }
+        // Save the Firebase token if it is not empty, and it is not already saved
+        if (credentials.firebaseToken.isNotBlank()) {
+            val firebaseTokenEntity = firebaseTokenRepository.findByFirebaseTokenAndStatusIsTrue(credentials.firebaseToken)
+            if (firebaseTokenEntity == null) {
+                val newFirebaseTokenEntity = FirebaseToken()
+                newFirebaseTokenEntity.firebaseToken = credentials.firebaseToken
+                newFirebaseTokenEntity.userId = userEntity.userId
+                firebaseTokenRepository.save(newFirebaseTokenEntity)
+            }
+        }
         // Get the user roles
         val roleEntities = roleRepository.findAllByEmail(credentials.email)
         val roles = roleEntities.map { role -> role.roleName }.toSet().toTypedArray()
         // Get the user groups
         val groupEntities = groupRepository.findAllByEmail(credentials.email)
         val groups = groupEntities.map { group -> group.groupName }.toSet().toTypedArray()
-
         return AuthUtil.generateAuthAndRefreshToken(userEntity, roles, groups)
     }
 

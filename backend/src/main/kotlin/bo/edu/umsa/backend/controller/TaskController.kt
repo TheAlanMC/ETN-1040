@@ -30,6 +30,16 @@ class TaskController @Autowired constructor(
         return ResponseEntity(ResponseDto(true, "Estados de tareas recuperados", statuses), HttpStatus.OK)
     }
 
+    @GetMapping("/priorities")
+    fun getAllPriorities(): ResponseEntity<ResponseDto<List<TaskPriorityDto>>> {
+        logger.info("Starting the API call to get all task priorities")
+        logger.info("GET /api/v1/tasks/priorities")
+        AuthUtil.verifyAuthTokenHasRoles(listOf("VER TAREAS", "CREAR TAREAS", "EDITAR TAREAS").toTypedArray())
+        val priorities: List<TaskPriorityDto> = taskService.getAllPriorities()
+        logger.info("Success: Task priorities retrieved")
+        return ResponseEntity(ResponseDto(true, "Prioridades de tareas recuperadas", priorities), HttpStatus.OK)
+    }
+
     @GetMapping
     fun getTasks(
         @RequestParam(defaultValue = "taskId") sortBy: String,
@@ -38,6 +48,7 @@ class TaskController @Autowired constructor(
         @RequestParam(defaultValue = "10") size: Int,
         @RequestParam(required = false) keyword: String?,
         @RequestParam(required = false) statuses: List<String>?,
+        @RequestParam(required = false) priorities: List<String>?,
         @RequestParam(required = false) dateFrom: String?,
         @RequestParam(required = false) dateTo: String?,
     ): ResponseEntity<ResponseDto<Page<TaskPartialDto>>> {

@@ -11,4 +11,8 @@ interface ProjectModeratorRepository : JpaRepository<ProjectModerator, Long> {
         projectId: Long,
         userId: Long
     ): ProjectModerator?
+
+    fun findAllByUserIdAndStatusIsTrue(
+        userId: Long
+    ): List<ProjectModerator>
 }

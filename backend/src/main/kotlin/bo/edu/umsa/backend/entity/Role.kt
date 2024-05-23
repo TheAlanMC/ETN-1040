@@ -31,7 +31,7 @@ class Role {
     @Column(name = "tx_host")
     var txHost: String = HttpUtil.getRequestHost() ?: "localhost"
 
-    @OneToMany(mappedBy = "role")
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
 
     var groupRoles: List<GroupRole>? = null
 

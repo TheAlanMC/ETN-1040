@@ -8,20 +8,22 @@ class TaskMapper {
         fun entityToDto(task: Task): TaskDto {
             return TaskDto(
                 taskId = task.taskId,
-                taskStatus = TaskStatusMapper.entityToDto(task.taskStatus!!),
                 project = ProjectPartialMapper.entityToDto(task.project!!),
+                taskStatus = TaskStatusMapper.entityToDto(task.taskStatus!!),
+                taskPriority = TaskPriorityMapper.entityToDto(task.taskPriority!!),
                 taskName = task.taskName,
                 taskDescription = task.taskDescription,
-                taskCreationDate = task.txDate,
-                taskDeadline = task.taskDeadline,
-                createdBy = task.txUser,
-                taskPriority = task.taskPriority,
-                feedback = task.feedback,
-                rating = task.rating,
+                taskDueDate = task.taskDueDate,
+                taskEndDate = task.taskEndDate,
+                taskRating = task.taskRating,
+                taskRatingComment = task.taskRatingComment,
+                txDate = task.txDate,
+                txHost = task.txHost,
                 taskAssignees = task.taskAssignees?.filter { it.status }?.map { UserPartialMapper.entityToDto(it.user!!) } ?: emptyList(),
                 taskFiles = task.taskFiles?.filter { it.status }?.map { FilePartialMapper.entityToDto(it.file!!) } ?: emptyList(),
-                taskComments = task.taskComments?.filter { it.status }?.sortedByDescending { it.commentNumber }?.map { TaskCommentMapper.entityToDto(it) }
+                taskComments = task.taskComments?.filter { it.status }?.sortedByDescending { it.taskCommentNumber }?.map { TaskCommentMapper.entityToDto(it) }
                     ?: emptyList(),
+                replacedParts = task.replacedParts?.filter { it.status }?.map { ReplacedPartMapper.entityToDto(it) } ?: emptyList(),
             )
         }
     }

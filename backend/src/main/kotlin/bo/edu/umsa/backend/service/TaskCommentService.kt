@@ -45,7 +45,7 @@ class TaskCommentService @Autowired constructor(
 
     fun createComment(newTaskCommentDto: NewTaskCommentDto) {
         // Validate the comment is not empty
-        if (newTaskCommentDto.comment.isEmpty()) {
+        if (newTaskCommentDto.taskComment.isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Comment is blank", "El comentario está en blanco")
         }
         // Get the user id from the token
@@ -67,15 +67,15 @@ class TaskCommentService @Autowired constructor(
         }
 
         // Get the comment number
-        val taskCommentNumber = taskCommentRepository.findFirstByTaskIdOrderByCommentNumberDesc(newTaskCommentDto.taskId.toLong())?.commentNumber?.plus(1)
+        val taskCommentNumber = taskCommentRepository.findFirstByTaskIdOrderByTaskCommentNumberDesc(newTaskCommentDto.taskId.toLong())?.taskCommentNumber?.plus(1)
             ?: 1
 
         // Create the comment
         val taskCommentEntity = TaskComment()
         taskCommentEntity.taskId = newTaskCommentDto.taskId
         taskCommentEntity.userId = userId.toInt()
-        taskCommentEntity.commentNumber = taskCommentNumber
-        taskCommentEntity.comment = newTaskCommentDto.comment
+        taskCommentEntity.taskCommentNumber = taskCommentNumber
+        taskCommentEntity.taskComment = newTaskCommentDto.taskComment
         taskCommentRepository.save(taskCommentEntity)
         logger.info("Comment created with id ${taskCommentEntity.taskCommentId}")
 
@@ -94,7 +94,7 @@ class TaskCommentService @Autowired constructor(
         newTaskCommentDto: NewTaskCommentDto
     ) {
         // Validate the comment is not empty
-        if (newTaskCommentDto.comment.isEmpty()) {
+        if (newTaskCommentDto.taskComment.isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Comment is blank", "El comentario está en blanco")
         }
         // Get the user id from the token
@@ -115,7 +115,7 @@ class TaskCommentService @Autowired constructor(
         }
         logger.info("Updating the comment with id $commentId")
         // Update the comment
-        taskCommentEntity.comment = newTaskCommentDto.comment
+        taskCommentEntity.taskComment = newTaskCommentDto.taskComment
         taskCommentRepository.save(taskCommentEntity)
         logger.info("Comment updated with id $commentId")
 

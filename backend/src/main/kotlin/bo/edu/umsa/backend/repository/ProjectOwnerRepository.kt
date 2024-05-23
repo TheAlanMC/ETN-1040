@@ -10,4 +10,8 @@ interface ProjectOwnerRepository : JpaRepository<ProjectOwner, Long> {
         projectId: Long,
         userId: Long
     ): ProjectOwner?
+
+    fun findAllByUserIdAndStatusIsTrue(
+        userId: Long
+    ): List<ProjectOwner>
 }

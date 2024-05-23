@@ -36,11 +36,12 @@ class ProjectController @Autowired constructor(
         @RequestParam(defaultValue = "asc") sortType: String,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int,
-    ): ResponseEntity<ResponseDto<Page<ProjectDto>>> {
+        @RequestParam(required = false) keyword: String?,
+        ): ResponseEntity<ResponseDto<Page<ProjectPartialDto>>> {
         logger.info("Starting the API call to get the projects")
         logger.info("GET /api/v1/projects")
         AuthUtil.verifyAuthTokenHasRole("VER PROYECTOS")
-        val projects: Page<ProjectDto> = projectService.getProjects(sortBy, sortType, page, size)
+        val projects: Page<ProjectPartialDto> = projectService.getProjects(sortBy, sortType, page, size, keyword)
         logger.info("Success: Projects retrieved")
         return ResponseEntity(ResponseDto(true, "Proyectos recuperados", projects), HttpStatus.OK)
     }
@@ -92,6 +93,19 @@ class ProjectController @Autowired constructor(
         return ResponseEntity(ResponseDto(true, "El proyecto se ha eliminado", null), HttpStatus.OK)
     }
 
+    @PutMapping("/{projectId}/close")
+    fun closeProject(
+        @PathVariable projectId: Long,
+        @RequestBody closeProjectDto: CloseProjectDto,
+    ): ResponseEntity<ResponseDto<Nothing>> {
+        logger.info("Starting the API call to close the project")
+        logger.info("PUT /api/v1/projects/$projectId/close")
+        AuthUtil.verifyAuthTokenHasRole("EDITAR PROYECTOS")
+        projectService.closeProject(projectId, closeProjectDto)
+        logger.info("Success: Project closed")
+        return ResponseEntity(ResponseDto(true, "El proyecto se ha cerrado", null), HttpStatus.OK)
+    }
+
     @GetMapping("/{projectId}/tasks")
     fun getProjectTasks(
         @PathVariable projectId: Long,
@@ -101,13 +115,14 @@ class ProjectController @Autowired constructor(
         @RequestParam(defaultValue = "10") size: Int,
         @RequestParam(required = false) keyword: String?,
         @RequestParam(required = false) statuses: List<String>?,
+        @RequestParam(required = false) priorities: List<String>?,
         @RequestParam(required = false) dateFrom: String?,
         @RequestParam(required = false) dateTo: String?,
     ): ResponseEntity<ResponseDto<Page<TaskPartialDto>>> {
         logger.info("Starting the API call to get the tasks")
         logger.info("GET /api/v1/projects/$projectId/tasks")
         AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
-        val tasks: Page<TaskPartialDto> = projectService.getProjectTasks(projectId, sortBy, sortType, page, size, keyword, statuses, dateFrom, dateTo)
+        val tasks: Page<TaskPartialDto> = projectService.getProjectTasks(projectId, sortBy, sortType, page, size, keyword, statuses, priorities, dateFrom, dateTo)
         logger.info("Success: Tasks retrieved")
         return ResponseEntity(ResponseDto(true, "Tareas recuperadas", tasks), HttpStatus.OK)
     }

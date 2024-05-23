@@ -9,6 +9,10 @@ class ProjectPartialMapper {
             return ProjectPartialDto(
                 projectId = project.projectId,
                 projectName = project.projectName,
+                projectDateFrom = project.projectDateFrom,
+                projectDateTo = project.projectDateTo,
+                projectEndDate = project.projectEndDate,
+                projectModerators = project.projectModerators?.filter { it.status }?.map { UserPartialMapper.entityToDto(it.user!!) } ?: emptyList(),
                 projectMembers = project.projectMembers?.filter { it.status }?.map { UserPartialMapper.entityToDto(it.user!!) } ?: emptyList(),
             )
         }

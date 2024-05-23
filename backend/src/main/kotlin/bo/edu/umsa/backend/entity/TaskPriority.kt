@@ -28,6 +28,6 @@ class TaskPriority {
     @Column(name = "tx_host")
     var txHost: String = HttpUtil.getRequestHost() ?: "localhost"
 
-    @OneToMany(mappedBy = "taskStatus")
+    @OneToMany(mappedBy = "taskPriority", fetch = FetchType.LAZY)
     var tasks: List<Task>? = null
 }
