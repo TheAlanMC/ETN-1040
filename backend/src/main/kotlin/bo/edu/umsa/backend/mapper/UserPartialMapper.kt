@@ -12,6 +12,9 @@ class UserPartialMapper {
                 email = user.email,
                 firstName = user.firstName,
                 lastName = user.lastName,
+                phone = user.phone,
+                txDate = user.txDate,
+                txHost = user.txHost
             )
         }
     }

@@ -71,7 +71,7 @@ CREATE TABLE group_role (
 CREATE TABLE notification (
     notification_id serial  NOT NULL,
     user_id int  NOT NULL,
-    message_tittle varchar(100)  NOT NULL,
+    message_title varchar(100)  NOT NULL,
     message_body varchar(255)  NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,

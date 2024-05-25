@@ -71,7 +71,7 @@ class AuthService @Autowired constructor(
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Empty fields", "Al menos un campo está vacío")
         }
         AuthUtil.verifyIsRefreshToken(token)
-        val email = AuthUtil.getEmailFromAuthToken(token)
+        val email = AuthUtil.getSubjectFromAuthToken(token)
         logger.info("User $email is trying to refresh the token")
         // Verify if the user exists
         val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email!!)

@@ -7,6 +7,7 @@ import bo.edu.umsa.backend.mapper.ProjectMapper
 import bo.edu.umsa.backend.mapper.ProjectPartialMapper
 import bo.edu.umsa.backend.mapper.TaskPartialMapper
 import bo.edu.umsa.backend.repository.*
+import bo.edu.umsa.backend.service.TaskService.Companion
 import bo.edu.umsa.backend.specification.ProjectSpecification
 import bo.edu.umsa.backend.specification.TaskSpecification
 import bo.edu.umsa.backend.util.AuthUtil
@@ -362,9 +363,9 @@ class ProjectService @Autowired constructor(
         val projectModeratorEntities = projectModeratorRepository.findAllByProjectIdInAndStatusIsTrue(projectEntities.map { it.projectId })
 
         projectOwnerEntities.forEach { projectOwnerEntity ->
-            logger.info("Sending notification to project owner ${projectOwnerEntity.user!!.email}")
-            val projectName = projectOwnerEntity.project!!.projectName
-            val ownerEmail = projectOwnerEntity.user!!.email
+            val projectName = projectRepository.findByProjectIdAndStatusIsTrue(projectOwnerEntity.projectId.toLong())!!.projectName
+            val ownerEmail = userRepository.findByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong())!!.email
+            logger.info("Sending notification to project owner ${ownerEmail}")
             val ownerTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong()).map { it.firebaseToken }
             val ownerMessageTittle = "Proyecto por finalizar"
             val ownerMessageBody = "El proyecto: '$projectName' en el que participas como propietario está por finalizar en las próximas 24 horas. Por favor, asegúrate de que todas las tareas estén completadas."
@@ -388,9 +389,9 @@ class ProjectService @Autowired constructor(
         }
 
         projectModeratorEntities.forEach { projectModeratorEntity ->
-            logger.info("Sending notification to project moderator ${projectModeratorEntity.user!!.email}")
-            val projectName = projectModeratorEntity.project!!.projectName
-            val moderatorEmail = projectModeratorEntity.user!!.email
+            val projectName = projectRepository.findByProjectIdAndStatusIsTrue(projectModeratorEntity.projectId.toLong())!!.projectName
+            val moderatorEmail = userRepository.findByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong())!!.email
+            logger.info("Sending notification to project moderator ${moderatorEmail}")
             val moderatorTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong()).map { it.firebaseToken }
             val moderatorMessageTittle = "Proyecto por finalizar"
             val moderatorMessageBody = "El proyecto: '$projectName' en el que participas como colaborador está por finalizar en las próximas 24 horas. Por favor, asegúrate de que todas las tareas estén completadas."

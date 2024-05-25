@@ -35,11 +35,11 @@ class UserController @Autowired constructor(private val userService: UserService
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int,
         @RequestParam(required = false) keyword: String?
-    ): ResponseEntity<ResponseDto<Page<UserDto>>> {
+    ): ResponseEntity<ResponseDto<Page<UserPartialDto>>> {
         logger.info("Starting the API call to get the users")
         logger.info("GET /api/v1/users")
         AuthUtil.verifyAuthTokenHasRole("VER USUARIOS")
-        val users: Page<UserDto> = userService.getUsers(sortBy, sortType, page, size, keyword)
+        val users: Page<UserPartialDto> = userService.getUsers(sortBy, sortType, page, size, keyword)
         logger.info("Success: Users retrieved")
         return ResponseEntity(ResponseDto(true, "Usuarios recuperados", users), HttpStatus.OK)
     }

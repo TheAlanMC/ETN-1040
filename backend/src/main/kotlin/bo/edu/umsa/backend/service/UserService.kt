@@ -51,7 +51,7 @@ class UserService @Autowired constructor(
         page: Int,
         size: Int,
         keyword: String?
-    ): Page<UserDto> {
+    ): Page<UserPartialDto> {
         logger.info("Getting users")
         // Pagination and sorting
         val pageable: Pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortType), sortBy))
@@ -62,7 +62,7 @@ class UserService @Autowired constructor(
             specification = specification.and(specification.and(UserSpecification.userKeyword(keyword)))
         }
         val userEntities: Page<User> = userRepository.findAll(specification, pageable)
-        return userEntities.map { UserMapper.entityToDto(it) }
+        return userEntities.map { UserPartialMapper.entityToDto(it) }
     }
 
     fun getUserById(userId: Long): UserDto {

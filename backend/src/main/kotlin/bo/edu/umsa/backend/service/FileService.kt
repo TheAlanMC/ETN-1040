@@ -39,7 +39,7 @@ class FileService @Autowired constructor(
         fileEntity.fileSize = file.size.toInt()
         try {
             if (file.contentType!!.startsWith("image")) {
-                val thumbnailBytes = thumbnailService.createThumbnail(file, 100)
+                val thumbnailBytes = thumbnailService.createThumbnail(file, 120)
                 fileEntity.thumbnail = thumbnailBytes
                 fileEntity.isPicture = true
             }
@@ -84,7 +84,7 @@ class FileService @Autowired constructor(
     ) {
         logger.info("Overwriting the thumbnail with id $fileId")
         // Generate the thumbnail
-        val thumbnailBytes = thumbnailService.createThumbnail(thumbnail, 50)
+        val thumbnailBytes = thumbnailService.createThumbnail(thumbnail, 60)
         // Overwrite the thumbnail
         val fileEntity: File = fileRepository.findByFileIdAndStatusIsTrue(fileId.toLong())
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found", "Archivo no encontrado")

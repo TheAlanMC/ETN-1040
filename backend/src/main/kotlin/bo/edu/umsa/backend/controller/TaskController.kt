@@ -55,7 +55,7 @@ class TaskController @Autowired constructor(
         logger.info("Starting the API call to get the tasks")
         logger.info("GET /api/v1/tasks")
         AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
-        val tasks: Page<TaskPartialDto> = taskService.getTasks(sortBy, sortType, page, size, keyword, statuses, dateFrom, dateTo)
+        val tasks: Page<TaskPartialDto> = taskService.getTasks(sortBy, sortType, page, size, keyword, statuses, priorities, dateFrom, dateTo)
         logger.info("Success: Tasks retrieved")
         return ResponseEntity(ResponseDto(true, "Tareas recuperadas", tasks), HttpStatus.OK)
     }

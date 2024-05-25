@@ -99,7 +99,15 @@ class AuthUtil(@Autowired jwtConfig: JwtConfig) {
             return AuthResDto(jwtToken, refreshToken)
         }
 
-        // Methods to get fields from the token
+        fun getSubjectFromAuthToken(token: String? = null): String? {
+            val jwtToken = token ?: getAuthToken()
+            return try {
+                JWT.require(Algorithm.HMAC256(jwtSecret)).build().verify(jwtToken).subject
+            } catch (e: Exception) {
+                null
+            }
+        }
+
         fun getEmailFromAuthToken(token: String? = null): String? {
             val jwtToken = token ?: getAuthToken()
             return try {

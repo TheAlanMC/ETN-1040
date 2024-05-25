@@ -46,16 +46,6 @@ class ProjectController @Autowired constructor(
         return ResponseEntity(ResponseDto(true, "Proyectos recuperados", projects), HttpStatus.OK)
     }
 
-    @PostMapping
-    fun createProject(@RequestBody newProjectDto: NewProjectDto): ResponseEntity<ResponseDto<Nothing>> {
-        logger.info("Starting the API call to create the project")
-        logger.info("POST /api/v1/projects")
-        AuthUtil.verifyAuthTokenHasRole("CREAR PROYECTOS")
-        projectService.createProject(newProjectDto)
-        logger.info("Success: Project created")
-        return ResponseEntity(ResponseDto(true, "El proyecto se ha creado", null), HttpStatus.CREATED)
-    }
-
     @GetMapping("/{projectId}")
     fun getProjectById(
         @PathVariable projectId: Long,
@@ -66,6 +56,16 @@ class ProjectController @Autowired constructor(
         val project: ProjectDto = projectService.getProjectById(projectId)
         logger.info("Success: Project retrieved")
         return ResponseEntity(ResponseDto(true, "Proyecto recuperado", project), HttpStatus.OK)
+    }
+
+    @PostMapping
+    fun createProject(@RequestBody newProjectDto: NewProjectDto): ResponseEntity<ResponseDto<Nothing>> {
+        logger.info("Starting the API call to create the project")
+        logger.info("POST /api/v1/projects")
+        AuthUtil.verifyAuthTokenHasRole("CREAR PROYECTOS")
+        projectService.createProject(newProjectDto)
+        logger.info("Success: Project created")
+        return ResponseEntity(ResponseDto(true, "El proyecto se ha creado", null), HttpStatus.CREATED)
     }
 
     @PutMapping("/{projectId}")
