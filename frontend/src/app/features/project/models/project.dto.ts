@@ -4,8 +4,9 @@ export interface ProjectDto {
     projectId: number;
     projectName: string;
     projectDescription: string;
-    dateFrom: Date;
-    dateTo: Date;
+    projectDateFrom: Date;
+    projectDateTo: Date;
+    projectEndDate: Date | null;
     projectOwners: UserDto[];
     projectModerators: UserDto[];
     projectMembers: UserDto[];

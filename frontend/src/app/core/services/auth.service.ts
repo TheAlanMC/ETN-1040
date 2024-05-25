@@ -6,6 +6,7 @@ import {ResponseDto} from "../models/response.dto";
 import {AuthDto} from '../../features/auth/models/auth.dto';
 import {Nullable} from "primeng/ts-helpers";
 import {UtilService} from "./util.service";
+import {FirebaseService} from "./firebase.service";
 
 @Injectable({
     providedIn: 'root'
@@ -15,17 +16,18 @@ export class AuthService {
 
     constructor(
         private http: HttpClient,
-        private utilService: UtilService
+        private utilService: UtilService,
     ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
     public login(
         email: string,
-        password: string
+        password: string,
+        firebaseToken: string
     ): Observable<ResponseDto<AuthDto>> {
         return this.http.post<ResponseDto<AuthDto>>(`${this.baseUrl}/login`,
-            {email, password});
+            {email, password, firebaseToken});
     }
 
     public refreshToken(refreshToken: string): Observable<ResponseDto<AuthDto>> {

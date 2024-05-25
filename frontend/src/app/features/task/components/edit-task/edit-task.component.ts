@@ -31,7 +31,7 @@ export class EditTaskComponent implements OnInit {
     taskNameControl = new FormControl('',
         [Validators.required]);
     taskDescriptionControl = new FormControl('');
-    taskDeadlineControl = new FormControl('',
+    taskDueDateControl = new FormControl('',
         [Validators.required]);
     selectedPriority: any = {value: ''};
 
@@ -95,12 +95,12 @@ export class EditTaskComponent implements OnInit {
                 this.task = data.data;
                 this.taskNameControl.setValue(this.task!.taskName);
                 this.taskDescriptionControl.setValue(this.task!.taskDescription);
-                let datePart = new Date(this.task!.taskDeadline).toLocaleDateString('en-GB');
-                let timePart = new Date(this.task!.taskDeadline).toLocaleTimeString('en-GB',
+                let datePart = new Date(this.task!.taskDueDate).toLocaleDateString('en-GB');
+                let timePart = new Date(this.task!.taskDueDate).toLocaleTimeString('en-GB',
                     {
                         hour: '2-digit', minute: '2-digit'
                     });
-                this.taskDeadlineControl.setValue(`${datePart} ${timePart}`);
+                this.taskDueDateControl.setValue(`${datePart} ${timePart}`);
                 this.selectedPriority = this.task!.taskPriority;
                 this.selectedAssignees = this.task!.taskAssignees.map(assignee => {
                     const img = new Image();
@@ -145,7 +145,7 @@ export class EditTaskComponent implements OnInit {
         this.task = null;
         this.taskNameControl.reset();
         this.taskDescriptionControl.reset();
-        this.taskDeadlineControl.reset();
+        this.taskDueDateControl.reset();
         this.selectedPriority = {value: ''};
         this.selectedAssignees = [];
         this.userItems = [];
@@ -339,14 +339,14 @@ export class EditTaskComponent implements OnInit {
     }
 
     public updateTask() {
-        let taskDeadlineDate = new Date(this.task!.taskDeadline);
+        let taskDueDateDate = new Date(this.task!.taskDueDate);
         this.taskService.updateTask(this.task!.taskId,
             this.taskNameControl.value!,
             this.taskDescriptionControl.value!,
-            (`${taskDeadlineDate.toLocaleDateString('en-GB')} ${taskDeadlineDate.toLocaleTimeString('en-GB',
+            (`${taskDueDateDate.toLocaleDateString('en-GB')} ${taskDueDateDate.toLocaleTimeString('en-GB',
                 {
                     hour: '2-digit', minute: '2-digit'
-                })}` === this.taskDeadlineControl.value) ? taskDeadlineDate.toISOString() : this.taskDeadlineControl.value!,
+                })}` === this.taskDueDateControl.value) ? taskDueDateDate.toISOString() : this.taskDueDateControl.value!,
             this.selectedPriority,
             this.selectedAssignees.map(assignee => assignee.value),
             this.uploadedFiles.map(file => file.fileId)).subscribe({

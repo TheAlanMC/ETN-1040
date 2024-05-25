@@ -51,14 +51,14 @@ export class TaskService {
         projectId: number,
         taskName: string,
         taskDescription: string,
-        taskDeadline: string,
+        taskDueDate: string,
         taskPriority: number,
         taskAssigneeIds: number[],
         taskFileIds: number[]
     ): Observable<ResponseDto<null>> {
         return this.http.post<ResponseDto<null>>(this.baseUrl,
             {
-                projectId, taskName, taskDescription, taskDeadline, taskPriority, taskAssigneeIds, taskFileIds
+                projectId, taskName, taskDescription, taskDueDate, taskPriority, taskAssigneeIds, taskFileIds
             },
             this.utilService.getHttpOptions());
     }
@@ -67,14 +67,14 @@ export class TaskService {
         taskId: number,
         taskName: string,
         taskDescription: string,
-        taskDeadline: string,
+        taskDueDate: string,
         taskPriority: number,
         taskAssigneeIds: number[],
         taskFileIds: number[]
     ): Observable<ResponseDto<null>> {
         return this.http.put<ResponseDto<null>>(`${this.baseUrl}/${taskId}`,
             {
-                taskName, taskDescription, taskDeadline, taskPriority, taskAssigneeIds, taskFileIds
+                taskName, taskDescription, taskDueDate, taskPriority, taskAssigneeIds, taskFileIds
             },
             this.utilService.getHttpOptions());
     }

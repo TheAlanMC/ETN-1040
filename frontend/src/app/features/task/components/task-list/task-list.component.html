@@ -44,8 +44,8 @@
             <th class="white-space-nowrap" pSortableColumn="txDate" style="width:15%"> Fecha de Creación
                 <p-sortIcon field="txDate"></p-sortIcon>
             </th>
-            <th class="white-space-nowrap" pSortableColumn="taskDeadline" style="width:15%"> Fecha Límite
-                <p-sortIcon field="taskDeadline"></p-sortIcon>
+            <th class="white-space-nowrap" pSortableColumn="taskDueDate" style="width:15%"> Fecha Límite
+                <p-sortIcon field="taskDueDate"></p-sortIcon>
             </th>
             <!--        <th class="white-space-nowrap" pSortableColumn="txUser" style="width:10%"> Creado por-->
             <!--          <p-sortIcon field="txUser"></p-sortIcon>-->
@@ -66,13 +66,13 @@
             </td>
             <td>{{ task.taskName }}</td>
             <td>{{ task.taskCreationDate | date: 'MM/dd/yyyy, HH:mm' }}</td>
-            <td>{{ task.taskDeadline | date: 'MM/dd/yyyy, HH:mm' }}</td>
+            <td>{{ task.taskDueDate | date: 'MM/dd/yyyy, HH:mm' }}</td>
             <!--        <td>{{ task.createdBy }}</td>-->
             <td>
                 <div class="flex align-items-center gap-2 flex-wrap">
-                    <p-tag *ngIf="checkIfTaskIsOverdue(task.taskStatus.taskStatusId, task.taskDeadline)"
+                    <p-tag *ngIf="checkIfTaskIsOverdue(task.taskStatus.taskStatusId, task.taskDueDate)"
                            [style]="{background: '#FF000080'}">
-                        VENCIDA {{ task.taskDeadline | timeAgo | uppercase }}
+                        VENCIDA {{ task.taskDueDate | timeAgo | uppercase }}
                     </p-tag>
                     <p-tag [style]="{background: getStatusColor(task.taskStatus.taskStatusId),}"
                            value="{{task.taskStatus.taskStatusName}}"></p-tag>

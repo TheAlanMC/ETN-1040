@@ -31,7 +31,7 @@ export class NewTaskComponent implements OnInit {
     taskNameControl = new FormControl('',
         [Validators.required]);
     taskDescriptionControl = new FormControl('');
-    taskDeadlineControl = new FormControl('',
+    taskDueDateControl = new FormControl('',
         [Validators.required]);
     selectedPriority: any = {value: ''};
 
@@ -120,7 +120,7 @@ export class NewTaskComponent implements OnInit {
         if (this.project != null) {
             this.taskNameControl.enable();
             this.taskDescriptionControl.enable();
-            this.taskDeadlineControl.enable();
+            this.taskDueDateControl.enable();
             this.userItems = this.project.projectMembers.map(user => {
                 // Pre-fetch the image
                 const img = new Image();
@@ -134,7 +134,7 @@ export class NewTaskComponent implements OnInit {
         } else {
             this.taskNameControl.disable();
             this.taskDescriptionControl.disable();
-            this.taskDeadlineControl.disable();
+            this.taskDueDateControl.disable();
         }
     }
 
@@ -143,7 +143,7 @@ export class NewTaskComponent implements OnInit {
             let datePart = new Date(this.deadline!).toLocaleDateString('en-GB');
             let timePart = new Date(this.deadline!).toLocaleTimeString('en-GB',
                 {hour: '2-digit', minute: '2-digit'});
-            this.taskDeadlineControl.setValue(`${datePart} ${timePart}`);
+            this.taskDueDateControl.setValue(`${datePart} ${timePart}`);
         }
     }
 
@@ -153,7 +153,7 @@ export class NewTaskComponent implements OnInit {
         this.sidebarVisible = false;
         this.taskNameControl.reset();
         this.taskDescriptionControl.reset();
-        this.taskDeadlineControl.reset();
+        this.taskDueDateControl.reset();
         this.selectedAssignees = [];
         this.selectedPriority = {value: ''};
         this.selectedProject = null;
@@ -304,7 +304,7 @@ export class NewTaskComponent implements OnInit {
         this.taskService.createTask(this.selectedProject,
             this.taskNameControl.value!,
             this.taskDescriptionControl.value!,
-            this.taskDeadlineControl.value!,
+            this.taskDueDateControl.value!,
             this.selectedPriority,
             this.selectedAssignees.map(assignee => assignee.value),
             this.uploadedFiles.map(file => file.fileId)).subscribe({

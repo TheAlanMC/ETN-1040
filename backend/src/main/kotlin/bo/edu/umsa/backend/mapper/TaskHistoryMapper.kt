@@ -7,11 +7,11 @@ class TaskHistoryMapper {
     companion object {
         fun entityToDto(taskHistory: TaskHistory): TaskHistoryDto {
             return TaskHistoryDto(
-                createdDate = taskHistory.txDate,
-                createdBy = taskHistory.user.let { UserPartialMapper.entityToDto(it!!) },
+                user = UserPartialMapper.entityToDto(taskHistory.user!!),
                 fieldName = taskHistory.fieldName.toString().replace("_", " ").lowercase().replaceFirstChar { it.uppercase() },
                 previousValue = taskHistory.previousValue,
                 newValue = taskHistory.newValue,
+                txDate = taskHistory.txDate,
             )
         }
     }

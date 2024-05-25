@@ -130,7 +130,7 @@ export class ProjectTaskDeadlineComponent implements OnInit {
     public getData() {
         this.isLoading = true;
         this.projectService.getProjectTasks(this.projectId,
-            'taskDeadline',
+            'taskDueDate',
             'asc',
             0,
             1000,
@@ -147,14 +147,14 @@ export class ProjectTaskDeadlineComponent implements OnInit {
                     let end = new Date();
                     list.tasks = this.tasks.filter(task => {
                         if (list.listId === '1') {
-                            return task.taskDeadline && new Date(task.taskDeadline) < new Date();
+                            return task.taskDueDate && new Date(task.taskDueDate) < new Date();
                         } else if (list.listId === '2') {
                             let start = new Date();
                             let end = new Date(new Date().setHours(23,
                                 59,
                                 59,
                                 999));
-                            return task.taskDeadline && new Date(task.taskDeadline) > new Date(start) && new Date(task.taskDeadline) < new Date(end);
+                            return task.taskDueDate && new Date(task.taskDueDate) > new Date(start) && new Date(task.taskDueDate) < new Date(end);
                         } else if (list.listId === '3') {
                             let start = new Date(new Date().setDate(new Date().getDate() + 1));
                             start.setHours(0,
@@ -166,7 +166,7 @@ export class ProjectTaskDeadlineComponent implements OnInit {
                                 59,
                                 59,
                                 999);
-                            return task.taskDeadline && new Date(task.taskDeadline) > new Date(start) && new Date(task.taskDeadline) < new Date(end);
+                            return task.taskDueDate && new Date(task.taskDueDate) > new Date(start) && new Date(task.taskDueDate) < new Date(end);
                         } else if (list.listId === '4') {
                             let start = new Date(new Date().setDate(new Date().getDate() + 7));
                             start.setHours(0,
@@ -178,14 +178,14 @@ export class ProjectTaskDeadlineComponent implements OnInit {
                                 59,
                                 59,
                                 999);
-                            return task.taskDeadline && new Date(task.taskDeadline) > new Date(start) && new Date(task.taskDeadline) < new Date(end);
+                            return task.taskDueDate && new Date(task.taskDueDate) > new Date(start) && new Date(task.taskDueDate) < new Date(end);
                         } else if (list.listId === '5') {
                             let start = new Date(new Date().setDate(new Date().getDate() + 14));
                             start.setHours(0,
                                 0,
                                 0,
                                 0);
-                            return task.taskDeadline && new Date(task.taskDeadline) > new Date(start);
+                            return task.taskDueDate && new Date(task.taskDueDate) > new Date(start);
                         } else {
                             return false;
                         }

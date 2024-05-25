@@ -113,12 +113,12 @@ export class ProjectTaskDeadlineCardComponent implements OnInit {
 
     public checkIfTaskIsOverdue(
         statusId: number,
-        taskDeadline: Date
+        taskDueDate: Date
     ): boolean {
         if (statusId === 3) {
             return false;
         }
-        return new Date(taskDeadline).getTime() < new Date().getTime();
+        return new Date(taskDueDate).getTime() < new Date().getTime();
     }
 
     public getPriorityColor(

@@ -100,14 +100,14 @@ export class ProjectTaskDeadlineListComponent implements OnInit {
         event.previousContainer.data.sort((
             a,
             b
-        ) => new Date(a.taskDeadline).getTime() - new Date(b.taskDeadline).getTime());
+        ) => new Date(a.taskDueDate).getTime() - new Date(b.taskDueDate).getTime());
 
         // If the item was moved to a different list, sort the tasks in the destination list
         if (event.previousContainer !== event.container) {
             event.container.data.sort((
                 a,
                 b
-            ) => new Date(a.taskDeadline).getTime() - new Date(b.taskDeadline).getTime());
+            ) => new Date(a.taskDueDate).getTime() - new Date(b.taskDueDate).getTime());
         }
     }
 
@@ -163,7 +163,7 @@ export class ProjectTaskDeadlineListComponent implements OnInit {
                         },
                         500);
                 } else {
-                    this.taskList.tasks.find(t => t.taskId === task.taskId)!.taskDeadline = newTaskDeadline;
+                    this.taskList.tasks.find(t => t.taskId === task.taskId)!.taskDueDate = newTaskDeadline;
                 }
             }, error: (error) => {
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});

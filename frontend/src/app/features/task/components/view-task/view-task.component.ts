@@ -34,7 +34,7 @@ export class ViewTaskComponent implements OnInit {
 
     taskName = '';
     taskDescription = '';
-    taskDeadline = '';
+    taskDueDate = '';
     taskFeedback = '';
     taskRating = 0;
 
@@ -173,14 +173,14 @@ export class ViewTaskComponent implements OnInit {
                 this.task = data.data;
                 this.taskName = this.task!.taskName;
                 this.taskDescription = this.task!.taskDescription;
-                this.taskFeedback = this.task!.feedback;
-                this.taskRating = this.task!.rating;
-                let datePart = new Date(this.task!.taskDeadline).toLocaleDateString('en-GB');
-                let timePart = new Date(this.task!.taskDeadline).toLocaleTimeString('en-GB',
+                this.taskFeedback = this.task!.taskRatingComment;
+                this.taskRating = this.task!.taskRating;
+                let datePart = new Date(this.task!.taskDueDate).toLocaleDateString('en-GB');
+                let timePart = new Date(this.task!.taskDueDate).toLocaleTimeString('en-GB',
                     {
                         hour: '2-digit', minute: '2-digit'
                     });
-                this.taskDeadline = `${datePart} ${timePart}`;
+                this.taskDueDate = `${datePart} ${timePart}`;
                 this.selectedPriority = this.task!.taskPriority;
                 this.selectedStatus = this.task!.taskStatus.taskStatusId;
                 this.selectedAssignees = this.task!.taskAssignees.map(assignee => {
@@ -216,7 +216,7 @@ export class ViewTaskComponent implements OnInit {
         this.task = null;
         this.taskName = '';
         this.taskDescription = '';
-        this.taskDeadline = '';
+        this.taskDueDate = '';
         this.selectedPriority = {value: ''};
         this.selectedAssignees = [];
         this.userItems = [];
@@ -260,7 +260,7 @@ export class ViewTaskComponent implements OnInit {
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = file.filename;
+                    a.download = file.fileName;
                     document.body.appendChild(a);
                     a.click();
                     URL.revokeObjectURL(url);
@@ -270,7 +270,7 @@ export class ViewTaskComponent implements OnInit {
                     reader.onloadend = async () => {
                         const base64Data = reader.result as string;
                         const savedFile = await Filesystem.writeFile({
-                            path: file.filename,
+                            path: file.fileName,
                             data: base64Data,
                             directory: Directory.Documents,
                         });
@@ -468,7 +468,7 @@ export class ViewTaskComponent implements OnInit {
         comment.taskCommentFiles.forEach(file => {
             this.editCommentFiles.push({
                 id: file.fileId,
-                name: file.filename,
+                name: file.fileName,
                 size: file.fileSize,
                 type: file.contentType,
                 objectURL: (file.contentType.includes('image') ? `${this.filesBaselUrl}/${file.fileId}/thumbnail` : null)
@@ -477,7 +477,7 @@ export class ViewTaskComponent implements OnInit {
         if (this.editCommentFiles.length > 0) {
             this.showEditCommentAttachment = true;
         }
-        this.editCommentControl.setValue(comment.comment);
+        this.editCommentControl.setValue(comment.taskComment);
     }
 
     public onCommentDelete() {
@@ -707,7 +707,7 @@ export class ViewTaskComponent implements OnInit {
             } else {
                 this.editUploadedFiles.push({
                     fileId: file.id,
-                    filename: file.name,
+                    fileName: file.name,
                     contentType: file.type,
                     fileSize: file.size
                 });

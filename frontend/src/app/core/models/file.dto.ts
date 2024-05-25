@@ -1,6 +1,7 @@
 export interface FileDto {
     fileId: number;
-    filename: string;
+    fileName: string;
     contentType: string;
     fileSize: number;
 }
+

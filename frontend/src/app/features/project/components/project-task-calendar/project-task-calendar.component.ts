@@ -255,7 +255,7 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
     public getData() {
         this.isLoading = true;
         this.projectService.getProjectTasks(this.projectId,
-            'taskDeadline',
+            'taskDueDate',
             'asc',
             0,
             1000,
@@ -270,12 +270,12 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
                 });
                 const events = this.tasks.map(task => {
                     const isTaskOverdue = this.checkIfTaskIsOverdue(task.taskStatus.taskStatusId,
-                        task.taskDeadline);
+                        task.taskDueDate);
                     return {
                         id: task.taskId.toString(),
                         title: (isTaskOverdue ? '⚠️' : '') + task.taskName,
-                        start: task.taskDeadline,
-                        end: task.taskDeadline,
+                        start: task.taskDueDate,
+                        end: task.taskDueDate,
                         backgroundColor: this.getPriorityColor(task.taskPriority),
                         borderColor: this.getPriorityColor(task.taskPriority),
                     }
@@ -478,12 +478,12 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
 
     public checkIfTaskIsOverdue(
         statusId: number,
-        taskDeadline: Date
+        taskDueDate: Date
     ): boolean {
         if (statusId === 3) {
             return false;
         }
-        return new Date(taskDeadline).getTime() < new Date().getTime();
+        return new Date(taskDueDate).getTime() < new Date().getTime();
     }
 
     public updateTaskDeadline(

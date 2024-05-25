@@ -45,7 +45,7 @@
                 </div>
                 <div class="col-12 lg:col-6 field">
                     <label class="font-semibold text-900" for="deadline">Fecha límite</label>
-                    <p-calendar [(ngModel)]="taskDeadline" [appendTo]="sidebar" [disabled]="true"
+                    <p-calendar [(ngModel)]="taskDueDate" [appendTo]="sidebar" [disabled]="true"
                                 [minDate]="today"
                                 [readonlyInput]="true" [showIcon]="true"
                                 [showSeconds]="false" [showTime]="true" dateFormat="dd/mm/yy" id="deadline"
@@ -105,7 +105,7 @@
                                              class="h-full relative w-10rem h-10rem border-3 border-transparent border-round hover:bg-primary transition-duration-100 cursor-auto"
                                              style="padding: 1px;">
                                             <div class="w-full h-full border-round shadow-2 flex align-items-center justify-content-center"
-                                                 pTooltip="{{file.filename}} - {{file.fileSize | fileSize}}"
+                                                 pTooltip="{{file.fileName}} - {{file.fileSize | fileSize}}"
                                                  tooltipPosition="top">
                                                 <div
                                                         style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
@@ -143,17 +143,17 @@
 			 	Z" fill="#535c69" fill-rule="evenodd" opacity="0.3"></path><svg height="33" width="65" x="35"
                                                                                  xmlns="http://www.w3.org/2000/svg"
                                                                                  y="53"><rect
-                                [attr.fill]="getFileDetails(file.filename).color" height="33" rx="2" ry="2" width="100%"
+                                [attr.fill]="getFileDetails(file.fileName).color" height="33" rx="2" ry="2" width="100%"
                                 x="0"
-                                y="0"></rect><text [attr.x]="getFileDetails(file.filename).x" dominant-baseline="middle"
+                                y="0"></rect><text [attr.x]="getFileDetails(file.fileName).x" dominant-baseline="middle"
                                                    fill="#fff"
                                                    style="color:#fff; font-family: OpenSans-Semibold, 'Open Sans', Helvetica, Arial, sans-serif; font-weight: 500; font-size: 22px; line-height: 25px;"
-                                                   y="54%">{{ getFileDetails(file.filename).extension }}</text></svg></svg></span>
+                                                   y="54%">{{ getFileDetails(file.fileName).extension }}</text></svg></svg></span>
                                                         </ng-template>
                                                     </div>
                                                     <div
                                                             style="overflow: hidden; text-overflow: ellipsis; max-width: 100px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; word-wrap: break-word; overflow-wrap: break-word;">
-                                                        <p style="font-size: 12px;">{{ getTruncatedFileName(file.filename) }}</p>
+                                                        <p style="font-size: 12px;">{{ getTruncatedFileName(file.fileName) }}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -191,7 +191,7 @@
                         <p-rating [cancel]="false" [disabled]="true" [iconOffStyle]="{'fontSize':'12px'}" [iconOnStyle]="{'fontSize':'12px'}"
                                   [ngModel]="taskRating" [readonly]="true"></p-rating>
                     </div>
-                    <textarea *ngIf="task.feedback.length > 0" [(ngModel)]="taskFeedback" [readonly]="true" [rows]="2"
+                    <textarea *ngIf="task.taskRatingComment.length > 0" [(ngModel)]="taskFeedback" [readonly]="true" [rows]="2"
                               class="w-full"
                               id="feedback"
                               name="description" pInputTextarea
@@ -350,7 +350,7 @@
                             <div class="flex justify-content-between align-items-center mb-2">
                                 <div>
                                     <span class="block text-900 font-semibold">{{ comment.user.firstName }} {{ comment.user.lastName }}</span>
-                                    <span class="block text-700">{{ comment.commentDate | date: 'dd/MM/yyyy HH:mm' }}</span>
+                                    <span class="block text-700">{{ comment.txDate | date: 'dd/MM/yyyy HH:mm' }}</span>
                                 </div>
                                 <div *ngIf="comment.user.userId === userId">
                                     <button (click)="onButtonClick(comment.taskCommentId); menu.toggle($event)"
@@ -361,7 +361,7 @@
                                     <p-tieredMenu #menu [model]="menuItems" [popup]="true" appendTo="body"></p-tieredMenu>
                                 </div>
                             </div>
-                            <span class="block text-900" style="word-break: break-all;">{{ comment.comment }}</span>
+                            <span class="block text-900" style="word-break: break-all;">{{ comment.taskComment }}</span>
                             <div *ngIf="comment.taskCommentFiles.length > 0" class="grid p-fluid formgrid">
                                 <div class="col-12">
                                     <p-fileUpload #fileUploader [auto]="true"
@@ -385,7 +385,7 @@
                                                          class="h-full relative w-10rem h-10rem border-3 border-transparent border-round hover:bg-primary transition-duration-100 cursor-auto"
                                                          style="padding: 1px;">
                                                         <div class="w-full h-full border-round shadow-2 flex align-items-center justify-content-center"
-                                                             pTooltip="{{file.filename}} - {{file.fileSize | fileSize}}"
+                                                             pTooltip="{{file.fileName}} - {{file.fileSize | fileSize}}"
                                                              tooltipPosition="top">
                                                             <div
                                                                     style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
@@ -423,17 +423,17 @@
 			 	Z" fill="#535c69" fill-rule="evenodd" opacity="0.3"></path><svg height="33" width="65" x="35"
                                                                                  xmlns="http://www.w3.org/2000/svg"
                                                                                  y="53"><rect
-                                [attr.fill]="getFileDetails(file.filename).color" height="33" rx="2" ry="2" width="100%"
+                                [attr.fill]="getFileDetails(file.fileName).color" height="33" rx="2" ry="2" width="100%"
                                 x="0"
-                                y="0"></rect><text [attr.x]="getFileDetails(file.filename).x" dominant-baseline="middle"
+                                y="0"></rect><text [attr.x]="getFileDetails(file.fileName).x" dominant-baseline="middle"
                                                    fill="#fff"
                                                    style="color:#fff; font-family: OpenSans-Semibold, 'Open Sans', Helvetica, Arial, sans-serif; font-weight: 500; font-size: 22px; line-height: 25px;"
-                                                   y="54%">{{ getFileDetails(file.filename).extension }}</text></svg></svg></span>
+                                                   y="54%">{{ getFileDetails(file.fileName).extension }}</text></svg></svg></span>
                                                                     </ng-template>
                                                                 </div>
                                                                 <div
                                                                         style="overflow: hidden; text-overflow: ellipsis; max-width: 100px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; word-wrap: break-word; overflow-wrap: break-word;">
-                                                                    <p style="font-size: 12px;">{{ getTruncatedFileName(file.filename) }}</p>
+                                                                    <p style="font-size: 12px;">{{ getTruncatedFileName(file.fileName) }}</p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -464,7 +464,7 @@
                         <div *ngIf="(editComment && selectedCommentId === comment.taskCommentId)" class="card w-full ml-3 p-4">
                             <div class="mb-2">
                                 <span class="block text-900 font-semibold">{{ comment.user.firstName }} {{ comment.user.lastName }}</span>
-                                <span class="block text-700">{{ comment.commentDate | date: 'dd/MM/yyyy HH:mm' }}</span>
+                                <span class="block text-700">{{ comment.txDate | date: 'dd/MM/yyyy HH:mm' }}</span>
                             </div>
                             <div class="flex justify-content-between align-items-center mb-2">
                                 <textarea (keydown.enter)="onEditComment($event)" [formControl]="editCommentControl" class="w-full" name="comment"

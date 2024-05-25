@@ -58,9 +58,9 @@
             <div class="flex align-items-center gap-1 flex-wrap">
                 <p-tag [style]="{background: getPriorityColor(selectedTask.taskPriority)}"
                        value="NIVEL {{selectedTask.taskPriority}}"></p-tag>
-                <p-tag *ngIf="checkIfTaskIsOverdue(selectedTask.taskStatus.taskStatusId, selectedTask.taskDeadline)"
+                <p-tag *ngIf="checkIfTaskIsOverdue(selectedTask.taskStatus.taskStatusId, selectedTask.taskDueDate)"
                        [style]="{background: '#FF000080'}">
-                    VENCIDA {{ selectedTask.taskDeadline | timeAgo | uppercase }}
+                    VENCIDA {{ selectedTask.taskDueDate | timeAgo | uppercase }}
                 </p-tag>
                 <p-tag [style]="{background: getStatusColor(selectedTask.taskStatus.taskStatusId),}"
                        value="{{selectedTask.taskStatus.taskStatusName}}"></p-tag>
@@ -101,11 +101,11 @@
                         </li>
                     </ul>
                 </p-overlayPanel>
-                <div *ngIf="selectedTask.taskFiles|| selectedTask.taskDeadline" class="flex align-items-center gap-3">
+                <div *ngIf="selectedTask.taskFiles|| selectedTask.taskDueDate" class="flex align-items-center gap-3">
           <span *ngIf="selectedTask.taskFiles.length>0" class="text-900 font-semibold"><i
                   class="pi pi-paperclip text-700 mr-2"></i>{{ selectedTask.taskFiles.length }}</span>
-                    <span *ngIf="selectedTask.taskDeadline" class="text-900 font-semibold"><i
-                            class="pi pi-clock text-700 mr-2"></i> {{ selectedTask.taskDeadline | date: 'dd/MM/yyyy, HH:mm' }}</span>
+                    <span *ngIf="selectedTask.taskDueDate" class="text-900 font-semibold"><i
+                            class="pi pi-clock text-700 mr-2"></i> {{ selectedTask.taskDueDate | date: 'dd/MM/yyyy, HH:mm' }}</span>
                 </div>
             </div>
         </div>

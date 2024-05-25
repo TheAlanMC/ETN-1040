@@ -15,9 +15,9 @@
         <p-tag [style]="{background: getPriorityColor(card.taskPriority)}"
                value="NIVEL {{card.taskPriority}}"></p-tag>
 
-        <p-tag *ngIf="checkIfTaskIsOverdue(card.taskStatus.taskStatusId, card.taskDeadline)"
+        <p-tag *ngIf="checkIfTaskIsOverdue(card.taskStatus.taskStatusId, card.taskDueDate)"
                [style]="{background: '#FF000080'}">
-            VENCIDA {{ card.taskDeadline | timeAgo | uppercase }}
+            VENCIDA {{ card.taskDueDate | timeAgo | uppercase }}
         </p-tag>
         <p-tag [style]="{background: getStatusColor(card.taskStatus.taskStatusId),}"
                value="{{card.taskStatus.taskStatusName}}"></p-tag>
@@ -58,11 +58,11 @@
                 </li>
             </ul>
         </p-overlayPanel>
-        <div *ngIf="card.taskFiles|| card.taskDeadline" class="flex align-items-center gap-3">
+        <div *ngIf="card.taskFiles|| card.taskDueDate" class="flex align-items-center gap-3">
       <span *ngIf="card.taskFiles.length>0" class="text-900 font-semibold"><i
               class="pi pi-paperclip text-700 mr-2"></i>{{ card.taskFiles.length }}</span>
-            <span *ngIf="card.taskDeadline" class="text-900 font-semibold"><i
-                    class="pi pi-clock text-700 mr-2"></i> {{ card.taskDeadline | date: 'dd/MM/yyyy, HH:mm' }}</span>
+            <span *ngIf="card.taskDueDate" class="text-900 font-semibold"><i
+                    class="pi pi-clock text-700 mr-2"></i> {{ card.taskDueDate | date: 'dd/MM/yyyy, HH:mm' }}</span>
         </div>
     </div>
 </div>

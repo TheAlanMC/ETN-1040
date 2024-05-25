@@ -4,8 +4,8 @@ import {FileDto} from "../../../core/models/file.dto";
 export interface TaskCommentDto {
     taskCommentId: number;
     user: UserDto;
-    commentNumber: number;
-    comment: string;
-    commentDate: Date;
+    taskCommentNumber: number;
+    taskComment: string;
+    txDate: Date;
     taskCommentFiles: FileDto[];
 }
