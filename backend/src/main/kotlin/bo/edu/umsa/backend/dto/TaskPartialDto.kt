@@ -3,6 +3,7 @@ package bo.edu.umsa.backend.dto
 import java.sql.Timestamp
 
 data class TaskPartialDto(
+    val projectId: Int,
     val taskId: Int,
     val taskStatus: TaskStatusDto,
     val taskPriority: TaskPriorityDto,

@@ -160,8 +160,8 @@
 
                                             <button #buttonOp (click)="$event.stopPropagation(); downloadFile(file)"
                                                     [id]="file.fileId"
-                                                    [style.display]="defaultDisplay"
                                                     [loading]="isLoading && downloadingFileId  === file.fileId"
+                                                    [style.display]="defaultDisplay"
                                                     class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
                                                     icon="pi pi-download"
                                                     pButton
@@ -212,14 +212,14 @@
                     </div>
 
                 </div>
-<!--                <div class="col-12">-->
-<!--                    <label class="font-semibold text-900"></label>-->
-<!--                    <div class="flex flex-column sm:flex-row justify-content-between align-items-center gap-3 py-2">-->
-<!--                        <button (click)="onClose()" [disabled]="loading" class="p-button-primary flex-1 p-button-outlined"-->
-<!--                                icon="pi pi-arrow-left" label="Volver"-->
-<!--                                pButton pRipple></button>-->
-<!--                    </div>-->
-<!--                </div>-->
+                <!--                <div class="col-12">-->
+                <!--                    <label class="font-semibold text-900"></label>-->
+                <!--                    <div class="flex flex-column sm:flex-row justify-content-between align-items-center gap-3 py-2">-->
+                <!--                        <button (click)="onClose()" [disabled]="loading" class="p-button-primary flex-1 p-button-outlined"-->
+                <!--                                icon="pi pi-arrow-left" label="Volver"-->
+                <!--                                pButton pRipple></button>-->
+                <!--                    </div>-->
+                <!--                </div>-->
             </div>
             <p-tabView orientation="left">
                 <p-tabPanel class="line-height-3 m-0" header="Comentarios">
@@ -322,8 +322,8 @@
                                                             <button #buttonOp (click)="$event.stopPropagation(); downloadFile(file)"
 
                                                                     [id]="file.name"
-                                                                    [style.display]="defaultDisplay"
                                                                     [loading]="isLoading && downloadingFileId  === file.fileId"
+                                                                    [style.display]="defaultDisplay"
                                                                     class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
                                                                     icon="pi pi-download"
                                                                     pButton
@@ -342,13 +342,16 @@
                             </div>
                             <div *ngIf="focusedComment" class="flex justify-content-end align-items-end">
 
-                                <button (click)="onFileUpload()" [loading]="isLoading" [loadingIcon]="'pi pi-paperclip'" class="p-button-secondary p-button-sm p-button-outlined mr-3"
+                                <button (click)="onFileUpload()" [loadingIcon]="'pi pi-paperclip'" [loading]="isLoading"
+                                        class="p-button-secondary p-button-sm p-button-outlined mr-3"
                                         icon="pi pi-paperclip" pButton pRipple></button>
-                                <button (click)="onComment()" [loading]="isLoading" class="p-button-primary p-button-sm p-button-outlined mr-3" icon = "pi pi-send"
+                                <button (click)="onComment()" [loading]="isLoading" class="p-button-primary p-button-sm p-button-outlined mr-3"
+                                        icon="pi pi-send"
                                         label="Enviar"
                                         pButton pRipple>
                                 </button>
-                                <button (click)="onCommentCancel()" [loading]="isLoading" [loadingIcon]="'pi pi-times'" class="p-button-danger p-button-sm p-button-outlined" icon="pi pi-times"
+                                <button (click)="onCommentCancel()" [loadingIcon]="'pi pi-times'" [loading]="isLoading"
+                                        class="p-button-danger p-button-sm p-button-outlined" icon="pi pi-times"
                                         label="Cancelar" pButton pRipple></button>
                             </div>
                         </div>
@@ -456,8 +459,8 @@
 
                                                         <button #buttonOp (click)="$event.stopPropagation(); downloadFile(file)"
                                                                 [id]="file.fileId"
-                                                                [style.display]="defaultDisplay"
                                                                 [loading]="isLoading && downloadingFileId  === file.fileId"
+                                                                [style.display]="defaultDisplay"
                                                                 class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
                                                                 icon="pi pi-download"
                                                                 pButton
@@ -575,8 +578,8 @@
                                                             <button #buttonOp (click)="$event.stopPropagation(); downloadEditFile(file)"
 
                                                                     [id]="file.name"
-                                                                    [style.display]="defaultDisplay"
                                                                     [loading]="isLoading && downloadingFileId  === file.id"
+                                                                    [style.display]="defaultDisplay"
                                                                     class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
                                                                     icon="pi pi-download"
                                                                     pButton
@@ -594,13 +597,16 @@
                             </div>
                             <div class="flex justify-content-end align-items-end">
 
-                                <button (click)="onEditFileUpload()" [loading]="isLoading" [loadingIcon]="'pi pi-paperclip'" class="p-button-secondary p-button-sm p-button-outlined mr-3"
+                                <button (click)="onEditFileUpload()" [loadingIcon]="'pi pi-paperclip'" [loading]="isLoading"
+                                        class="p-button-secondary p-button-sm p-button-outlined mr-3"
                                         icon="pi pi-paperclip" pButton pRipple></button>
-                                <button (click)="onEditComment()" [loading]="isLoading" class="p-button-primary p-button-sm p-button-outlined mr-3" icon = "pi pi-send"
+                                <button (click)="onEditComment()" [loading]="isLoading" class="p-button-primary p-button-sm p-button-outlined mr-3"
+                                        icon="pi pi-send"
                                         label="Enviar"
                                         pButton pRipple>
                                 </button>
-                                <button (click)="onEditCommentCancel()" [loading]="isLoading" [loadingIcon]="'pi pi-times'" class="p-button-danger p-button-sm p-button-outlined" icon="pi pi-times"
+                                <button (click)="onEditCommentCancel()" [loadingIcon]="'pi pi-times'" [loading]="isLoading"
+                                        class="p-button-danger p-button-sm p-button-outlined" icon="pi pi-times"
                                         label="Cancelar" pButton pRipple></button>
                             </div>
                         </div>
@@ -624,7 +630,9 @@
                                 <td>{{ history.user.firstName }} {{ history.user.lastName }}</td>
                                 <td>{{ history.fieldName }}</td>
                                 <td *ngIf="history.fieldName!== 'Fecha limite'">{{ history.previousValue }} -> {{ history.newValue }}</td>
-                                <td *ngIf="history.fieldName === 'Fecha limite'">{{ history.previousValue | date: 'dd/MM/yyyy, HH:mm' }} -> {{ history.newValue | date: 'dd/MM/yyyy, HH:mm' }}</td>
+                                <td *ngIf="history.fieldName === 'Fecha limite'">{{ history.previousValue | date: 'dd/MM/yyyy, HH:mm' }}
+                                    -> {{ history.newValue | date: 'dd/MM/yyyy, HH:mm' }}
+                                </td>
                             </tr>
                         </ng-template>
                     </p-table>
@@ -656,9 +664,10 @@
                   style="resize: none" type="text"></textarea>
     </div>
     <div class="flex flex-wrap gap-2 justify-content-between">
-        <button (click)="onAddFeedbackCancel()" class="flex-auto p-button-outlined" label="Cancelar" pButton icon="pi pi-times" [loading]="isLoading" [loadingIcon]="'pi pi-times'"
+        <button (click)="onAddFeedbackCancel()" [loadingIcon]="'pi pi-times'" [loading]="isLoading" class="flex-auto p-button-outlined" icon="pi pi-times" label="Cancelar"
+                pButton
                 pRipple></button>
-        <button (click)="onAddFeedback()" class="flex-auto" label="Guardar" pButton pRipple icon="pi pi-save" [loading]="isLoading"
+        <button (click)="onAddFeedback()" [loading]="isLoading" class="flex-auto" icon="pi pi-save" label="Guardar" pButton pRipple
         ></button>
     </div>
 </p-dialog>

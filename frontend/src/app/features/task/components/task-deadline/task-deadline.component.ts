@@ -14,6 +14,7 @@ import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {ResponseDto} from "../../../../core/models/response.dto";
 import {PageDto} from "../../../../core/models/page.dto";
 import {UserDto} from "../../../user/models/user.dto";
+import {TaskPriorityDto} from "../../models/task-priority.dto";
 
 @Component({
     selector: 'app-task-deadline',
@@ -43,6 +44,7 @@ export class TaskDeadlineComponent implements OnInit {
 
     taskListIds: string[] = this.taskLists.map(list => list.listId);
 
+
     isLoading: boolean = true;
 
     tasks: TaskDto[] = [];
@@ -52,6 +54,12 @@ export class TaskDeadlineComponent implements OnInit {
     statusItems: SelectItem[] = [];
 
     selectedStatus: any[] = [];
+
+    priorities: TaskPriorityDto[] = [];
+
+    priorityItems: SelectItem[] = [];
+
+    selectedPriority: any[] = [];
 
     keyword: string = '';
 
@@ -72,7 +80,7 @@ export class TaskDeadlineComponent implements OnInit {
         private sharedService: SharedService,
         private activatedRoute: ActivatedRoute,
         private taskService: TaskService,
-        private utilService: UtilService
+        private utilService: UtilService,
     ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage
@@ -90,10 +98,13 @@ export class TaskDeadlineComponent implements OnInit {
         }
         this.keyword = this.sharedService.getData('keyword') ?? '';
         this.selectedStatus = this.sharedService.getData('selectedStatus') ?? [];
+        this.selectedPriority = this.sharedService.getData('selectedPriority') ?? [];
+
     }
 
     ngOnInit() {
         this.activatedRoute.parent?.params.subscribe(params => {
+            this.getAllPriorities();
             this.getAllStatuses();
             this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
                 this.getData()
@@ -115,6 +126,13 @@ export class TaskDeadlineComponent implements OnInit {
         this.getData();
     }
 
+    public onPriorityChange(event: any) {
+        this.selectedPriority = event.value;
+        this.sharedService.changeData('selectedPriority',
+            this.selectedPriority);
+        this.getData();
+    }
+
 
     public getData() {
         this.isLoading = true;
@@ -123,8 +141,8 @@ export class TaskDeadlineComponent implements OnInit {
             0,
             1000,
             this.keyword,
-            [],
-            this.selectedStatus.map(status => status.label)).subscribe({
+            this.selectedStatus.map(status => status.label),
+            this.selectedPriority.map(priority => priority.label)).subscribe({
             next: (data: ResponseDto<PageDto<TaskDto>>) => {
                 this.tasks = data.data!.content;
                 this.tasks.forEach(task => {
@@ -143,7 +161,7 @@ export class TaskDeadlineComponent implements OnInit {
                                 59,
                                 59,
                                 999));
-                            return task.taskDueDate && new Date(task.taskDueDate) > new Date(start) && new Date(task.taskDueDate) < new Date(end);
+                            return task.taskDueDate && new Date(task.taskDueDate) >= new Date(start) && new Date(task.taskDueDate) < new Date(end);
                         } else if (list.listId === '3') {
                             let start = new Date(new Date().setDate(new Date().getDate() + 1));
                             start.setHours(0,
@@ -155,7 +173,7 @@ export class TaskDeadlineComponent implements OnInit {
                                 59,
                                 59,
                                 999);
-                            return task.taskDueDate && new Date(task.taskDueDate) > new Date(start) && new Date(task.taskDueDate) < new Date(end);
+                            return task.taskDueDate && new Date(task.taskDueDate) >= new Date(start) && new Date(task.taskDueDate) < new Date(end);
                         } else if (list.listId === '4') {
                             let start = new Date(new Date().setDate(new Date().getDate() + 7));
                             start.setHours(0,
@@ -167,7 +185,7 @@ export class TaskDeadlineComponent implements OnInit {
                                 59,
                                 59,
                                 999);
-                            return task.taskDueDate && new Date(task.taskDueDate) > new Date(start) && new Date(task.taskDueDate) < new Date(end);
+                            return task.taskDueDate && new Date(task.taskDueDate) >= new Date(start) && new Date(task.taskDueDate) < new Date(end);
                         } else if (list.listId === '5') {
                             let start = new Date(new Date().setDate(new Date().getDate() + 14));
                             start.setHours(0,
@@ -196,6 +214,22 @@ export class TaskDeadlineComponent implements OnInit {
     public onEditCard(event: any) {
         this.taskId = event.taskId;
         this.editSidebarVisible = true;
+    }
+
+    public getAllPriorities() {
+        this.taskService.getPriorities().subscribe({
+            next: (data) => {
+                this.priorities = data.data!;
+                this.priorityItems = this.priorities.map(priority => {
+                    return {
+                        label: priority.taskPriorityName, value: priority.taskPriorityId
+                    }
+                });
+                this.selectedPriority = this.selectedPriority.length == 0 ? this.priorityItems : this.selectedPriority;
+            }, error: (error) => {
+                console.log(error);
+            }
+        });
     }
 
 

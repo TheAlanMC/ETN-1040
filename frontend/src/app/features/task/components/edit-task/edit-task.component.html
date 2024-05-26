@@ -175,8 +175,8 @@
                                                     type="button"></button>
                                             <button #buttonOp (click)="$event.stopPropagation(); downloadFile(file)"
                                                     [id]="file.name"
-                                                    [style.display]="defaultDisplay"
                                                     [loading]="isLoading && downloadingFileId  === file.id"
+                                                    [style.display]="defaultDisplay"
                                                     class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
                                                     icon="pi pi-download"
                                                     pButton
@@ -193,11 +193,12 @@
                 </div>
                 <div class="col-12">
                     <div class="flex flex-column sm:flex-row justify-content-between align-items-center gap-3 py-2">
-                        <button (click)="onSave()" class="p-button-primary flex-1 border-round" [loading]="isLoading"
+                        <button (click)="onSave()" [loading]="isLoading" class="p-button-primary flex-1 border-round"
                                 label="Guardar" pButton
                                 pRipple>
                         </button>
-                        <button (click)="onClose()" class="p-button-primary flex-1 p-button-outlined" [loading]="isLoading" [loadingIcon]="'pi pi-times'"
+                        <button (click)="onClose()" [loadingIcon]="'pi pi-times'" [loading]="isLoading"
+                                class="p-button-primary flex-1 p-button-outlined"
                                 icon="pi pi-fw pi-times" label="Cancelar"
                                 pButton pRipple></button>
                     </div>

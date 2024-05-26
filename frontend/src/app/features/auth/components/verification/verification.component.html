@@ -37,10 +37,11 @@
             </div>
 
             <div class="flex flex-wrap gap-2 justify-content-between">
-                <button [routerLink]="['/auth/login']" class="flex-auto p-button-outlined" label="Cancelar" pButton icon="pi pi-times" [loading]="isLoading" [loadingIcon]="'pi pi-times'"
+                <button [loadingIcon]="'pi pi-times'" [loading]="isLoading" [routerLink]="['/auth/login']" class="flex-auto p-button-outlined" icon="pi pi-times"
+                        label="Cancelar" pButton
                         pRipple></button>
-                <button (click)="onVerify()" class="flex-auto" label="Verificar" pButton pRipple icon="pi pi-check"
-                        [loading]="isLoading"
+                <button (click)="onVerify()" [loading]="isLoading" class="flex-auto" icon="pi pi-check" label="Verificar" pButton
+                        pRipple
                 ></button>
             </div>
         </div>

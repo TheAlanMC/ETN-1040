@@ -46,6 +46,10 @@ export class LoginComponent implements OnInit {
         }
     }
 
+    get dark(): boolean {
+        return this.layoutService.config().colorScheme !== 'light';
+    }
+
     ngOnInit(): void {
         this.firebaseService.getFirebaseToken().subscribe({
             next: (token) => {
@@ -57,14 +61,11 @@ export class LoginComponent implements OnInit {
         });
     }
 
-    get dark(): boolean {
-        return this.layoutService.config().colorScheme !== 'light';
-    }
-
     login() {
         this.isLoading = true;
         this.authService.login(this.emailControl.value!,
-            this.passwordControl.value!,this.token).subscribe({
+            this.passwordControl.value!,
+            this.token).subscribe({
             next: (data) => {
                 // Save token
                 localStorage.setItem('token',

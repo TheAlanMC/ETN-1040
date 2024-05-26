@@ -52,12 +52,12 @@
                               type="text"></textarea>
                 </div>
                 <div class="col-12 lg:col-3 md:col-4 field">
-                    <button (click)="onSave()" class="flex-auto" icon="pi pi-save" label="Guardar" pButton [loading]="isDataLoading"
+                    <button (click)="onSave()" [loading]="isDataLoading" class="flex-auto" icon="pi pi-save" label="Guardar" pButton
                             pRipple></button>
                 </div>
                 <div class="col-12 lg:col-4 md:col-5 field">
-                    <button (click)="visibleChangePassword = true" class="fex-auto p-button-outlined" icon="pi pi-key" [loading]="isDataLoading"
-                            [loadingIcon]="'pi pi-key'"
+                    <button (click)="visibleChangePassword = true" [loadingIcon]="'pi pi-key'" [loading]="isDataLoading" class="fex-auto p-button-outlined"
+                            icon="pi pi-key"
                             label="Cambiar Contraseña" pButton
                             pRipple></button>
                 </div>
@@ -80,8 +80,8 @@
     <div class="flex flex-column">
           <span class="p-input-icon-left w-full mb-4">
                 <i class="pi pi-lock z-2"></i>
-                <p-password [feedback]=false [formControl]="oldPasswordControl" [inputStyle]="{paddingLeft: '2.5rem'}"
-                            [toggleMask]="true" id="oldPassword" [autocomplete]="'off'"
+                <p-password [autocomplete]="'off'" [feedback]=false [formControl]="oldPasswordControl"
+                            [inputStyle]="{paddingLeft: '2.5rem'}" [toggleMask]="true" id="oldPassword"
                             inputStyleClass="w-full md:w-25rem" placeholder="Contraseña Actual"
                             styleClass="w-full"></p-password>
             </span>
@@ -100,10 +100,10 @@
                             styleClass="w-full"></p-password>
             </span>
         <div class="flex flex-wrap gap-2 justify-content-between">
-            <button (click)="visibleChangePassword = false" class="flex-auto p-button-outlined" label="Cancelar" pButton icon = "pi pi-times"
-                    [loading]="isLoading" [loadingIcon]="'pi pi-times'"
+            <button (click)="visibleChangePassword = false" [loadingIcon]="'pi pi-times'" [loading]="isLoading" class="flex-auto p-button-outlined" icon="pi pi-times"
+                    label="Cancelar" pButton
                     pRipple></button>
-            <button (click)="onSubmit()" class="flex-auto" label="Guardar" pButton pRipple icon="pi pi-save" [loading]="isLoading"
+            <button (click)="onSubmit()" [loading]="isLoading" class="flex-auto" icon="pi pi-save" label="Guardar" pButton pRipple
             ></button>
         </div>
     </div>

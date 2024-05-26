@@ -12,7 +12,6 @@ import {ActivatedRoute} from "@angular/router";
 import {ConfirmationService, MenuItem, MessageService, SelectItem} from "primeng/api";
 import {UtilService} from "../../../../core/services/util.service";
 import {ProjectService} from "../../../../core/services/project.service";
-import {UserService} from "../../../../core/services/user.service";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {SharedService} from "../../../../core/services/shared.service";
@@ -108,7 +107,6 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
         private messageService: MessageService,
         private utilService: UtilService,
         private projectService: ProjectService,
-        private userService: UserService,
         private sharedService: SharedService,
         private activatedRoute: ActivatedRoute,
         private taskService: TaskService
@@ -219,7 +217,9 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
             return;
         } else if (this.selectedTask != null && this.selectedTask.taskEndDate) {
             this.messageService.add({
-                severity: 'error', summary: 'Error', detail: 'No puedes modificar la fecha límite de una tarea finalizada'
+                severity: 'error',
+                summary: 'Error',
+                detail: 'No puedes modificar la fecha límite de una tarea finalizada'
             });
             e.revert();
             return;
@@ -240,7 +240,7 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
                 {label: 'Eliminar tarea', command: () => this.onDeleteTask(this.selectedTask!.taskId)}
             ];
 
-            if (!((this.isOwner || this.isModerator) && this.canEditTask && !this.selectedTask!.taskEndDate)){
+            if (!((this.isOwner || this.isModerator) && this.canEditTask && !this.selectedTask!.taskEndDate)) {
                 this.menuItems = this.menuItems.filter(item => item.label === 'Ver tarea');
             }
         }
@@ -349,7 +349,10 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
                 this.isOwner = this.project.projectOwners.find(owner => owner.userId === this.userId) != null;
                 this.isModerator = this.project.projectModerators.find(moderator => moderator.userId === this.userId) != null;
                 this.isMember = this.project.projectMembers.find(member => member.userId === this.userId) != null;
-                this.calendarOptions = {...this.calendarOptions, ...{editable: ((this.isOwner || this.isModerator) && this.canEditTask)}, validRange: {start: this.project.projectDateFrom, end: this.project.projectDateTo}};
+                this.calendarOptions = {
+                    ...this.calendarOptions, ...{editable: ((this.isOwner || this.isModerator) && this.canEditTask)},
+                    validRange: {start: this.project.projectDateFrom, end: this.project.projectDateTo}
+                };
             }, error: (error) => {
                 console.log(error);
             }

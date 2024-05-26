@@ -162,7 +162,7 @@ class TaskService @Autowired constructor(
         }
         // Validate that the user is the project owner or a project moderator
         if (projectOwnerRepository.findByProjectIdAndUserIdAndStatusIsTrue(newTaskDto.projectId.toLong(), userId) == null && projectModeratorRepository.findByProjectIdAndUserIdAndStatusIsTrue(newTaskDto.projectId.toLong(), userId) == null) {
-            throw EtnException(HttpStatus.FORBIDDEN, "Error: User is not the project owner or a project moderator", "El usuario no es el propietario del proyecto o un colaborador del proyecto")
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: User is not the project owner or a project moderator", "El usuario no es el propietario del proyecto o un colaborador del proyecto")
         }
         // Validate the assignees are project members
         if (projectMemberRepository.findAllByProjectIdAndUserIdInAndStatusIsTrue(newTaskDto.projectId.toLong(), newTaskDto.taskAssigneeIds).size != newTaskDto.taskAssigneeIds.size) {

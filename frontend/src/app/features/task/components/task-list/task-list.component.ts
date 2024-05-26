@@ -12,6 +12,7 @@ import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {ResponseDto} from "../../../../core/models/response.dto";
 import {PageDto} from "../../../../core/models/page.dto";
+import {TaskPriorityDto} from "../../models/task-priority.dto";
 
 @Component({
     selector: 'app-task-list',
@@ -51,6 +52,12 @@ export class TaskListComponent implements OnInit {
 
     selectedStatus: any[] = [];
 
+    priorities: TaskPriorityDto[] = [];
+
+    priorityItems: SelectItem[] = [];
+
+    selectedPriority: any[] = [];
+
     keyword: string = '';
 
     isModerator: boolean = false;
@@ -82,21 +89,23 @@ export class TaskListComponent implements OnInit {
             const decoded = jwtDecode<JwtPayload>(token!);
             if (decoded.roles.includes('CREAR TAREAS')) {
                 this.canAddTask = true;
-                this.isModerator = true;
+                this.isModerator = true
             }
             if (decoded.roles.includes('EDITAR TAREAS')) {
                 this.canEditTask = true;
-                this.isModerator = true;
+                this.isModerator = true
             }
             this.userId = decoded.userId;
             this.isMember = true;
         }
         this.keyword = this.sharedService.getData('keyword') ?? '';
         this.selectedStatus = this.sharedService.getData('selectedStatus') ?? [];
+        this.selectedPriority = this.sharedService.getData('selectedPriority') ?? [];
     }
 
     ngOnInit() {
         this.activatedRoute.parent?.params.subscribe(params => {
+            this.getAllPriorities();
             this.getAllStatuses();
             this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
                 this.getData()
@@ -146,8 +155,9 @@ export class TaskListComponent implements OnInit {
             this.page,
             this.size,
             this.keyword,
-            [],
-            this.selectedStatus.map(status => status.label)).subscribe({
+            this.selectedStatus.map(status => status.label),
+            this.selectedPriority.map(priority => priority.label),
+        ).subscribe({
             next: (data: ResponseDto<PageDto<TaskDto>>) => {
                 this.tasks = data.data!.content;
                 this.totalElements = data.data!.page.totalElements;
@@ -196,6 +206,22 @@ export class TaskListComponent implements OnInit {
         });
     }
 
+    public getAllPriorities() {
+        this.taskService.getPriorities().subscribe({
+            next: (data) => {
+                this.priorities = data.data!;
+                this.priorityItems = this.priorities.map(priority => {
+                    return {
+                        label: priority.taskPriorityName, value: priority.taskPriorityId
+                    }
+                });
+                this.selectedPriority = this.selectedPriority.length == 0 ? this.priorityItems : this.selectedPriority;
+            }, error: (error) => {
+                console.log(error);
+            }
+        });
+    }
+
     public getAllStatuses() {
         this.taskService.getStatuses().subscribe({
             next: (data) => {
@@ -223,111 +249,41 @@ export class TaskListComponent implements OnInit {
         this.getData();
     }
 
+    public onPriorityChange(event: any) {
+        this.selectedPriority = event.value;
+        this.sharedService.changeData('selectedPriority',
+            this.selectedPriority);
+        this.getData();
+    }
+
     public getPriorityColor(
-        priority: number,
-        maxPriority: number = 10
-    ): string {
-        // Define the color ranges
-        const colorRanges = [
-            {
-                min: 1, max: Math.round(maxPriority * 0.2), start: [
-                    0,
-                    0,
-                    255
-                ], end: [
-                    0,
-                    128,
-                    0
-                ]
-            }, // Blue to Green
-            {
-                min: Math.round(maxPriority * 0.2) + 1, max: Math.round(maxPriority * 0.4), start: [
-                    0,
-                    128,
-                    0
-                ], end: [
-                    255,
-                    255,
-                    0
-                ]
-            }, // Green to Yellow
-            {
-                min: Math.round(maxPriority * 0.4) + 1, max: Math.round(maxPriority * 0.6), start: [
-                    255,
-                    255,
-                    0
-                ], end: [
-                    255,
-                    165,
-                    0
-                ]
-            }, // Yellow to Orange
-            {
-                min: Math.round(maxPriority * 0.6) + 1, max: Math.round(maxPriority * 0.8), start: [
-                    255,
-                    165,
-                    0
-                ], end: [
-                    255,
-                    0,
-                    0
-                ]
-            }, // Orange to Red
-            {
-                min: Math.round(maxPriority * 0.8) + 1, max: maxPriority, start: [
-                    255,
-                    0,
-                    0
-                ], end: [
-                    128,
-                    0,
-                    0
-                ]
-            }, // Red to Dark Red
-        ];
-        // Find the color range that the priority falls into
-        const range = colorRanges.find(r => priority >= r.min && priority <= r.max);
-        if (!range) {
-            return '#000000'; // Return black if no range is found (should not happen)
+        priorityId: number): string {
+        let color = [0, 0, 0];
+        switch (priorityId) {
+            case 1:
+                color = [0, 128, 0];
+                break;
+            case 2:
+                color = [255, 165, 0];
+                break;
+            case 3:
+                color = [255, 0, 0];
+                break;
         }
-        // Calculate the ratio of where the priority falls within the range
-        const ratio = (priority - range.min) / (range.max - range.min);
-        // Interpolate the color
-        const color = range.start.map((
-            start,
-            i
-        ) => Math.round(start + ratio * (range.end[i] - start)));
-        // Convert the color to a CSS RGB string
-        return `rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.5)`;
+        return `rgb(${color[0]}, ${color[1]}, ${color[2]},0.7)`;
     }
 
     public getStatusColor(statusId: number): string {
-        let color = [
-            0,
-            0,
-            0
-        ];
+        let color = [0, 0, 0];
         switch (statusId) {
             case 1:
-                color = [
-                    255,
-                    165,
-                    0
-                ];
+                color = [255, 165, 0];
                 break;
             case 2:
-                color = [
-                    0,
-                    128,
-                    0
-                ];
+                color = [0, 128, 0];
                 break;
             case 3:
-                color = [
-                    0,
-                    0,
-                    255
-                ];
+                color = [0, 0, 255];
                 break;
         }
         return `rgb(${color[0]}, ${color[1]}, ${color[2]},0.7)`;

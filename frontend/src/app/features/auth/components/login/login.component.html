@@ -39,7 +39,7 @@
                         class="text-600 cursor-pointer hover:text-primary cursor-pointer ml-auto transition-colors transition-duration-300">Olvidé
                     mi contraseña</a>
             </div>
-            <button #loginButton [loading]="isLoading" (click)="login()" class="w-full" label="Iniciar Sesión" pButton pRipple></button>
+            <button #loginButton (click)="login()" [loading]="isLoading" class="w-full" label="Iniciar Sesión" pButton pRipple></button>
         </div>
     </div>
 </div>

@@ -7,6 +7,7 @@ class TaskPartialMapper {
     companion object {
         fun entityToDto(task: Task): TaskPartialDto {
             return TaskPartialDto(
+                projectId = task.project!!.projectId,
                 taskId = task.taskId,
                 taskStatus = TaskStatusMapper.entityToDto(task.taskStatus!!),
                 taskPriority = TaskPriorityMapper.entityToDto(task.taskPriority!!),

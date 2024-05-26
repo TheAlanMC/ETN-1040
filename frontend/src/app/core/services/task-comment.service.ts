@@ -4,7 +4,6 @@ import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {ResponseDto} from "../models/response.dto";
 import {UtilService} from "./util.service";
-import {TaskCommentDto} from "../../features/task/models/task-comment.dto";
 
 @Injectable({
     providedIn: 'root'

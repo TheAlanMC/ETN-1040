@@ -64,12 +64,13 @@
             </p-pickList>
             <div *ngIf="selectedUserId!=0" class="grid p-fluid mt-3">
                 <div class="col-12 lg:col-2 md:col-3">
-                    <button (click)="saveUserGroups()" class="flex-auto p-button" icon="pi pi-save" label="Guardar" pButton [loading]="isLoading"
+                    <button (click)="saveUserGroups()" [loading]="isLoading" class="flex-auto p-button" icon="pi pi-save" label="Guardar" pButton
                             pRipple></button>
                 </div>
                 <div class="col-12 lg:col-2 md:col-3">
-                    <button (click)="onClearUser()" class="flex-auto p-button-outlined" icon="pi pi-times" label="Cancelar" pButton [loading]="isLoading"
-                            [loadingIcon]="'pi pi-times'"
+                    <button (click)="onClearUser()" [loadingIcon]="'pi pi-times'" [loading]="isLoading" class="flex-auto p-button-outlined" icon="pi pi-times"
+                            label="Cancelar"
+                            pButton
                             pRipple></button>
                 </div>
             </div>
@@ -119,11 +120,12 @@
             </p-pickList>
             <div *ngIf="selectedGroupId!=0" class="grid p-fluid mt-3">
                 <div class="col-12 lg:col-2 md:col-3">
-                    <button (click)="saveGroupRoles()" class="flex-auto p-button" icon="pi pi-save" label="Guardar" pButton [loading]="isLoading"
+                    <button (click)="saveGroupRoles()" [loading]="isLoading" class="flex-auto p-button" icon="pi pi-save" label="Guardar" pButton
                             pRipple></button>
                 </div>
                 <div class="col-12 lg:col-2 md:col-3">
-                    <button (click)="onClearGroup()" class="flex-auto p-button-outlined" icon="pi pi-times" label="Cancelar" pButton [loading]="isLoading" [loadingIcon]="'pi pi-times'"
+                    <button (click)="onClearGroup()" [loadingIcon]="'pi pi-times'" [loading]="isLoading" class="flex-auto p-button-outlined" icon="pi pi-times"
+                            label="Cancelar" pButton
                             pRipple></button>
                 </div>
             </div>
@@ -147,9 +149,10 @@
         </div>
 
         <div class="flex flex-wrap gap-2 justify-content-between">
-            <button (click)="visibleAddGroup = false" class="flex-auto p-button-outlined" label="Cancelar" pButton icon="pi pi-times" [loading]="isLoading" [loadingIcon]="'pi pi-times'"
+            <button (click)="visibleAddGroup = false" [loadingIcon]="'pi pi-times'" [loading]="isLoading" class="flex-auto p-button-outlined" icon="pi pi-times"
+                    label="Cancelar" pButton
                     pRipple></button>
-            <button (click)="onSaveGroup()" class="flex-auto" label="Guardar" pButton pRipple icon="pi pi-save" [loading]="isLoading"
+            <button (click)="onSaveGroup()" [loading]="isLoading" class="flex-auto" icon="pi pi-save" label="Guardar" pButton pRipple
                     pRipple
             ></button>
         </div>
@@ -172,9 +175,10 @@
         </div>
 
         <div class="flex flex-wrap gap-2 justify-content-between">
-            <button (click)="visibleEditGroup = false" class="flex-auto p-button-outlined" label="Cancelar" pButton icon="pi pi-times" [loading]="isLoading" [loadingIcon]="'pi pi-times'"
+            <button (click)="visibleEditGroup = false" [loadingIcon]="'pi pi-times'" [loading]="isLoading" class="flex-auto p-button-outlined" icon="pi pi-times"
+                    label="Cancelar" pButton
                     pRipple></button>
-            <button (click)="onUpdateGroup()" class="flex-auto" label="Guardar" pButton pRipple icon="pi pi-save" [loading]="isLoading"
+            <button (click)="onUpdateGroup()" [loading]="isLoading" class="flex-auto" icon="pi pi-save" label="Guardar" pButton pRipple
 
             ></button>
         </div>

@@ -17,20 +17,20 @@
 </div>
 <div class="grid p-fluid">
     <div class="col-12 lg:col-6">
-    <p-multiSelect (onChange)="onPriorityChange($event)" [(ngModel)]="selectedPriority"
-                   [options]="priorityItems"
-                   [filter]="false"
-                   class="multiselect-custom" display="chip" optionLabel="label"
-                   placeholder="Seleccionar Prioridad">
-    </p-multiSelect>
+        <p-multiSelect (onChange)="onPriorityChange($event)" [(ngModel)]="selectedPriority"
+                       [filter]="false"
+                       [options]="priorityItems"
+                       class="multiselect-custom" display="chip" optionLabel="label"
+                       placeholder="Seleccionar Prioridad">
+        </p-multiSelect>
     </div>
     <div class="col-12 lg:col-6">
-    <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus"
-                   [options]="statusItems"
-                   [filter]="false"
-                   class="multiselect-custom" display="chip" optionLabel="label"
-                   placeholder="Seleccionar Estado">
-    </p-multiSelect>
+        <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus"
+                       [filter]="false"
+                       [options]="statusItems"
+                       class="multiselect-custom" display="chip" optionLabel="label"
+                       placeholder="Seleccionar Estado">
+        </p-multiSelect>
     </div>
 </div>
 

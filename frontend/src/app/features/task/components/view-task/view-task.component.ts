@@ -15,7 +15,6 @@ import {TaskCommentService} from "../../../../core/services/task-comment.service
 import {TaskHistoryDto} from "../../models/task-history.dto";
 import {Directory, Filesystem} from "@capacitor/filesystem";
 import {FileOpener} from "@capacitor-community/file-opener";
-import {logger} from "@capacitor/assets/dist/util/log";
 
 @Component({
     selector: 'app-view-task',
@@ -221,7 +220,7 @@ export class ViewTaskComponent implements OnInit {
                         label: `${user.firstName} ${user.lastName}`, labelSecondary: user.email, value: user.userId,
                     }
                 });
-                if(this.task!.taskEndDate != null) {
+                if (this.task!.taskEndDate != null) {
                     const dateTo = new Date(this.task!.taskDueDate);
                     const dateEnd = new Date(this.task!.taskEndDate);
                     const difference = dateEnd.getTime() - dateTo.getTime();

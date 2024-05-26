@@ -54,12 +54,12 @@
                 </div>
 
                 <div class="col-12 lg:col-3 md:col-4 field">
-                    <button (click)="onSave()" class="flex-auto" icon="pi pi-save" label="Guardar" pButton [loading]="isLoading"
+                    <button (click)="onSave()" [loading]="isLoading" class="flex-auto" icon="pi pi-save" label="Guardar" pButton
                             pRipple></button>
                 </div>
                 <div class="col-12 lg:col-3 md:col-4 field">
-                    <button (click)="onCancel()" class="flex-auto p-button-outlined" icon="pi pi-times" label="Cancelar"
-                            pButton [loading]="isLoading" [loadingIcon]="'pi pi-times'"
+                    <button (click)="onCancel()" [loadingIcon]="'pi pi-times'" [loading]="isLoading" class="flex-auto p-button-outlined"
+                            icon="pi pi-times" label="Cancelar" pButton
                             pRipple></button>
                 </div>
 

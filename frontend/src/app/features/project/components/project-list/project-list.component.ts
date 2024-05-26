@@ -111,7 +111,7 @@ export class ProjectListComponent implements OnInit {
             this.page,
             this.size,
             this.keyword
-            ).subscribe({
+        ).subscribe({
             next: (data: ResponseDto<PageDto<ProjectDto>>) => {
                 this.projects = data.data!.content;
                 this.totalElements = data.data!.page.totalElements;

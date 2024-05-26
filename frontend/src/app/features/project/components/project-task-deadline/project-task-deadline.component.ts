@@ -4,7 +4,7 @@ import {environment} from "../../../../../environments/environment";
 import {TaskStatusDto} from "../../../task/models/task-status.dto";
 import {MessageService, SelectItem} from "primeng/api";
 import {debounceTime, Subject} from "rxjs";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute} from "@angular/router";
 import {UtilService} from "../../../../core/services/util.service";
 import {ProjectService} from "../../../../core/services/project.service";
 import {SharedService} from "../../../../core/services/shared.service";
@@ -15,7 +15,6 @@ import {TaskDto} from "../../../task/models/task.dto";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {ProjectDto} from "../../models/project.dto";
-import {UserService} from "../../../../core/services/user.service";
 import {UserDto} from "../../../user/models/user.dto";
 import {TaskPriorityDto} from "../../../task/models/task-priority.dto";
 
@@ -88,8 +87,6 @@ export class ProjectTaskDeadlineComponent implements OnInit {
         private activatedRoute: ActivatedRoute,
         private taskService: TaskService,
         private utilService: UtilService,
-        private router: Router,
-        private userService: UserService
     ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage

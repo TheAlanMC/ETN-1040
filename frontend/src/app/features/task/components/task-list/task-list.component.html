@@ -15,13 +15,23 @@
             class="p-button-outlined w-full sm:w-auto flex-order-1 sm:flex-order-1" icon="pi pi-plus-circle"
             label="Crear Tarea" pButton></button>
 </div>
-<div class="mb-3">
-    <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus"
-                   [options]="statusItems"
-                   [style]="{'width': '100%'}"
-                   class="multiselect-custom" display="chip" optionLabel="label"
-                   placeholder="Seleccionar Estado">
-    </p-multiSelect>
+<div class="grid p-fluid">
+    <div class="col-12 lg:col-6">
+        <p-multiSelect (onChange)="onPriorityChange($event)" [(ngModel)]="selectedPriority"
+                       [filter]="false"
+                       [options]="priorityItems"
+                       class="multiselect-custom" display="chip" optionLabel="label"
+                       placeholder="Seleccionar Prioridad">
+        </p-multiSelect>
+    </div>
+    <div class="col-12 lg:col-6">
+        <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus"
+                       [filter]="false"
+                       [options]="statusItems"
+                       class="multiselect-custom" display="chip" optionLabel="label"
+                       placeholder="Seleccionar Estado">
+        </p-multiSelect>
+    </div>
 </div>
 
 <p-table (onPage)="onPageChange($event)" (onSort)="onSortChange($event)" [customSort]="true" [lazy]="true"
@@ -34,8 +44,8 @@
     <!--    </ng-template>-->
     <ng-template pTemplate="header">
         <tr>
-            <th class="white-space-nowrap" pSortableColumn="taskPriority" style="width:5%"> Prioridad
-                <p-sortIcon field="taskPriority"></p-sortIcon>
+            <th class="white-space-nowrap" pSortableColumn="taskPriorityId" style="width:5%"> Prioridad
+                <p-sortIcon field="taskPriorityId"></p-sortIcon>
             </th>
             <th class="white-space-nowrap" pSortableColumn="taskName" style="width:20%"> Nombre de la Tarea
                 <p-sortIcon field="taskName"></p-sortIcon>
@@ -60,11 +70,11 @@
         <tr>
             <td>
 
-                <p-tag [style]="{background: getPriorityColor(task.taskPriority), color: '#00000080', fontSize: '14px'}"
-                       value="NIVEL {{task.taskPriority}}"></p-tag>
+                <p-tag [style]="{background: getPriorityColor(task.taskPriority.taskPriorityId), fontSize: '14px'}"
+                       value="{{task.taskPriority.taskPriorityName}}"></p-tag>
             </td>
             <td>{{ task.taskName }}</td>
-            <td>{{ task.taskCreationDate | date: 'dd/MM/yyyy, HH:mm' }}</td>
+            <td>{{ task.txDate | date: 'dd/MM/yyyy, HH:mm' }}</td>
             <td>{{ task.taskDueDate | date: 'dd/MM/yyyy, HH:mm' }}</td>
             <!--        <td>{{ task.createdBy }}</td>-->
             <td>
@@ -117,10 +127,10 @@
                     <button (click)="navigateToViewTask(task.taskId)"
                             class="p-button-rounded p-button p-button-secondary mr-1" icon="pi pi-eye"
                             pButton></button>
-                    <button (click)="navigateToEditTask(task.taskId)" *ngIf="canEditTask&&(isModerator)"
+                    <button (click)="navigateToEditTask(task.taskId)" *ngIf="canEditTask&&(isModerator)&&!task.taskEndDate"
                             class="p-button-rounded p-button p-button-secondary mr-1"
                             icon="pi pi-pencil" pButton></button>
-                    <button (click)="onDeleteTask(task.taskId)" *ngIf="canEditTask&&(isModerator)"
+                    <button (click)="onDeleteTask(task.taskId)" *ngIf="canEditTask&&(isModerator)&&!task.taskEndDate"
                             class="p-button-rounded p-button p-button-secondary"
                             icon="pi pi-trash" pButton></button>
                 </div>

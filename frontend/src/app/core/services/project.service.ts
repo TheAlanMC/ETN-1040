@@ -54,7 +54,13 @@ export class ProjectService {
     ): Observable<ResponseDto<Nullable>> {
         return this.http.post<ResponseDto<Nullable>>(this.baseUrl,
             {
-                projectName, projectDescription, projectDateFrom, projectDateTo, projectObjective, projectMemberIds, projectModeratorIds
+                projectName,
+                projectDescription,
+                projectDateFrom,
+                projectDateTo,
+                projectObjective,
+                projectMemberIds,
+                projectModeratorIds
             },
             this.utilService.getHttpOptions());
     }
@@ -71,7 +77,13 @@ export class ProjectService {
     ): Observable<ResponseDto<Nullable>> {
         return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/${projectId}`,
             {
-                projectName, projectDescription, projectDateFrom, projectDateTo, projectObjective, projectMemberIds, projectModeratorIds
+                projectName,
+                projectDescription,
+                projectDateFrom,
+                projectDateTo,
+                projectObjective,
+                projectMemberIds,
+                projectModeratorIds
             },
             this.utilService.getHttpOptions());
     }
@@ -81,7 +93,10 @@ export class ProjectService {
             this.utilService.getHttpOptions());
     }
 
-    public closeProject(projectId: number, projectCloseMessage: string): Observable<ResponseDto<Nullable>> {
+    public closeProject(
+        projectId: number,
+        projectCloseMessage: string
+    ): Observable<ResponseDto<Nullable>> {
         return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/${projectId}/close`,
             {projectCloseMessage},
             this.utilService.getHttpOptions());

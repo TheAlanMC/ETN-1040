@@ -11,18 +11,29 @@
                  pInputText
                  placeholder="Busqueda Global" type="text">
         </span>
-    <button (click)="navigateToCreateTask()" *ngIf="canAddTask&&isModerator"
+    <button (click)="navigateToCreateTask()" *ngIf="canAddTask&&(isModerator)"
             class="p-button-outlined w-full sm:w-auto flex-order-1 sm:flex-order-1" icon="pi pi-plus-circle"
             label="Crear Tarea" pButton></button>
 </div>
-<div class="mb-3">
-    <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus"
-                   [options]="statusItems"
-                   [style]="{'width': '100%'}"
-                   class="multiselect-custom" display="chip" optionLabel="label"
-                   placeholder="Seleccionar Estado">
-    </p-multiSelect>
+<div class="grid p-fluid">
+    <div class="col-12 lg:col-6">
+        <p-multiSelect (onChange)="onPriorityChange($event)" [(ngModel)]="selectedPriority"
+                       [filter]="false"
+                       [options]="priorityItems"
+                       class="multiselect-custom" display="chip" optionLabel="label"
+                       placeholder="Seleccionar Prioridad">
+        </p-multiSelect>
+    </div>
+    <div class="col-12 lg:col-6">
+        <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus"
+                       [filter]="false"
+                       [options]="statusItems"
+                       class="multiselect-custom" display="chip" optionLabel="label"
+                       placeholder="Seleccionar Estado">
+        </p-multiSelect>
+    </div>
 </div>
+
 
 <full-calendar #calendar [options]="calendarOptions">
 </full-calendar>

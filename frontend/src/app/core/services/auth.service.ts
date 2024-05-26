@@ -6,7 +6,6 @@ import {ResponseDto} from "../models/response.dto";
 import {AuthDto} from '../../features/auth/models/auth.dto';
 import {Nullable} from "primeng/ts-helpers";
 import {UtilService} from "./util.service";
-import {FirebaseService} from "./firebase.service";
 
 @Injectable({
     providedIn: 'root'

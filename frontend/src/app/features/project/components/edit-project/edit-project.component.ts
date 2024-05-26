@@ -62,7 +62,8 @@ export class EditProjectComponent implements OnInit {
         [Validators.required]);
     dateToControl = new FormControl('',
         [Validators.required]);
-    projectObjectiveControl = new FormControl('', [Validators.required]);
+    projectObjectiveControl = new FormControl('',
+        [Validators.required]);
 
     projectDescriptionControl = new FormControl('');
 

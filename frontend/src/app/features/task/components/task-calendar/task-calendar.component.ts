@@ -18,6 +18,7 @@ import esLocale from "@fullcalendar/core/locales/es";
 import {ResponseDto} from "../../../../core/models/response.dto";
 import {PageDto} from "../../../../core/models/page.dto";
 import {UserDto} from "../../../user/models/user.dto";
+import {TaskPriorityDto} from "../../models/task-priority.dto";
 
 @Component({
     selector: 'app-task-calendar',
@@ -57,6 +58,12 @@ export class TaskCalendarComponent implements OnInit, AfterViewInit {
     statusItems: SelectItem[] = [];
 
     selectedStatus: any[] = [];
+
+    priorities: TaskPriorityDto[] = [];
+
+    priorityItems: SelectItem[] = [];
+
+    selectedPriority: any[] = [];
 
     keyword: string = '';
 
@@ -107,6 +114,7 @@ export class TaskCalendarComponent implements OnInit, AfterViewInit {
         }
         this.keyword = this.sharedService.getData('keyword') ?? '';
         this.selectedStatus = this.sharedService.getData('selectedStatus') ?? [];
+        this.selectedPriority = this.sharedService.getData('selectedPriority') ?? [];
     }
 
 
@@ -114,7 +122,11 @@ export class TaskCalendarComponent implements OnInit, AfterViewInit {
         // Initialize the today variable with the current date
         this.today = new Date().toISOString().split('T')[0];
         this.calendarOptions = {
-            plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
+            plugins: [
+                dayGridPlugin,
+                timeGridPlugin,
+                interactionPlugin
+            ],
             height: 720,
             initialDate: this.today,
             headerToolbar: {
@@ -133,6 +145,7 @@ export class TaskCalendarComponent implements OnInit, AfterViewInit {
         };
         this.activatedRoute.parent?.params.subscribe(params => {
             this.calendarOptions = {...this.calendarOptions, ...{editable: ((this.isModerator) && this.canEditTask)}};
+            this.getAllPriorities();
             this.getAllStatuses();
             this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
                 this.getData()
@@ -180,9 +193,18 @@ export class TaskCalendarComponent implements OnInit, AfterViewInit {
 
 
     public onEventDrop(e: any) {
+        this.selectedTask = this.tasks.find(task => task.taskId === Number(e.event.id)) ?? null;
         if (new Date(e.event.start).getTime() < new Date().getTime()) {
             this.messageService.add({
                 severity: 'error', summary: 'Error', detail: 'No puedes establecer una fecha límite en el pasado'
+            });
+            e.revert();
+            return;
+        } else if (this.selectedTask != null && this.selectedTask.taskEndDate) {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'No puedes modificar la fecha límite de una tarea finalizada'
             });
             e.revert();
             return;
@@ -193,13 +215,17 @@ export class TaskCalendarComponent implements OnInit, AfterViewInit {
 
     public generateMenu() {
         if (this.selectedTask != null) {
-            this.menuItems = [{
-                label: 'Ver tarea', command: () => this.navigateToViewTask(this.selectedTask!.taskId)
-            }, {
-                label: 'Editar tarea', command: () => this.navigateToEditTask(this.selectedTask!.taskId)
-            }, {label: 'Eliminar tarea', command: () => this.onDeleteTask(this.selectedTask!.taskId)}];
+            this.menuItems = [
+                {
+                    label: 'Ver tarea', command: () => this.navigateToViewTask(this.selectedTask!.taskId)
+                },
+                {
+                    label: 'Editar tarea', command: () => this.navigateToEditTask(this.selectedTask!.taskId)
+                },
+                {label: 'Eliminar tarea', command: () => this.onDeleteTask(this.selectedTask!.taskId)}
+            ];
 
-            if (!((this.isModerator) && this.canEditTask)) {
+            if (!((this.isModerator) && this.canEditTask && !this.selectedTask!.taskEndDate)) {
                 this.menuItems = this.menuItems.filter(item => item.label === 'Ver tarea');
             }
         }
@@ -232,7 +258,7 @@ export class TaskCalendarComponent implements OnInit, AfterViewInit {
         this.taskService.getTasks('taskDueDate',
             'asc',
             0,
-            1000,
+            100,
             this.keyword,
             this.selectedStatus.map(status => status.label),
             [],
@@ -307,6 +333,29 @@ export class TaskCalendarComponent implements OnInit, AfterViewInit {
         this.getData();
     }
 
+    public onPriorityChange(event: any) {
+        this.selectedPriority = event.value;
+        this.sharedService.changeData('selectedPriority',
+            this.selectedPriority);
+        this.getData();
+    }
+
+    public getAllPriorities() {
+        this.taskService.getPriorities().subscribe({
+            next: (data) => {
+                this.priorities = data.data!;
+                this.priorityItems = this.priorities.map(priority => {
+                    return {
+                        label: priority.taskPriorityName, value: priority.taskPriorityId
+                    }
+                });
+                this.selectedPriority = this.selectedPriority.length == 0 ? this.priorityItems : this.selectedPriority;
+            }, error: (error) => {
+                console.log(error);
+            }
+        });
+    }
+
     public getAllStatuses() {
         this.taskService.getStatuses().subscribe({
             next: (data) => {
@@ -328,49 +377,20 @@ export class TaskCalendarComponent implements OnInit, AfterViewInit {
     }
 
     public getPriorityColor(
-        priority: number,
-        maxPriority: number = 10
-    ): string {
-        // Define the color ranges
-        const colorRanges = [{
-            min: 1, max: Math.round(maxPriority * 0.2), start: [0, 0, 255], end: [0, 128, 0]
-        }, // Blue to Green
-            {
-                min: Math.round(maxPriority * 0.2) + 1,
-                max: Math.round(maxPriority * 0.4),
-                start: [0, 128, 0],
-                end: [255, 255, 0]
-            }, // Green to Yellow
-            {
-                min: Math.round(maxPriority * 0.4) + 1,
-                max: Math.round(maxPriority * 0.6),
-                start: [255, 255, 0],
-                end: [255, 165, 0]
-            }, // Yellow to Orange
-            {
-                min: Math.round(maxPriority * 0.6) + 1,
-                max: Math.round(maxPriority * 0.8),
-                start: [255, 165, 0],
-                end: [255, 0, 0]
-            }, // Orange to Red
-            {
-                min: Math.round(maxPriority * 0.8) + 1, max: maxPriority, start: [255, 0, 0], end: [128, 0, 0]
-            }, // Red to Dark Red
-        ];
-        // Find the color range that the priority falls into
-        const range = colorRanges.find(r => priority >= r.min && priority <= r.max);
-        if (!range) {
-            return '#000000'; // Return black if no range is found (should not happen)
+        priorityId: number): string {
+        let color = [0, 0, 0];
+        switch (priorityId) {
+            case 1:
+                color = [0, 128, 0];
+                break;
+            case 2:
+                color = [255, 165, 0];
+                break;
+            case 3:
+                color = [255, 0, 0];
+                break;
         }
-        // Calculate the ratio of where the priority falls within the range
-        const ratio = (priority - range.min) / (range.max - range.min);
-        // Interpolate the color
-        const color = range.start.map((
-            start,
-            i
-        ) => Math.round(start + ratio * (range.end[i] - start)));
-        // Convert the color to a CSS RGB string
-        return `rgb(${color[0]}, ${color[1]}, ${color[2]}, 0.5)`;
+        return `rgb(${color[0]}, ${color[1]}, ${color[2]},0.7)`;
     }
 
     public getStatusColor(statusId: number): string {
@@ -407,7 +427,7 @@ export class TaskCalendarComponent implements OnInit, AfterViewInit {
         const taskAssigneeIds = task!.taskAssignees.map(assignee => assignee.userId);
         const taskFileIds = task!.taskFiles.map(file => file.fileId);
         this.taskService.updateTask(task!.taskId,
-            task!.project.projectId,
+            task!.projectId,
             task!.taskName,
             task!.taskDescription,
             newTaskDeadline.toISOString(),

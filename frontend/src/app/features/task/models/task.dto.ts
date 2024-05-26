@@ -7,6 +7,7 @@ import {TaskPriorityDto} from "./task-priority.dto";
 
 export interface TaskDto {
     taskId: number;
+    projectId: number;
     project: ProjectDto;
     taskStatus: TaskStatusDto;
     taskPriority: TaskPriorityDto;

@@ -18,7 +18,7 @@ interface ProjectRepository : JpaRepository<Project, Long> {
 
     fun findByProjectIdAndStatusIsTrue(projectId: Long): Project?
 
-    fun findAllByProjectIdInAndStatusIsTrueOrderByProjectIdDesc(projectIds: List<Int>): List<Project>
+    fun findAllByProjectIdInAndProjectEndDateIsNullAndStatusIsTrueOrderByProjectIdDesc(projectIds: List<Int>): List<Project>
 
     fun findAllByProjectDateToBetweenAndProjectEndDateIsNullAndStatusIsTrueOrderByProjectDateTo(
         startDate: Timestamp,

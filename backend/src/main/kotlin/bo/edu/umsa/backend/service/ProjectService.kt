@@ -7,7 +7,6 @@ import bo.edu.umsa.backend.mapper.ProjectMapper
 import bo.edu.umsa.backend.mapper.ProjectPartialMapper
 import bo.edu.umsa.backend.mapper.TaskPartialMapper
 import bo.edu.umsa.backend.repository.*
-import bo.edu.umsa.backend.service.TaskService.Companion
 import bo.edu.umsa.backend.specification.ProjectSpecification
 import bo.edu.umsa.backend.specification.TaskSpecification
 import bo.edu.umsa.backend.util.AuthUtil
@@ -49,7 +48,7 @@ class ProjectService @Autowired constructor(
         val projectOwnerEntities = projectOwnerRepository.findAllByUserIdAndStatusIsTrue(userId)
         val projectModeratorEntities = projectModeratorRepository.findAllByUserIdAndStatusIsTrue(userId)
         // Get the projects where the user is owner, moderator or member
-        val projectEntities = projectRepository.findAllByProjectIdInAndStatusIsTrueOrderByProjectIdDesc(
+        val projectEntities = projectRepository.findAllByProjectIdInAndProjectEndDateIsNullAndStatusIsTrueOrderByProjectIdDesc(
             projectOwnerEntities.map { it.projectId } +
                     projectModeratorEntities.map { it.projectId }
         )
