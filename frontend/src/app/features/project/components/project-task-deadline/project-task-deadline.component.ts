@@ -79,6 +79,9 @@ export class ProjectTaskDeadlineComponent implements OnInit {
     viewSidebarVisible: boolean = false;
     taskId: number = 0;
 
+    projectEndDate: Date | null = null;
+
+
     private searchSubject = new Subject<string>();
 
     constructor(
@@ -102,7 +105,7 @@ export class ProjectTaskDeadlineComponent implements OnInit {
         this.keyword = this.sharedService.getData('keyword') ?? '';
         this.selectedStatus = this.sharedService.getData('selectedStatus') ?? [];
         this.selectedPriority = this.sharedService.getData('selectedPriority') ?? [];
-
+        this.projectEndDate = this.sharedService.getData('projectEndDate') ?? null;
     }
 
     ngOnInit() {
@@ -270,8 +273,11 @@ export class ProjectTaskDeadlineComponent implements OnInit {
                 this.statusItems.push({
                     label: 'VENCIDO', value: 4
                 });
-                this.selectedStatus = this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 1 || status.value === 2)) : this.selectedStatus;
-                this.getData();
+                if(this.projectEndDate===null){
+                    this.selectedStatus = this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 1 || status.value === 2)) : this.selectedStatus;
+                } else {
+                    this.selectedStatus =  this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 3)) : this.selectedStatus;
+                }                this.getData();
             }, error: (error) => {
                 console.log(error);
             }

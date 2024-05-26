@@ -105,6 +105,10 @@ class ProjectService @Autowired constructor(
         if (Timestamp.from(Instant.parse(newProjectDto.projectDateFrom)).after(Timestamp.from(Instant.parse(newProjectDto.projectDateTo)))) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date range is incorrect", "El rango de fechas es incorrecto")
         }
+        // Validate the end date is after current date
+        if (Timestamp.from(Instant.parse(newProjectDto.projectDateTo)).before(Timestamp.from(Instant.now()))) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: End date is before current date", "La fecha de finalización es anterior a la fecha actual")
+        }
         // Validate the project moderators are not empty and valid
         if (newProjectDto.projectModeratorIds.isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one moderator is required", "Se requiere al menos un colaborador")
@@ -131,7 +135,7 @@ class ProjectService @Autowired constructor(
         projectEntity.projectDescription = newProjectDto.projectDescription
         projectEntity.projectObjective = newProjectDto.projectObjective
         projectEntity.projectDateFrom = Timestamp.from(Instant.parse(newProjectDto.projectDateFrom))
-        projectEntity.projectDateTo = Timestamp.from(Instant.parse(newProjectDto.projectDateTo))
+        projectEntity.projectDateTo = Timestamp.from(Instant.parse(newProjectDto.projectDateTo).plusSeconds(60 * 60 * 24 - 1))
         projectRepository.save(projectEntity)
         logger.info("Project created with id ${projectEntity.projectId}")
 
@@ -177,6 +181,10 @@ class ProjectService @Autowired constructor(
         if (Timestamp.from(Instant.parse(projectDto.projectDateFrom)).after(Timestamp.from(Instant.parse(projectDto.projectDateTo)))) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date range is incorrect", "El rango de fechas es incorrecto")
         }
+        // Validate the end date is after current date
+        if (Timestamp.from(Instant.parse(projectDto.projectDateTo)).before(Timestamp.from(Instant.now()))) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: End date is before current date", "La fecha de finalización es anterior a la fecha actual")
+        }
         // Validate the project exists
         val projectEntity = projectRepository.findByProjectIdAndStatusIsTrue(projectId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Project not found", "Proyecto no encontrado")
@@ -205,7 +213,7 @@ class ProjectService @Autowired constructor(
         projectEntity.projectDescription = projectDto.projectDescription
         projectEntity.projectObjective = projectDto.projectObjective
         projectEntity.projectDateFrom = Timestamp.from(Instant.parse(projectDto.projectDateFrom))
-        projectEntity.projectDateTo = Timestamp.from(Instant.parse(projectDto.projectDateTo))
+        projectEntity.projectDateTo = Timestamp.from(Instant.parse(projectDto.projectDateTo).plusSeconds(60 * 60 * 24 - 1))
         projectRepository.save(projectEntity)
         logger.info("Project updated with id $projectId")
 
@@ -406,7 +414,7 @@ class ProjectService @Autowired constructor(
             val ownerEmail = userRepository.findByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong())!!.email
             logger.info("Sending notification to project owner ${ownerEmail}")
             val ownerTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong()).map { it.firebaseToken }
-            val ownerMessageTittle = "Proyecto por finalizar"
+            val ownerMessageTittle = "Recordatorio: Proyecto por finalizar"
             val ownerMessageBody = "El proyecto: '$projectName' en el que participas como propietario está por finalizar en las próximas 24 horas. Por favor, asegúrate de que todas las tareas estén completadas."
             val notificationEntity = Notification()
             notificationEntity.messageTitle = ownerMessageTittle
@@ -424,7 +432,7 @@ class ProjectService @Autowired constructor(
             val moderatorEmail = userRepository.findByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong())!!.email
             logger.info("Sending notification to project moderator ${moderatorEmail}")
             val moderatorTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong()).map { it.firebaseToken }
-            val moderatorMessageTittle = "Proyecto por finalizar"
+            val moderatorMessageTittle = "Recordatorio: Proyecto por finalizar"
             val moderatorMessageBody = "El proyecto: '$projectName' en el que participas como colaborador está por finalizar en las próximas 24 horas. Por favor, asegúrate de que todas las tareas estén completadas."
             val notificationEntity = Notification()
             notificationEntity.messageTitle = moderatorMessageTittle

@@ -4,6 +4,7 @@ import {UserDto} from "../../user/models/user.dto";
 import {FileDto} from "../../../core/models/file.dto";
 import {TaskCommentDto} from "./task-comment.dto";
 import {TaskPriorityDto} from "./task-priority.dto";
+import {ReplacedPartDto} from "./replaced-part.dto";
 
 export interface TaskDto {
     taskId: number;
@@ -22,4 +23,5 @@ export interface TaskDto {
     taskAssignees: UserDto[];
     taskFiles: FileDto[];
     taskComments: TaskCommentDto[];
+    replacedParts: ReplacedPartDto[];
 }

@@ -99,6 +99,9 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
 
     rendered: boolean = false;
 
+    projectEndDate: Date | null = null;
+
+
 
     private searchSubject = new Subject<string>();
 
@@ -127,6 +130,8 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
         this.keyword = this.sharedService.getData('keyword') ?? '';
         this.selectedStatus = this.sharedService.getData('selectedStatus') ?? [];
         this.selectedPriority = this.sharedService.getData('selectedPriority') ?? [];
+        this.projectEndDate = this.sharedService.getData('projectEndDate') ?? null;
+
     }
 
 
@@ -401,8 +406,11 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
                 this.statusItems.push({
                     label: 'VENCIDO', value: 4
                 });
-                this.selectedStatus = this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 1 || status.value === 2)) : this.selectedStatus;
-                this.getData();
+                if(this.projectEndDate===null){
+                    this.selectedStatus = this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 1 || status.value === 2)) : this.selectedStatus;
+                } else {
+                    this.selectedStatus =  this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 3)) : this.selectedStatus;
+                }                this.getData();
             }, error: (error) => {
                 console.log(error);
             }

@@ -27,18 +27,18 @@ class NotificationService @Autowired constructor(
         // Get the user
         val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found", "Usuario no encontrado")
-        val notificationEntities = notificationRepository.findAllByUserIdAndStatusIsTrue(userEntity.userId.toLong())
+        val notificationEntities = notificationRepository.findAllByUserIdAndStatusIsTrueOrderByTxDateDesc(userEntity.userId.toLong())
         return notificationEntities.map { notificationEntity -> NotificationMapper.entityToDto(notificationEntity) }
     }
 
-    fun markNotificationAsRead(notificationId: Int) {
+    fun markNotificationAsRead(notificationId: Long) {
         val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         logger.info("Marking the notification with id $notificationId as read")
         // Get the user
         val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found", "Usuario no encontrado")
         // Get the notification
-        val notificationEntity = notificationRepository.findByNotificationIdAndStatusIsTrue(notificationId.toLong())
+        val notificationEntity = notificationRepository.findByNotificationIdAndStatusIsTrue(notificationId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Notification not found", "Notificación no encontrada")
         // Mark the notification as read
         notificationEntity.status = false

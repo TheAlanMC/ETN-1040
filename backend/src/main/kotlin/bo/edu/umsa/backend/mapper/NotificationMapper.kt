@@ -10,7 +10,7 @@ class NotificationMapper {
             return NotificationDto(
                 notificationId = notification.notificationId,
                 messageTitle = notification.messageTitle,
-                messageBody = notification.messageBody,
+                messageBody = notification.messageBody, txDate = notification.txDate
             )
         }
     }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface NotificationRepository : JpaRepository<Notification, Long> {
 
-    fun findAllByUserIdAndStatusIsTrue(userId: Long): List<Notification>
+    fun findAllByUserIdAndStatusIsTrueOrderByTxDateDesc(userId: Long): List<Notification>
 
     fun findByNotificationIdAndStatusIsTrue(notificationId: Long): Notification?
 

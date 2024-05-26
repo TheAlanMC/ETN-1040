@@ -31,22 +31,26 @@
         </ul>
     </div>
 
+
     <div class="flex flex-column mt-5 mx-auto md:mx-0">
         <span class="mb-2 font-semibold">Notificaciones</span>
         <span class="text-color-secondary font-medium mb-5">Tienes {{ notifications.length }} notificaciones</span>
         <ul class="list-none m-0 p-0">
-          <li *ngFor="let notification of notifications">
-            <a class="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
-              <span>
-                  <i [class]="notification.icon"></i>
-              </span>
-              <div class="ml-3">
-                <span class="mb-2 font-semibold">{{ notification.message }}</span>
-                <p class="text-color-secondary m-0">{{ notification.time | timeAgo }}</p>
-              </div>
-            </a>
-          </li>
+            <li *ngFor="let notification of notifications">
+                <a class="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
+          <span>
+              <i [class]="notification.icon"></i>
+          </span>
+                    <div class="ml-3">
+                        <span class="mb-2 font-semibold">{{ notification.messageBody }}</span>
+<!--                        <span class="mb-2 font-semibold">{{ notification.messageTitle }}</span>-->
+<!--                        <p class="text-color-secondary m-0" style="font-size: 0.8em;">{{ notification.messageBody }}</p>-->
+                        <p class="text-color-secondary m-0">{{ notification.txDate | timeAgo }}</p>
+                    </div>
+                    <button pButton pRipple type="button" icon="pi pi-check" class="p-button-rounded p-button-text" pTooltip="Marcar como leido" tooltipPosition="left" (click)="markAsRead(notification.notificationId)">
+                    </button>
+                </a>
+            </li>
         </ul>
     </div>
-
 </p-sidebar>

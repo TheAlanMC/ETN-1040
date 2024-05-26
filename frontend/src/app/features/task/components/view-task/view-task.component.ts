@@ -15,6 +15,7 @@ import {TaskCommentService} from "../../../../core/services/task-comment.service
 import {TaskHistoryDto} from "../../models/task-history.dto";
 import {Directory, Filesystem} from "@capacitor/filesystem";
 import {FileOpener} from "@capacitor-community/file-opener";
+import {ReplacedPartService} from "../../../../core/services/replaced-part.service";
 
 @Component({
     selector: 'app-view-task',
@@ -22,7 +23,7 @@ import {FileOpener} from "@capacitor-community/file-opener";
     styleUrl: './view-task.component.scss',
     providers: [MessageService, ConfirmationService,],
 })
-export class ViewTaskComponent implements OnInit {
+export class ViewTaskComponent {
 
     @Input() sidebarVisible: boolean = false;
     @Input() taskId: number = 0;
@@ -50,6 +51,8 @@ export class ViewTaskComponent implements OnInit {
     statusItems: SelectItem[] = [];
 
     focusedComment: boolean = false;
+
+    focusedReplacement: boolean = false;
 
     taskHistory: TaskHistoryDto[] = [];
 
@@ -80,23 +83,44 @@ export class ViewTaskComponent implements OnInit {
 
     editCommentControl = new FormControl('');
 
+    replacementControl = new FormControl('');
+
+    editReplacementControl = new FormControl('');
+
     menuItems: MenuItem[] = [];
+
+    replacementMenuItems: MenuItem[] = [];
 
     selectedCommentId: number = 0;
 
     uploadedFiles: FileDto[] = [];
 
+    replacementUploadedFiles: FileDto[] = [];
+
     showNewCommentAttachment: boolean = false;
+
+    showNewReplacementAttachment: boolean = false;
 
     newCommentFiles: any[] = [];
 
+    newReplacementFiles: any[] = [];
+
     editComment: boolean = false;
+
+    editReplacement: boolean = false;
 
     editCommentFiles: any[] = [];
 
+    editReplacementFiles: any[] = [];
+
     editUploadedFiles: FileDto[] = [];
 
+    editReplacementUploadedFiles: FileDto[] = [];
+
+
     showEditCommentAttachment: boolean = false;
+
+    showEditReplacementAttachment: boolean = false;
 
     visibleAddFeedback: boolean = false;
 
@@ -106,6 +130,8 @@ export class ViewTaskComponent implements OnInit {
 
     downloadingFileId: number = 0;
 
+    valRadio: string = 'No';
+
 
     constructor(
         private taskService: TaskService,
@@ -114,7 +140,8 @@ export class ViewTaskComponent implements OnInit {
         private fileService: FileService,
         private router: Router,
         private taskCommentService: TaskCommentService,
-        private confirmationService: ConfirmationService
+        private confirmationService: ConfirmationService,
+        private replacedPartService: ReplacedPartService
     ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         this.defaultDisplay = this.utilService.checkIfMobile() ? 'true' : 'none';
@@ -131,18 +158,14 @@ export class ViewTaskComponent implements OnInit {
 
         this.menuItems = [{label: 'Editar', icon: 'pi pi-pencil', command: () => this.onCommentEdit()},
             {label: 'Eliminar', icon: 'pi pi-trash', command: () => this.onCommentDelete()}];
+
+        this.replacementMenuItems = [{label: 'Editar', icon: 'pi pi-pencil', command: () => this.onReplacementEdit()},
+            {label: 'Eliminar', icon: 'pi pi-trash', command: () => this.onReplacementDelete()}];
     }
 
-    ngOnInit() {
-        this.priorityItems = [{label: 'Nivel 1', value: 1}, {label: 'Nivel 2', value: 2}, {label: 'Nivel 3', value: 3},
-            {label: 'Nivel 4', value: 4}, {label: 'Nivel 5', value: 5}, {label: 'Nivel 6', value: 6},
-            {label: 'Nivel 7', value: 7}, {label: 'Nivel 8', value: 8}, {label: 'Nivel 9', value: 9},
-            {label: 'Nivel 10', value: 10},];
-    }
-
-    public onSidebarShow() {
-        this.getStatuses()
-        this.getPriorities()
+    public onSidebarShow(){
+    this.getStatuses()
+    this.getPriorities()
         this.getTask()
         this.getHistory()
     }
@@ -227,6 +250,7 @@ export class ViewTaskComponent implements OnInit {
                     this.daysOfDifference = Math.ceil(difference / (1000 * 3600 * 24));
                     this.daysOfDifference = this.daysOfDifference < 0 ? 0 : this.daysOfDifference;
                 }
+                this.valRadio = this.task!.replacedParts.length > 0 ? 'Yes' : 'No';
                 this.isLoading = false;
             }, error: (error) => {
                 this.isLoading = false;
@@ -256,6 +280,8 @@ export class ViewTaskComponent implements OnInit {
 
         this.onCommentCancel();
         this.onEditCommentCancel();
+        this.onReplacementCancel();
+        this.onEditReplacementCancel();
     }
 
     public onFileMouseOver(file: any) {
@@ -277,6 +303,82 @@ export class ViewTaskComponent implements OnInit {
     }
 
     public downloadFile(file: any) {
+        if (file.fileId === undefined) {
+            if (!this.isMobile) {
+                const url = URL.createObjectURL(file);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file.name;
+                document.body.appendChild(a);
+                a.click();
+                URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } else {
+                const reader = new FileReader();
+                reader.onloadend = async () => {
+                    const base64Data = reader.result as string;
+                    const savedFile = await Filesystem.writeFile({
+                        path: file.name,
+                        data: base64Data,
+                        directory: Directory.Documents,
+                    });
+                    const fileOpenerOptions = {
+                        filePath: savedFile.uri,
+                        contentType: file.type,
+                        openWithDefault: true,
+                    };
+                    await FileOpener.open(fileOpenerOptions);
+
+                };
+                reader.readAsDataURL(file);
+            }
+        } else {
+            this.isLoading = true;
+            this.downloadingFileId = file.fileId;
+            this.fileService.getFile(file.fileId).subscribe({
+                next: (data) => {
+                    const blob = new Blob([data],
+                        {type: file.contentType});
+                    if (!this.isMobile) {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = file.fileName;
+                        document.body.appendChild(a);
+                        a.click();
+                        URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                    } else {
+                        const reader = new FileReader();
+                        reader.onloadend = async () => {
+                            const base64Data = reader.result as string;
+                            const savedFile = await Filesystem.writeFile({
+                                path: file.fileName,
+                                data: base64Data,
+                                directory: Directory.Documents,
+                            });
+                            const fileOpenerOptions = {
+                                filePath: savedFile.uri,
+                                contentType: file.contentType,
+                                openWithDefault: true,
+                            };
+                            await FileOpener.open(fileOpenerOptions);
+
+                        };
+                        reader.readAsDataURL(blob);
+                    }
+                    this.isLoading = false;
+                    this.downloadingFileId = 0;
+                }, error: (error) => {
+                    this.isLoading = false;
+                    this.downloadingFileId = 0;
+                    console.log(error);
+                }
+            });
+        }
+    }
+
+    public downloadReplacementFile(file: any) {
         if (file.fileId === undefined) {
             if (!this.isMobile) {
                 const url = URL.createObjectURL(file);
@@ -480,6 +582,32 @@ export class ViewTaskComponent implements OnInit {
         });
     }
 
+    public onReplacement(event: any | null = null) {
+        this.isLoading = true;
+        if (this.newReplacementFiles.length == 0) {
+            this.saveTaskReplacement();
+            return;
+        }
+        this.newReplacementFiles.forEach(file => {
+            this.fileService.uploadFile(file).subscribe({
+                next: (data) => {
+                    this.replacementUploadedFiles.push(data.data!);
+                    if (this.replacementUploadedFiles.length == this.newReplacementFiles.length) {
+                        this.saveTaskReplacement();
+                    }
+                }, error: (error) => {
+                    console.log(error);
+                    this.isLoading = false;
+                    this.messageService.add({
+                        severity: 'error', summary: 'Error', detail: error.error.message
+                    });
+                }
+            });
+        });
+    }
+
+
+
     public saveTaskComment() {
         this.taskCommentService.createTaskComment(this.taskId,
             this.newCommentControl.value!,
@@ -511,12 +639,54 @@ export class ViewTaskComponent implements OnInit {
         });
     }
 
+    public saveTaskReplacement() {
+        this.replacedPartService.createReplacedPart(
+            this.taskId,
+            this.replacementControl.value!,
+            this.replacementUploadedFiles.map(file => file.fileId)).subscribe({
+            next: (data) => {
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Éxito',
+                    detail: 'Reemplazo creado correctamente'
+                });
+                setTimeout(() => {
+                        let currentRoute = this.router.url;
+                        this.router.navigateByUrl('/',
+                            {skipLocationChange: true}).then(() => {
+                            this.router.navigate([currentRoute]).then(r => console.log('Task replacement created'));
+                            this.isLoading = false;
+                        });
+                    },
+                    500);
+                this.onClose();
+            }, error: (error) => {
+                console.log(error);
+                this.replacementUploadedFiles = [];
+                this.isLoading = false;
+                this.messageService.add({
+                    severity: 'error', summary: 'Error', detail: error.error.message
+                });
+            }
+        });
+    }
+
+
     public onCommentCancel() {
         this.newCommentControl.setValue('');
         this.focusedComment = false;
         this.showNewCommentAttachment = false;
         this.newCommentFiles = [];
         this.uploadedFiles = [];
+    }
+
+    public onReplacementCancel() {
+        this.replacementControl.setValue('');
+        this.focusedReplacement = false;
+        this.showNewReplacementAttachment = false;
+        this.newReplacementFiles = [];
+this.replacementUploadedFiles = [];
+this.valRadio = 'No';
     }
 
     public onEditCommentCancel() {
@@ -526,6 +696,14 @@ export class ViewTaskComponent implements OnInit {
         this.selectedCommentId = 0;
         this.editCommentFiles = [];
         this.editUploadedFiles = [];
+    }
+
+    public onEditReplacementCancel() {
+        this.editReplacementControl.setValue('');
+        this.showEditReplacementAttachment = false;
+        this.editReplacement = false;
+        this.editReplacementFiles = [];
+        this.replacementUploadedFiles = [];
     }
 
     public onCommentEdit() {
@@ -546,6 +724,24 @@ export class ViewTaskComponent implements OnInit {
         this.editCommentControl.setValue(comment.taskComment);
     }
 
+    public onReplacementEdit() {
+        this.editReplacement = true;
+        const replacement = this.task!.replacedParts[0];
+        replacement.replacedPartFiles.forEach(file => {
+            this.editReplacementFiles.push({
+                id: file.fileId,
+                name: file.fileName,
+                size: file.fileSize,
+                type: file.contentType,
+                objectURL: (file.contentType.includes('image') ? `${this.filesBaselUrl}/${file.fileId}/thumbnail` : null)
+            });
+        });
+        if (this.editReplacementFiles.length > 0) {
+            this.showEditReplacementAttachment = true;
+        }
+        this.editReplacementControl.setValue(replacement.replacedPartDescription);
+    }
+
     public onCommentDelete() {
         this.confirmationService.confirm({
             key: 'confirmDeleteComment',
@@ -556,6 +752,20 @@ export class ViewTaskComponent implements OnInit {
             rejectLabel: 'No',
             accept: () => {
                 this.deleteTaskComment(this.selectedCommentId);
+            },
+        });
+    }
+
+    public onReplacementDelete() {
+        this.confirmationService.confirm({
+            key: 'confirmDeleteReplacement',
+            message: '¿Estás seguro de que deseas eliminar este reemplazo? Esta acción no se puede deshacer.',
+            header: 'Confirmar',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Sí',
+            rejectLabel: 'No',
+            accept: () => {
+                this.deleteTaskReplacement();
             },
         });
     }
@@ -586,14 +796,51 @@ export class ViewTaskComponent implements OnInit {
         });
     }
 
+    public deleteTaskReplacement() {
+        let replacementId = this.task!.replacedParts[0].replacedPartId;
+        this.replacedPartService.deleteReplacedPart(replacementId).subscribe({
+            next: (data) => {
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Éxito',
+                    detail: 'Reemplazo eliminado correctamente'
+                });
+                setTimeout(() => {
+                        let currentRoute = this.router.url;
+                        this.router.navigateByUrl('/',
+                            {skipLocationChange: true}).then(() => {
+                            this.router.navigate([currentRoute]).then(r => console.log('Task replacement deleted'));
+                        });
+                    },
+                    500);
+                this.onClose();
+            }, error: (error) => {
+                console.log(error);
+                this.messageService.add({
+                    severity: 'error', summary: 'Error', detail: error.error.message
+                });
+            }
+        });
+    }
+
     public onButtonClick(event: any) {
         this.selectedCommentId = event;
         this.editComment = false;
         this.editCommentFiles = [];
     }
 
+    public onReplacementButtonClick() {
+        this.selectedCommentId = 0;
+        this.editReplacement = false;
+        this.editCommentFiles = [];
+    }
+
     public onCommentFocus() {
         this.focusedComment = true;
+    }
+
+    public onReplacementFocus() {
+        this.focusedReplacement = true;
     }
 
     public onFileUpload() {
@@ -604,6 +851,14 @@ export class ViewTaskComponent implements OnInit {
         this.showEditCommentAttachment = true;
     }
 
+    public onEditReplacementFileUpload() {
+        this.showEditReplacementAttachment = true;
+    }
+
+    public onReplacementFileUpload() {
+        this.showNewReplacementAttachment = true;
+    }
+
     public onUpload(event: any) {
         for (let file of event.files) {
             if (!this.newCommentFiles.some(f => f.name === file.name)) {
@@ -612,11 +867,35 @@ export class ViewTaskComponent implements OnInit {
         }
     }
 
+    public onReplacementUpload(event: any) {
+        for (let file of event.files) {
+            if (!this.newReplacementFiles.some(f => f.name === file.name)) {
+                this.newReplacementFiles.push(file);
+            }
+        }
+    }
+
     public removeFile(file: any) {
         this.newCommentFiles = this.newCommentFiles.filter(f => f !== file);
     }
 
+    public removeReplacementFile(file: any) {
+        this.newReplacementFiles = this.newReplacementFiles.filter(f => f !== file);
+    }
+
     public onNewFileMouseOver(file: any) {
+        if (this.isMobile) {
+            return;
+        }
+        this.buttonEl.toArray().forEach(el => {
+            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'flex' : null;
+        })
+        this.buttonOp.toArray().forEach(el => {
+            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'flex' : null;
+        })
+    }
+
+    public onNewReplacementFileMouseOver(file: any) {
         if (this.isMobile) {
             return;
         }
@@ -640,7 +919,31 @@ export class ViewTaskComponent implements OnInit {
         })
     }
 
+    public onNewReplacementFileMouseLeave(file: any) {
+        if (this.isMobile) {
+            return;
+        }
+        this.buttonEl.toArray().forEach(el => {
+            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'none' : null;
+        })
+        this.buttonOp.toArray().forEach(el => {
+            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'none' : null;
+        })
+    }
+
     public onEditFileMouseOver(file: any) {
+        if (this.isMobile) {
+            return;
+        }
+        this.buttonEl.toArray().forEach(el => {
+            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'flex' : null;
+        })
+        this.buttonOp.toArray().forEach(el => {
+            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'flex' : null;
+        })
+    }
+
+    public onEditReplacementFileMouseOver(file: any) {
         if (this.isMobile) {
             return;
         }
@@ -664,6 +967,18 @@ export class ViewTaskComponent implements OnInit {
         })
     }
 
+    public onEditReplacementFileMouseLeave(file: any) {
+        if (this.isMobile) {
+            return;
+        }
+        this.buttonEl.toArray().forEach(el => {
+            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'none' : null;
+        })
+        this.buttonOp.toArray().forEach(el => {
+            el.nativeElement.id === file.name ? el.nativeElement.style.display = 'none' : null;
+        })
+    }
+
     public onEditUpload(event: any) {
         for (let file of event.files) {
             if (!this.editCommentFiles.some(f => f.name === file.name)) {
@@ -672,11 +987,100 @@ export class ViewTaskComponent implements OnInit {
         }
     }
 
+    public onEditReplacementUpload(event: any) {
+        for (let file of event.files) {
+            if (!this.editReplacementFiles.some(f => f.name === file.name)) {
+                this.editReplacementFiles.push(file);
+            }
+        }
+    }
+
     public removeEditFile(file: any) {
         this.editCommentFiles = this.editCommentFiles.filter(f => f !== file);
     }
 
+    public removeEditReplacementFile(file: any) {
+        this.editReplacementFiles = this.editReplacementFiles.filter(f => f !== file);
+    }
+
     public downloadEditFile(file: any) {
+        if (file.id === undefined) {
+            if (!this.isMobile) {
+                const url = URL.createObjectURL(file);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file.name;
+                document.body.appendChild(a);
+                a.click();
+                URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } else {
+                const reader = new FileReader();
+                reader.onloadend = async () => {
+                    const base64Data = reader.result as string;
+                    const savedFile = await Filesystem.writeFile({
+                        path: file.name,
+                        data: base64Data,
+                        directory: Directory.Documents,
+                    });
+                    const fileOpenerOptions = {
+                        filePath: savedFile.uri,
+                        contentType: file.type,
+                        openWithDefault: true,
+                    };
+                    await FileOpener.open(fileOpenerOptions);
+
+                };
+                reader.readAsDataURL(file);
+            }
+        } else {
+            this.isLoading = true;
+            this.downloadingFileId = file.id;
+            this.fileService.getFile(file.id).subscribe({
+                next: (data) => {
+                    const blob = new Blob([data],
+                        {type: file.type});
+                    if (!this.isMobile) {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = file.name
+                        document.body.appendChild(a);
+                        a.click();
+                        URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                    } else {
+                        const reader = new FileReader();
+                        reader.onloadend = async () => {
+                            const base64Data = reader.result as string;
+                            const savedFile = await Filesystem.writeFile({
+                                path: file.name,
+                                data: base64Data,
+                                directory: Directory.Documents,
+                            });
+                            const fileOpenerOptions = {
+                                filePath: savedFile.uri,
+                                contentType: file.type,
+                                openWithDefault: true,
+                            };
+                            await FileOpener.open(fileOpenerOptions);
+
+                        };
+                        reader.readAsDataURL(blob);
+                    }
+                    this.isLoading = false;
+                    this.downloadingFileId = 0;
+                }, error: (error) => {
+                    this.isLoading = false;
+                    this.downloadingFileId = 0;
+                    console.log(error);
+                }
+            });
+        }
+    }
+
+    public downloadEditReplacementFile(file: any) {
+        console.log(file);
         if (file.id === undefined) {
             if (!this.isMobile) {
                 const url = URL.createObjectURL(file);
@@ -788,6 +1192,42 @@ export class ViewTaskComponent implements OnInit {
         });
     }
 
+    public onEditReplacement(event: any | null = null) {
+        this.isLoading = true;
+        if (this.editReplacementFiles.length == 0) {
+            this.updateTaskReplacement();
+            return;
+        }
+        this.editReplacementFiles.forEach(file => {
+            if (file.id === undefined) {
+                this.fileService.uploadFile(file).subscribe({
+                    next: (data) => {
+                        this.editReplacementUploadedFiles.push(data.data!);
+                        if (this.editReplacementUploadedFiles.length == this.editReplacementFiles.length) {
+                            this.updateTaskReplacement();
+                        }
+                    }, error: (error) => {
+                        console.log(error);
+                        this.isLoading = false;
+                        this.messageService.add({
+                            severity: 'error', summary: 'Error', detail: error.error.message
+                        });
+                    }
+                });
+            } else {
+                this.editReplacementUploadedFiles.push({
+                    fileId: file.id,
+                    fileName: file.name,
+                    contentType: file.type,
+                    fileSize: file.size
+                });
+                if (this.editReplacementUploadedFiles.length == this.editReplacementFiles.length) {
+                    this.updateTaskReplacement();
+                }
+            }
+        });
+    }
+
     public updateTaskComment() {
         this.taskCommentService.updateTaskComment(this.selectedCommentId,
             this.editCommentControl.value!,
@@ -811,6 +1251,37 @@ export class ViewTaskComponent implements OnInit {
             }, error: (error) => {
                 console.log(error);
                 this.editUploadedFiles = [];
+                this.isLoading = false;
+                this.messageService.add({
+                    severity: 'error', summary: 'Error', detail: error.error.message
+                });
+            }
+        });
+    }
+
+    public updateTaskReplacement() {
+        this.replacedPartService.updateReplacedPart(this.task!.replacedParts[0].replacedPartId,
+            this.editReplacementControl.value!,
+            this.editReplacementUploadedFiles.map(file => file.fileId)).subscribe({
+            next: (data) => {
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Éxito',
+                    detail: 'Reemplazo actualizado correctamente'
+                });
+                setTimeout(() => {
+                        let currentRoute = this.router.url;
+                        this.router.navigateByUrl('/',
+                            {skipLocationChange: true}).then(() => {
+                            this.router.navigate([currentRoute]).then(r => console.log('Task replacement updated'));
+                            this.isLoading = false;
+                        });
+                    },
+                    500);
+                this.onClose();
+            }, error: (error) => {
+                console.log(error);
+                this.editReplacementUploadedFiles = [];
                 this.isLoading = false;
                 this.messageService.add({
                     severity: 'error', summary: 'Error', detail: error.error.message

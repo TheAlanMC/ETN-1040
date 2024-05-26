@@ -79,6 +79,8 @@ export class ProjectTaskListComponent implements OnInit {
 
     private searchSubject = new Subject<string>();
 
+    projectEndDate: Date | null = null;
+
     constructor(
         private confirmationService: ConfirmationService,
         private messageService: MessageService,
@@ -104,6 +106,7 @@ export class ProjectTaskListComponent implements OnInit {
         this.keyword = this.sharedService.getData('keyword') ?? '';
         this.selectedStatus = this.sharedService.getData('selectedStatus') ?? [];
         this.selectedPriority = this.sharedService.getData('selectedPriority') ?? [];
+        this.projectEndDate = this.sharedService.getData('projectEndDate') ?? null;
     }
 
     ngOnInit() {
@@ -255,7 +258,11 @@ export class ProjectTaskListComponent implements OnInit {
                 this.statusItems.push({
                     label: 'VENCIDO', value: 4
                 });
-                this.selectedStatus = this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 1 || status.value === 2)) : this.selectedStatus;
+                if(this.projectEndDate===null){
+                    this.selectedStatus = this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 1 || status.value === 2)) : this.selectedStatus;
+                } else {
+                    this.selectedStatus =  this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 3)) : this.selectedStatus;
+                }
                 this.getData();
             }, error: (error) => {
                 console.log(error);

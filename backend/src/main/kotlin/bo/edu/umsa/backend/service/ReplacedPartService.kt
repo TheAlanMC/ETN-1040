@@ -43,7 +43,7 @@ class ReplacedPartService @Autowired constructor(
     fun createReplacedPart(newReplacedPartDto: NewReplacedPartDto) {
         // Validate the replaced part is not empty
         if (newReplacedPartDto.replacedPartDescription.trim().isEmpty()) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Replaced part is blank", "El reemplazo está en blanco")
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Replaced part is blank", "La descripción del reemplazo está en blanco")
         }
         // Get the user id from the token
         val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
@@ -84,7 +84,7 @@ class ReplacedPartService @Autowired constructor(
     ) {
         // Validate the replaced part is not empty
         if (newReplacedPartDto.replacedPartDescription.trim().isEmpty()) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Replaced part is blank", "El reemplazo está en blanco")
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Replaced part is blank", "La descripción del reemplazo está en blanco")
         }
         // Validate the replaced part exists
         val replacedPartEntity = replacedPartRepository.findByReplacedPartIdAndStatusIsTrue(replacedPartId)

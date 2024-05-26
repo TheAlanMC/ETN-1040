@@ -10,6 +10,7 @@ import {ResponseDto} from "../../../../core/models/response.dto";
 import {PageDto} from "../../../../core/models/page.dto";
 import {ProjectService} from '../../../../core/services/project.service';
 import {debounceTime, Subject} from "rxjs";
+import {SharedService} from "../../../../core/services/shared.service";
 
 @Component({
     selector: 'app-project-list',
@@ -50,7 +51,8 @@ export class ProjectListComponent implements OnInit {
         private confirmationService: ConfirmationService,
         private messageService: MessageService,
         private utilService: UtilService,
-        private projectService: ProjectService
+        private projectService: ProjectService,
+        private sharedService: SharedService
     ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage
@@ -83,6 +85,9 @@ export class ProjectListComponent implements OnInit {
     }
 
     public navigateToViewProject(projectId: number) {
+        this.sharedService.changeData('selectedStatus', [])
+        this.sharedService.changeData('selectedPriority', [])
+        this.sharedService.changeData('projectEndDate', this.projects.find(project => project.projectId === projectId)?.projectEndDate)
         this.router.navigate(['/projects/view/' + projectId]).then(r => console.log('Navigate to view project'));
     }
 

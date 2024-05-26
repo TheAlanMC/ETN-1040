@@ -233,7 +233,7 @@ class TaskService @Autowired constructor(
         taskAssigneeEntities.forEach { taskAssigneeEntity ->
             val assigneeEmail = userRepository.findByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong())!!.email
             val assigneeTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong()).map { it.firebaseToken }
-            val assigneeMessageTittle = "Nueva tarea asignada"
+            val assigneeMessageTittle = "Tarea asignada"
             val assigneeMessageBody = "Se le ha asignado la tarea '${taskEntity.taskName}' en el proyecto '${projectEntity.projectName}'"
             val notificationEntity = Notification()
             notificationEntity.messageTitle = assigneeMessageTittle
@@ -578,7 +578,7 @@ class TaskService @Autowired constructor(
             val assigneeEmail = userRepository.findByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong())!!.email
             logger.info("Sending notification to project assignee $assigneeEmail")
             val assigneeTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong()).map { it.firebaseToken }
-            val assigneeMessageTittle = "Tarea por finalizar"
+            val assigneeMessageTittle = "Recordatorio: Tarea por finalizar"
             val assigneeMessageBody = "La tarea: '${taskAssigneeEntity.task!!.taskName}' en el proyecto: '$projectName' está por finalizar en las próximas 24 horas. Por favor, complete la tarea."
             val notificationEntity = Notification()
             notificationEntity.messageTitle = assigneeMessageTittle
