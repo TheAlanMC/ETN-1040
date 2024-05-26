@@ -143,10 +143,11 @@ export class ProjectTaskDeadlineListComponent implements OnInit {
         const taskAssigneeIds = task.taskAssignees.map(assignee => assignee.userId);
         const taskFileIds = task.taskFiles.map(file => file.fileId);
         this.taskService.updateTask(task.taskId,
+            this.projectId,
             task.taskName,
             task.taskDescription,
             newTaskDeadline.toISOString(),
-            task.taskPriority,
+            task.taskPriority.taskPriorityId,
             taskAssigneeIds,
             taskFileIds).subscribe({
             next: (data: ResponseDto<null>) => {

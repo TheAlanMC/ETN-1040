@@ -19,7 +19,7 @@
                                         (editCard)="onEditCard($event)"
                                         (moveCard)="onMoveCard($event)" (viewCard)="onViewCard($event)"
                                         *ngFor="let task of taskList.tasks" [card]="task"
-                                        [cdkDragDisabled]="isMobileDevice || !((isOwner || isModerator) && canEditTask)"
+                                        [cdkDragDisabled]="isMobileDevice || !((isOwner || isModerator) && canEditTask) || task.taskEndDate"
                                         [listId]="taskList.listId" [users]="users"
                                         cdkDrag
                                         cdkDragHandle></app-project-task-deadline-card>

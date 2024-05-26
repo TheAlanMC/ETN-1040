@@ -12,7 +12,6 @@
 <div class="mb-3">
     <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus"
                    [options]="statusItems"
-                   [showClear]="true"
                    [style]="{'width': '100%'}"
                    class="multiselect-custom" display="chip" optionLabel="label"
                    placeholder="Seleccionar Estado">

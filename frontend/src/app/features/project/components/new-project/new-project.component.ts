@@ -57,6 +57,7 @@ export class NewProjectComponent implements OnInit {
         [Validators.required]);
     dateToControl = new FormControl('',
         [Validators.required]);
+    projectObjectiveControl = new FormControl('', [Validators.required]);
     projectDescriptionControl = new FormControl('');
 
     baseUrl: string = `${environment.API_URL}/api/v1/users`;
@@ -126,6 +127,7 @@ export class NewProjectComponent implements OnInit {
             this.projectDescriptionControl.value!,
             this.dateFromControl.value!,
             this.dateToControl.value!,
+            this.projectObjectiveControl.value!,
             this.selectedMembers.map(member => member.value),
             this.selectedModerators.map(moderator => moderator.value)).subscribe({
             next: (data) => {

@@ -16,11 +16,11 @@ import {FileSizePipe} from "../core/pipes/file-size.pipe";
         ForbiddenComponent,
         NotFoundComponent,
         TimeAgoPipe,
-        FileSizePipe
+        FileSizePipe,
     ],
     exports: [
         TimeAgoPipe,
-        FileSizePipe
+        FileSizePipe,
     ],
     imports: [
         CommonModule,

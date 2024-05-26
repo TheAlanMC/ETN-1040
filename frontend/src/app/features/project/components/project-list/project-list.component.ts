@@ -9,6 +9,7 @@ import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {ResponseDto} from "../../../../core/models/response.dto";
 import {PageDto} from "../../../../core/models/page.dto";
 import {ProjectService} from '../../../../core/services/project.service';
+import {debounceTime, Subject} from "rxjs";
 
 @Component({
     selector: 'app-project-list',
@@ -25,7 +26,7 @@ export class ProjectListComponent implements OnInit {
 
     // Pagination variables
     sortBy: string = 'projectId';
-    sortType: string = 'asc';
+    sortType: string = 'desc';
     page: number = 0;
     size: number = 10;
 
@@ -39,6 +40,10 @@ export class ProjectListComponent implements OnInit {
     baseUrl: string = `${environment.API_URL}/api/v1/users`;
 
     imgLoaded: { [key: string]: boolean } = {};
+
+    keyword: string = '';
+
+    private searchSubject = new Subject<string>();
 
     constructor(
         private router: Router,
@@ -63,6 +68,14 @@ export class ProjectListComponent implements OnInit {
 
     ngOnInit() {
         this.getData();
+        this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
+            this.getData()
+        });
+    }
+
+    public onSearch(event: any) {
+        this.keyword = event.target.value;
+        this.searchSubject.next(this.keyword);
     }
 
     public navigateToCreateProject() {
@@ -96,7 +109,9 @@ export class ProjectListComponent implements OnInit {
         this.projectService.getProjects(this.sortBy,
             this.sortType,
             this.page,
-            this.size).subscribe({
+            this.size,
+            this.keyword
+            ).subscribe({
             next: (data: ResponseDto<PageDto<ProjectDto>>) => {
                 this.projects = data.data!.content;
                 this.totalElements = data.data!.page.totalElements;

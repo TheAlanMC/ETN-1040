@@ -43,7 +43,7 @@ class TaskSpecification {
                 Specification { root, _, cb ->
                     cb.or(
                         cb.`in`(root.get<Any>("taskStatus").get<Any>("taskStatusName")).value(taskStatuses),
-                        cb.and(cb.lessThan(root.get("taskDeadline"), currentDate), cb.notEqual(root.get<Task>("taskStatusId"), 3)),
+                        cb.and(cb.lessThan(root.get("taskDueDate"), currentDate), cb.notEqual(root.get<Task>("taskStatusId"), 3)),
                     )
                 }
             }
@@ -70,7 +70,7 @@ class TaskSpecification {
             cal.add(Calendar.DATE, -1)
             val newDateFrom = cal.time
             return Specification { root, _, cb ->
-                cb.between(root.get("taskDeadline"), newDateFrom, dateTo)
+                cb.between(root.get("taskDueDate"), newDateFrom, dateTo)
             }
         }
 

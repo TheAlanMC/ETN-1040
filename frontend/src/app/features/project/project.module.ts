@@ -47,6 +47,7 @@ import {
 } from './components/project-task-deadline-card/project-task-deadline-card.component';
 import {TieredMenuModule} from "primeng/tieredmenu";
 import {TaskModule} from "../task/task.module";
+import {RatingModule} from "primeng/rating";
 
 
 @NgModule({
@@ -98,7 +99,8 @@ import {TaskModule} from "../task/task.module";
         CdkDragHandle,
         CdkDrag,
         TieredMenuModule,
-        TaskModule
+        TaskModule,
+        RatingModule
     ]
 })
 export class ProjectModule {

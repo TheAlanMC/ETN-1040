@@ -139,6 +139,7 @@ export class TaskDeadlineListComponent implements OnInit {
         const taskAssigneeIds = task.taskAssignees.map(assignee => assignee.userId);
         const taskFileIds = task.taskFiles.map(file => file.fileId);
         this.taskService.updateTask(task.taskId,
+            task.project.projectId,
             task.taskName,
             task.taskDescription,
             newTaskDeadline.toISOString(),

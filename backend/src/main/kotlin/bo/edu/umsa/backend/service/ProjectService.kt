@@ -7,7 +7,6 @@ import bo.edu.umsa.backend.mapper.ProjectMapper
 import bo.edu.umsa.backend.mapper.ProjectPartialMapper
 import bo.edu.umsa.backend.mapper.TaskPartialMapper
 import bo.edu.umsa.backend.repository.*
-import bo.edu.umsa.backend.service.TaskService.Companion
 import bo.edu.umsa.backend.specification.ProjectSpecification
 import bo.edu.umsa.backend.specification.TaskSpecification
 import bo.edu.umsa.backend.util.AuthUtil
@@ -98,8 +97,8 @@ class ProjectService @Autowired constructor(
         }
         // Validate the dates have the correct format
         try {
-            val dateFrom = Timestamp.from(Instant.parse(newProjectDto.projectDateFrom))
-            val dateTo = Timestamp.from(Instant.parse(newProjectDto.projectDateTo))
+            Timestamp.from(Instant.parse(newProjectDto.projectDateFrom))
+            Timestamp.from(Instant.parse(newProjectDto.projectDateTo))
         } catch (e: Exception) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date format is incorrect", "El formato de fecha es incorrecto")
         }
@@ -108,7 +107,7 @@ class ProjectService @Autowired constructor(
         }
         // Validate the project moderators are not empty and valid
         if (newProjectDto.projectModeratorIds.isEmpty()) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one moderator is required", "Se requiere al menos un moderador")
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one moderator is required", "Se requiere al menos un colaborador")
         }
         // Validate the project members are not empty
         if (newProjectDto.projectMemberIds.isEmpty()) {
@@ -170,8 +169,8 @@ class ProjectService @Autowired constructor(
         }
         // Validate the dates have the correct format
         try {
-            val dateFrom = Timestamp.from(Instant.parse(projectDto.projectDateFrom))
-            val dateTo = Timestamp.from(Instant.parse(projectDto.projectDateTo))
+            Timestamp.from(Instant.parse(projectDto.projectDateFrom))
+            Timestamp.from(Instant.parse(projectDto.projectDateTo))
         } catch (e: Exception) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date format is incorrect", "El formato de fecha es incorrecto")
         }
@@ -288,13 +287,13 @@ class ProjectService @Autowired constructor(
         if (taskEntities.isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project has no tasks", "El proyecto no tiene tareas")
         }
-        if (taskEntities.map { it.taskStatus!!.taskStatusId != 3 }.isNotEmpty()) {
+        if (taskEntities.any { it.taskStatusId != 3 }) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Project has uncompleted tasks", "El proyecto tiene tareas incompletas")
         }
         // Validate the project owner or a project moderator is closing the project
         val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         if (projectOwnerRepository.findByProjectIdAndUserIdAndStatusIsTrue(projectId, userId) == null && projectModeratorRepository.findByProjectIdAndUserIdAndStatusIsTrue(projectId, userId) == null) {
-            throw EtnException(HttpStatus.FORBIDDEN, "Error: User is not the project owner or a project moderator", "El usuario no es el propietario del proyecto o un moderador del proyecto")
+            throw EtnException(HttpStatus.FORBIDDEN, "Error: User is not the project owner or a project moderator", "El usuario no es el propietario del proyecto o un colaborador del proyecto")
         }
         // Close the project
         projectEntity.projectEndDate = Timestamp.from(Instant.now())
@@ -376,15 +375,7 @@ class ProjectService @Autowired constructor(
             notificationRepository.save(notificationEntity)
             emailService.sendEmail(ownerEmail, ownerMessageTittle, ownerMessageBody)
             ownerTokens.forEach { token ->
-                try {
                     firebaseMessagingService.sendNotification(token, ownerMessageTittle, ownerMessageBody)
-                } catch (e: Exception) {
-                    logger.error("Error sending notification to token $token, owner")
-                    // Disable the token
-                    val firebaseTokenEntity = firebaseTokenRepository.findByFirebaseTokenAndStatusIsTrue(token) ?: return
-                    firebaseTokenEntity.status = false
-                    firebaseTokenRepository.save(firebaseTokenEntity)
-                }
             }
         }
 
@@ -401,15 +392,7 @@ class ProjectService @Autowired constructor(
             notificationEntity.userId = projectModeratorEntity.userId
             emailService.sendEmail(moderatorEmail, moderatorMessageTittle, moderatorMessageBody)
             moderatorTokens.forEach { token ->
-                try {
                     firebaseMessagingService.sendNotification(token, moderatorMessageTittle, moderatorMessageBody)
-                } catch (e: Exception) {
-                    logger.error("Error sending notification to token $token, moderator")
-                    // Disable the token
-                    val firebaseTokenEntity = firebaseTokenRepository.findByFirebaseTokenAndStatusIsTrue(token) ?: return
-                    firebaseTokenEntity.status = false
-                    firebaseTokenRepository.save(firebaseTokenEntity)
-                }
             }
         }
     }

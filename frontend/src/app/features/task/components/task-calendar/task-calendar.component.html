@@ -18,7 +18,6 @@
 <div class="mb-3">
     <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus"
                    [options]="statusItems"
-                   [showClear]="true"
                    [style]="{'width': '100%'}"
                    class="multiselect-custom" display="chip" optionLabel="label"
                    placeholder="Seleccionar Estado">
@@ -56,7 +55,7 @@
                  style="word-break: break-word">{{ selectedTask.taskDescription }}
             </div>
             <div class="flex align-items-center gap-1 flex-wrap">
-                <p-tag [style]="{background: getPriorityColor(selectedTask.taskPriority)}"
+                <p-tag [style]="{background: getPriorityColor(selectedTask.taskPriority.taskPriorityId)}"
                        value="NIVEL {{selectedTask.taskPriority}}"></p-tag>
                 <p-tag *ngIf="checkIfTaskIsOverdue(selectedTask.taskStatus.taskStatusId, selectedTask.taskDueDate)"
                        [style]="{background: '#FF000080'}">

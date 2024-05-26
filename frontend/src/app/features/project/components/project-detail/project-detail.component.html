@@ -1,3 +1,12 @@
+<p-toast></p-toast>
+<p-confirmDialog [baseZIndex]="10000" [style]="{width: '350px'}"
+                 acceptButtonStyleClass="p-button-primary"
+                 header="Confirmation"
+                 icon="pi pi-exclamation-triangle"
+                 key="confirmCloseProject"
+                 message="'¿Estás seguro de que deseas cerrar este proyecto? Esta acción no se puede deshacer.'"
+                 rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
 <div *ngIf="project else loading" class="grid p-fluid">
     <div class="col-12 lg:col-8">
         <div class="grid formgrid">
@@ -5,23 +14,31 @@
                 <label class="font-bold text-900" for="projectName">Nombre del Proyecto</label>
                 <input [(ngModel)]="project.projectName" id="projectName" label="Nombre del Proyecto" pInputText
                        placeholder="Nombre del Proyecto"
-                       readonly type="text">
+                       [readonly]="true" type="text">
             </div>
             <div class="col-12 lg:col-6 field">
-                <label class="font-bold text-900" for="dateFrom">Fecha de inicio</label>
+                <label class="font-bold text-900" for="dateFrom">Fecha de Inicio</label>
                 <p-calendar [disabled]="true" [ngModel]="dateFrom" [showIcon]="true" dateFormat="dd/mm/yy"
-                            id="dateFrom" placeholder="Fecha de inicio"></p-calendar>
+                            id="dateFrom" placeholder="Fecha de inicio" ></p-calendar>
             </div>
             <div class="col-12 lg:col-6 field">
-                <label class="font-bold text-900" for="dateTo">Fecha de finalización</label>
+                <label class="font-bold text-900" for="dateTo">Fecha de Finalización</label>
                 <p-calendar [disabled]="true" [ngModel]="dateTo" [showIcon]="true" dateFormat="dd/mm/yy"
                             id="dateTo" placeholder="Fecha de finalización"></p-calendar>
             </div>
             <div class="col-12 field">
+                <label class="font-semibold text-900" for="projectObjective">Objetivo del Proyecto</label>
+                <textarea [ngModel]="project.projectObjective" [rows]="3" class="w-full" id="projectObjective"
+                          name="projectObjective"
+                          pInputTextarea
+                          placeholder="Description del Proyecto" style="resize: none" [readonly]="true"
+                          type="text"></textarea>
+            </div>
+            <div class="col-12 field">
                 <label class="font-bold text-900" for="projectDescription">Descripción del Proyecto</label>
                 <p-editor [(ngModel)]="project.projectDescription" [modules]="editorModules" [readonly]="true"
-                          [style]="{'height':'250px'}" id="projectDescription"
-                          placeholder="Ingrese la descripción del proyecto">
+                          [style]="{'height':'150px'}" id="projectDescription"
+                          placeholder="No hay descripción disponible">
                     <ng-template pTemplate="header">
                     </ng-template>
                 </p-editor>
@@ -68,7 +85,40 @@
                 </div>
             </div>
         </div>
+        <div class="flex flex-column gap-2 field border-1 surface-border border-round field">
+            <div class="flex justify-content-between border-bottom-1 surface-border p-3 ">
+                <span class="text-900 font-semibold ">Progreso</span>
+                <span class="text-900 font-semibold"><i
+                        class="pi pi-check-square text-700 mr-2"></i
+                >{{project.finishedTasks}}/{{project.totalTasks}}</span>
+            </div>
+            <div class="p-3">
+                <p-progressBar name="progress" [value]="projectProgress" [showValue]="false" [style]="{'height':'1rem'}"></p-progressBar>
+            </div>
+
+        </div>
+
+        <div class="flex flex-column gap-2 field border-1 surface-border border-round field" *ngIf="project.projectEndDate">
+            <span class="text-900 font-semibold border-bottom-1 surface-border p-3">Proyecto Cerrado el {{project.projectEndDate | date: 'dd/MM/yyyy, HH:mm'}}</span>
+            <div class="flex justify-content-between px-3">
+                <span class="text-900 font-semibold">Comentario de Cierre</span>
+                <p-tag *ngIf="daysOfDifference > 0" [style]="{background: '#FF000080'}"
+                       value="Cerrado con {{daysOfDifference}} días de retraso"></p-tag>
+            </div>
+            <div class="px-3 pb-3">
+                            <textarea [ngModel]="project.projectCloseMessage" [rows]="2" class="w-full" id="projectCloseMessage"
+                                      name="projectCloseMessage"
+                                      pInputTextarea
+                                      placeholder="Description del Proyecto" style="resize: none" [readonly]="true"
+                                      type="text"></textarea>
+            </div>
+
+        </div>
         <div class="flex flex-column sm:flex-row justify-content-between align-items-center gap-3 py-2">
+            <button (click)="onCloseProject()" class="p-button-primary border-round flex-1" icon="pi pi-fw pi-save"
+                    label="Cerrar Proyecto" pButton
+                    pRipple *ngIf="!project.projectEndDate"
+            ></button>
             <button (click)="onBack()" class="p-button-primary flex-1 p-button-outlined" icon="pi pi-arrow-left"
                     label="Volver" pButton
                     pRipple></button>
@@ -81,3 +131,20 @@
         <p-progressSpinner ariaLabel="Cargando..."></p-progressSpinner>
     </div>
 </ng-template>
+
+<p-dialog [(visible)]="visibleAddCloseMessage" [baseZIndex]="10000" [draggable]="false" [modal]="true"
+          [resizable]="false" [style]="{width: '30rem'}" header="Agregar Comentario de Cierre" [closable]="false">
+    <div class="mb-3">
+        <span class="text-600 font-medium">Por favor, añade un comentario para cerrar el proyecto</span>
+    </div>
+    <div class="flex flex-column mb-3">
+        <textarea [formControl]="projectCloseMessageControl" [rows]="2" class="w-full" id="closeMessage" name="closeMessage"
+                  pInputTextarea placeholder="Comentario de Cierre"
+                  style="resize: none" type="text"></textarea>
+    </div>
+    <div class="flex flex-wrap gap-2 justify-content-between">
+        <button (click)="onAddCloseMessageCancel()" class="flex-auto p-button-outlined" label="Cancelar" pButton
+                pRipple></button>
+        <button (click)="onAddCloseMessage()" class="flex-auto" label="Guardar" pButton pRipple></button>
+    </div>
+</p-dialog>

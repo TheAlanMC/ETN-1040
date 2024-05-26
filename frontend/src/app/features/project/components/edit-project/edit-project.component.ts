@@ -60,6 +60,8 @@ export class EditProjectComponent implements OnInit {
         [Validators.required]);
     dateToControl = new FormControl('',
         [Validators.required]);
+    projectObjectiveControl = new FormControl('', [Validators.required]);
+
     projectDescriptionControl = new FormControl('');
 
     baseUrl: string = `${environment.API_URL}/api/v1/users`;
@@ -104,8 +106,9 @@ export class EditProjectComponent implements OnInit {
                 this.project = data.data!;
                 this.projectNameControl.setValue(data.data!.projectName);
                 this.projectDescriptionControl.setValue(data.data!.projectDescription);
-                this.dateFromControl.setValue(new Date(data.data!.dateFrom).toLocaleDateString('en-GB'));
-                this.dateToControl.setValue(new Date(data.data!.dateTo).toLocaleDateString('en-GB'));
+                this.projectObjectiveControl.setValue(data.data!.projectObjective);
+                this.dateFromControl.setValue(new Date(data.data!.projectDateFrom).toLocaleDateString('en-GB'));
+                this.dateToControl.setValue(new Date(data.data!.projectDateTo).toLocaleDateString('en-GB'));
                 this.selectedMembers = data.data!.projectMembers.map(member => {
                     this.fetchUserImage(member.userId);
                     return {
@@ -161,11 +164,14 @@ export class EditProjectComponent implements OnInit {
     }
 
     public onSave() {
+        let dateFrom = new Date(this.project!.projectDateFrom)
+        let dateTo = new Date(this.project!.projectDateTo)
         this.projectService.updateProject(this.projectId,
             this.projectNameControl.value!,
             this.projectDescriptionControl.value!,
-            this.dateFromControl.value!,
-            this.dateToControl.value!,
+            (dateFrom.toLocaleDateString('en-GB') === this.dateFromControl.value!) ? dateFrom.toISOString() : this.dateFromControl.value!,
+            (dateTo.toLocaleDateString('en-GB') === this.dateToControl.value!) ? dateTo.toISOString() : this.dateToControl.value!,
+            this.projectObjectiveControl.value!,
             this.selectedMembers.map(member => member.value),
             this.selectedModerators.map(moderator => moderator.value)).subscribe({
             next: (data) => {
@@ -181,3 +187,4 @@ export class EditProjectComponent implements OnInit {
         });
     }
 }
+

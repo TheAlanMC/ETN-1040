@@ -8,6 +8,7 @@ import {TaskStatusDto} from "../../features/task/models/task-status.dto";
 import {PageDto} from "../models/page.dto";
 import {TaskDto} from "../../features/task/models/task.dto";
 import {TaskHistoryDto} from "../../features/task/models/task-history.dto";
+import {TaskPriorityDto} from "../../features/task/models/task-priority.dto";
 
 @Injectable({
     providedIn: 'root'
@@ -27,6 +28,11 @@ export class TaskService {
             this.utilService.getHttpOptions());
     }
 
+    public getPriorities(): Observable<ResponseDto<TaskPriorityDto[]>> {
+        return this.http.get<ResponseDto<TaskPriorityDto[]>>(`${this.baseUrl}/priorities`,
+            this.utilService.getHttpOptions());
+    }
+
     public getTasks(
         sortBy: string,
         sortType: string,
@@ -34,11 +40,13 @@ export class TaskService {
         size: number,
         keyword: string,
         statuses: string[],
+        priorities: string[],
         dateFrom: string | null = null,
         dateTo: string | null = null
     ): Observable<ResponseDto<PageDto<TaskDto>>> {
         const statusList = statuses.join(',');
-        return this.http.get<ResponseDto<PageDto<TaskDto>>>(`${this.baseUrl}?sortBy=${sortBy}&sortType=${sortType}&page=${page}&size=${size}&keyword=${keyword}&statuses=${statusList}&dateFrom=${(dateFrom ? dateFrom : '')}&dateTo=${(dateTo ? dateTo : '')}`,
+        const priorityList = priorities.join(',');
+        return this.http.get<ResponseDto<PageDto<TaskDto>>>(`${this.baseUrl}?sortBy=${sortBy}&sortType=${sortType}&page=${page}&size=${size}&keyword=${keyword}&statuses=${statusList}&priorities=${priorityList}&dateFrom=${(dateFrom ? dateFrom : '')}&dateTo=${(dateTo ? dateTo : '')}`,
             this.utilService.getHttpOptions());
     }
 
@@ -52,29 +60,30 @@ export class TaskService {
         taskName: string,
         taskDescription: string,
         taskDueDate: string,
-        taskPriority: number,
+        taskPriorityId: number,
         taskAssigneeIds: number[],
         taskFileIds: number[]
     ): Observable<ResponseDto<null>> {
         return this.http.post<ResponseDto<null>>(this.baseUrl,
             {
-                projectId, taskName, taskDescription, taskDueDate, taskPriority, taskAssigneeIds, taskFileIds
+                projectId, taskName, taskDescription, taskDueDate, taskPriorityId, taskAssigneeIds, taskFileIds
             },
             this.utilService.getHttpOptions());
     }
 
     public updateTask(
         taskId: number,
+        projectId: number,
         taskName: string,
         taskDescription: string,
         taskDueDate: string,
-        taskPriority: number,
+        taskPriorityId: number,
         taskAssigneeIds: number[],
         taskFileIds: number[]
     ): Observable<ResponseDto<null>> {
         return this.http.put<ResponseDto<null>>(`${this.baseUrl}/${taskId}`,
             {
-                taskName, taskDescription, taskDueDate, taskPriority, taskAssigneeIds, taskFileIds
+                projectId, taskName, taskDescription, taskDueDate, taskPriorityId, taskAssigneeIds, taskFileIds
             },
             this.utilService.getHttpOptions());
     }
@@ -98,12 +107,12 @@ export class TaskService {
 
     public createTaskFeedback(
         taskId: number,
-        rating: number,
-        feedback: string
+        taskRating: number,
+        taskRatingComment: string
     ): Observable<ResponseDto<null>> {
         return this.http.post<ResponseDto<null>>(`${this.baseUrl}/${taskId}/feedback`,
             {
-                rating, feedback
+                taskRating, taskRatingComment
             },
             this.utilService.getHttpOptions());
     }

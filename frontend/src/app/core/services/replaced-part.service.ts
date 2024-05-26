@@ -9,8 +9,8 @@ import {TaskCommentDto} from "../../features/task/models/task-comment.dto";
 @Injectable({
     providedIn: 'root'
 })
-export class TaskCommentService {
-    baseUrl: string = `${environment.API_URL}/api/v1/task-comments`;
+export class ReplacedPartService {
+    baseUrl: string = `${environment.API_URL}/api/v1/replaced-parts`;
 
     constructor(
         private http: HttpClient,
@@ -19,32 +19,32 @@ export class TaskCommentService {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
-    public createTaskComment(
+    public createReplacedPart(
         taskId: number,
-        taskComment: string,
-        taskCommentFileIds: number[]
+        replacedPartDescription: string,
+        replacedPartFileIds: number[]
     ): Observable<ResponseDto<null>> {
         return this.http.post<ResponseDto<null>>(this.baseUrl,
             {
-                taskId, taskComment, taskCommentFileIds
+                taskId, replacedPartDescription, replacedPartFileIds
             },
             this.utilService.getHttpOptions());
     }
 
-    public updateTaskComment(
-        taskCommentId: number,
-        taskComment: string,
-        taskCommentFileIds: number[]
+    public updateReplacedPart(
+        replacedPartId: number,
+        replacedPartDescription: string,
+        replacedPartFileIds: number[]
     ): Observable<ResponseDto<null>> {
-        return this.http.put<ResponseDto<null>>(`${this.baseUrl}/${taskCommentId}`,
+        return this.http.put<ResponseDto<null>>(`${this.baseUrl}/${replacedPartId}`,
             {
-                taskComment, taskCommentFileIds
+                replacedPartDescription, replacedPartFileIds
             },
             this.utilService.getHttpOptions());
     }
 
-    public deleteTaskComment(taskCommentId: number): Observable<ResponseDto<null>> {
-        return this.http.delete<ResponseDto<null>>(`${this.baseUrl}/${taskCommentId}`,
+    public deleteReplacedPart(replacedPartId: number): Observable<ResponseDto<null>> {
+        return this.http.delete<ResponseDto<null>>(`${this.baseUrl}/${replacedPartId}`,
             this.utilService.getHttpOptions());
     }
 }

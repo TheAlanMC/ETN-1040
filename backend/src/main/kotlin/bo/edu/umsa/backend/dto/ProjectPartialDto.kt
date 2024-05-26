@@ -8,6 +8,7 @@ data class ProjectPartialDto(
     val projectDateFrom: Timestamp,
     val projectDateTo: Timestamp,
     val projectEndDate: Timestamp?,
+    val projectOwners: List<UserPartialDto>,
     val projectModerators: List<UserPartialDto>,
     val projectMembers: List<UserPartialDto>,
 )

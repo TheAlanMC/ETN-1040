@@ -126,7 +126,7 @@ export class EditTaskComponent implements OnInit {
                 this.task?.taskFiles.forEach(file => {
                     this.files.push({
                         id: file.fileId,
-                        name: file.filename,
+                        name: file.fileName,
                         size: file.fileSize,
                         type: file.contentType,
                         objectURL: (file.contentType.includes('image') ? `${this.filesBaselUrl}/${file.fileId}/thumbnail` : null)
@@ -149,7 +149,6 @@ export class EditTaskComponent implements OnInit {
         this.selectedPriority = {value: ''};
         this.selectedAssignees = [];
         this.userItems = [];
-
         this.files = [];
         this.uploadedFiles = [];
         this.objectURLs = [];
@@ -329,7 +328,7 @@ export class EditTaskComponent implements OnInit {
                 });
             } else {
                 this.uploadedFiles.push({
-                    fileId: file.id, filename: file.name, contentType: file.type, fileSize: file.size
+                    fileId: file.id, fileName: file.name, contentType: file.type, fileSize: file.size
                 });
                 if (this.uploadedFiles.length == this.files.length) {
                     this.updateTask();
@@ -341,6 +340,7 @@ export class EditTaskComponent implements OnInit {
     public updateTask() {
         let taskDueDateDate = new Date(this.task!.taskDueDate);
         this.taskService.updateTask(this.task!.taskId,
+            this.task!.project.projectId,
             this.taskNameControl.value!,
             this.taskDescriptionControl.value!,
             (`${taskDueDateDate.toLocaleDateString('en-GB')} ${taskDueDateDate.toLocaleTimeString('en-GB',

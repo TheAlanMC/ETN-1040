@@ -6,8 +6,12 @@ export interface ProjectDto {
     projectDescription: string;
     projectDateFrom: Date;
     projectDateTo: Date;
+    projectObjective: string;
+    projectCloseMessage: string;
     projectEndDate: Date | null;
     projectOwners: UserDto[];
     projectModerators: UserDto[];
     projectMembers: UserDto[];
+    finishedTasks: number;
+    totalTasks: number;
 }

@@ -5,18 +5,27 @@
                  pInputText
                  placeholder="Busqueda Global" type="text">
         </span>
-    <button (click)="navigateToCreateTask()" *ngIf="canAddTask&&(isOwner || isModerator)"
+    <button (click)="navigateToCreateTask()" *ngIf="canAddTask&&(isOwner || isModerator)&&!project!.projectEndDate"
             class="p-button-outlined w-full sm:w-auto flex-order-1 sm:flex-order-1" icon="pi pi-plus-circle"
             label="Crear Tarea" pButton></button>
 </div>
-<div class="mb-3">
-    <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus"
-                   [options]="statusItems"
-                   [showClear]="true"
-                   [style]="{'width': '100%'}"
-                   class="multiselect-custom" display="chip" optionLabel="label"
-                   placeholder="Seleccionar Estado">
-    </p-multiSelect>
+<div class="grid p-fluid">
+    <div class="col-12 lg:col-6">
+        <p-multiSelect (onChange)="onPriorityChange($event)" [(ngModel)]="selectedPriority"
+                       [options]="priorityItems"
+                       [filter]="false"
+                       class="multiselect-custom" display="chip" optionLabel="label"
+                       placeholder="Seleccionar Prioridad">
+        </p-multiSelect>
+    </div>
+    <div class="col-12 lg:col-6">
+        <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus"
+                       [options]="statusItems"
+                       [filter]="false"
+                       class="multiselect-custom" display="chip" optionLabel="label"
+                       placeholder="Seleccionar Estado">
+        </p-multiSelect>
+    </div>
 </div>
 <div *ngIf="!isLoading else loading">
     <div *ngIf="project" [cdkDropListData]="taskLists" cdkDropList

@@ -242,15 +242,7 @@ class TaskService @Autowired constructor(
             notificationRepository.save(notificationEntity)
             emailService.sendEmail(assigneeEmail, assigneeMessageTittle, assigneeMessageBody)
             assigneeTokens.forEach { token ->
-                try {
                     firebaseMessagingService.sendNotification(token, assigneeMessageTittle, assigneeMessageBody)
-                } catch (e: Exception) {
-                    logger.error("Error sending notification to token $token, assignee")
-                    // Disable the token
-                    val firebaseTokenEntity = firebaseTokenRepository.findByFirebaseTokenAndStatusIsTrue(token) ?: return
-                    firebaseTokenEntity.status = false
-                    firebaseTokenRepository.save(firebaseTokenEntity)
-                }
             }
         }
     }
@@ -275,6 +267,10 @@ class TaskService @Autowired constructor(
         // Validate the task exists
         val taskEntity = taskRepository.findByTaskIdAndStatusIsTrue(taskId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task not found", "Tarea no encontrada")
+        // Validate the task is not completed
+        if (taskEntity.taskEndDate != null) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Task is completed", "La tarea está completada")
+        }
         // Validate the task priority exists
         taskPriorityRepository.findByTaskPriorityIdAndStatusIsTrue(newTaskDto.taskPriorityId.toLong())
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task priority not found", "Prioridad de la tarea no encontrada")
@@ -417,15 +413,7 @@ class TaskService @Autowired constructor(
                 notificationRepository.save(notificationEntity)
                 emailService.sendEmail(assigneeEmail, assigneeMessageTittle, assigneeMessageBody)
                 assigneeTokens.forEach { token ->
-                    try {
                         firebaseMessagingService.sendNotification(token, assigneeMessageTittle, assigneeMessageBody)
-                    } catch (e: Exception) {
-                        logger.error("Error sending notification to token $token, assignee")
-                        // Disable the token
-                        val firebaseTokenEntity = firebaseTokenRepository.findByFirebaseTokenAndStatusIsTrue(token) ?: return
-                        firebaseTokenEntity.status = false
-                        firebaseTokenRepository.save(firebaseTokenEntity)
-                    }
                 }
             }
         }
@@ -454,6 +442,9 @@ class TaskService @Autowired constructor(
 
         val originalTaskStatusId = taskEntity.taskStatusId
         // Update the task status
+        if (taskStatusId.toInt() == 3) {
+            taskEntity.taskEndDate = Timestamp.from(Instant.now())
+        }
         taskEntity.taskStatusId = taskStatusId.toInt()
         taskRepository.save(taskEntity)
 
@@ -485,15 +476,7 @@ class TaskService @Autowired constructor(
                 notificationRepository.save(notificationEntity)
                 emailService.sendEmail(ownerEmail, ownerMessageTittle, ownerMessageBody)
                 ownerTokens.forEach { token ->
-                    try {
                         firebaseMessagingService.sendNotification(token, ownerMessageTittle, ownerMessageBody)
-                    } catch (e: Exception) {
-                        logger.error("Error sending notification to token $token, owner")
-                        // Disable the token
-                        val firebaseTokenEntity = firebaseTokenRepository.findByFirebaseTokenAndStatusIsTrue(token) ?: return
-                        firebaseTokenEntity.status = false
-                        firebaseTokenRepository.save(firebaseTokenEntity)
-                    }
                 }
             }
 
@@ -511,15 +494,7 @@ class TaskService @Autowired constructor(
                 notificationRepository.save(notificationEntity)
                 emailService.sendEmail(moderatorEmail, moderatorMessageTittle, moderatorMessageBody)
                 moderatorTokens.forEach { token ->
-                    try {
                         firebaseMessagingService.sendNotification(token, moderatorMessageTittle, moderatorMessageBody)
-                    } catch (e: Exception) {
-                        logger.error("Error sending notification to token $token, moderator")
-                        // Disable the token
-                        val firebaseTokenEntity = firebaseTokenRepository.findByFirebaseTokenAndStatusIsTrue(token) ?: return
-                        firebaseTokenEntity.status = false
-                        firebaseTokenRepository.save(firebaseTokenEntity)
-                    }
                 }
             }
         }
@@ -612,15 +587,7 @@ class TaskService @Autowired constructor(
             notificationRepository.save(notificationEntity)
             emailService.sendEmail(assigneeEmail, assigneeMessageTittle, assigneeMessageBody)
             assigneeTokens.forEach { token ->
-                try {
-                    firebaseMessagingService.sendNotification(token, assigneeMessageTittle, assigneeMessageBody)
-                } catch (e: Exception) {
-                    logger.error("Error sending notification to token $token")
-                    // Disable the token
-                    val firebaseTokenEntity = firebaseTokenRepository.findByFirebaseTokenAndStatusIsTrue(token) ?: return
-                    firebaseTokenEntity.status = false
-                    firebaseTokenRepository.save(firebaseTokenEntity)
-                }
+                firebaseMessagingService.sendNotification(token, assigneeMessageTittle, assigneeMessageBody)
             }
         }
 

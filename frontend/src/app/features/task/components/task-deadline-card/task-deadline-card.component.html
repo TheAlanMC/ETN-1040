@@ -12,7 +12,7 @@
     </div>
     <div *ngIf="card.taskDescription" class="text-700" style="word-break: break-word">{{ card.taskDescription }}</div>
     <div class="flex align-items-center gap-1 flex-wrap">
-        <p-tag [style]="{background: getPriorityColor(card.taskPriority)}"
+        <p-tag [style]="{background: getPriorityColor(card.taskPriority.taskPriorityId)}"
                value="NIVEL {{card.taskPriority}}"></p-tag>
 
         <p-tag *ngIf="checkIfTaskIsOverdue(card.taskStatus.taskStatusId, card.taskDueDate)"

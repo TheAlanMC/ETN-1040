@@ -146,6 +146,7 @@ export class TaskListComponent implements OnInit {
             this.page,
             this.size,
             this.keyword,
+            [],
             this.selectedStatus.map(status => status.label)).subscribe({
             next: (data: ResponseDto<PageDto<TaskDto>>) => {
                 this.tasks = data.data!.content;

@@ -11,21 +11,30 @@
                            type="text">
                 </div>
                 <div class="col-12 lg:col-6 field">
-                    <label class="font-bold text-900" for="dateFrom">Fecha de inicio</label>
+                    <label class="font-bold text-900" for="dateFrom">Fecha de Inicio</label>
                     <p-calendar [formControl]="dateFromControl" [readonlyInput]="true" [showIcon]="true"
                                 dateFormat="dd/mm/yy"
                                 id="dateFrom" placeholder="Fecha de inicio"></p-calendar>
                 </div>
                 <div class="col-12 lg:col-6 field">
-                    <label class="font-bold text-900" for="dateTo">Fecha de finalización</label>
+                    <label class="font-bold text-900" for="dateTo">Fecha de Finalización</label>
                     <p-calendar [formControl]="dateToControl" [readonlyInput]="true" [showIcon]="true"
                                 dateFormat="dd/mm/yy"
                                 id="dateTo" placeholder="Fecha de finalización"></p-calendar>
                 </div>
                 <div class="col-12 field">
+                    <label class="font-semibold text-900" for="projectObjective">Objetivo del Proyecto <span
+                            style="color: red;">*</span></label>
+                    <textarea [formControl]="projectObjectiveControl" [rows]="3" class="w-full" id="projectObjective"
+                              name="projectObjective"
+                              pInputTextarea
+                              placeholder="Objetivo del Proyecto" style="resize: none"
+                              type="text"></textarea>
+                </div>
+                <div class="col-12 field">
                     <label class="font-bold text-900" for="projectDescription">Descripción del Proyecto</label>
                     <p-editor [formControl]="projectDescriptionControl" [modules]="editorModules"
-                              [style]="{'height':'250px'}"
+                              [style]="{'height':'150px'}"
                               id="projectDescription" placeholder="Ingrese la descripción del proyecto">
                         <ng-template pTemplate="header">
                         </ng-template>
@@ -54,7 +63,7 @@
                     </div>
                     <p-multiSelect [(ngModel)]="selectedModerators" [options]="userItems"
                                    class="multiselect-custom" display="chip"
-                                   optionLabel="label" placeholder="Seleccione Colaboradores" showClear="true"
+                                   optionLabel="label" placeholder="Seleccione Colaboradores"
                                    variant="filled">
                         <ng-template let-value pTemplate="selectedItems">
                             <div>Seleccione Colaboradores</div>
@@ -97,7 +106,7 @@
                     <p-multiSelect [(ngModel)]="selectedMembers" [options]="userItems"
                                    class="multiselect-custom"
                                    display="chip" optionLabel="label" placeholder="Seleccione Miembros del Equipo"
-                                   showClear="true">
+                                  >
                         <ng-template let-value pTemplate="selectedItems">
                             <div>Seleccione Miembros del Equipo</div>
                         </ng-template>

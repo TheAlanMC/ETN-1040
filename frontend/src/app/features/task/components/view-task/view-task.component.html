@@ -350,7 +350,7 @@
                             <div class="flex justify-content-between align-items-center mb-2">
                                 <div>
                                     <span class="block text-900 font-semibold">{{ comment.user.firstName }} {{ comment.user.lastName }}</span>
-                                    <span class="block text-700">{{ comment.txDate | date: 'dd/MM/yyyy HH:mm' }}</span>
+                                    <span class="block text-700">{{ comment.txDate | date: 'dd/MM/yyyy, HH:mm' }}</span>
                                 </div>
                                 <div *ngIf="comment.user.userId === userId">
                                     <button (click)="onButtonClick(comment.taskCommentId); menu.toggle($event)"
@@ -464,7 +464,7 @@
                         <div *ngIf="(editComment && selectedCommentId === comment.taskCommentId)" class="card w-full ml-3 p-4">
                             <div class="mb-2">
                                 <span class="block text-900 font-semibold">{{ comment.user.firstName }} {{ comment.user.lastName }}</span>
-                                <span class="block text-700">{{ comment.txDate | date: 'dd/MM/yyyy HH:mm' }}</span>
+                                <span class="block text-700">{{ comment.txDate | date: 'dd/MM/yyyy, HH:mm' }}</span>
                             </div>
                             <div class="flex justify-content-between align-items-center mb-2">
                                 <textarea (keydown.enter)="onEditComment($event)" [formControl]="editCommentControl" class="w-full" name="comment"
@@ -605,7 +605,7 @@
                         </ng-template>
                         <ng-template let-history pTemplate="body">
                             <tr>
-                                <td>{{ history.createdDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+                                <td>{{ history.createdDate | date: 'dd/MM/yyyy, HH:mm' }}</td>
                                 <td>{{ history.createdBy.firstName }} {{ history.createdBy.lastName }}</td>
                                 <td>{{ history.fieldName }}</td>
                                 <td>{{ history.previousValue }} -> {{ history.newValue }}</td>

@@ -31,9 +31,10 @@ export class ProjectService {
         sortBy: string,
         sortType: string,
         page: number,
-        size: number
+        size: number,
+        keyword: string
     ): Observable<ResponseDto<PageDto<ProjectDto>>> {
-        return this.http.get<ResponseDto<PageDto<ProjectDto>>>(`${this.baseUrl}?sortBy=${sortBy}&sortType=${sortType}&page=${page}&size=${size}`,
+        return this.http.get<ResponseDto<PageDto<ProjectDto>>>(`${this.baseUrl}?sortBy=${sortBy}&sortType=${sortType}&page=${page}&size=${size}&keyword=${keyword}`,
             this.utilService.getHttpOptions());
     }
 
@@ -45,14 +46,15 @@ export class ProjectService {
     public createProject(
         projectName: string,
         projectDescription: string,
-        dateFrom: string,
-        dateTo: string,
+        projectDateFrom: string,
+        projectDateTo: string,
+        projectObjective: string,
         projectMemberIds: number[],
         projectModeratorIds: number[]
     ): Observable<ResponseDto<Nullable>> {
         return this.http.post<ResponseDto<Nullable>>(this.baseUrl,
             {
-                projectName, projectDescription, dateFrom, dateTo, projectMemberIds, projectModeratorIds
+                projectName, projectDescription, projectDateFrom, projectDateTo, projectObjective, projectMemberIds, projectModeratorIds
             },
             this.utilService.getHttpOptions());
     }
@@ -61,20 +63,27 @@ export class ProjectService {
         projectId: number,
         projectName: string,
         projectDescription: string,
-        dateFrom: string,
-        dateTo: string,
+        projectDateFrom: string,
+        projectDateTo: string,
+        projectObjective: string,
         projectMemberIds: number[],
         projectModeratorIds: number[]
     ): Observable<ResponseDto<Nullable>> {
         return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/${projectId}`,
             {
-                projectName, projectDescription, dateFrom, dateTo, projectMemberIds, projectModeratorIds
+                projectName, projectDescription, projectDateFrom, projectDateTo, projectObjective, projectMemberIds, projectModeratorIds
             },
             this.utilService.getHttpOptions());
     }
 
     public deleteProject(projectId: number): Observable<ResponseDto<Nullable>> {
         return this.http.delete<ResponseDto<Nullable>>(`${this.baseUrl}/${projectId}`,
+            this.utilService.getHttpOptions());
+    }
+
+    public closeProject(projectId: number, projectCloseMessage: string): Observable<ResponseDto<Nullable>> {
+        return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/${projectId}/close`,
+            {projectCloseMessage},
             this.utilService.getHttpOptions());
     }
 
@@ -86,11 +95,13 @@ export class ProjectService {
         size: number,
         keyword: string,
         statuses: string[],
+        priorities: string[],
         dateFrom: string | null = null,
         dateTo: string | null = null
     ): Observable<ResponseDto<PageDto<TaskDto>>> {
         const statusList = statuses.join(',');
-        return this.http.get<ResponseDto<PageDto<TaskDto>>>(`${this.baseUrl}/${projectId}/tasks?sortBy=${sortBy}&sortType=${sortType}&page=${page}&size=${size}&keyword=${keyword}&statuses=${statusList}&dateFrom=${(dateFrom ? dateFrom : '')}&dateTo=${(dateTo ? dateTo : '')}`,
+        const priorityList = priorities.join(',');
+        return this.http.get<ResponseDto<PageDto<TaskDto>>>(`${this.baseUrl}/${projectId}/tasks?sortBy=${sortBy}&sortType=${sortType}&page=${page}&size=${size}&keyword=${keyword}&statuses=${statusList}&priorities=${priorityList}&dateFrom=${(dateFrom ? dateFrom : '')}&dateTo=${(dateTo ? dateTo : '')}`,
             this.utilService.getHttpOptions());
     }
 }

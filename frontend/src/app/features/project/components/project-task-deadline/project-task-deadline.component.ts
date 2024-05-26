@@ -17,6 +17,7 @@ import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {ProjectDto} from "../../models/project.dto";
 import {UserService} from "../../../../core/services/user.service";
 import {UserDto} from "../../../user/models/user.dto";
+import {TaskPriorityDto} from "../../../task/models/task-priority.dto";
 
 @Component({
     selector: 'app-project-task-deadline',
@@ -58,6 +59,12 @@ export class ProjectTaskDeadlineComponent implements OnInit {
 
     selectedStatus: any[] = [];
 
+    priorities: TaskPriorityDto[] = [];
+
+    priorityItems: SelectItem[] = [];
+
+    selectedPriority: any[] = [];
+
     keyword: string = '';
 
     baseUrl: string = `${environment.API_URL}/api/v1/users`;
@@ -97,6 +104,8 @@ export class ProjectTaskDeadlineComponent implements OnInit {
         }
         this.keyword = this.sharedService.getData('keyword') ?? '';
         this.selectedStatus = this.sharedService.getData('selectedStatus') ?? [];
+        this.selectedPriority = this.sharedService.getData('selectedPriority') ?? [];
+
     }
 
     ngOnInit() {
@@ -105,6 +114,7 @@ export class ProjectTaskDeadlineComponent implements OnInit {
             this.sharedService.changeData('projectId',
                 this.projectId);
             this.getProjectInfo();
+            this.getAllPriorities();
             this.getAllStatuses();
             this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
                 this.getData()
@@ -126,6 +136,13 @@ export class ProjectTaskDeadlineComponent implements OnInit {
         this.getData();
     }
 
+    public onPriorityChange(event: any) {
+        this.selectedPriority = event.value;
+        this.sharedService.changeData('selectedPriority',
+            this.selectedPriority);
+        this.getData();
+    }
+
 
     public getData() {
         this.isLoading = true;
@@ -135,7 +152,8 @@ export class ProjectTaskDeadlineComponent implements OnInit {
             0,
             1000,
             this.keyword,
-            this.selectedStatus.map(status => status.label)).subscribe({
+            this.selectedStatus.map(status => status.label),
+            this.selectedPriority.map(priority => priority.label)).subscribe({
             next: (data: ResponseDto<PageDto<TaskDto>>) => {
                 this.tasks = data.data!.content;
                 this.tasks.forEach(task => {
@@ -224,6 +242,22 @@ export class ProjectTaskDeadlineComponent implements OnInit {
     public onEditCard(event: any) {
         this.taskId = event.taskId;
         this.editSidebarVisible = true;
+    }
+
+    public getAllPriorities() {
+        this.taskService.getPriorities().subscribe({
+            next: (data) => {
+                this.priorities = data.data!;
+                this.priorityItems = this.priorities.map(priority => {
+                    return {
+                        label: priority.taskPriorityName, value: priority.taskPriorityId
+                    }
+                });
+                this.selectedPriority = this.selectedPriority.length == 0 ? this.priorityItems : this.selectedPriority;
+            }, error: (error) => {
+                console.log(error);
+            }
+        });
     }
 
 

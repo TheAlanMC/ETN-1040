@@ -18,7 +18,6 @@
 <div class="mb-3">
     <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus"
                    [options]="statusItems"
-                   [showClear]="true"
                    [style]="{'width': '100%'}"
                    class="multiselect-custom" display="chip" optionLabel="label"
                    placeholder="Seleccionar Estado">
@@ -65,8 +64,8 @@
                        value="NIVEL {{task.taskPriority}}"></p-tag>
             </td>
             <td>{{ task.taskName }}</td>
-            <td>{{ task.taskCreationDate | date: 'MM/dd/yyyy, HH:mm' }}</td>
-            <td>{{ task.taskDueDate | date: 'MM/dd/yyyy, HH:mm' }}</td>
+            <td>{{ task.taskCreationDate | date: 'dd/MM/yyyy, HH:mm' }}</td>
+            <td>{{ task.taskDueDate | date: 'dd/MM/yyyy, HH:mm' }}</td>
             <!--        <td>{{ task.createdBy }}</td>-->
             <td>
                 <div class="flex align-items-center gap-2 flex-wrap">

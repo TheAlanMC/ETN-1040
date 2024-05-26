@@ -235,6 +235,7 @@ export class TaskCalendarComponent implements OnInit, AfterViewInit {
             1000,
             this.keyword,
             this.selectedStatus.map(status => status.label),
+            [],
             this.dateFrom.toString(),
             this.dateTo.toString(),).subscribe({
             next: (data: ResponseDto<PageDto<TaskDto>>) => {
@@ -250,8 +251,8 @@ export class TaskCalendarComponent implements OnInit, AfterViewInit {
                         title: (isTaskOverdue ? '⚠️' : '') + task.taskName,
                         start: task.taskDueDate,
                         end: task.taskDueDate,
-                        backgroundColor: this.getPriorityColor(task.taskPriority),
-                        borderColor: this.getPriorityColor(task.taskPriority),
+                        backgroundColor: this.getPriorityColor(task.taskPriority.taskPriorityId),
+                        borderColor: this.getPriorityColor(task.taskPriority.taskPriorityId),
                     }
                 });
                 let calendarApi = this.calendarComponent.getApi();
@@ -406,10 +407,11 @@ export class TaskCalendarComponent implements OnInit, AfterViewInit {
         const taskAssigneeIds = task!.taskAssignees.map(assignee => assignee.userId);
         const taskFileIds = task!.taskFiles.map(file => file.fileId);
         this.taskService.updateTask(task!.taskId,
+            task!.project.projectId,
             task!.taskName,
             task!.taskDescription,
             newTaskDeadline.toISOString(),
-            task!.taskPriority,
+            task!.taskPriority.taskPriorityId,
             taskAssigneeIds,
             taskFileIds).subscribe({
             next: (data: ResponseDto<null>) => {

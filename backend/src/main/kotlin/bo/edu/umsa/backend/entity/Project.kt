@@ -54,4 +54,7 @@ class Project {
 
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
     var projectMembers: List<ProjectMember>? = null
+
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+    var tasks: List<Task>? = null
 }

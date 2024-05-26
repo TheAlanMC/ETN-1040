@@ -1,17 +1,19 @@
 import {Component, OnInit} from '@angular/core';
 import {environment} from "../../../../../environments/environment";
-import {SelectItem} from "primeng/api";
+import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
 import {ProjectDto} from "../../models/project.dto";
 import {ActivatedRoute, Router} from "@angular/router";
 import {UtilService} from "../../../../core/services/util.service";
 import {ProjectService} from "../../../../core/services/project.service";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
+import {FormControl, Validators} from "@angular/forms";
 
 @Component({
     selector: 'app-project-detail',
     templateUrl: './project-detail.component.html',
     styleUrl: './project-detail.component.scss',
+    providers: [MessageService, ConfirmationService],
 })
 export class ProjectDetailComponent implements OnInit {
     projectId: number = 0;
@@ -61,11 +63,21 @@ export class ProjectDetailComponent implements OnInit {
     dateFrom: string = '';
     dateTo: string = '';
 
+    projectProgress: number = 0;
+
+    visibleAddCloseMessage: boolean = false;
+
+    projectCloseMessageControl = new FormControl('', [Validators.required]);
+
+    daysOfDifference: number = 0;
+
     constructor(
         private activatedRoute: ActivatedRoute,
         private utilService: UtilService,
         private projectService: ProjectService,
-        private router: Router
+        private router: Router,
+        private messageService: MessageService,
+        private confirmationService: ConfirmationService
     ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         const token = localStorage.getItem('token');
@@ -87,8 +99,8 @@ export class ProjectDetailComponent implements OnInit {
         this.projectService.getProject(this.projectId).subscribe({
             next: (data) => {
                 this.project = data.data!;
-                this.dateFrom = new Date(data.data!.dateFrom).toLocaleDateString('en-GB')
-                this.dateTo = new Date(data.data!.dateTo).toLocaleDateString('en-GB')
+                this.dateFrom = new Date(data.data!.projectDateFrom).toLocaleDateString('en-GB')
+                this.dateTo = new Date(data.data!.projectDateTo).toLocaleDateString('en-GB')
                 this.selectedMembers = data.data!.projectMembers.map(member => {
                     this.fetchUserImage(member.userId);
                     return {
@@ -107,6 +119,15 @@ export class ProjectDetailComponent implements OnInit {
                         disabled: (moderator.userId === this.userId)
                     }
                 });
+                // difference between two dates (end date and date to)
+                if(this.project.projectEndDate != null) {
+                    const dateTo = new Date(this.project.projectDateTo);
+                    const dateEnd = new Date(this.project.projectEndDate);
+                    const difference = dateEnd.getTime() - dateTo.getTime();
+                    this.daysOfDifference = Math.ceil(difference / (1000 * 3600 * 24));
+                    this.daysOfDifference = this.daysOfDifference < 0 ? 0 : this.daysOfDifference;
+                }
+                this.projectProgress = (data.data!.finishedTasks / data.data!.totalTasks) * 100;
             }, error: (error) => {
                 console.log(error);
             }
@@ -123,4 +144,38 @@ export class ProjectDetailComponent implements OnInit {
     public onBack() {
         this.router.navigate(['/projects']).then(r => console.log('Navigate to projects'));
     }
+
+    public onCloseProject() {
+        this.confirmationService.confirm({
+            key: 'confirmCloseProject',
+            message: '¿Estás seguro de que deseas cerrar este proyecto? Esta acción no se puede deshacer.',
+            header: 'Confirmar',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Sí',
+            rejectLabel: 'No',
+            accept: () => {
+                this.visibleAddCloseMessage = true;
+            }
+        });
+    }
+
+    public onAddCloseMessageCancel(){
+        this.visibleAddCloseMessage = false;
+        this.projectCloseMessageControl.reset();
+    }
+
+    public onAddCloseMessage() {
+                this.projectService.closeProject(this.projectId, this.projectCloseMessageControl.value!).subscribe({
+                next: (data) => {
+                    this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Proyecto cerrado'});
+                    setTimeout(() => {
+                        this.router.navigate(['/projects']).then(r => console.log('Redirect to projects page'));
+                    }, 500);
+                }, error: (error) => {
+                    console.log(error);
+                    this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
+                }
+            });
+    }
+
 }

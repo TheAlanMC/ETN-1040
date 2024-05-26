@@ -64,7 +64,7 @@
                 <td>{{ user.firstName }}</td>
                 <td>{{ user.lastName }}</td>
                 <td>{{ user.phone }}</td>
-                <td>{{ user.txDate | date: 'MM/dd/yyyy, HH:mm' }}</td>
+                <td>{{ user.txDate | date: 'dd/MM/yyyy, HH:mm' }}</td>
                 <td>{{ user.txUser }}</td>
                 <td *ngIf="user.userId!==userId else elseBlock">
                     <div class="flex justify-content-center">

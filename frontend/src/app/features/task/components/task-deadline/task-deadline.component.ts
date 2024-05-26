@@ -123,6 +123,7 @@ export class TaskDeadlineComponent implements OnInit {
             0,
             1000,
             this.keyword,
+            [],
             this.selectedStatus.map(status => status.label)).subscribe({
             next: (data: ResponseDto<PageDto<TaskDto>>) => {
                 this.tasks = data.data!.content;
