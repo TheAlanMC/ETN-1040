@@ -172,7 +172,7 @@ export class ProjectTaskDeadlineComponent implements OnInit {
                                 59,
                                 59,
                                 999));
-                            return task.taskDueDate && new Date(task.taskDueDate) > new Date(start) && new Date(task.taskDueDate) < new Date(end);
+                            return task.taskDueDate && new Date(task.taskDueDate) >= new Date(start) && new Date(task.taskDueDate) < new Date(end);
                         } else if (list.listId === '3') {
                             let start = new Date(new Date().setDate(new Date().getDate() + 1));
                             start.setHours(0,
@@ -184,7 +184,7 @@ export class ProjectTaskDeadlineComponent implements OnInit {
                                 59,
                                 59,
                                 999);
-                            return task.taskDueDate && new Date(task.taskDueDate) > new Date(start) && new Date(task.taskDueDate) < new Date(end);
+                            return task.taskDueDate && new Date(task.taskDueDate) >= new Date(start) && new Date(task.taskDueDate) < new Date(end);
                         } else if (list.listId === '4') {
                             let start = new Date(new Date().setDate(new Date().getDate() + 7));
                             start.setHours(0,
@@ -196,7 +196,7 @@ export class ProjectTaskDeadlineComponent implements OnInit {
                                 59,
                                 59,
                                 999);
-                            return task.taskDueDate && new Date(task.taskDueDate) > new Date(start) && new Date(task.taskDueDate) < new Date(end);
+                            return task.taskDueDate && new Date(task.taskDueDate) >= new Date(start) && new Date(task.taskDueDate) < new Date(end);
                         } else if (list.listId === '5') {
                             let start = new Date(new Date().setDate(new Date().getDate() + 14));
                             start.setHours(0,

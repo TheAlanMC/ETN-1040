@@ -15,6 +15,7 @@ import {FirebaseService} from "../../../../core/services/firebase.service";
     ],
 })
 export class LoginComponent implements OnInit {
+    isLoading: boolean = false;
     token: string = '';
     emailControl = new FormControl('',
         [
@@ -61,6 +62,7 @@ export class LoginComponent implements OnInit {
     }
 
     login() {
+        this.isLoading = true;
         this.authService.login(this.emailControl.value!,
             this.passwordControl.value!,this.token).subscribe({
             next: (data) => {
@@ -72,11 +74,13 @@ export class LoginComponent implements OnInit {
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Inicio de sesión exitoso'});
                 setTimeout(() => {
                         this.router.navigate(['/']).then(r => console.log('Navigated to home'));
+                        this.isLoading = false;
                     },
                     500);
             }, error: (error) => {
-                this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
                 console.log(error);
+                this.isLoading = false;
+                this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
         });
     }

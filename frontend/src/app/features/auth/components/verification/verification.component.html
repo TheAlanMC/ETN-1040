@@ -37,9 +37,11 @@
             </div>
 
             <div class="flex flex-wrap gap-2 justify-content-between">
-                <button [routerLink]="['/auth/login']" class="flex-auto p-button-outlined" label="Cancelar" pButton
+                <button [routerLink]="['/auth/login']" class="flex-auto p-button-outlined" label="Cancelar" pButton icon="pi pi-times" [loading]="isLoading" [loadingIcon]="'pi pi-times'"
                         pRipple></button>
-                <button (click)="onVerify()" class="flex-auto" label="Verificar" pButton pRipple></button>
+                <button (click)="onVerify()" class="flex-auto" label="Verificar" pButton pRipple icon="pi pi-check"
+                        [loading]="isLoading"
+                ></button>
             </div>
         </div>
     </div>

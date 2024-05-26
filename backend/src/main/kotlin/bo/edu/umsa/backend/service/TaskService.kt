@@ -234,7 +234,7 @@ class TaskService @Autowired constructor(
             val assigneeEmail = userRepository.findByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong())!!.email
             val assigneeTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong()).map { it.firebaseToken }
             val assigneeMessageTittle = "Nueva tarea asignada"
-            val assigneeMessageBody = "Se le ha asignado la tarea ${taskEntity.taskName} en el proyecto ${projectEntity.projectName}"
+            val assigneeMessageBody = "Se le ha asignado la tarea '${taskEntity.taskName}' en el proyecto '${projectEntity.projectName}'"
             val notificationEntity = Notification()
             notificationEntity.messageTitle = assigneeMessageTittle
             notificationEntity.messageBody = assigneeMessageBody
@@ -252,7 +252,7 @@ class TaskService @Autowired constructor(
         newTaskDto: NewTaskDto
     ) {
         // Validate the name, description, and dueDate are not empty
-        if (newTaskDto.taskName.trim().isEmpty() || newTaskDto.taskDescription.trim().isEmpty()) {
+        if (newTaskDto.taskName.trim().isEmpty() || newTaskDto.taskDueDate.trim().isEmpty()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one required field is blank", "Al menos un campo requerido está en blanco")
         }
         // Validate the dates have the correct format
@@ -405,7 +405,7 @@ class TaskService @Autowired constructor(
                 val assigneeEmail = userRepository.findByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong())!!.email
                 val assigneeTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong()).map { it.firebaseToken }
                 val assigneeMessageTittle = "Tarea reasignada"
-                val assigneeMessageBody = "Se le ha reasignado la tarea ${taskEntity.taskName} en el proyecto ${projectEntity.projectName}"
+                val assigneeMessageBody = "Se le ha reasignado la tarea '${taskEntity.taskName}' en el proyecto '${projectEntity.projectName}'"
                 val notificationEntity = Notification()
                 notificationEntity.messageTitle = assigneeMessageTittle
                 notificationEntity.messageBody = assigneeMessageBody
@@ -468,7 +468,7 @@ class TaskService @Autowired constructor(
                 logger.info("Sending notification to project owner $ownerEmail")
                 val ownerTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong()).map { it.firebaseToken }
                 val ownerMessageTittle = "Tarea completada"
-                val ownerMessageBody = "La tarea ${taskEntity.taskName} en el proyecto $projectName ha sido completada"
+                val ownerMessageBody = "La tarea '${taskEntity.taskName}' del proyecto '$projectName' ha sido completada"
                 val notificationEntity = Notification()
                 notificationEntity.messageTitle = ownerMessageTittle
                 notificationEntity.messageBody = ownerMessageBody
@@ -486,7 +486,7 @@ class TaskService @Autowired constructor(
                 logger.info("Sending notification to project moderator $moderatorEmail")
                 val moderatorTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong()).map { it.firebaseToken }
                 val moderatorMessageTittle = "Tarea completada"
-                val moderatorMessageBody = "La tarea ${taskEntity.taskName} en el proyecto $projectName ha sido completada"
+                val moderatorMessageBody = "La tarea ${taskEntity.taskName} en del proyecto '$projectName' ha sido completada"
                 val notificationEntity = Notification()
                 notificationEntity.messageTitle = moderatorMessageTittle
                 notificationEntity.messageBody = moderatorMessageBody

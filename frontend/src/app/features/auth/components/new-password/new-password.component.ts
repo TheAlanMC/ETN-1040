@@ -16,6 +16,7 @@ import {FormControl, Validators} from "@angular/forms";
     ],
 })
 export class NewPasswordComponent implements OnInit {
+    isLoading: boolean = false;
     passwordControl = new FormControl('',
         [
             Validators.required,
@@ -48,6 +49,7 @@ export class NewPasswordComponent implements OnInit {
     }
 
     onSubmit() {
+        this.isLoading = true;
         this.authService.resetPassword(this.sharedService.getData('email'),
             this.sharedService.getData('code'),
             this.passwordControl.value!,
@@ -56,11 +58,13 @@ export class NewPasswordComponent implements OnInit {
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Contraseña restablecida'});
                 setTimeout(() => {
                         this.router.navigate(['/auth/login']).then(r => console.log('Redirect to login'));
+                        this.isLoading = false;
                     },
                     500);
             }, error: (error) => {
-                this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
                 console.log(error);
+                this.isLoading = false;
+                this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
         });
     }

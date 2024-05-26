@@ -12,6 +12,9 @@ import {MessageService} from "primeng/api";
     providers: [MessageService],
 })
 export class VerificationComponent implements OnInit {
+
+    isLoading: boolean = false;
+
     val1!: number;
 
     val2!: number;
@@ -58,6 +61,7 @@ export class VerificationComponent implements OnInit {
 
     onVerify() {
         const code = this.val1.toString() + this.val2.toString() + this.val3.toString() + this.val4.toString();
+        this.isLoading = true;
         this.authService.verification(this.email,
             code).subscribe({
             next: (data) => {
@@ -68,10 +72,12 @@ export class VerificationComponent implements OnInit {
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Código verificado'});
                 setTimeout(() => {
                         this.router.navigate(['/auth/new-password']).then(r => console.log('Redirect to new password'));
+                        this.isLoading = false;
                     },
                     500);
             }, error: (error) => {
                 console.log(error);
+                this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
         });

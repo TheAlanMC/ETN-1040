@@ -29,7 +29,9 @@ class FirebaseMessagingService @Autowired constructor(
             return
         }
         try {
-            val message = Message.builder().setToken(token).setNotification(Notification.builder().setTitle(title).setBody(body).setImage("https://cvinge.umsa.bo/pluginfile.php/29/coursecat/description/logo.jpg").build()).build()
+//            val message = Message.builder().setToken(token).setNotification(Notification.builder().setTitle(title).setBody(body).setImage("https://cvinge.umsa.bo/pluginfile.php/29/coursecat/description/logo.jpg").build()).build()
+            val dataMap = mapOf("title" to title, "body" to body, "image" to "https://cvinge.umsa.bo/pluginfile.php/29/coursecat/description/logo.jpg")
+            val message = Message.builder().setToken(token).putAllData(dataMap).build()
             // Send a message to the device corresponding to the provided token
             val response = FirebaseMessaging.getInstance().send(message)
             // Log the response

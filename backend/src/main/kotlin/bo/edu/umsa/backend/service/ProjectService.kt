@@ -7,6 +7,7 @@ import bo.edu.umsa.backend.mapper.ProjectMapper
 import bo.edu.umsa.backend.mapper.ProjectPartialMapper
 import bo.edu.umsa.backend.mapper.TaskPartialMapper
 import bo.edu.umsa.backend.repository.*
+import bo.edu.umsa.backend.service.TaskService.Companion
 import bo.edu.umsa.backend.specification.ProjectSpecification
 import bo.edu.umsa.backend.specification.TaskSpecification
 import bo.edu.umsa.backend.util.AuthUtil
@@ -300,6 +301,46 @@ class ProjectService @Autowired constructor(
         projectEntity.projectCloseMessage = closeProjectDto.projectCloseMessage
         projectRepository.save(projectEntity)
         logger.info("Project closed with id $projectId")
+
+        // Send notification to the project owner and moderators
+        val projectOwnerEntities = projectOwnerRepository.findAllByProjectIdAndStatusIsTrue(projectId)
+        val projectModeratorEntities = projectModeratorRepository.findAllByProjectIdAndStatusIsTrue(projectId)
+        projectOwnerEntities.forEach { projectOwnerEntity ->
+            val projectName = projectRepository.findByProjectIdAndStatusIsTrue(projectId)!!.projectName
+            val ownerEmail = userRepository.findByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong())!!.email
+            logger.info("Sending notification to project owner $ownerEmail")
+            val ownerTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong()).map { it.firebaseToken }
+            val ownerMessageTittle = "Proyecto cerrado"
+            val ownerMessageBody = "El proyecto '$projectName' ha sido cerrado"
+            val notificationEntity = Notification()
+            notificationEntity.messageTitle = ownerMessageTittle
+            notificationEntity.messageBody = ownerMessageBody
+            notificationEntity.userId = projectOwnerEntity.userId
+            notificationRepository.save(notificationEntity)
+            emailService.sendEmail(ownerEmail, ownerMessageTittle, ownerMessageBody)
+            ownerTokens.forEach { token ->
+                firebaseMessagingService.sendNotification(token, ownerMessageTittle, ownerMessageBody)
+            }
+        }
+
+        projectModeratorEntities.forEach { projectModeratorEntity ->
+            val projectName = projectRepository.findByProjectIdAndStatusIsTrue(projectId)!!.projectName
+            val moderatorEmail = userRepository.findByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong())!!.email
+            logger.info("Sending notification to project moderator $moderatorEmail")
+            val moderatorTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong()).map { it.firebaseToken }
+            val moderatorMessageTittle = "Proyecto cerrado"
+            val moderatorMessageBody = "El proyecto '$projectName' ha sido cerrado"
+            val notificationEntity = Notification()
+            notificationEntity.messageTitle = moderatorMessageTittle
+            notificationEntity.messageBody = moderatorMessageBody
+            notificationEntity.userId = projectModeratorEntity.userId
+            notificationRepository.save(notificationEntity)
+            emailService.sendEmail(moderatorEmail, moderatorMessageTittle, moderatorMessageBody)
+            moderatorTokens.forEach { token ->
+                firebaseMessagingService.sendNotification(token, moderatorMessageTittle, moderatorMessageBody)
+            }
+        }
+
     }
 
     fun getProjectTasks(

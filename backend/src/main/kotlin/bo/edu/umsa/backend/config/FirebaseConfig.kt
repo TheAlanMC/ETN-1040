@@ -17,7 +17,6 @@ class FirebaseConfig {
         try {
             val credentials = GoogleCredentials.fromStream(ClassPathResource("firebase/serviceAccountKey.json").inputStream)
             val options = FirebaseOptions.builder().setCredentials(credentials).build()
-
             return FirebaseApp.initializeApp(options)
         } catch (e: IOException) {
             throw RuntimeException("Error initializing Firebase", e)

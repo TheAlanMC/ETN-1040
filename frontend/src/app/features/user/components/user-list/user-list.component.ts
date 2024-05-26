@@ -38,7 +38,7 @@ export class UserListComponent implements OnInit {
     canAddUser: boolean = false;
     canEditUser: boolean = false;
 
-    isLoading: boolean = true;
+    isDataLoading: boolean = true;
 
     baseUrl: string = `${environment.API_URL}/api/v1/users`;
 
@@ -103,7 +103,7 @@ export class UserListComponent implements OnInit {
     }
 
     public getData() {
-        this.isLoading = true;
+        this.isDataLoading = true;
         this.userService.getUsers(this.sortBy,
             this.sortType,
             this.page,
@@ -112,7 +112,7 @@ export class UserListComponent implements OnInit {
             next: (data: ResponseDto<PageDto<UserDto>>) => {
                 this.users = data.data!.content;
                 this.totalElements = data.data!.page.totalElements;
-                this.isLoading = false
+                this.isDataLoading = false
                 // Filter the users to remove the current user
                 // this.users = this.users.filter(user => user.userId !== this.userId);
             }, error: (error) => {

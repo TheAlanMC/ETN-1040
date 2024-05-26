@@ -16,6 +16,8 @@ import {Location} from "@angular/common";
 })
 export class EditUserComponent implements OnInit {
 
+    isLoading: boolean = false;
+
     userId: number = 0;
 
     profilePictureUrl: string = 'assets/layout/images/avatar.png';
@@ -95,6 +97,7 @@ export class EditUserComponent implements OnInit {
     }
 
     public onSave() {
+        this.isLoading = true;
         this.onUpload();
         this.userService.updateUser(this.userId,
             this.firstNameControl.value!,
@@ -108,10 +111,12 @@ export class EditUserComponent implements OnInit {
                             console.log('Redirect to users page');
                             window.location.reload();
                         });
+                        this.isLoading = false;
                     },
                     500);
             }, error: (error) => {
                 console.log(error);
+                this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
         })
@@ -134,4 +139,5 @@ export class EditUserComponent implements OnInit {
     public onCancel() {
         this.location.back();
     }
+
 }

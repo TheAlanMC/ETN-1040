@@ -45,7 +45,9 @@
                 </div>
                 <div class="col-12 field">
                     <div class="border-1 surface-border border-round field">
-                        <span class="font-semibold text-900 block border-bottom-1 surface-border p-3">Agregar Responsables</span>
+                        <span class="font-semibold text-900 block border-bottom-1 surface-border p-3">Agregar Responsables <span
+                                style="color: red;">*</span>
+                        </span>
                         <div class="p-3">
                             <div *ngIf="selectedAssignees.length > 0" class="auto-flex align-items-center field">
                                 <p-chips [(ngModel)]="selectedAssignees" class="chips-custom">
@@ -172,9 +174,9 @@
                                                     tooltipPosition="top"
                                                     type="button"></button>
                                             <button #buttonOp (click)="$event.stopPropagation(); downloadFile(file)"
-
                                                     [id]="file.name"
                                                     [style.display]="defaultDisplay"
+                                                    [loading]="isLoading && downloadingFileId  === file.id"
                                                     class="p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
                                                     icon="pi pi-download"
                                                     pButton
@@ -191,14 +193,11 @@
                 </div>
                 <div class="col-12">
                     <div class="flex flex-column sm:flex-row justify-content-between align-items-center gap-3 py-2">
-                        <button (click)="onSave()" [disabled]="loading" class="p-button-primary flex-1 border-round"
+                        <button (click)="onSave()" class="p-button-primary flex-1 border-round" [loading]="isLoading"
                                 label="Guardar" pButton
                                 pRipple>
-                            <span *ngIf="!loading"></span>
-                            <i *ngIf="loading" class="pi pi-spin pi-spinner"></i>
-                            <i *ngIf="!loading" class="pi pi-fw pi-save"></i>
                         </button>
-                        <button (click)="onClose()" [disabled]="loading" class="p-button-primary flex-1 p-button-outlined"
+                        <button (click)="onClose()" class="p-button-primary flex-1 p-button-outlined" [loading]="isLoading" [loadingIcon]="'pi pi-times'"
                                 icon="pi pi-fw pi-times" label="Cancelar"
                                 pButton pRipple></button>
                     </div>

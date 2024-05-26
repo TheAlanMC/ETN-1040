@@ -11,6 +11,7 @@ import {Router} from "@angular/router";
 import {TaskDto} from "../../models/task.dto";
 import {Directory, Filesystem} from "@capacitor/filesystem";
 import {FileOpener} from "@capacitor-community/file-opener";
+import {TaskPriorityDto} from "../../models/task-priority.dto";
 
 @Component({
     selector: 'app-edit-task',
@@ -35,6 +36,8 @@ export class EditTaskComponent implements OnInit {
         [Validators.required]);
     selectedPriority: any = {value: ''};
 
+    priorities: TaskPriorityDto[] = [];
+
     priorityItems: SelectItem[] = [];
 
     users: UserDto[] = [];
@@ -52,7 +55,7 @@ export class EditTaskComponent implements OnInit {
 
     uploadedFiles: FileDto[] = [];
 
-    loading: boolean = false;
+    isLoading: boolean = false;
 
     objectURLs: any[] = [];
 
@@ -63,6 +66,8 @@ export class EditTaskComponent implements OnInit {
     defaultDisplay: string = 'none';
 
     isMobile: boolean = false;
+
+    downloadingFileId: number = 0;
 
     constructor(
         private taskService: TaskService,
@@ -78,18 +83,29 @@ export class EditTaskComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.priorityItems = [{label: 'Nivel 1', value: 1}, {label: 'Nivel 2', value: 2}, {label: 'Nivel 3', value: 3},
-            {label: 'Nivel 4', value: 4}, {label: 'Nivel 5', value: 5}, {label: 'Nivel 6', value: 6},
-            {label: 'Nivel 7', value: 7}, {label: 'Nivel 8', value: 8}, {label: 'Nivel 9', value: 9},
-            {label: 'Nivel 10', value: 10},];
+        this.getAllPriorities();
     }
 
     public onSidebarShow() {
         this.getTask()
     }
 
+    public getAllPriorities() {
+        this.taskService.getPriorities().subscribe({
+            next: (data) => {
+                this.priorities = data.data!;
+                this.priorityItems = this.priorities.map(priority => {
+                    return {
+                        label: priority.taskPriorityName, value: priority.taskPriorityId
+                    }
+                });
+            }, error: (error) => {
+                console.log(error);
+            }
+        });
+    }
+
     public getTask() {
-        this.loading = true;
         this.taskService.getTask(this.taskId).subscribe({
             next: (data) => {
                 this.task = data.data;
@@ -101,7 +117,7 @@ export class EditTaskComponent implements OnInit {
                         hour: '2-digit', minute: '2-digit'
                     });
                 this.taskDueDateControl.setValue(`${datePart} ${timePart}`);
-                this.selectedPriority = this.task!.taskPriority;
+                this.selectedPriority = this.task!.taskPriority.taskPriorityId;
                 this.selectedAssignees = this.task!.taskAssignees.map(assignee => {
                     const img = new Image();
                     img.src = this.baseUrl + '/' + assignee.userId + '/profile-picture/thumbnail';
@@ -132,7 +148,6 @@ export class EditTaskComponent implements OnInit {
                         objectURL: (file.contentType.includes('image') ? `${this.filesBaselUrl}/${file.fileId}/thumbnail` : null)
                     });
                 });
-                this.loading = false;
             }, error: (error) => {
                 console.log(error);
             }
@@ -152,7 +167,7 @@ export class EditTaskComponent implements OnInit {
         this.files = [];
         this.uploadedFiles = [];
         this.objectURLs = [];
-        this.loading = false;
+        this.isLoading = false;
     }
 
     public onUpload(event: any) {
@@ -218,6 +233,8 @@ export class EditTaskComponent implements OnInit {
                 reader.readAsDataURL(file);
             }
         } else {
+            this.isLoading = true;
+            this.downloadingFileId = file.id;
             this.fileService.getFile(file.id).subscribe({
                 next: (data) => {
                     const blob = new Blob([data],
@@ -250,7 +267,11 @@ export class EditTaskComponent implements OnInit {
                         };
                         reader.readAsDataURL(blob);
                     }
+                    this.isLoading = false;
+                    this.downloadingFileId = 0;
                 }, error: (error) => {
+                    this.isLoading = false;
+                    this.downloadingFileId = 0;
                     console.log(error);
                 }
             });
@@ -305,7 +326,7 @@ export class EditTaskComponent implements OnInit {
     }
 
     public onSave() {
-        this.loading = true;
+        this.isLoading = true;
         if (this.files.length == 0) {
             this.updateTask();
             return;
@@ -320,7 +341,7 @@ export class EditTaskComponent implements OnInit {
                         }
                     }, error: (error) => {
                         console.log(error);
-                        this.loading = false;
+                        this.isLoading = false;
                         this.messageService.add({
                             severity: 'error', summary: 'Error', detail: error.error.message
                         });
@@ -339,7 +360,8 @@ export class EditTaskComponent implements OnInit {
 
     public updateTask() {
         let taskDueDateDate = new Date(this.task!.taskDueDate);
-        this.taskService.updateTask(this.task!.taskId,
+        this.taskService.updateTask(
+            this.task!.taskId,
             this.task!.project.projectId,
             this.taskNameControl.value!,
             this.taskDescriptionControl.value!,
@@ -351,7 +373,6 @@ export class EditTaskComponent implements OnInit {
             this.selectedAssignees.map(assignee => assignee.value),
             this.uploadedFiles.map(file => file.fileId)).subscribe({
             next: (data) => {
-                this.loading = false;
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Tarea actualizada correctamente'
                 });
@@ -360,13 +381,15 @@ export class EditTaskComponent implements OnInit {
                         this.router.navigateByUrl('/',
                             {skipLocationChange: true}).then(() => {
                             this.router.navigate([currentRoute]).then(r => console.log('Task updated successfully'));
+                            this.isLoading = false;
                         });
                     },
                     500);
                 this.onClose();
             }, error: (error) => {
                 console.log(error);
-                this.loading = false;
+                this.uploadedFiles = [];
+                this.isLoading = false;
                 this.messageService.add({
                     severity: 'error', summary: 'Error', detail: error.error.message
                 });

@@ -21,6 +21,19 @@ export class FirebaseService {
     const messaging = getMessaging();
     onMessage(messaging, (payload) => {
       this.messageSubject.next(payload);
+      // Display notification if app is in the foreground
+      // if (payload.notification) {
+      //   new Notification(payload.notification.title!, {
+      //     body: payload.notification.body,
+      //     icon: payload.notification.image,
+      //   });
+      // }
+      if (payload.data) {
+        new Notification(payload.data['title']!, {
+          body: payload.data['body'],
+          icon: payload.data['image'],
+        });
+      }
     });
   }
 

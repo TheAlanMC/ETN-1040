@@ -16,6 +16,8 @@ import {SharedService} from "../../../../core/services/shared.service";
     ],
 })
 export class ForgotPasswordComponent {
+    isLoading: boolean = false;
+
     emailControl = new FormControl('',
         [
             Validators.required,
@@ -36,6 +38,7 @@ export class ForgotPasswordComponent {
     }
 
     onSubmit() {
+        this.isLoading = true;
         this.authService.forgotPassword(this.emailControl.value!).subscribe({
             next: (data) => {
                 this.sharedService.changeData('email',
@@ -43,11 +46,13 @@ export class ForgotPasswordComponent {
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Correo enviado'});
                 setTimeout(() => {
                         this.router.navigate(['/auth/verification']).then(r => console.log('Navigated to home'));
+                        this.isLoading = false;
                     },
                     500);
             }, error: (error) => {
-                this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
                 console.log(error);
+                this.isLoading = false;
+                this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
         });
     }

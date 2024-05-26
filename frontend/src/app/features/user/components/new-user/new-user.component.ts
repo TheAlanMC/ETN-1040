@@ -15,6 +15,9 @@ import {Location} from '@angular/common';
     providers: [MessageService],
 })
 export class NewUserComponent implements OnInit {
+
+    isLoading: boolean = false;
+
     selectedGroupId: number = 0;
 
     roles: string[] = [];
@@ -82,6 +85,7 @@ export class NewUserComponent implements OnInit {
     }
 
     public onSave() {
+        this.isLoading = true;
         this.userService.createUser(this.selectedGroupId,
             this.emailControl.value!,
             this.firstNameControl.value!,
@@ -92,10 +96,12 @@ export class NewUserComponent implements OnInit {
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Usuario creado'});
                 setTimeout(() => {
                         this.router.navigate(['/users']).then(r => console.log('Redirect to users page'));
+                        this.isLoading = false;
                     },
                     500);
             }, error: (error) => {
                 console.log(error);
+                this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
         })

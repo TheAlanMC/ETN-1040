@@ -15,6 +15,7 @@ import {TaskCommentService} from "../../../../core/services/task-comment.service
 import {TaskHistoryDto} from "../../models/task-history.dto";
 import {Directory, Filesystem} from "@capacitor/filesystem";
 import {FileOpener} from "@capacitor-community/file-opener";
+import {logger} from "@capacitor/assets/dist/util/log";
 
 @Component({
     selector: 'app-view-task',
@@ -67,7 +68,7 @@ export class ViewTaskComponent implements OnInit {
 
     imgLoaded: { [key: string]: boolean } = {};
 
-    loading: boolean = false;
+    isLoading: boolean = false;
 
     task: TaskDto | null = null;
 
@@ -101,6 +102,10 @@ export class ViewTaskComponent implements OnInit {
     visibleAddFeedback: boolean = false;
 
     isMobile: boolean = false;
+
+    daysOfDifference: number = 0;
+
+    downloadingFileId: number = 0;
 
 
     constructor(
@@ -138,6 +143,7 @@ export class ViewTaskComponent implements OnInit {
 
     public onSidebarShow() {
         this.getStatuses()
+        this.getPriorities()
         this.getTask()
         this.getHistory()
     }
@@ -166,8 +172,20 @@ export class ViewTaskComponent implements OnInit {
         });
     }
 
+    public getPriorities() {
+        this.taskService.getPriorities().subscribe({
+            next: (data) => {
+                this.priorityItems = data.data!.map(priority => {
+                    return {label: priority.taskPriorityName, value: priority.taskPriorityId}
+                });
+            }, error: (error) => {
+                console.log(error);
+            }
+        });
+    }
+
     public getTask() {
-        this.loading = true;
+        this.isLoading = true;
         this.taskService.getTask(this.taskId).subscribe({
             next: (data) => {
                 this.task = data.data;
@@ -181,7 +199,7 @@ export class ViewTaskComponent implements OnInit {
                         hour: '2-digit', minute: '2-digit'
                     });
                 this.taskDueDate = `${datePart} ${timePart}`;
-                this.selectedPriority = this.task!.taskPriority;
+                this.selectedPriority = this.task!.taskPriority.taskPriorityId;
                 this.selectedStatus = this.task!.taskStatus.taskStatusId;
                 this.selectedAssignees = this.task!.taskAssignees.map(assignee => {
                     const img = new Image();
@@ -203,8 +221,16 @@ export class ViewTaskComponent implements OnInit {
                         label: `${user.firstName} ${user.lastName}`, labelSecondary: user.email, value: user.userId,
                     }
                 });
-                this.loading = false;
+                if(this.task!.taskEndDate != null) {
+                    const dateTo = new Date(this.task!.taskDueDate);
+                    const dateEnd = new Date(this.task!.taskEndDate);
+                    const difference = dateEnd.getTime() - dateTo.getTime();
+                    this.daysOfDifference = Math.ceil(difference / (1000 * 3600 * 24));
+                    this.daysOfDifference = this.daysOfDifference < 0 ? 0 : this.daysOfDifference;
+                }
+                this.isLoading = false;
             }, error: (error) => {
+                this.isLoading = false;
                 console.log(error);
             }
         });
@@ -221,7 +247,7 @@ export class ViewTaskComponent implements OnInit {
         this.selectedAssignees = [];
         this.userItems = [];
         this.statusItems = [];
-        this.loading = false;
+        this.isLoading = false;
 
         this.taskRating = 0;
         this.taskFeedback = '';
@@ -251,43 +277,80 @@ export class ViewTaskComponent implements OnInit {
         })
     }
 
-    public downloadFile(file: FileDto) {
-        this.fileService.getFile(file.fileId).subscribe({
-            next: (data) => {
-                const blob = new Blob([data],
-                    {type: file.contentType});
-                if (!this.isMobile) {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = file.fileName;
-                    document.body.appendChild(a);
-                    a.click();
-                    URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
-                } else {
-                    const reader = new FileReader();
-                    reader.onloadend = async () => {
-                        const base64Data = reader.result as string;
-                        const savedFile = await Filesystem.writeFile({
-                            path: file.fileName,
-                            data: base64Data,
-                            directory: Directory.Documents,
-                        });
-                        const fileOpenerOptions = {
-                            filePath: savedFile.uri,
-                            contentType: file.contentType,
-                            openWithDefault: true,
-                        };
-                        await FileOpener.open(fileOpenerOptions);
-
+    public downloadFile(file: any) {
+        if (file.fileId === undefined) {
+            if (!this.isMobile) {
+                const url = URL.createObjectURL(file);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file.name;
+                document.body.appendChild(a);
+                a.click();
+                URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } else {
+                const reader = new FileReader();
+                reader.onloadend = async () => {
+                    const base64Data = reader.result as string;
+                    const savedFile = await Filesystem.writeFile({
+                        path: file.name,
+                        data: base64Data,
+                        directory: Directory.Documents,
+                    });
+                    const fileOpenerOptions = {
+                        filePath: savedFile.uri,
+                        contentType: file.type,
+                        openWithDefault: true,
                     };
-                    reader.readAsDataURL(blob);
-                }
-            }, error: (error) => {
-                console.log(error);
+                    await FileOpener.open(fileOpenerOptions);
+
+                };
+                reader.readAsDataURL(file);
             }
-        });
+        } else {
+            this.isLoading = true;
+            this.downloadingFileId = file.fileId;
+            this.fileService.getFile(file.fileId).subscribe({
+                next: (data) => {
+                    const blob = new Blob([data],
+                        {type: file.contentType});
+                    if (!this.isMobile) {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = file.fileName;
+                        document.body.appendChild(a);
+                        a.click();
+                        URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                    } else {
+                        const reader = new FileReader();
+                        reader.onloadend = async () => {
+                            const base64Data = reader.result as string;
+                            const savedFile = await Filesystem.writeFile({
+                                path: file.fileName,
+                                data: base64Data,
+                                directory: Directory.Documents,
+                            });
+                            const fileOpenerOptions = {
+                                filePath: savedFile.uri,
+                                contentType: file.contentType,
+                                openWithDefault: true,
+                            };
+                            await FileOpener.open(fileOpenerOptions);
+
+                        };
+                        reader.readAsDataURL(blob);
+                    }
+                    this.isLoading = false;
+                    this.downloadingFileId = 0;
+                }, error: (error) => {
+                    this.isLoading = false;
+                    this.downloadingFileId = 0;
+                    console.log(error);
+                }
+            });
+        }
     }
 
     public getFileExtension(fileName: string): string {
@@ -363,6 +426,7 @@ export class ViewTaskComponent implements OnInit {
         taskStatus: any,
         addFeedback: boolean = false
     ) {
+        this.isLoading = true;
         this.taskService.updateTaskStatus(this.taskId,
             taskStatus.value,
             taskStatus.label!).subscribe({
@@ -380,6 +444,7 @@ export class ViewTaskComponent implements OnInit {
                             this.router.navigateByUrl('/',
                                 {skipLocationChange: true}).then(() => {
                                 this.router.navigate([currentRoute]).then(r => console.log('Task status updated'));
+                                this.isLoading = true;
                             });
                         },
                         500);
@@ -393,7 +458,7 @@ export class ViewTaskComponent implements OnInit {
     }
 
     public onComment(event: any | null = null) {
-        this.loading = true;
+        this.isLoading = true;
         if (this.newCommentFiles.length == 0) {
             this.saveTaskComment();
             return;
@@ -407,7 +472,7 @@ export class ViewTaskComponent implements OnInit {
                     }
                 }, error: (error) => {
                     console.log(error);
-                    this.loading = false;
+                    this.isLoading = false;
                     this.messageService.add({
                         severity: 'error', summary: 'Error', detail: error.error.message
                     });
@@ -431,13 +496,15 @@ export class ViewTaskComponent implements OnInit {
                         this.router.navigateByUrl('/',
                             {skipLocationChange: true}).then(() => {
                             this.router.navigate([currentRoute]).then(r => console.log('Task comment created'));
+                            this.isLoading = false;
                         });
                     },
                     500);
                 this.onClose();
             }, error: (error) => {
                 console.log(error);
-                this.loading = false;
+                this.uploadedFiles = [];
+                this.isLoading = false;
                 this.messageService.add({
                     severity: 'error', summary: 'Error', detail: error.error.message
                 });
@@ -513,7 +580,6 @@ export class ViewTaskComponent implements OnInit {
                 this.onClose();
             }, error: (error) => {
                 console.log(error);
-                this.loading = false;
                 this.messageService.add({
                     severity: 'error', summary: 'Error', detail: error.error.message
                 });
@@ -612,7 +678,6 @@ export class ViewTaskComponent implements OnInit {
     }
 
     public downloadEditFile(file: any) {
-        console.log(file)
         if (file.id === undefined) {
             if (!this.isMobile) {
                 const url = URL.createObjectURL(file);
@@ -643,6 +708,8 @@ export class ViewTaskComponent implements OnInit {
                 reader.readAsDataURL(file);
             }
         } else {
+            this.isLoading = true;
+            this.downloadingFileId = file.id;
             this.fileService.getFile(file.id).subscribe({
                 next: (data) => {
                     const blob = new Blob([data],
@@ -675,7 +742,11 @@ export class ViewTaskComponent implements OnInit {
                         };
                         reader.readAsDataURL(blob);
                     }
+                    this.isLoading = false;
+                    this.downloadingFileId = 0;
                 }, error: (error) => {
+                    this.isLoading = false;
+                    this.downloadingFileId = 0;
                     console.log(error);
                 }
             });
@@ -683,7 +754,7 @@ export class ViewTaskComponent implements OnInit {
     }
 
     public onEditComment(event: any | null = null) {
-        this.loading = true;
+        this.isLoading = true;
         if (this.editCommentFiles.length == 0) {
             this.updateTaskComment();
             return;
@@ -698,7 +769,7 @@ export class ViewTaskComponent implements OnInit {
                         }
                     }, error: (error) => {
                         console.log(error);
-                        this.loading = false;
+                        this.isLoading = false;
                         this.messageService.add({
                             severity: 'error', summary: 'Error', detail: error.error.message
                         });
@@ -733,13 +804,15 @@ export class ViewTaskComponent implements OnInit {
                         this.router.navigateByUrl('/',
                             {skipLocationChange: true}).then(() => {
                             this.router.navigate([currentRoute]).then(r => console.log('Task comment updated'));
+                            this.isLoading = false;
                         });
                     },
                     500);
                 this.onClose();
             }, error: (error) => {
                 console.log(error);
-                this.loading = false;
+                this.editUploadedFiles = [];
+                this.isLoading = false;
                 this.messageService.add({
                     severity: 'error', summary: 'Error', detail: error.error.message
                 });
@@ -767,20 +840,20 @@ export class ViewTaskComponent implements OnInit {
                     summary: 'Éxito',
                     detail: 'Retroalimentación de la tarea creada correctamente'
                 });
-
                 this.visibleAddFeedback = false;
                 setTimeout(() => {
                         let currentRoute = this.router.url;
                         this.router.navigateByUrl('/',
                             {skipLocationChange: true}).then(() => {
                             this.router.navigate([currentRoute]).then(r => console.log('Task feedback created'));
+                            this.isLoading = true;
                         });
                     },
                     500);
                 this.onClose();
             }, error: (error) => {
                 console.log(error);
-                this.loading = false;
+                this.isLoading = false;
                 this.messageService.add({
                     severity: 'error', summary: 'Error', detail: error.error.message
                 });

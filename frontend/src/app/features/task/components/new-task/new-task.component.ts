@@ -11,6 +11,7 @@ import {FileDto} from "../../../../core/models/file.dto";
 import {Router} from "@angular/router";
 import {Directory, Filesystem} from "@capacitor/filesystem";
 import {FileOpener} from "@capacitor-community/file-opener";
+import {TaskPriorityDto} from "../../models/task-priority.dto";
 
 @Component({
     selector: 'app-new-task',
@@ -22,10 +23,12 @@ export class NewTaskComponent implements OnInit {
 
     @Input() sidebarVisible: boolean = false;
     @Input() projectId: number = 0;
-    @Input() deadline: Date | null = null
+    @Input() taskDueDate: Date | null = null
     @Output() sidebarVisibleChange = new EventEmitter<boolean>();
     @ViewChildren('buttonEl') buttonEl!: QueryList<ElementRef>;
     @ViewChildren('buttonOp') buttonOp!: QueryList<ElementRef>;
+
+    projectDateTo: Date = new Date();
 
 
     taskNameControl = new FormControl('',
@@ -34,6 +37,8 @@ export class NewTaskComponent implements OnInit {
     taskDueDateControl = new FormControl('',
         [Validators.required]);
     selectedPriority: any = {value: ''};
+
+    priorities: TaskPriorityDto[] = [];
 
     priorityItems: SelectItem[] = [];
 
@@ -58,7 +63,7 @@ export class NewTaskComponent implements OnInit {
 
     uploadedFiles: FileDto[] = [];
 
-    loading: boolean = false;
+    isLoading: boolean = false;
 
     showProjectDropdown: boolean = false;
 
@@ -82,20 +87,23 @@ export class NewTaskComponent implements OnInit {
 
     ngOnInit() {
         this.showProjectDropdown = this.projectId == 0;
-
-        this.priorityItems = [
-            {label: 'Nivel 1', value: 1},
-            {label: 'Nivel 2', value: 2},
-            {label: 'Nivel 3', value: 3},
-            {label: 'Nivel 4', value: 4},
-            {label: 'Nivel 5', value: 5},
-            {label: 'Nivel 6', value: 6},
-            {label: 'Nivel 7', value: 7},
-            {label: 'Nivel 8', value: 8},
-            {label: 'Nivel 9', value: 9},
-            {label: 'Nivel 10', value: 10},
-        ];
+        this.getAllPriorities();
         this.getAllProjects();
+    }
+
+    public getAllPriorities() {
+        this.taskService.getPriorities().subscribe({
+            next: (data) => {
+                this.priorities = data.data!;
+                this.priorityItems = this.priorities.map(priority => {
+                    return {
+                        label: priority.taskPriorityName, value: priority.taskPriorityId
+                    }
+                });
+            }, error: (error) => {
+                console.log(error);
+            }
+        });
     }
 
 
@@ -121,6 +129,7 @@ export class NewTaskComponent implements OnInit {
             this.taskNameControl.enable();
             this.taskDescriptionControl.enable();
             this.taskDueDateControl.enable();
+            this.projectDateTo = new Date(this.project.projectDateTo);
             this.userItems = this.project.projectMembers.map(user => {
                 // Pre-fetch the image
                 const img = new Image();
@@ -139,12 +148,13 @@ export class NewTaskComponent implements OnInit {
     }
 
     public onSidebarShow() {
-        if (this.deadline != null) {
-            let datePart = new Date(this.deadline!).toLocaleDateString('en-GB');
-            let timePart = new Date(this.deadline!).toLocaleTimeString('en-GB',
+        if (this.taskDueDate != null) {
+            let datePart = new Date(this.taskDueDate!).toLocaleDateString('en-GB');
+            let timePart = new Date(this.taskDueDate!).toLocaleTimeString('en-GB',
                 {hour: '2-digit', minute: '2-digit'});
             this.taskDueDateControl.setValue(`${datePart} ${timePart}`);
         }
+        this.selectedProject = this.projectItems.find(project => project.value == this.projectId)?.value;
     }
 
 
@@ -156,10 +166,9 @@ export class NewTaskComponent implements OnInit {
         this.taskDueDateControl.reset();
         this.selectedAssignees = [];
         this.selectedPriority = {value: ''};
-        this.selectedProject = null;
         this.files = [];
         this.uploadedFiles = [];
-        this.loading = false;
+        this.isLoading = false;
     }
 
     public onUpload(event: any) {
@@ -277,7 +286,7 @@ export class NewTaskComponent implements OnInit {
     }
 
     public onSave() {
-        this.loading = true;
+        this.isLoading = true;
         if (this.files.length == 0) {
             this.saveTask();
             return;
@@ -291,7 +300,7 @@ export class NewTaskComponent implements OnInit {
                     }
                 }, error: (error) => {
                     console.log(error);
-                    this.loading = false;
+                    this.isLoading = false;
                     this.messageService.add({
                         severity: 'error', summary: 'Error', detail: error.error.message
                     });
@@ -305,11 +314,11 @@ export class NewTaskComponent implements OnInit {
             this.taskNameControl.value!,
             this.taskDescriptionControl.value!,
             this.taskDueDateControl.value!,
-            this.selectedPriority,
+            this.selectedPriority.value == '' ? 0 : this.selectedPriority,
             this.selectedAssignees.map(assignee => assignee.value),
             this.uploadedFiles.map(file => file.fileId)).subscribe({
             next: (data) => {
-                this.loading = false;
+                this.isLoading = false;
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Tarea creada con éxito'
                 });
@@ -324,7 +333,8 @@ export class NewTaskComponent implements OnInit {
                 this.onClose();
             }, error: (error) => {
                 console.log(error);
-                this.loading = false;
+                this.isLoading = false;
+                this.uploadedFiles = [];
                 this.messageService.add({
                     severity: 'error', summary: 'Error', detail: error.error.message
                 });

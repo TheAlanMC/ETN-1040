@@ -17,6 +17,10 @@ import {MessageService} from "primeng/api";
 })
 export class ProfileComponent implements OnInit {
 
+    isDataLoading: boolean = false;
+
+    isLoading: boolean = false;
+
     visibleChangePassword = false
 
     oldPasswordControl = new FormControl('',
@@ -72,6 +76,7 @@ export class ProfileComponent implements OnInit {
         this.getProfilePictureUrl();
     }
 
+
     public getProfilePictureUrl() {
         this.profileService.getProfilePicture().subscribe({
             next: (data) => {
@@ -109,6 +114,7 @@ export class ProfileComponent implements OnInit {
     }
 
     public onSave() {
+        this.isDataLoading = true;
         this.onUpload();
         this.profileService.updateProfile(this.firstNameControl.value!,
             this.lastNameControl.value!,
@@ -119,10 +125,12 @@ export class ProfileComponent implements OnInit {
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Perfil actualizado'});
                 setTimeout(() => {
                         this.router.navigate(['/']).then(r => window.location.reload());
+                        this.isDataLoading = false;
                     },
                     500);
             }, error: (error) => {
                 console.log(error);
+                this.isDataLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
         })
@@ -155,14 +163,20 @@ export class ProfileComponent implements OnInit {
         });
     }
 
-    onSubmit() {
+    public onSubmit() {
+        this.isLoading = true;
         this.profileService.changePassword(this.oldPasswordControl.value!,
             this.passwordControl.value!,
             this.confirmPasswordControl.value!).subscribe({
             next: (data) => {
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Contraseña actualizada'});
                 this.visibleChangePassword = false;
+                this.isLoading = false;
+                this.oldPasswordControl.reset();
+                this.passwordControl.reset();
+                this.confirmPasswordControl.reset();
             }, error: (error) => {
+                this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
                 console.log(error);
             }

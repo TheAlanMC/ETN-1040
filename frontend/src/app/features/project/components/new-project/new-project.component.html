@@ -47,7 +47,9 @@
 
         <div class="col-12 lg:col-4">
             <div class="border-1 surface-border border-round field">
-                <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Agregar Colaboradores</span>
+                <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Agregar Colaboradores <span
+                        style="color: red;">*</span>
+                </span>
                 <div class="p-3">
                     <div *ngIf="selectedModerators.length > 0" class="auto-flex align-items-center field">
                         <p-chips [(ngModel)]="selectedModerators" class="chips-custom">
@@ -89,7 +91,9 @@
                 </div>
             </div>
             <div class="border-1 surface-border border-round field">
-                <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Agregar Miembros del Equipo</span>
+                <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Agregar Miembros del Equipo <span
+                        style="color: red;">*</span>
+                </span>
                 <div class="p-3">
                     <div *ngIf="selectedMembers.length > 0" class="auto-flex align-items-center field">
                         <p-chips [(ngModel)]="selectedMembers" class="chips-custom">
@@ -131,11 +135,11 @@
                 </div>
             </div>
             <div class="flex flex-column sm:flex-row justify-content-between align-items-center gap-3 py-2">
-                <button (click)="onSave()" class="p-button-primary flex-1 border-round" icon="pi pi-fw pi-save"
+                <button (click)="onSave()" class="p-button-primary flex-1 border-round" icon="pi pi-fw pi-save" [loading]="isLoading"
                         label="Guardar"
                         pButton
                         pRipple></button>
-                <button (click)="onCancel()" class="p-button-primary flex-1 p-button-outlined" icon="pi pi-fw pi-times"
+                <button (click)="onCancel()" class="p-button-primary flex-1 p-button-outlined" icon="pi pi-fw pi-times" [loading]="isLoading" [loadingIcon]="'pi pi-times'"
                         label="Cancelar"
                         pButton pRipple></button>
             </div>

@@ -19,6 +19,8 @@ import {Router} from "@angular/router";
 })
 export class NewProjectComponent implements OnInit {
 
+    isLoading: boolean = false;
+
     editorModules = {
         toolbar: [
             [
@@ -122,7 +124,7 @@ export class NewProjectComponent implements OnInit {
     }
 
     public onSave() {
-        // Convert the date to ISO format
+        this.isLoading = true;
         this.projectService.createProject(this.projectNameControl.value!,
             this.projectDescriptionControl.value!,
             this.dateFromControl.value!,
@@ -134,10 +136,12 @@ export class NewProjectComponent implements OnInit {
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Proyecto creado'});
                 setTimeout(() => {
                         this.router.navigate(['/projects']).then(r => console.log('Redirect to projects page'));
+                        this.isLoading = false;
                     },
                     500);
             }, error: (error) => {
                 console.log(error);
+                this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
         });

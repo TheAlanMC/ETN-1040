@@ -7,7 +7,7 @@
                      rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
     <p-table (onPage)="onPageChange($event)" (onSort)="onSortChange($event)" [customSort]="true" [lazy]="true"
-             [loading]="isLoading"
+             [loading]="isDataLoading"
              [paginator]="true" [rowsPerPageOptions]="[5, 10, 25]" [rows]="10" [showCurrentPageReport]="true"
              [totalRecords]="totalElements" [value]="projects"
              currentPageReportTemplate="Mostrando registros {first}-{last} de {totalRecords}">

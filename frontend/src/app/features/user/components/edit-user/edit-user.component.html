@@ -55,12 +55,13 @@
 
                 <div class="col-12 lg:col-3 md:col-4 field">
                     <button (click)="onSave()" class="flex-auto mt-3 mr-3" icon="pi pi-save" label="Guardar" pButton
+                            [loading]="isLoading"
                             pRipple></button>
                 </div>
                 <div class="col-12 lg:col-3 md:col-4 field">
                     <button (click)="onCancel()" class="flex-auto mt-3 p-button-outlined" icon="pi pi-times"
                             label="Cancelar"
-                            pButton
+                            pButton [loading]="isLoading" [loadingIcon]="'pi pi-times'"
                             pRipple></button>
                 </div>
             </div>

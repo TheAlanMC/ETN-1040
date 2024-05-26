@@ -20,6 +20,8 @@ import {ProjectDto} from "../../models/project.dto";
 })
 export class EditProjectComponent implements OnInit {
 
+    isLoading: boolean = false;
+
     projectId: number = 0;
 
     editorModules = {
@@ -164,6 +166,7 @@ export class EditProjectComponent implements OnInit {
     }
 
     public onSave() {
+        this.isLoading = true;
         let dateFrom = new Date(this.project!.projectDateFrom)
         let dateTo = new Date(this.project!.projectDateTo)
         this.projectService.updateProject(this.projectId,
@@ -178,10 +181,12 @@ export class EditProjectComponent implements OnInit {
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Proyecto actualizado'});
                 setTimeout(() => {
                         this.router.navigate(['/projects']).then(r => console.log('Redirect to projects page'));
+                        this.isLoading = false;
                     },
                     500);
             }, error: (error) => {
                 console.log(error);
+                this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
         });

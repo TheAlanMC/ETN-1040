@@ -94,7 +94,7 @@ class AuthService @Autowired constructor(
         logger.info("User $email is trying to reset the password, sending an email with the code")
         // Verify if the user exists
         val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email)
-            ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: User not found", "Usuario no encontrado")
+            ?: throw EtnException(HttpStatus.BAD_REQUEST, "Error: User not found", "Usuario no encontrado")
         // Check if user has an active account recovery
         val accountRecoveryEntities = accountRecoveryRepository.findAllByUserEmailAndStatusIsTrueAndStatusIsTrue(email)
         if (accountRecoveryEntities.isNotEmpty()) {
@@ -133,11 +133,11 @@ class AuthService @Autowired constructor(
         // Verify if the hash code is correct
         val verifyResult = BCrypt.verifyer().verify(code.toCharArray(), accountRecoveryEntity.hashCode)
         if (!verifyResult.verified) {
-            throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Hash code not valid", "Código no válido")
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Hash code not valid", "Código no válido")
         }
         // Verify if the hash code is expired
         if (accountRecoveryEntity.expirationDate.before(java.sql.Timestamp(System.currentTimeMillis()))) {
-            throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Hash code expired", "Código expirado")
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Hash code expired", "Código expirado")
         }
     }
 

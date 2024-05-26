@@ -20,6 +20,8 @@ import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 })
 export class GroupAndRoleComponent implements OnInit {
 
+    isLoading: boolean = false;
+
     selectedUserId = 0;
     selectedGroupId = 0;
 
@@ -158,16 +160,19 @@ export class GroupAndRoleComponent implements OnInit {
     }
 
     public saveUserGroups() {
+        this.isLoading = true;
         this.userService.addUsersToGroup(this.selectedUserId,
             this.targetGroups.map(group => group.code)).subscribe({
             next: (data) => {
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Grupos asignados correctamente'
                 });
+                this.isLoading = false;
                 this.selectedUser = {value: ''};
                 this.onClearUser();
             }, error: (error) => {
                 console.log(error);
+                this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
         });
@@ -249,15 +254,18 @@ export class GroupAndRoleComponent implements OnInit {
     }
 
     public saveGroupRoles() {
+        this.isLoading = true;
         this.groupsService.addRolesToGroup(this.selectedGroupId,
             this.targetRoles.map(role => role.code)).subscribe({
             next: (data) => {
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Roles asignados correctamente'
                 });
+                this.isLoading = false;
                 this.onClearGroup();
             }, error: (error) => {
                 console.log(error);
+                this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
         });
@@ -319,22 +327,26 @@ export class GroupAndRoleComponent implements OnInit {
     }
 
     onSaveGroup() {
+        this.isLoading = true;
         this.groupsService.createGroup(this.groupNameControl.value!,
             this.groupDescriptionControl.value!).subscribe({
             next: (data) => {
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Grupo creado correctamente'
                 });
+                this.isLoading = false;
                 this.visibleAddGroup = false;
                 this.getGroups();
             }, error: (error) => {
                 console.log(error);
+                this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
         });
     }
 
     public onUpdateGroup() {
+        this.isLoading = true;
         this.groupsService.updateGroup(this.selectedGroupId,
             this.groupNameControl.value!,
             this.groupDescriptionControl.value!).subscribe({
@@ -342,11 +354,13 @@ export class GroupAndRoleComponent implements OnInit {
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Grupo actualizado correctamente'
                 });
+                this.isLoading = false;
                 this.visibleEditGroup = false;
                 this.getGroups();
                 this.onClearGroup();
             }, error: (error) => {
                 console.log(error);
+                this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
         });

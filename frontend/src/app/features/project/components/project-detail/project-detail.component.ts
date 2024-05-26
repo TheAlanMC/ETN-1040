@@ -16,6 +16,9 @@ import {FormControl, Validators} from "@angular/forms";
     providers: [MessageService, ConfirmationService],
 })
 export class ProjectDetailComponent implements OnInit {
+
+    isLoading: boolean = false;
+
     projectId: number = 0;
 
     editorModules = {
@@ -67,7 +70,8 @@ export class ProjectDetailComponent implements OnInit {
 
     visibleAddCloseMessage: boolean = false;
 
-    projectCloseMessageControl = new FormControl('', [Validators.required]);
+    projectCloseMessageControl = new FormControl('',
+        [Validators.required]);
 
     daysOfDifference: number = 0;
 
@@ -119,8 +123,7 @@ export class ProjectDetailComponent implements OnInit {
                         disabled: (moderator.userId === this.userId)
                     }
                 });
-                // difference between two dates (end date and date to)
-                if(this.project.projectEndDate != null) {
+                if (this.project.projectEndDate != null) {
                     const dateTo = new Date(this.project.projectDateTo);
                     const dateEnd = new Date(this.project.projectEndDate);
                     const difference = dateEnd.getTime() - dateTo.getTime();
@@ -159,23 +162,28 @@ export class ProjectDetailComponent implements OnInit {
         });
     }
 
-    public onAddCloseMessageCancel(){
+    public onAddCloseMessageCancel() {
         this.visibleAddCloseMessage = false;
         this.projectCloseMessageControl.reset();
     }
 
     public onAddCloseMessage() {
-                this.projectService.closeProject(this.projectId, this.projectCloseMessageControl.value!).subscribe({
-                next: (data) => {
-                    this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Proyecto cerrado'});
-                    setTimeout(() => {
+        this.isLoading = true;
+        this.projectService.closeProject(this.projectId,
+            this.projectCloseMessageControl.value!).subscribe({
+            next: (data) => {
+                this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Proyecto cerrado'});
+                setTimeout(() => {
                         this.router.navigate(['/projects']).then(r => console.log('Redirect to projects page'));
-                    }, 500);
-                }, error: (error) => {
-                    console.log(error);
-                    this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
-                }
-            });
+                        this.isLoading = false;
+                    },
+                    500);
+            }, error: (error) => {
+                console.log(error);
+                this.isLoading = false;
+                this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
+            }
+        });
     }
 
 }

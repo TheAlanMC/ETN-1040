@@ -35,7 +35,7 @@ export class ProjectListComponent implements OnInit {
     canAddProject: boolean = false;
     canEditProject: boolean = false;
 
-    isLoading: boolean = true;
+    isDataLoading: boolean = true;
 
     baseUrl: string = `${environment.API_URL}/api/v1/users`;
 
@@ -105,7 +105,7 @@ export class ProjectListComponent implements OnInit {
     }
 
     public getData() {
-        this.isLoading = true;
+        this.isDataLoading = true;
         this.projectService.getProjects(this.sortBy,
             this.sortType,
             this.page,
@@ -120,7 +120,7 @@ export class ProjectListComponent implements OnInit {
                     project.projectModerators.forEach(user => this.fetchUserImage(user.userId));
                     project.projectMembers.forEach(user => this.fetchUserImage(user.userId));
                 });
-                this.isLoading = false;
+                this.isDataLoading = false;
             }, error: (error) => {
                 console.error(error);
             }
