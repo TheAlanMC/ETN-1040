@@ -14,7 +14,7 @@ class UserPartialMapper {
                 lastName = user.lastName,
                 phone = user.phone,
                 txDate = user.txDate,
-                txHost = user.txHost
+                txUser = user.txUser
             )
         }
     }

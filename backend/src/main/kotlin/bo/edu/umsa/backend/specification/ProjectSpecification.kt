@@ -3,6 +3,7 @@ package bo.edu.umsa.backend.specification
 import bo.edu.umsa.backend.entity.*
 import jakarta.persistence.criteria.Expression
 import org.springframework.data.jpa.domain.Specification
+import java.util.*
 
 
 class ProjectSpecification {
@@ -14,11 +15,6 @@ class ProjectSpecification {
                 cb.or(
                     cb.like(cb.lower(root.get("projectName")), "%${keyword.lowercase()}%"),
                     cb.like(cb.lower(root.get("projectDescription")), "%${keyword.lowercase()}%"),
-//                    cb.like(cb.lower(root.get("projectObjective")), "%${keyword.lowercase()}%"),
-//                    cb.like(cb.lower(root.get("projectCloseMessage")), "%${keyword.lowercase()}%"),
-//                    cb.like(cb.lower(root.get<Task>("projectOwners").get<TaskAssignee>("user").get<User>("firstName") as Expression<String>), "%${keyword.lowercase()}%"),
-//                    cb.like(cb.lower(root.get<Task>("projectOwners").get<TaskAssignee>("user").get<User>("lastName") as Expression<String>), "%${keyword.lowercase()}%"),
-//                    cb.like(cb.lower(root.get<Task>("projectOwners").get<TaskAssignee>("user").get<User>("email") as Expression<String>), "%${keyword.lowercase()}%"),
                     cb.like(cb.lower(root.get<Task>("projectModerators").get<TaskAssignee>("user").get<User>("firstName") as Expression<String>), "%${keyword.lowercase()}%"),
                     cb.like(cb.lower(root.get<Task>("projectModerators").get<TaskAssignee>("user").get<User>("lastName") as Expression<String>), "%${keyword.lowercase()}%"),
                     cb.like(cb.lower(root.get<Task>("projectModerators").get<TaskAssignee>("user").get<User>("email") as Expression<String>), "%${keyword.lowercase()}%"),
@@ -26,6 +22,50 @@ class ProjectSpecification {
                     cb.like(cb.lower(root.get<Task>("projectMembers").get<TaskAssignee>("user").get<User>("lastName") as Expression<String>), "%${keyword.lowercase()}%"),
                     cb.like(cb.lower(root.get<Task>("projectMembers").get<TaskAssignee>("user").get<User>("email") as Expression<String>), "%${keyword.lowercase()}%"),
                 )
+            }
+        }
+
+        fun dateBetweenAll(
+            dateFrom: Date,
+            dateTo: Date
+        ): Specification<Project> {
+            return Specification { root, _, cb ->
+                cb.or (
+                    cb.between(root.get("projectDateFrom"), dateFrom, dateTo),
+                    cb.between(root.get("projectDateTo"), dateFrom, dateTo),
+                    cb.between(root.get("projectEndDate"),dateFrom, dateTo),
+                )
+            }
+        }
+
+        fun projectOwners(userIds: List<Int>): Specification<Project> {
+            return Specification { root, _, cb ->
+                cb.`in`(root.get<Any>("projectOwners").get<Any>("userId")).value(userIds)
+            }
+        }
+
+        fun projectModerators(userIds: List<Int>): Specification<Project> {
+            return Specification { root, _, cb ->
+                cb.`in`(root.get<Any>("projectModerators").get<Any>("userId")).value(userIds)
+            }
+        }
+
+        fun projectMembers(userIds: List<Int>): Specification<Project> {
+            return Specification { root, _, cb ->
+                cb.`in`(root.get<Any>("projectMembers").get<Any>("userId")).value(userIds)
+            }
+        }
+
+        fun statuses(statuses: List<String>): Specification<Project> {
+            return Specification { root, query, cb ->
+                query.distinct(true)
+                val openProjectPredicate = if (statuses.contains("ABIERTO"))
+                    cb.isNull(root.get<Any>("projectEndDate")) else null
+                val closedProjectPredicate = if (statuses.contains("CERRADO"))
+                    cb.isNotNull(root.get<Any>("projectEndDate")) else null
+                val delayedProjectPredicate = if (statuses.contains("ATRASADO"))
+                    cb.lessThan(root.get("projectDateTo"), Date()) else null
+                cb.or(openProjectPredicate, closedProjectPredicate, delayedProjectPredicate)
             }
         }
 

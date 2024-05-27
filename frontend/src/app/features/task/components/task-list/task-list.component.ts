@@ -232,7 +232,7 @@ export class TaskListComponent implements OnInit {
                     }
                 });
                 this.statusItems.push({
-                    label: 'VENCIDO', value: 4
+                    label: 'ATRASADO', value: 4
                 });
                 this.selectedStatus = this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 1 || status.value === 2)) : this.selectedStatus;
                 this.getData();

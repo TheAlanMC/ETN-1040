@@ -56,10 +56,10 @@ class UserService @Autowired constructor(
         // Pagination and sorting
         val pageable: Pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortType), sortBy))
         var specification: Specification<User> = Specification.where(null)
-        specification = specification.and(specification.and(UserSpecification.statusIsTrue()))
+        specification = specification.and(UserSpecification.statusIsTrue())
         // Search by keyword
         if (!keyword.isNullOrEmpty() && keyword.isNotBlank()) {
-            specification = specification.and(specification.and(UserSpecification.userKeyword(keyword)))
+            specification = specification.and(UserSpecification.userKeyword(keyword))
         }
         val userEntities: Page<User> = userRepository.findAll(specification, pageable)
         return userEntities.map { UserPartialMapper.entityToDto(it) }

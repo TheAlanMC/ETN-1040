@@ -75,27 +75,27 @@ class TaskService @Autowired constructor(
         // Pagination and sorting
         val pageable: Pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortType), sortBy))
         var specification: Specification<Task> = Specification.where(null)
-        specification = specification.and(specification.and(TaskSpecification.statusIsTrue()))
-        specification = specification.and(specification.and(TaskSpecification.taskAssignee(userId.toInt())))
+        specification = specification.and(TaskSpecification.statusIsTrue())
+        specification = specification.and(TaskSpecification.taskAssignee(userId.toInt()))
 
         if (!keyword.isNullOrEmpty() && keyword.isNotBlank()) {
-            specification = specification.and(specification.and(TaskSpecification.taskKeyword(keyword)))
+            specification = specification.and(TaskSpecification.taskKeyword(keyword))
         }
 
         if (!statuses.isNullOrEmpty()) {
-            val currentDate = if (statuses.contains("VENCIDO")) Timestamp.from(Instant.now()) else null
+            val currentDate = if (statuses.contains("ATRASADO")) Timestamp.from(Instant.now()) else null
             specification = specification.and(TaskSpecification.taskStatuses(statuses, currentDate))
         }
 
         if (!priorities.isNullOrEmpty()) {
-            specification = specification.and(specification.and(TaskSpecification.taskPriorities(priorities)))
+            specification = specification.and(TaskSpecification.taskPriorities(priorities))
         }
 
         try {
             val newDateFrom = if (!dateFrom.isNullOrEmpty()) Timestamp.from(Instant.parse(dateFrom)) else Timestamp.from(Instant.parse("2024-01-01T00:00:00Z"))
             val newDateTo = if (!dateTo.isNullOrEmpty()) Timestamp.from(Instant.parse(dateTo)) else Timestamp.from(Instant.parse("2050-01-01T00:00:00Z"))
             if (newDateFrom.after(newDateTo)) {
-                specification = specification.and(specification.and(TaskSpecification.dateBetween(newDateFrom, newDateTo)))
+                specification = specification.and(TaskSpecification.dateBetween(newDateFrom, newDateTo))
             }
         } catch (e: Exception) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date format is incorrect", "El formato de fecha es incorrecto")

@@ -40,7 +40,8 @@ class TaskSpecification {
                     cb.`in`(root.get<Any>("taskStatus").get<Any>("taskStatusName")).value(taskStatuses)
                 }
             } else {
-                Specification { root, _, cb ->
+                Specification { root, query, cb ->
+                    query.distinct(true)
                     cb.or(
                         cb.`in`(root.get<Any>("taskStatus").get<Any>("taskStatusName")).value(taskStatuses),
                         cb.and(cb.lessThan(root.get("taskDueDate"), currentDate), cb.notEqual(root.get<Task>("taskStatusId"), 3)),
@@ -65,12 +66,33 @@ class TaskSpecification {
             dateFrom: Date,
             dateTo: Date
         ): Specification<Task> {
-            val cal = Calendar.getInstance()
-            cal.time = dateFrom
-            cal.add(Calendar.DATE, -1)
-            val newDateFrom = cal.time
             return Specification { root, _, cb ->
-                cb.between(root.get("taskDueDate"), newDateFrom, dateTo)
+                cb.between(root.get("taskDueDate"), dateFrom, dateTo)
+            }
+        }
+
+        fun dateBetweenAll(
+            dateFrom: Date,
+            dateTo: Date
+        ): Specification<Task> {
+            return Specification { root, _, cb ->
+                cb.or (
+                    cb.between(root.get("taskDueDate"), dateFrom, dateTo),
+                    cb.between(root.get("taskEndDate"), dateFrom, dateTo),
+                    cb.between(root.get("txDate"),dateFrom, dateTo),
+                )
+            }
+        }
+
+        fun projects(projectIds: List<Int>): Specification<Task> {
+            return Specification { root, _, cb ->
+                cb.`in`(root.get<Any>("projectId")).value(projectIds)
+            }
+        }
+
+        fun taskAssignees(userIds: List<Int>): Specification<Task> {
+            return Specification { root, _, cb ->
+                cb.`in`(root.get<Any>("taskAssignees").get<Any>("userId")).value(userIds)
             }
         }
 

@@ -67,7 +67,7 @@
             </div>
             <div class="flex align-items-center gap-1 flex-wrap">
                 <p-tag [style]="{background: getPriorityColor(selectedTask.taskPriority.taskPriorityId)}"
-                       value="NIVEL {{selectedTask.taskPriority}}"></p-tag>
+                       value="{{selectedTask.taskPriority.taskPriorityName}}"></p-tag>
                 <p-tag *ngIf="checkIfTaskIsOverdue(selectedTask.taskStatus.taskStatusId, selectedTask.taskDueDate)"
                        [style]="{background: '#FF000080'}">
                     VENCIDA {{ selectedTask.taskDueDate | timeAgo | uppercase }}

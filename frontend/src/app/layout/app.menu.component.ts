@@ -82,6 +82,12 @@ export class AppMenuComponent {
       icon: 'pi pi-fw pi-chart-bar',
       items: [
         {
+            label: 'Reporte Ejecutivo',
+            icon: 'pi pi-fw pi-chart-bar',
+            role: 'VER REPORTES EJECUTIVOS',
+            routerLink: ['/reports/executive']
+        },
+        {
           label: 'Reportes de Proyectos',
           icon: 'pi pi-fw pi-chart-line',
           role: 'VER REPORTES DE PROYECTOS',

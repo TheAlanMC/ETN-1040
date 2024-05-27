@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2024-05-23 03:18:17.881
+-- Last modification date: 2024-05-27 00:40:25.688
 
 -- tables
 -- Table: account_recovery
@@ -155,6 +155,21 @@ CREATE TABLE replaced_part_file (
     tx_user varchar(100)  NOT NULL,
     tx_host varchar(100)  NOT NULL,
     CONSTRAINT replaced_part_file_pk PRIMARY KEY (replaced_part_file_id)
+);
+
+-- Table: report
+CREATE TABLE report (
+    report_id serial  NOT NULL,
+    user_id int  NOT NULL,
+    file_id int  NOT NULL,
+    report_start_date date  NOT NULL,
+    report_end_date date  NOT NULL,
+    report_type varchar(100)  NOT NULL,
+    report_description varchar(255)  NOT NULL,
+    tx_date timestamp  NOT NULL,
+    tx_user varchar(100)  NOT NULL,
+    tx_host varchar(100)  NOT NULL,
+    CONSTRAINT report_pk PRIMARY KEY (report_id)
 );
 
 -- Table: role
@@ -414,6 +429,22 @@ ALTER TABLE project_member ADD CONSTRAINT project_team_user
 ALTER TABLE replaced_part_file ADD CONSTRAINT replaced_part_file_replaced_part
     FOREIGN KEY (replaced_part_id)
     REFERENCES replaced_part (replaced_part_id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: report_file (table: report)
+ALTER TABLE report ADD CONSTRAINT report_file
+    FOREIGN KEY (file_id)
+    REFERENCES file (file_id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: report_user (table: report)
+ALTER TABLE report ADD CONSTRAINT report_user
+    FOREIGN KEY (user_id)
+    REFERENCES "user" (user_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;

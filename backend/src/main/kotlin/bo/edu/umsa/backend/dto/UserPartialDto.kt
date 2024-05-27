@@ -10,5 +10,5 @@ data class UserPartialDto(
     val lastName: String,
     val phone: String,
     val txDate: Timestamp,
-    val txHost: String,
+    val txUser: String,
 )
