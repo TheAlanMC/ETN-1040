@@ -2,14 +2,15 @@ package bo.edu.umsa.backend.service
 
 import bo.edu.umsa.backend.dto.*
 import bo.edu.umsa.backend.entity.Project
+import bo.edu.umsa.backend.entity.Report
 import bo.edu.umsa.backend.entity.Task
 import bo.edu.umsa.backend.exception.EtnException
-import bo.edu.umsa.backend.repository.ProjectRepository
-import bo.edu.umsa.backend.repository.TaskPriorityRepository
-import bo.edu.umsa.backend.repository.TaskRepository
-import bo.edu.umsa.backend.repository.TaskStatusRepository
+import bo.edu.umsa.backend.mapper.ReportMapper
+import bo.edu.umsa.backend.repository.*
 import bo.edu.umsa.backend.specification.ProjectSpecification
+import bo.edu.umsa.backend.specification.ReportSpecification
 import bo.edu.umsa.backend.specification.TaskSpecification
+import bo.edu.umsa.backend.util.AuthUtil
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -20,10 +21,13 @@ import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
+import java.text.SimpleDateFormat
 import java.time.Instant
 
 @Service
 class ReportService @Autowired constructor(
+    private val fileRepository: FileRepository,
+    private val reportRepository: ReportRepository,
     private val projectRepository: ProjectRepository,
     private val taskRepository: TaskRepository,
     private val taskStatusRepository: TaskStatusRepository,
@@ -31,6 +35,74 @@ class ReportService @Autowired constructor(
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(ReportService::class.java.name)
+    }
+
+    fun getReports(
+        sortBy: String,
+        sortType: String,
+        page: Int,
+        size: Int,
+        dateFrom: String,
+        dateTo: String,
+    ): Page<ReportDto> {
+        try {
+            Timestamp.from(Instant.parse(dateFrom))
+            Timestamp.from(Instant.parse(dateTo))
+        } catch (e: Exception) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date format is incorrect", "El formato de fecha es incorrecto")
+        }
+        if (Timestamp.from(Instant.parse(dateFrom)).after(Timestamp.from(Instant.parse(dateTo)))) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date range is incorrect", "El rango de fechas es incorrecto")
+        }
+        // Pagination and sorting
+        val pageable: Pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortType), sortBy))
+        var specification: Specification<Report> = Specification.where(null)
+        specification = specification.and(ReportSpecification.statusIsTrue())
+
+        specification = specification.and(ReportSpecification.dateBetween(Timestamp.from(Instant.parse(dateFrom)), Timestamp.from(Instant.parse(dateTo).plusSeconds(60 * 60 * 24 - 1))))
+
+        val reportEntities: Page<Report> = reportRepository.findAll(specification, pageable)
+        logger.info("Success: Reports retrieved")
+        return reportEntities.map { ReportMapper.entityToDto(it) }
+    }
+
+
+    fun uploadReportFile(
+        file: FilePartialDto,
+        reportType: ReportType,
+        dateFrom: String,
+        dateTo: String
+    ) {
+        if (file.fileName.isBlank()) throw EtnException(HttpStatus.BAD_REQUEST, "Error: Empty fields", "Al menos un campo está vacío")
+        try {
+            Timestamp.from(Instant.parse(dateFrom))
+            Timestamp.from(Instant.parse(dateTo))
+        } catch (e: Exception) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date format is incorrect", "El formato de fecha es incorrecto")
+        }
+        if (Timestamp.from(Instant.parse(dateFrom)).after(Timestamp.from(Instant.parse(dateTo)))) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date range is incorrect", "El rango de fechas es incorrecto")
+        }
+        // Get the user id from the token
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        // Validate the file exists
+        val fileEntity = fileRepository.findByFileIdAndStatusIsTrue(file.fileId.toLong())
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found", "Archivo no encontrado")
+        logger.info("Starting the service call to upload the report file")
+
+        val fileName = file.fileName.split(".")
+        val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
+        val simpleDateFrom = simpleDateFormat.format(Timestamp.from(Instant.parse(dateFrom)))
+        val simpleDateTo = simpleDateFormat.format(Timestamp.from(Instant.parse(dateTo)))
+        val reportEntity = Report()
+        reportEntity.userId = userId.toInt()
+        reportEntity.fileId = file.fileId
+        reportEntity.reportType = reportType
+        reportEntity.reportStartDate = Timestamp.from(Instant.parse(dateFrom))
+        reportEntity.reportEndDate = Timestamp.from(Instant.parse(dateTo))
+        reportEntity.reportName = "${fileName[0]}: $simpleDateFrom - $simpleDateTo.${fileName[1]}"
+        reportRepository.save(reportEntity)
+        logger.info("Success: Report file uploaded")
     }
 
     fun getTaskFilters(
@@ -251,7 +323,7 @@ class ReportService @Autowired constructor(
         if (!statuses.isNullOrEmpty()) {
             specification = specification.and(ProjectSpecification.statuses(statuses))
         }
-        
+
         if (!projectOwners.isNullOrEmpty()) {
             specification = specification.and(ProjectSpecification.projectOwners(projectOwners))
         }
@@ -263,7 +335,7 @@ class ReportService @Autowired constructor(
         if (!projectMembers.isNullOrEmpty()) {
             specification = specification.and(ProjectSpecification.projectMembers(projectMembers))
         }
-        
+
         val projectEntities: Page<Project> = projectRepository.findAll(specification, pageable)
 
         logger.info("Success: Projects retrieved")

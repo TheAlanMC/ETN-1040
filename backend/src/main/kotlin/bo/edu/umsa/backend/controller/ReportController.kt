@@ -20,6 +20,38 @@ class ReportController @Autowired constructor(
         private val logger = LoggerFactory.getLogger(ReportController::class.java.name)
     }
 
+    @GetMapping()
+    fun getReports(
+        @RequestParam(defaultValue = "reportId") sortBy: String,
+        @RequestParam(defaultValue = "asc") sortType: String,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int,
+        @RequestParam(required = false) dateFrom: String,
+        @RequestParam(required = false) dateTo: String,
+    ): ResponseEntity<ResponseDto<Page<ReportDto>>> {
+        logger.info("Starting the API call to get the reports")
+        logger.info("GET /api/v1/reports")
+        AuthUtil.verifyAuthTokenHasRoles(listOf("VER REPORTES DE TAREAS", "VER REPORTES DE PROYECTOS", "VER REPORTES EJECUTIVOS").toTypedArray())
+        val reports: Page<ReportDto> = reportService.getReports(sortBy, sortType, page, size, dateFrom, dateTo)
+        logger.info("Success: Reports retrieved")
+        return ResponseEntity(ResponseDto(true, "Reportes recuperados", reports), HttpStatus.OK)
+    }
+
+    @PostMapping("/{reportType}")
+    fun uploadReportFile(
+        @RequestParam(defaultValue = "dateFrom") dateFrom: String,
+        @RequestParam(defaultValue = "dateTo") dateTo: String,
+        @PathVariable reportType: ReportType,
+        @RequestBody file: FilePartialDto
+    ): ResponseEntity<ResponseDto<Nothing>> {
+        logger.info("Starting the API call to upload the report file")
+        logger.info("POST /api/v1/reports")
+        AuthUtil.verifyAuthTokenHasRoles(listOf("VER REPORTES DE TAREAS", "VER REPORTES DE PROYECTOS", "VER REPORTES EJECUTIVOS").toTypedArray())
+        reportService.uploadReportFile(file, reportType, dateFrom, dateTo)
+        logger.info("Success: Report file uploaded")
+        return ResponseEntity(ResponseDto(true, "Archivo de reporte subido", null), HttpStatus.OK)
+    }
+
     @GetMapping("/tasks/filters")
     fun getTaskFilters(
         @RequestParam(defaultValue = "dateFrom") dateFrom: String,
