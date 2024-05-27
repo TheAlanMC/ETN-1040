@@ -66,7 +66,7 @@ VALUES  (3, 2, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'
 -- Task Status
 INSERT INTO "task_status" (task_status_name, status, tx_date, tx_user, tx_host)
 VALUES  ('PENDIENTE', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
-        ('EN PROCESO', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
+        ('EN PROGRESO', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         ('FINALIZADO', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost');
 
 -- Task Priority

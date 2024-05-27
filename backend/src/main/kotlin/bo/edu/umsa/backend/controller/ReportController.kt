@@ -1,8 +1,6 @@
 package bo.edu.umsa.backend.controller
 
-import bo.edu.umsa.backend.controller.ProjectController.Companion
 import bo.edu.umsa.backend.dto.*
-import bo.edu.umsa.backend.entity.ProjectOwner
 import bo.edu.umsa.backend.service.ReportService
 import bo.edu.umsa.backend.util.AuthUtil
 import org.slf4j.LoggerFactory
@@ -88,5 +86,18 @@ class ReportController @Autowired constructor(
         val projects: Page<ProjectReportDto> = reportService.getProjects(sortBy, sortType, page, size, dateFrom, dateTo, projectOwners, projectModerators, projectMembers, statuses)
         logger.info("Success: Projects retrieved")
         return ResponseEntity(ResponseDto(true, "Proyectos recuperados", projects), HttpStatus.OK)
+    }
+
+    @GetMapping("/executives")
+    fun getExecutiveReport(
+        @RequestParam(required = true) dateFrom: String,
+        @RequestParam(required = true) dateTo: String,
+    ): ResponseEntity<ResponseDto<ExecutiveReportDto>> {
+        logger.info("Starting the API call to get the executive report")
+        logger.info("GET /api/v1/reports/executive")
+        AuthUtil.verifyAuthTokenHasRole("VER REPORTES EJECUTIVOS")
+        val executiveReport: ExecutiveReportDto = reportService.getExecutiveReport(dateFrom, dateTo)
+        logger.info("Success: Executive report retrieved")
+        return ResponseEntity(ResponseDto(true, "Reporte ejecutivo recuperado", executiveReport), HttpStatus.OK)
     }
 }

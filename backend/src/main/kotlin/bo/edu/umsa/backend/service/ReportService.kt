@@ -4,7 +4,10 @@ import bo.edu.umsa.backend.dto.*
 import bo.edu.umsa.backend.entity.Project
 import bo.edu.umsa.backend.entity.Task
 import bo.edu.umsa.backend.exception.EtnException
-import bo.edu.umsa.backend.repository.*
+import bo.edu.umsa.backend.repository.ProjectRepository
+import bo.edu.umsa.backend.repository.TaskPriorityRepository
+import bo.edu.umsa.backend.repository.TaskRepository
+import bo.edu.umsa.backend.repository.TaskStatusRepository
 import bo.edu.umsa.backend.specification.ProjectSpecification
 import bo.edu.umsa.backend.specification.TaskSpecification
 import org.slf4j.LoggerFactory
@@ -21,17 +24,8 @@ import java.time.Instant
 
 @Service
 class ReportService @Autowired constructor(
-    private val userRepository: UserRepository,
     private val projectRepository: ProjectRepository,
-    private val projectOwnerRepository: ProjectOwnerRepository,
-    private val projectModeratorRepository: ProjectModeratorRepository,
-    private val projectMemberRepository: ProjectMemberRepository,
     private val taskRepository: TaskRepository,
-    private val taskAssigneeRepository: TaskAssigneeRepository,
-    private val emailService: EmailService,
-    private val firebaseMessagingService: FirebaseMessagingService,
-    private val firebaseTokenRepository: FirebaseTokenRepository,
-    private val notificationRepository: NotificationRepository,
     private val taskStatusRepository: TaskStatusRepository,
     private val taskPriorityRepository: TaskPriorityRepository
 ) {
@@ -54,12 +48,12 @@ class ReportService @Autowired constructor(
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date range is incorrect", "El rango de fechas es incorrecto")
         }
 
-        val taskEntities = taskRepository.findAllTasksByDateRange(Timestamp.from(Instant.parse(dateFrom)), Timestamp.from(Instant.parse(dateTo).plusSeconds(60 * 60 * 24 - 1)))
+        val taskEntities = taskRepository.findAllTasksByDateRange(Timestamp.from(Instant.parse(dateFrom)), Timestamp.from(Instant.parse(dateTo).plusSeconds(60 * 60 * 24 - 1))).distinctBy { it.taskId }
         val projectsEntity = taskEntities.map { it.project }.distinct().filterNotNull()
         val statusesEntity = taskStatusRepository.findAllByStatusIsTrueOrderByTaskStatusId()
 
         val prioritiesEntity = taskPriorityRepository.findAllByStatusIsTrueOrderByTaskPriorityId()
-        val taskAssigneeEntities = taskEntities.flatMap { it.taskAssignees?.filter { it.status } ?: emptyList() }.distinctBy { it.userId }
+        val taskAssigneeEntities = taskEntities.flatMap { task -> task.taskAssignees?.filter { it.status } ?: emptyList() }.distinctBy { it.userId }
 
         val taskReportFiltersDto = TaskReportFiltersDto(projects = projectsEntity.map { project ->
             TaskReportProjectDto(
@@ -74,6 +68,9 @@ class ReportService @Autowired constructor(
         } + TaskReportStatusDto(
             statusId = 4,
             statusName = "ATRASADO",
+        ) + TaskReportStatusDto(
+            statusId = 5,
+            statusName = "FINALIZADO CON RETRASO",
         ), priorities = prioritiesEntity.map { priority ->
             TaskReportPriorityDto(
                 priorityId = priority.taskPriorityId,
@@ -121,8 +118,7 @@ class ReportService @Autowired constructor(
         specification = specification.and(TaskSpecification.dateBetweenAll(Timestamp.from(Instant.parse(dateFrom)), Timestamp.from(Instant.parse(dateTo).plusSeconds(60 * 60 * 24 - 1))))
 
         if (!statuses.isNullOrEmpty()) {
-            val currentDate = if (statuses.contains("ATRASADO")) Timestamp.from(Instant.now()) else null
-            specification = specification.and(TaskSpecification.taskStatuses(statuses, currentDate))
+            specification = specification.and(TaskSpecification.taskStatuses(statuses))
         }
 
         if (!priorities.isNullOrEmpty()) {
@@ -138,12 +134,13 @@ class ReportService @Autowired constructor(
         }
 
         val taskEntities: Page<Task> = taskRepository.findAll(specification, pageable)
+        logger.info("Success: Tasks retrieved")
         return taskEntities.map {
             TaskReportDto(
                 taskId = it.taskId,
                 taskName = it.taskName,
                 projectName = it.project!!.projectName,
-                taskStatusName = if (it.taskDueDate.before(Timestamp.from(Instant.now()))) "ATRASADO" else it.taskStatus!!.taskStatusName,
+                taskStatusName = if (it.taskEndDate != null && it.taskEndDate!!.after(it.taskDueDate)) "FINALIZADO CON RETRASO" else if (it.taskEndDate == null && it.taskDueDate.before(Timestamp.from(Instant.now()))) "ATRASADO" else it.taskStatus!!.taskStatusName,
                 taskPriorityName = it.taskPriority!!.taskPriorityName,
                 taskCreationDate = it.txDate,
                 taskDueDate = it.taskDueDate,
@@ -172,10 +169,16 @@ class ReportService @Autowired constructor(
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date range is incorrect", "El rango de fechas es incorrecto")
         }
 
-        val projectEntities = projectRepository.findAllProjectsByDateRange(Timestamp.from(Instant.parse(dateFrom)), Timestamp.from(Instant.parse(dateTo).plusSeconds(60 * 60 * 24 - 1)))
-        val projectOwnerEntities = projectEntities.flatMap { it.projectOwners?.filter { it.status } ?: emptyList() }.distinctBy { it.userId }
-        val projectModeratorEntities = projectEntities.flatMap { it.projectModerators?.filter { it.status } ?: emptyList() }.distinctBy { it.userId }
-        val projectMemberEntities = projectEntities.flatMap { it.projectMembers?.filter { it.status } ?: emptyList() }.distinctBy { it.userId }
+        val projectEntities = projectRepository.findAllProjectsByDateRange(Timestamp.from(Instant.parse(dateFrom)), Timestamp.from(Instant.parse(dateTo).plusSeconds(60 * 60 * 24 - 1))).distinctBy { it.projectId }
+        val projectOwnerEntities = projectEntities.flatMap { project ->
+            project.projectOwners?.filter { it.status } ?: emptyList()
+        }.distinctBy { it.userId }
+        val projectModeratorEntities = projectEntities.flatMap { project ->
+            project.projectModerators?.filter { it.status } ?: emptyList()
+        }.distinctBy { it.userId }
+        val projectMemberEntities = projectEntities.flatMap { project ->
+            project.projectMembers?.filter { it.status } ?: emptyList()
+        }.distinctBy { it.userId }
 
         val customStatuses = listOf(ProjectReportStatusDto(
             statusId = 1,
@@ -186,6 +189,9 @@ class ReportService @Autowired constructor(
         ), ProjectReportStatusDto(
             statusId = 3,
             statusName = "ATRASADO",
+        ), ProjectReportStatusDto(
+            statusId = 4,
+            statusName = "CERRADO CON RETRASO",
         ))
         val projectReportFiltersDto = ProjectReportFiltersDto(statuses = customStatuses, projectOwners = projectOwnerEntities.map { projectOwner ->
             ProjectReportOwnerDto(
@@ -259,11 +265,14 @@ class ReportService @Autowired constructor(
         }
         
         val projectEntities: Page<Project> = projectRepository.findAll(specification, pageable)
+
+        logger.info("Success: Projects retrieved")
         return projectEntities.map {
             ProjectReportDto(
+                tasks = emptyList(),
                 projectId = it.projectId,
                 projectName = it.projectName,
-                projectStatusName = if (it.projectEndDate != null) "CERRADO" else if (it.projectDateTo.before(Timestamp.from(Instant.now()))) "ATRASADO" else "ABIERTO",
+                projectStatusName = if (it.projectEndDate != null && it.projectEndDate!!.after(it.projectDateTo)) "CERRADO CON RETRASO" else if (it.projectEndDate != null) "CERRADO" else if (it.projectDateTo.before(Timestamp.from(Instant.now()))) "ATRASADO" else "ABIERTO",
                 projectFinishedTasks = it.tasks!!.count { task -> task.taskEndDate != null },
                 projectTotalTasks = it.tasks!!.size,
                 projectDateFrom = it.projectDateFrom,
@@ -281,5 +290,80 @@ class ReportService @Autowired constructor(
             )
         }
     }
-}
 
+    fun getExecutiveReport(
+        dateFrom: String,
+        dateTo: String
+    ): ExecutiveReportDto {
+        logger.info("Starting the service call to get the executive report")
+        try {
+            Timestamp.from(Instant.parse(dateFrom))
+            Timestamp.from(Instant.parse(dateTo))
+        } catch (e: Exception) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date format is incorrect", "El formato de fecha es incorrecto")
+        }
+        if (Timestamp.from(Instant.parse(dateFrom)).after(Timestamp.from(Instant.parse(dateTo)))) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date range is incorrect", "El rango de fechas es incorrecto")
+        }
+
+        val projectEntities: List<Project> = projectRepository.findAllProjectsByDateRange(Timestamp.from(Instant.parse(dateFrom)), Timestamp.from(Instant.parse(dateTo).plusSeconds(60 * 60 * 24 - 1))).distinctBy { it.projectId }
+        projectEntities.forEach { project ->
+            project.tasks = project.tasks?.filter { it.status }?.distinctBy { it.taskId }
+        }
+
+        return ExecutiveReportDto(
+            totalProjects = projectEntities.size,
+            completedProjects = projectEntities.count { it.projectEndDate != null && it.projectDateTo.after(it.projectEndDate) },
+            completedWithDelayProjects = projectEntities.count { it.projectEndDate != null && it.projectEndDate!!.after(it.projectDateTo) },
+            inProgressProjects = projectEntities.count { it.projectEndDate == null && it.projectDateTo.after(Timestamp.from(Instant.now())) },
+            delayedProjects = projectEntities.count { it.projectEndDate == null && it.projectDateTo.before(Timestamp.from(Instant.now())) },
+            totalTasks = projectEntities.sumOf { it.tasks!!.size },
+            completedTasks = projectEntities.sumOf { it.tasks!!.count { task -> task.taskEndDate != null && task.taskDueDate.after(task.taskEndDate) } },
+            completedWithDelayTasks = projectEntities.sumOf { it.tasks!!.count { task -> task.taskEndDate != null && task.taskEndDate!!.after(task.taskDueDate) } },
+            inProgressTasks = projectEntities.sumOf { it.tasks!!.count { task -> task.taskEndDate == null && task.taskDueDate.after(Timestamp.from(Instant.now())) && task.taskStatus!!.taskStatusName == "EN PROGRESO" } },
+            pendingTasks = projectEntities.sumOf { it.tasks!!.count { task -> task.taskEndDate == null && task.taskDueDate.after(Timestamp.from(Instant.now())) && task.taskStatus!!.taskStatusName == "PENDIENTE" } },
+            delayedTasks = projectEntities.sumOf { it.tasks!!.count { task -> task.taskEndDate == null && task.taskDueDate.before(Timestamp.from(Instant.now())) } },
+            highPriorityTasks = projectEntities.sumOf { it.tasks!!.count { task -> task.taskPriority!!.taskPriorityName == "ALTA" } },
+            mediumPriorityTasks = projectEntities.sumOf { it.tasks!!.count { task -> task.taskPriority!!.taskPriorityName == "MEDIA" } },
+            lowPriorityTasks = projectEntities.sumOf { it.tasks!!.count { task -> task.taskPriority!!.taskPriorityName == "BAJA" } },
+            projectReports = projectEntities.map {
+                ProjectReportDto(
+                    projectId = it.projectId,
+                    projectName = it.projectName,
+                    projectStatusName = if (it.projectEndDate != null && it.projectEndDate!!.after(it.projectDateTo)) "CERRADO CON RETRASO" else if (it.projectEndDate != null) "CERRADO" else if (it.projectDateTo.before(Timestamp.from(Instant.now()))) "ATRASADO" else "ABIERTO",
+                    projectFinishedTasks = it.tasks!!.count { task -> task.taskEndDate != null },
+                    projectTotalTasks = it.tasks!!.size,
+                    projectDateFrom = it.projectDateFrom,
+                    projectDateTo = it.projectDateTo,
+                    projectEndDate = it.projectEndDate,
+                    projectOwners = it.projectOwners!!.map { projectOwner ->
+                        projectOwner.user!!.firstName + " " + projectOwner.user!!.lastName
+                    },
+                    projectModerators = it.projectModerators!!.map { projectModerator ->
+                        projectModerator.user!!.firstName + " " + projectModerator.user!!.lastName
+                    },
+                    projectMembers = it.projectMembers!!.map { projectMember ->
+                        projectMember.user!!.firstName + " " + projectMember.user!!.lastName
+                    },
+                    tasks = it.tasks!!.map { task ->
+                        TaskReportDto(
+                            taskId = task.taskId,
+                            taskName = task.taskName,
+                            projectName = it.projectName,
+                            taskStatusName = if (task.taskEndDate != null && task.taskEndDate!!.after(task.taskDueDate)) "FINALIZADO CON RETRASO" else if (task.taskEndDate == null && task.taskDueDate.before(Timestamp.from(Instant.now()))) "ATRASADO" else task.taskStatus!!.taskStatusName,
+                            taskPriorityName = task.taskPriority!!.taskPriorityName,
+                            taskCreationDate = task.txDate,
+                            taskDueDate = task.taskDueDate,
+                            taskEndDate = task.taskEndDate,
+                            taskRating = task.taskRating,
+                            replacedPartDescription = task.replacedParts?.joinToString { replacedPart -> replacedPart.replacedPartDescription } ?: "",
+                            taskAssignees = task.taskAssignees!!.map { taskAssignee ->
+                                taskAssignee.user!!.firstName + " " + taskAssignee.user!!.lastName
+                            },
+                        )
+                    },
+                )
+            },
+        )
+    }
+}

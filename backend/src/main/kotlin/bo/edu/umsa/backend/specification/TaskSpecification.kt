@@ -32,21 +32,23 @@ class TaskSpecification {
         }
 
         fun taskStatuses(
-            taskStatuses: List<String>,
-            currentDate: Timestamp?
+            taskStatuses: List<String>
         ): Specification<Task> {
-            return if (currentDate == null) {
-                Specification { root, _, cb ->
-                    cb.`in`(root.get<Any>("taskStatus").get<Any>("taskStatusName")).value(taskStatuses)
-                }
-            } else {
-                Specification { root, query, cb ->
-                    query.distinct(true)
-                    cb.or(
-                        cb.`in`(root.get<Any>("taskStatus").get<Any>("taskStatusName")).value(taskStatuses),
-                        cb.and(cb.lessThan(root.get("taskDueDate"), currentDate), cb.notEqual(root.get<Task>("taskStatusId"), 3)),
-                    )
-                }
+            return Specification { root, query, cb ->
+                query.distinct(true)
+                val delayedTaskPredicate = if (taskStatuses.contains("ATRASADO"))
+                    cb.and(
+                        cb.notEqual(root.get<Any>("taskStatus").get<Any>("taskStatusName"), "FINALIZADO"),
+                        cb.lessThan(root.get("taskDueDate"), Timestamp(System.currentTimeMillis()),
+                            )
+                    ) else null
+                val finishedWithDelayPredicate = if (taskStatuses.contains("FINALIZADO CON RETRASO"))
+                    cb.and(
+                        cb.greaterThan(root.get<Date>("taskEndDate"), root.get<Date>("taskDueDate"))
+                    ) else null
+                val taskStatusesPredicate = cb.`in`(root.get<Any>("taskStatus").get<Any>("taskStatusName")).value(taskStatuses)
+                val predicates = listOfNotNull(delayedTaskPredicate, finishedWithDelayPredicate, taskStatusesPredicate)
+                cb.or(*predicates.toTypedArray())
             }
         }
 

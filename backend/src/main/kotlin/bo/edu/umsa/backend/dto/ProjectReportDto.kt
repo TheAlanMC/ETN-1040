@@ -14,5 +14,6 @@ data class ProjectReportDto(
     val projectOwners: List<String>,
     val projectModerators: List<String>,
     val projectMembers: List<String>,
-)
+    val tasks: List<TaskReportDto>,
+    )
 

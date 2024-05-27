@@ -29,11 +29,11 @@ interface ProjectRepository : JpaRepository<Project, Long> {
     @Query("""
         SELECT *
         FROM project p 
-        WHERE (p.project_date_from BETWEEN :startDate AND :endDate)
+        WHERE p.status = true
+        AND ((p.project_date_from BETWEEN :startDate AND :endDate)
         OR (p.project_date_to BETWEEN :startDate AND :endDate)
-        OR (p.project_end_date BETWEEN :startDate AND :endDate)
-        AND p.status = true
-        ORDER BY p.tx_date DESC
+        OR (p.project_end_date BETWEEN :startDate AND :endDate))
+        ORDER BY p.project_id DESC
     """, nativeQuery = true)
     fun findAllProjectsByDateRange(
         startDate: Timestamp,

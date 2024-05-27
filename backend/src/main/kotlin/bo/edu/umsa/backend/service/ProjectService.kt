@@ -377,8 +377,7 @@ class ProjectService @Autowired constructor(
         }
 
         if (!statuses.isNullOrEmpty()) {
-            val currentDate = if (statuses.contains("ATRASADO")) Timestamp.from(Instant.now()) else null
-            specification = specification.and(TaskSpecification.taskStatuses(statuses, currentDate))
+            specification = specification.and(TaskSpecification.taskStatuses(statuses))
         }
 
         if (!priorities.isNullOrEmpty()) {

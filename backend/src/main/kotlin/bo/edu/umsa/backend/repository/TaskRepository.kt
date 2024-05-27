@@ -31,11 +31,11 @@ interface TaskRepository : PagingAndSortingRepository<Task, Long>,
     @Query("""
         SELECT *
         FROM task t
-        WHERE (t.tx_date BETWEEN :startDate AND :endDate)
+        WHERE t.status = true
+        AND ((t.tx_date BETWEEN :startDate AND :endDate)
         OR (t.task_due_date BETWEEN :startDate AND :endDate)
-        OR (t.task_end_date BETWEEN :startDate AND :endDate)
-        AND t.status = true
-        ORDER BY t.tx_date DESC
+        OR (t.task_end_date BETWEEN :startDate AND :endDate))
+        ORDER BY t.task_id DESC
     """, nativeQuery = true)
     fun findAllTasksByDateRange(
         startDate: Timestamp,
