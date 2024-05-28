@@ -341,7 +341,7 @@ class ReportService @Autowired constructor(
         logger.info("Success: Projects retrieved")
         return projectEntities.map {
             ProjectReportDto(
-                tasks = emptyList(),
+                taskReports = emptyList(),
                 projectId = it.projectId,
                 projectName = it.projectName,
                 projectStatusName = if (it.projectEndDate != null && it.projectEndDate!!.after(it.projectDateTo)) "CERRADO CON RETRASO" else if (it.projectEndDate != null) "CERRADO" else if (it.projectDateTo.before(Timestamp.from(Instant.now()))) "ATRASADO" else "ABIERTO",
@@ -417,7 +417,7 @@ class ReportService @Autowired constructor(
                     projectMembers = it.projectMembers!!.map { projectMember ->
                         projectMember.user!!.firstName + " " + projectMember.user!!.lastName
                     },
-                    tasks = it.tasks!!.map { task ->
+                    taskReports = it.tasks!!.map { task ->
                         TaskReportDto(
                             taskId = task.taskId,
                             taskName = task.taskName,

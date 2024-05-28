@@ -1,0 +1,75 @@
+<p-toast></p-toast>
+<div class="card">
+    <p-table (onPage)="onPageChange($event)" (onSort)="onSortChange($event)" [customSort]="true" [lazy]="true"
+             [loading]="isDataLoading"
+             [paginator]="true" [rowsPerPageOptions]="[5, 10, 25]" [rows]="10" [showCurrentPageReport]="true"
+             [totalRecords]="totalElements" [value]="reports"
+             currentPageReportTemplate="Mostrando registros {first}-{last} de {totalRecords}">
+        <ng-template pTemplate="caption">
+            <div class="grid p-fluid">
+                <div class="col-12 lg:col-5">
+                    <p-calendar [formControl]="dateFromControl" [readonlyInput]="true"
+                                [showIcon]="true" dateFormat="dd/mm/yy"
+                                id="dateFrom" placeholder="Fecha de Inicio"></p-calendar>
+                </div>
+                <div class="col-12 lg:col-5">
+                    <p-calendar [formControl]="dateToControl" [readonlyInput]="true"
+                                [showIcon]="true" dateFormat="dd/mm/yy"
+                                id="dateTo" placeholder="Fecha de Finalización"></p-calendar>
+                </div>
+                <div class="col-12 lg:col-2">
+                    <button (click)="getData()" class="p-button p-button-primary" pButton
+                            label="Buscar" [loading]="isDataLoading" icon="pi pi-search"
+                            [disabled]="dateFromControl.invalid || dateToControl.invalid"
+                    ></button>
+                </div>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="white-space-nowrap" pSortableColumn="txDate" style="width:10%">Fecha de Creación
+                    <p-sortIcon field="txDate"></p-sortIcon>
+                </th>
+                <th class="white-space-nowrap" pSortableColumn="reportName" style="width:20%">Nombre del Reporte
+                    <p-sortIcon field="reportName"></p-sortIcon>
+                </th>
+                <th class="white-space-nowrap" pSortableColumn="reportType" style="width:10%">Tipo de Reporte
+                    <p-sortIcon field="reportType"></p-sortIcon>
+                </th>
+                <th class="white-space-nowrap" pSortableColumn="user.firstName" style="width:10%">Creado Por
+                    <p-sortIcon field="user.firstName"></p-sortIcon>
+                </th>
+                <th class="white-space-nowrap" style="width:10%">Acciones</th>
+            </tr>
+        </ng-template>
+        <ng-template let-report pTemplate="body">
+            <tr>
+                <td>{{ report.txDate | date: 'dd/MM/yyyy, HH:mm' }}</td>
+                <td>{{ report.reportName }}</td>
+                <td>{{ report.reportType }}</td>
+                <td>{{ report.user.firstName }} {{ report.user.lastName }}</td>
+                <td>
+                    <div class="flex justify-content-center">
+                        <button (click)="onDownloadReport(report.file)"
+                                class="p-button-rounded p-button p-button-secondary"
+                                icon="pi pi-download"
+                                pButton title="Descargar Reporte"
+                                pTooltip="{{ report.file.fileSize | fileSize}}"
+                                [loading]="isLoading &&downloadingFileId === report.file.fileId"
+                        ></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="5">
+                    <div class="flex justify-content-center align-items-center gap-2">
+                        <i class="pi pi-info-circle p-mr-2"></i>
+                        <span>No se encontraron registros</span>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

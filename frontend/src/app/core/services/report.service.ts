@@ -4,12 +4,12 @@ import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {ResponseDto} from "../models/response.dto";
 import {UtilService} from "./util.service";
-import {ReportDto} from "../../features/home/models/report.dto";
+import {ReportDto} from "../../features/report/models/report.dto";
 import {PageDto} from "../models/page.dto";
-import {TaskReportFilterDto} from "../../features/home/models/task-report-filter.dto";
-import {TaskReportDto} from "../../features/home/models/task-report.dto";
-import {ProjectReportDto} from "../../features/home/models/project-report.dto";
-import {ExecutiveReportDto} from "../../features/home/models/executive-report.dto";
+import {TaskReportFilterDto} from "../../features/report/models/task-report-filter.dto";
+import {TaskReportDto} from "../../features/report/models/task-report.dto";
+import {ProjectReportDto} from "../../features/report/models/project-report.dto";
+import {ExecutiveReportDto} from "../../features/report/models/executive-report.dto";
 
 
 @Injectable({
@@ -113,7 +113,7 @@ export class ReportService {
         dateFrom: string,
         dateTo: string,
     ): Observable<ResponseDto<ExecutiveReportDto>> {
-        return this.http.get<ResponseDto<ExecutiveReportDto>>(`${this.baseUrl}/executive?dateFrom=${dateFrom}&dateTo=${dateTo}`,
+        return this.http.get<ResponseDto<ExecutiveReportDto>>(`${this.baseUrl}/executives?dateFrom=${dateFrom}&dateTo=${dateTo}`,
             this.utilService.getHttpOptions());
     }
 }

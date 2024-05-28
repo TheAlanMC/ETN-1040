@@ -17,7 +17,8 @@ VALUES  ('VER DASHBOARD', 'Acceso al dashboard del sistema', true, CURRENT_TIMES
         ('VER TAREAS', 'Ver tareas en el sistema', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         ('CREAR TAREAS', 'Crear tareas en el sistema', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         ('EDITAR TAREAS', 'Editar tareas en el sistema', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
-        ('VER REPORTES EJECUTIVOS', 'Ver reportes del sistema', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
+        ('VER REPORTES GENERADOS', 'Ver reportes del sistema', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
+        ('VER REPORTES EJECUTIVOS', 'Ver reportes ejecutivos', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         ('VER REPORTES DE PROYECTOS', 'Ver reportes de proyectos', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         ('VER REPORTES DE TAREAS', 'Ver reportes de tareas', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         ('VER USUARIOS', 'Ver usuarios del sistema', true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
@@ -44,7 +45,8 @@ VALUES  (1, 1, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'
         (1, 11, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         (1, 12, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         (1, 13, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
-        (1, 14, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost');
+        (1, 14, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
+        (1, 15, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost');
 
 -- Group Role - Docente
 INSERT INTO "group_role" (group_id, role_id, status, tx_date, tx_user, tx_host)
@@ -56,7 +58,8 @@ VALUES  (2, 1, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'
         (2, 8, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         (2, 9, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
         (2, 10, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
-        (2, 11, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost');
+        (2, 11, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost'),
+        (2, 12, true, CURRENT_TIMESTAMP, 'chrisalanapazaa@gmail.com', 'localhost');
 
 -- Group Role - Auxiliar
 INSERT INTO "group_role" (group_id, role_id, status, tx_date, tx_user, tx_host)

@@ -12,7 +12,7 @@ class ReportMapper {
                 user = UserPartialMapper.entityToDto(report.user!!),
                 file = FilePartialMapper.entityToDto(report.file!!),
                 reportName = report.reportName,
-                reportType = report.reportType,
+                reportType = report.reportType.toString().lowercase().replaceFirstChar { it.uppercase() },
                 reportStartDate = report.reportStartDate,
                 reportEndDate = report.reportEndDate,
                 txDate = report.txDate,

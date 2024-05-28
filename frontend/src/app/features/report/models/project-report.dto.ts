@@ -12,5 +12,5 @@ export interface ProjectReportDto {
     projectOwners: string[];
     projectModerators: string[];
     projectMembers: string[];
-    tasks: TaskReportDto[];
+    taskReports: TaskReportDto[];
 }

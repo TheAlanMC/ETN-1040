@@ -66,7 +66,7 @@ export class DashboardComponent implements OnInit {
 
         this.projectBarData = {
             labels: ['Cerrado', 'Cerrado con Retraso', 'Abierto', 'Atrasado',], datasets: [{
-                label: 'Tareas',
+                label: 'Proyectos',
                 backgroundColor: [documentStyle.getPropertyValue('--green-400'),
                                   documentStyle.getPropertyValue('--yellow-400'),
                                   documentStyle.getPropertyValue('--blue-400'),

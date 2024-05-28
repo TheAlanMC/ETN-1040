@@ -633,7 +633,7 @@
                     <div class="flex flex-column gap-2 field border-1 surface-border border-round">
                         <span class="text-900 font-semibold border-bottom-1 surface-border p-3">Tarea Finalizada el {{ task.taskEndDate | date: 'dd/MM/yyyy, HH:mm' }}</span>
                         <div class="flex justify-content-between px-3">
-                            <label class="font-semibold text-900" for="feedback">Reseña de la Tarea</label>
+                            <label class="font-semibold text-900" for="feedback">Calificación de la Tarea</label>
                             <p-rating [cancel]="false" [disabled]="true" [iconOffStyle]="{'fontSize':'12px'}" [iconOnStyle]="{'fontSize':'12px'}"
                                       [ngModel]="taskRating" [readonly]="true"></p-rating>
                         </div>
@@ -646,7 +646,7 @@
                                   class="w-full"
                                   id="feedback"
                                   name="description" pInputTextarea
-                                  placeholder="No hay reseña de la tarea"
+                                  placeholder="No hay calificación de la tarea"
                                   style="resize: none"
                                   type="text"></textarea>
                         </div>
@@ -1083,18 +1083,18 @@
 </p-sidebar>
 
 <p-dialog [(visible)]="visibleAddFeedback" [baseZIndex]="10000" [draggable]="false" [modal]="true"
-          [resizable]="false" [style]="{width: '30rem'}" header="Agregar reseña">
+          [resizable]="false" [style]="{width: '30rem'}" header="Agregar Calificación">
     <div class="mb-3">
         <span class="text-600 font-medium">Por favor, califica el trabajo realizado</span>
     </div>
     <div class="flex flex-column mb-3">
         <div class="flex align-items-center justify-content-between mb-3">
-            <label class="font-semibold text-900 field" for="givenFeedback">Reseña de la tarea</label>
+            <label class="font-semibold text-900 field" for="givenFeedback">Calificación de la Tarea</label>
             <p-rating [autofocus]="false" [cancel]="false" [disabled]="false" [formControl]="taskRatingControl"
                       [iconOffStyle]="{'fontSize':'12px'}" [iconOnStyle]="{'fontSize':'12px'}"></p-rating>
         </div>
         <textarea [formControl]="taskFeedbackControl" [rows]="2" class="w-full" id="givenFeedback" name="description"
-                  pInputTextarea placeholder="Reseña de la tarea"
+                  pInputTextarea placeholder="Calificación de la tarea"
                   style="resize: none" type="text"></textarea>
     </div>
     <div class="flex flex-wrap gap-2 justify-content-between">

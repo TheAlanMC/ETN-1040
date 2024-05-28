@@ -7,7 +7,7 @@ data class ReportDto(
     val user: UserPartialDto,
     val file: FilePartialDto,
     val reportName: String,
-    val reportType: ReportType,
+    val reportType: String,
     val reportStartDate: Timestamp,
     val reportEndDate: Timestamp,
     val txDate: Timestamp,

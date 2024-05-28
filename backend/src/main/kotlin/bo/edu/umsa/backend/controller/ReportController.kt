@@ -31,7 +31,7 @@ class ReportController @Autowired constructor(
     ): ResponseEntity<ResponseDto<Page<ReportDto>>> {
         logger.info("Starting the API call to get the reports")
         logger.info("GET /api/v1/reports")
-        AuthUtil.verifyAuthTokenHasRoles(listOf("VER REPORTES DE TAREAS", "VER REPORTES DE PROYECTOS", "VER REPORTES EJECUTIVOS").toTypedArray())
+        AuthUtil.verifyAuthTokenHasRole("VER REPORTES GENERADOS")
         val reports: Page<ReportDto> = reportService.getReports(sortBy, sortType, page, size, dateFrom, dateTo)
         logger.info("Success: Reports retrieved")
         return ResponseEntity(ResponseDto(true, "Reportes recuperados", reports), HttpStatus.OK)
