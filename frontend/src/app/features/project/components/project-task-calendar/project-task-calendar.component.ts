@@ -135,7 +135,7 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
     }
 
 
-    ngOnInit(): void {
+    ngOnInit() {
         // Initialize the today variable with the current date
         this.today = new Date().toISOString().split('T')[0];
         this.calendarOptions = {
@@ -334,7 +334,7 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
         });
     }
 
-    public deleteTask(taskId: number): void {
+    public deleteTask(taskId: number) {
         this.taskService.deleteTask(taskId).subscribe({
             next: (data) => {
                 this.getData();
@@ -359,7 +359,7 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
                     validRange: {start: this.project.projectDateFrom, end: this.project.projectDateTo}
                 };
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -389,12 +389,12 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
                 });
                 this.selectedPriority = this.selectedPriority.length == 0 ? this.priorityItems : this.selectedPriority;
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
 
-    public getAllStatuses() {
+    public getAllStatuses(){
         this.taskService.getStatuses().subscribe({
             next: (data) => {
                 this.statuses = data.data!;
@@ -412,7 +412,7 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
                     this.selectedStatus =  this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 3)) : this.selectedStatus;
                 }                this.getData();
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -475,7 +475,7 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
             task!.taskPriority.taskPriorityId,
             taskAssigneeIds,
             taskFileIds).subscribe({
-            next: (data: ResponseDto<null>) => {
+            next: (data) => {
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Fecha actualizada correctamente'
                 });

@@ -141,7 +141,7 @@ export class UserListComponent implements OnInit {
         });
     }
 
-    public deleteUser(userId: number): void {
+    public deleteUser(userId: number) {
         this.userService.deleteUser(userId).subscribe({
             next: (data) => {
                 this.getData();

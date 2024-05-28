@@ -4,7 +4,7 @@ import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {ResponseDto} from "../models/response.dto";
 import {UtilService} from "./util.service";
-import {Nullable} from "primeng/ts-helpers";
+
 import {PageDto} from "../models/page.dto";
 import {ProjectDto} from "../../features/project/models/project.dto";
 import {TaskDto} from "../../features/task/models/task.dto";
@@ -51,8 +51,8 @@ export class ProjectService {
         projectObjective: string,
         projectMemberIds: number[],
         projectModeratorIds: number[]
-    ): Observable<ResponseDto<Nullable>> {
-        return this.http.post<ResponseDto<Nullable>>(this.baseUrl,
+    ): Observable<ResponseDto<null>> {
+        return this.http.post<ResponseDto<null>>(this.baseUrl,
             {
                 projectName,
                 projectDescription,
@@ -74,8 +74,8 @@ export class ProjectService {
         projectObjective: string,
         projectMemberIds: number[],
         projectModeratorIds: number[]
-    ): Observable<ResponseDto<Nullable>> {
-        return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/${projectId}`,
+    ): Observable<ResponseDto<null>> {
+        return this.http.put<ResponseDto<null>>(`${this.baseUrl}/${projectId}`,
             {
                 projectName,
                 projectDescription,
@@ -88,16 +88,16 @@ export class ProjectService {
             this.utilService.getHttpOptions());
     }
 
-    public deleteProject(projectId: number): Observable<ResponseDto<Nullable>> {
-        return this.http.delete<ResponseDto<Nullable>>(`${this.baseUrl}/${projectId}`,
+    public deleteProject(projectId: number): Observable<ResponseDto<null>> {
+        return this.http.delete<ResponseDto<null>>(`${this.baseUrl}/${projectId}`,
             this.utilService.getHttpOptions());
     }
 
     public closeProject(
         projectId: number,
         projectCloseMessage: string
-    ): Observable<ResponseDto<Nullable>> {
-        return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/${projectId}/close`,
+    ): Observable<ResponseDto<null>> {
+        return this.http.put<ResponseDto<null>>(`${this.baseUrl}/${projectId}/close`,
             {projectCloseMessage},
             this.utilService.getHttpOptions());
     }

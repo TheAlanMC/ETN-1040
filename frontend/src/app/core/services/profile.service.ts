@@ -3,7 +3,7 @@ import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {ResponseDto} from "../models/response.dto";
-import {Nullable} from "primeng/ts-helpers";
+
 import {ProfileDto} from "../../features/user/models/profile.dto";
 import {UtilService} from "./util.service";
 
@@ -25,11 +25,11 @@ export class ProfileService {
             this.utilService.getHttpOptions('blob'));
     }
 
-    public uploadProfilePicture(file: File): Observable<ResponseDto<Nullable>> {
+    public uploadProfilePicture(file: File): Observable<ResponseDto<null>> {
         const formData = new FormData();
         formData.append('file',
             file);
-        return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/picture`,
+        return this.http.put<ResponseDto<null>>(`${this.baseUrl}/picture`,
             formData,
             this.utilService.getHttpOptions());
     }
@@ -44,8 +44,8 @@ export class ProfileService {
         lastName: string,
         phone: string,
         description: string
-    ): Observable<ResponseDto<Nullable>> {
-        return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}`,
+    ): Observable<ResponseDto<null>> {
+        return this.http.put<ResponseDto<null>>(`${this.baseUrl}`,
             {
                 firstName, lastName, phone, description
             },
@@ -56,8 +56,8 @@ export class ProfileService {
         oldPassword: string,
         password: string,
         confirmPassword: string
-    ): Observable<ResponseDto<Nullable>> {
-        return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/password`,
+    ): Observable<ResponseDto<null>> {
+        return this.http.put<ResponseDto<null>>(`${this.baseUrl}/password`,
             {
                 oldPassword, password, confirmPassword
             },

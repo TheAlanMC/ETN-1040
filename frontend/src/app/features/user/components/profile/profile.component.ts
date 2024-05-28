@@ -83,7 +83,7 @@ export class ProfileComponent implements OnInit {
                 this.profilePictureUrl = URL.createObjectURL(data);
                 this.backupProfilePictureUrl = URL.createObjectURL(data);
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -97,7 +97,7 @@ export class ProfileComponent implements OnInit {
                 this.phoneControl.setValue(this.profile?.phone ?? '');
                 this.descriptionControl.setValue(this.profile?.description ?? '');
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -129,7 +129,7 @@ export class ProfileComponent implements OnInit {
                     },
                     500);
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.isDataLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
@@ -143,7 +143,7 @@ export class ProfileComponent implements OnInit {
                     this.backupProfilePictureUrl = this.profilePictureUrl;
                     this.onCancelSelect();
                 }, error: (error) => {
-                    console.log(error);
+                    console.error(error);
                 }
             });
         }
@@ -158,7 +158,7 @@ export class ProfileComponent implements OnInit {
                 localStorage.setItem('refreshToken',
                     data.data!.refreshToken);
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -178,7 +178,7 @@ export class ProfileComponent implements OnInit {
             }, error: (error) => {
                 this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
-                console.log(error);
+                console.error(error);
             }
         });
     }

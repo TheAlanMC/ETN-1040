@@ -33,7 +33,7 @@ export class ViewUserComponent implements OnInit {
             next: (data) => {
                 this.profilePictureUrl = URL.createObjectURL(data);
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -43,7 +43,7 @@ export class ViewUserComponent implements OnInit {
             next: (data) => {
                 this.user = data.data;
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }

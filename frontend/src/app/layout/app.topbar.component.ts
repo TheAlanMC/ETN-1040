@@ -32,7 +32,7 @@ export class AppTopbarComponent {
           this.profilePictureUrl = URL.createObjectURL(data);
         },
         error: (error) => {
-          console.log(error);
+          console.error(error);
         }
       });
   }

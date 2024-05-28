@@ -84,7 +84,7 @@ export class AppLayoutComponent implements OnDestroy {
             });
     }
 
-    blockBodyScroll(): void {
+    blockBodyScroll(){
         if (document.body.classList) {
             document.body.classList.add('blocked-scroll');
         } else {
@@ -92,7 +92,7 @@ export class AppLayoutComponent implements OnDestroy {
         }
     }
 
-    unblockBodyScroll(): void {
+    unblockBodyScroll(){
         if (document.body.classList) {
             document.body.classList.remove('blocked-scroll');
         } else {

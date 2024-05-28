@@ -34,7 +34,7 @@ class DashboardController @Autowired constructor(
         AuthUtil.verifyAuthTokenHasRole("VER DASHBOARD")
         val taskDashboard: TaskDashboardDto = dashboardService.getTaskDashboard(dateFrom, dateTo)
         logger.info("Success: Task dashboard retrieved")
-        return ResponseEntity(ResponseDto(true, "Tablero de tareas recuperado", taskDashboard), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true, "Dashboard de tareas recuperado", taskDashboard), HttpStatus.OK)
     }
 
     @GetMapping("/projects")
@@ -47,6 +47,6 @@ class DashboardController @Autowired constructor(
         AuthUtil.verifyAuthTokenHasRole("VER DASHBOARD")
         val projectDashboard: ProjectDashboardDto = dashboardService.getProjectDashboard(dateFrom, dateTo)
         logger.info("Success: Project dashboard retrieved")
-        return ResponseEntity(ResponseDto(true, "Tablero de proyectos recuperado", projectDashboard), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true, "Dashboard de proyectos recuperado", projectDashboard), HttpStatus.OK)
     }
 }

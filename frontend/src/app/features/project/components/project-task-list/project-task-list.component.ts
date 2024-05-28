@@ -203,7 +203,7 @@ export class ProjectTaskListComponent implements OnInit {
         });
     }
 
-    public deleteTask(taskId: number): void {
+    public deleteTask(taskId: number) {
         this.taskService.deleteTask(taskId).subscribe({
             next: (data) => {
                 this.getData();
@@ -225,7 +225,7 @@ export class ProjectTaskListComponent implements OnInit {
                 this.isModerator = this.project.projectModerators.find(moderator => moderator.userId === this.userId) != null;
                 this.isMember = this.project.projectMembers.find(member => member.userId === this.userId) != null;
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -241,7 +241,7 @@ export class ProjectTaskListComponent implements OnInit {
                 });
                 this.selectedPriority = this.selectedPriority.length == 0 ? this.priorityItems : this.selectedPriority;
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -265,7 +265,7 @@ export class ProjectTaskListComponent implements OnInit {
                 }
                 this.getData();
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }

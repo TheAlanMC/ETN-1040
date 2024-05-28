@@ -131,7 +131,7 @@ export class EditProjectComponent implements OnInit {
                     }
                 });
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -150,7 +150,7 @@ export class EditProjectComponent implements OnInit {
                     }
                 });
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -186,7 +186,7 @@ export class EditProjectComponent implements OnInit {
                     },
                     500);
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }

@@ -101,7 +101,7 @@ export class NewTaskComponent implements OnInit {
                     }
                 });
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -117,7 +117,7 @@ export class NewTaskComponent implements OnInit {
                 this.selectedProject = this.projectItems.find(project => project.value == this.projectId)?.value;
                 this.onProjectChange(null);
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -299,7 +299,7 @@ export class NewTaskComponent implements OnInit {
                         this.saveTask();
                     }
                 }, error: (error) => {
-                    console.log(error);
+                    console.error(error);
                     this.isLoading = false;
                     this.messageService.add({
                         severity: 'error', summary: 'Error', detail: error.error.message
@@ -332,7 +332,7 @@ export class NewTaskComponent implements OnInit {
                     500);
                 this.onClose();
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.isLoading = false;
                 this.uploadedFiles = [];
                 this.messageService.add({

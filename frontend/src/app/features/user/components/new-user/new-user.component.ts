@@ -61,7 +61,7 @@ export class NewUserComponent implements OnInit {
                     }
                 });
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -74,7 +74,7 @@ export class NewUserComponent implements OnInit {
                 this.selectedGroupId = event.value;
                 this.loadingRoles = false;
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.loadingRoles = false;
             }
         });
@@ -100,7 +100,7 @@ export class NewUserComponent implements OnInit {
                     },
                     500);
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }

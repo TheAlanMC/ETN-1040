@@ -154,7 +154,7 @@ export class ProjectListComponent implements OnInit {
         });
     }
 
-    public deleteProject(projectId: number): void {
+    public deleteProject(projectId: number) {
         this.projectService.deleteProject(projectId).subscribe({
             next: (data) => {
                 this.getData();

@@ -5,11 +5,14 @@ import {HomeRoutingModule} from './home-routing.module';
 import {HomePageComponent} from './components/home-page/home-page.component';
 import {DashboardComponent} from './components/dashboard/dashboard.component';
 import {KnobModule} from "primeng/knob";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {DropdownModule} from "primeng/dropdown";
 import {ChartModule} from "primeng/chart";
 import {TableModule} from "primeng/table";
 import {RatingModule} from "primeng/rating";
+import {CalendarModule} from "primeng/calendar";
+import {ToastModule} from "primeng/toast";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
 
 
 @NgModule({
@@ -24,7 +27,11 @@ import {RatingModule} from "primeng/rating";
         DropdownModule,
         ChartModule,
         TableModule,
-        RatingModule
+        RatingModule,
+        CalendarModule,
+        ReactiveFormsModule,
+        ToastModule,
+        ProgressSpinnerModule
     ]
 })
 export class HomeModule {

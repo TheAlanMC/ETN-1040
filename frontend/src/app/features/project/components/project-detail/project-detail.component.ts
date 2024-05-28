@@ -132,7 +132,7 @@ export class ProjectDetailComponent implements OnInit {
                 }
                 this.projectProgress = (data.data!.finishedTasks / data.data!.totalTasks) * 100;
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -179,7 +179,7 @@ export class ProjectDetailComponent implements OnInit {
                     },
                     500);
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }

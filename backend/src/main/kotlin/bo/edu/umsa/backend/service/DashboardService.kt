@@ -48,10 +48,20 @@ class DashboardService @Autowired constructor(
         val mediumPriorityTaskEntities = taskEntities.filter { task -> task.taskPriority!!.taskPriorityName == "MEDIA" }
         val lowPriorityTaskEntities = taskEntities.filter { task -> task.taskPriority!!.taskPriorityName == "BAJA" }
 
-        val taskByDate = taskEntities.groupBy { Pair(it.txDate.toLocalDateTime().year, it.txDate.toLocalDateTime().monthValue) }.map { (yearMonth, tasks) ->
+        val allMonths = generateSequence(Timestamp.from(Instant.parse(dateFrom)).toLocalDateTime().withDayOfMonth(1)) { it.plusMonths(1) }
+            .takeWhile { !it.isAfter(Timestamp.from(Instant.parse(dateTo)).toLocalDateTime().withDayOfMonth(1)) }
+            .toList()
+
+        val taskGroups = taskEntities.groupBy { Pair(it.txDate.toLocalDateTime().year, it.txDate.toLocalDateTime().monthValue) }
+
+        val taskByDate = allMonths.map { date ->
+            val year = date.year
+            val month = date.monthValue
+            val tasks = taskGroups[Pair(year, month)] ?: emptyList()
+
             TaskByDateDto(
-                year = yearMonth.first,
-                month = yearMonth.second,
+                year = year,
+                month = month,
                 completedTasks = tasks.count { it.taskEndDate != null && it.taskDueDate.after(it.taskEndDate) },
                 completedWithDelayTasks = tasks.count { it.taskEndDate != null && it.taskEndDate!!.after(it.taskDueDate) },
                 inProgressTasks = tasks.count { it.taskEndDate == null && it.taskDueDate.after(Timestamp.from(Instant.now())) && it.taskStatus!!.taskStatusName == "EN PROGRESO" },
@@ -97,10 +107,20 @@ class DashboardService @Autowired constructor(
         val inProgressProjectEntities = projectEntities.filter { project -> project.projectEndDate == null && project.projectDateTo.after(Timestamp.from(Instant.now())) }
         val delayedProjectEntities = projectEntities.filter { project -> project.projectEndDate == null && project.projectDateTo.before(Timestamp.from(Instant.now())) }
 
-        val projectByDate = projectEntities.groupBy { Pair(it.txDate.toLocalDateTime().year, it.txDate.toLocalDateTime().monthValue) }.map { (yearMonth, projects) ->
+        val allMonths = generateSequence(Timestamp.from(Instant.parse(dateFrom)).toLocalDateTime().withDayOfMonth(1)) { it.plusMonths(1) }
+            .takeWhile { !it.isAfter(Timestamp.from(Instant.parse(dateTo)).toLocalDateTime().withDayOfMonth(1)) }
+            .toList()
+
+        val projectGroups = projectEntities.groupBy { Pair(it.txDate.toLocalDateTime().year, it.txDate.toLocalDateTime().monthValue) }
+
+        val projectByDate = allMonths.map { date ->
+            val year = date.year
+            val month = date.monthValue
+            val projects = projectGroups[Pair(year, month)] ?: emptyList()
+
             ProjectByDateDto(
-                year = yearMonth.first,
-                month = yearMonth.second,
+                year = year,
+                month = month,
                 completedProjects = projects.count { it.projectEndDate != null && it.projectDateTo.after(it.projectEndDate) },
                 completedWithDelayProjects = projects.count { it.projectEndDate != null && it.projectEndDate!!.after(it.projectDateTo) },
                 inProgressProjects = projects.count { it.projectEndDate == null && it.projectDateTo.after(Timestamp.from(Instant.now())) },

@@ -192,7 +192,7 @@ export class TaskListComponent implements OnInit {
         });
     }
 
-    public deleteTask(taskId: number): void {
+    public deleteTask(taskId: number){
         this.taskService.deleteTask(taskId).subscribe({
             next: (data) => {
                 this.getData();
@@ -217,7 +217,7 @@ export class TaskListComponent implements OnInit {
                 });
                 this.selectedPriority = this.selectedPriority.length == 0 ? this.priorityItems : this.selectedPriority;
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -237,7 +237,7 @@ export class TaskListComponent implements OnInit {
                 this.selectedStatus = this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 1 || status.value === 2)) : this.selectedStatus;
                 this.getData();
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }

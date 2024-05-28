@@ -50,13 +50,13 @@ export class LoginComponent implements OnInit {
         return this.layoutService.config().colorScheme !== 'light';
     }
 
-    ngOnInit(): void {
+    ngOnInit() {
         this.firebaseService.getFirebaseToken().subscribe({
             next: (token) => {
                 this.token = token;
             },
             error: (error) => {
-                console.log(error);
+                console.error(error);
             },
         });
     }
@@ -79,7 +79,7 @@ export class LoginComponent implements OnInit {
                     },
                     500);
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }

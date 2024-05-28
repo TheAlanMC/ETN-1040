@@ -4,7 +4,7 @@ import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {ResponseDto} from "../models/response.dto";
 import {AuthDto} from '../../features/auth/models/auth.dto';
-import {Nullable} from "primeng/ts-helpers";
+
 import {UtilService} from "./util.service";
 
 @Injectable({
@@ -34,7 +34,7 @@ export class AuthService {
             {refreshToken});
     }
 
-    public forgotPassword(email: string): Observable<ResponseDto<Nullable>> {
+    public forgotPassword(email: string): Observable<ResponseDto<null>> {
         return this.http.post<ResponseDto<any>>(`${this.baseUrl}/forgot-password`,
             {email});
     }
@@ -42,7 +42,7 @@ export class AuthService {
     public verification(
         email: string,
         code: string
-    ): Observable<ResponseDto<Nullable>> {
+    ): Observable<ResponseDto<null>> {
         return this.http.post<ResponseDto<any>>(`${this.baseUrl}/verification`,
             {email, code});
     }
@@ -52,7 +52,7 @@ export class AuthService {
         code: string,
         password: string,
         confirmPassword: string
-    ): Observable<ResponseDto<Nullable>> {
+    ): Observable<ResponseDto<null>> {
         return this.http.post<ResponseDto<any>>(`${this.baseUrl}/reset-password`,
             {
                 email,

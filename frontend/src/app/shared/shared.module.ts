@@ -8,8 +8,8 @@ import {FormsModule} from "@angular/forms";
 import {NotFoundComponent} from "./components/not-found/not-found.component";
 import {ButtonModule} from "primeng/button";
 import {RouterLink} from "@angular/router";
-import {TimeAgoPipe} from "../core/pipes/time-ago.pipe";
-import {FileSizePipe} from "../core/pipes/file-size.pipe";
+import {TimeAgoPipe} from "./pipes/time-ago.pipe";
+import {FileSizePipe} from "./pipes/file-size.pipe";
 
 @NgModule({
     declarations: [

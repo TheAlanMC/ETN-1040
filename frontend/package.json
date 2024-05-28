@@ -32,7 +32,7 @@
     "@fullcalendar/timegrid": "^6.1.11",
     "@ngx-translate/core": "^15.0.0",
     "@ngx-translate/http-loader": "^8.0.0",
-    "chart.js": "^4.4.2",
+    "chart.js": "^4.4.3",
     "firebase": "^10.12.1",
     "i": "^0.3.7",
     "jwt-decode": "^4.0.0",

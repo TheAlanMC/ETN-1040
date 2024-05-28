@@ -100,7 +100,7 @@ export class EditTaskComponent implements OnInit {
                     }
                 });
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -149,7 +149,7 @@ export class EditTaskComponent implements OnInit {
                     });
                 });
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -272,7 +272,7 @@ export class EditTaskComponent implements OnInit {
                 }, error: (error) => {
                     this.isLoading = false;
                     this.downloadingFileId = 0;
-                    console.log(error);
+                    console.error(error);
                 }
             });
         }
@@ -340,7 +340,7 @@ export class EditTaskComponent implements OnInit {
                             this.updateTask();
                         }
                     }, error: (error) => {
-                        console.log(error);
+                        console.error(error);
                         this.isLoading = false;
                         this.messageService.add({
                             severity: 'error', summary: 'Error', detail: error.error.message
@@ -387,7 +387,7 @@ export class EditTaskComponent implements OnInit {
                     500);
                 this.onClose();
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.uploadedFiles = [];
                 this.isLoading = false;
                 this.messageService.add({

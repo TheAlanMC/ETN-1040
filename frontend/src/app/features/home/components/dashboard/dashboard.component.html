@@ -1,1 +1,61 @@
-<p>dashboard works!</p>
+<!--<p-toast></p-toast>-->
+<div class="card">
+    <span class="text-900 text-xl font-bold mb-4 block">Dashboard</span>
+    <div class="grid p-fluid">
+        <div class="col-12 lg:col-6 field">
+            <label class="font-bold text-900" for="dateFrom">Fecha de Inicio</label>
+            <p-calendar (onSelect)="onDateFromChange($event)" [formControl]="dateFromControl" [readonlyInput]="true"
+                        [showIcon]="true" dateFormat="dd/mm/yy"
+                        id="dateFrom" placeholder="Fecha de inicio"></p-calendar>
+        </div>
+        <div class="col-12 lg:col-6 field">
+            <label class="font-bold text-900" for="dateFrom">Fecha de Finalización</label>
+            <p-calendar (onSelect)="onDateToChange($event)" [formControl]="dateToControl" [readonlyInput]="true"
+                        [showIcon]="true" dateFormat="dd/mm/yy"
+                        id="dateTo" placeholder="Fecha de finalización"></p-calendar>
+        </div>
+    </div>
+</div>
+
+<div class="grid p-fluid" *ngIf="taskDashboard && projectDashboard else loading">
+    <div class="col-12 lg:col-6">
+        <div class="card h-full">
+            <h5 class="text-left w-full">Proyectos por Estado (Total: {{ projectDashboard.totalProjects }})</h5>
+            <p-chart [data]="projectBarData" [options]="projectBarOptions" type="bar" height="300px"
+            ></p-chart>
+        </div>
+    </div>
+    <div class="col-12 lg:col-6">
+        <div class="card h-full">
+            <h5 class="text-left w-full">Progreso de Proyectos (Total: {{ projectDashboard.totalProjects }})</h5>
+            <p-chart type="line" [data]="projectLineData" [options]="projectLineOptions" height="300px"></p-chart>
+        </div>
+    </div>
+
+    <div class="col-12 lg:col-6">
+        <div class="card h-full">
+            <h5 class="text-left w-full">Tareas por Estado (Total: {{ taskDashboard.totalTasks }})</h5>
+            <p-chart [data]="taskBarData" [options]="taskBarOptions" type="bar" height="300px"
+            ></p-chart>
+        </div>
+    </div>
+    <div class="col-12 lg:col-6">
+        <div class="card h-full">
+            <h5 class="text-left w-full">Tareas por Prioridad (Total: {{ taskDashboard.totalTasks }})</h5>
+            <p-chart type="pie" [data]="taskPieData" [options]="taskPieOptions" height="300px"></p-chart>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card h-full">
+            <h5 class="text-left w-full">Progreso de Tareas (Total: {{ taskDashboard.totalTasks }})</h5>
+            <p-chart type="line" [data]="taskLineData" [options]="taskLineOptions" height="300px"></p-chart>
+        </div>
+    </div>
+
+</div>
+
+<ng-template #loading>
+    <div class="flex justify-content-center align-items-center h-full">
+        <p-progressSpinner></p-progressSpinner>
+    </div>
+</ng-template>

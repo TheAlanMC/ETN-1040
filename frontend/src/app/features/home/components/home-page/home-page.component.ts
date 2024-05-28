@@ -21,16 +21,9 @@ export class HomePageComponent implements OnInit {
 
     pieOptions: any;
 
-    subscription: Subscription;
-
     cols: any[] = [];
 
-    constructor(private layoutService: LayoutService) {
-        this.subscription = this.layoutService.configUpdate$
-            .pipe(debounceTime(25))
-            .subscribe((config) => {
-                this.initCharts();
-            });
+    constructor() {
     }
 
     ngOnInit(): void {

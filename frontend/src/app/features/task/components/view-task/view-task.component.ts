@@ -176,7 +176,7 @@ export class ViewTaskComponent {
                 next: (data) => {
                     this.taskHistory = data.data!;
                 }, error: (error) => {
-                    console.log(error);
+                    console.error(error);
                 }
             });
         }
@@ -189,7 +189,7 @@ export class ViewTaskComponent {
                     return {label: status.taskStatusName, value: status.taskStatusId}
                 });
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -201,7 +201,7 @@ export class ViewTaskComponent {
                     return {label: priority.taskPriorityName, value: priority.taskPriorityId}
                 });
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -254,7 +254,7 @@ export class ViewTaskComponent {
                 this.isLoading = false;
             }, error: (error) => {
                 this.isLoading = false;
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -372,7 +372,7 @@ export class ViewTaskComponent {
                 }, error: (error) => {
                     this.isLoading = false;
                     this.downloadingFileId = 0;
-                    console.log(error);
+                    console.error(error);
                 }
             });
         }
@@ -448,7 +448,7 @@ export class ViewTaskComponent {
                 }, error: (error) => {
                     this.isLoading = false;
                     this.downloadingFileId = 0;
-                    console.log(error);
+                    console.error(error);
                 }
             });
         }
@@ -552,7 +552,7 @@ export class ViewTaskComponent {
                     this.onClose();
                 }
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
 
@@ -572,7 +572,7 @@ export class ViewTaskComponent {
                         this.saveTaskComment();
                     }
                 }, error: (error) => {
-                    console.log(error);
+                    console.error(error);
                     this.isLoading = false;
                     this.messageService.add({
                         severity: 'error', summary: 'Error', detail: error.error.message
@@ -596,7 +596,7 @@ export class ViewTaskComponent {
                         this.saveTaskReplacement();
                     }
                 }, error: (error) => {
-                    console.log(error);
+                    console.error(error);
                     this.isLoading = false;
                     this.messageService.add({
                         severity: 'error', summary: 'Error', detail: error.error.message
@@ -629,7 +629,7 @@ export class ViewTaskComponent {
                     500);
                 this.onClose();
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.uploadedFiles = [];
                 this.isLoading = false;
                 this.messageService.add({
@@ -661,7 +661,7 @@ export class ViewTaskComponent {
                     500);
                 this.onClose();
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.replacementUploadedFiles = [];
                 this.isLoading = false;
                 this.messageService.add({
@@ -788,7 +788,7 @@ this.valRadio = 'No';
                     500);
                 this.onClose();
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.messageService.add({
                     severity: 'error', summary: 'Error', detail: error.error.message
                 });
@@ -815,7 +815,7 @@ this.valRadio = 'No';
                     500);
                 this.onClose();
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.messageService.add({
                     severity: 'error', summary: 'Error', detail: error.error.message
                 });
@@ -1073,7 +1073,7 @@ this.valRadio = 'No';
                 }, error: (error) => {
                     this.isLoading = false;
                     this.downloadingFileId = 0;
-                    console.log(error);
+                    console.error(error);
                 }
             });
         }
@@ -1150,7 +1150,7 @@ this.valRadio = 'No';
                 }, error: (error) => {
                     this.isLoading = false;
                     this.downloadingFileId = 0;
-                    console.log(error);
+                    console.error(error);
                 }
             });
         }
@@ -1171,7 +1171,7 @@ this.valRadio = 'No';
                             this.updateTaskComment();
                         }
                     }, error: (error) => {
-                        console.log(error);
+                        console.error(error);
                         this.isLoading = false;
                         this.messageService.add({
                             severity: 'error', summary: 'Error', detail: error.error.message
@@ -1207,7 +1207,7 @@ this.valRadio = 'No';
                             this.updateTaskReplacement();
                         }
                     }, error: (error) => {
-                        console.log(error);
+                        console.error(error);
                         this.isLoading = false;
                         this.messageService.add({
                             severity: 'error', summary: 'Error', detail: error.error.message
@@ -1249,7 +1249,7 @@ this.valRadio = 'No';
                     500);
                 this.onClose();
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.editUploadedFiles = [];
                 this.isLoading = false;
                 this.messageService.add({
@@ -1280,7 +1280,7 @@ this.valRadio = 'No';
                     500);
                 this.onClose();
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.editReplacementUploadedFiles = [];
                 this.isLoading = false;
                 this.messageService.add({
@@ -1322,7 +1322,7 @@ this.valRadio = 'No';
                     500);
                 this.onClose();
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.isLoading = false;
                 this.messageService.add({
                     severity: 'error', summary: 'Error', detail: error.error.message

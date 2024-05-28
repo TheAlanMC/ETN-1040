@@ -63,7 +63,7 @@ export class EditUserComponent implements OnInit {
                 this.profilePictureUrl = URL.createObjectURL(data);
                 this.backupProfilePictureUrl = URL.createObjectURL(data);
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -80,7 +80,7 @@ export class EditUserComponent implements OnInit {
                 this.roles = this.user?.roles ?? [];
                 this.email = this.user?.email ?? '';
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -115,7 +115,7 @@ export class EditUserComponent implements OnInit {
                     },
                     500);
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
@@ -130,7 +130,7 @@ export class EditUserComponent implements OnInit {
                     this.backupProfilePictureUrl = this.profilePictureUrl;
                     this.onCancelSelect();
                 }, error: (error) => {
-                    console.log(error);
+                    console.error(error);
                 }
             });
         }

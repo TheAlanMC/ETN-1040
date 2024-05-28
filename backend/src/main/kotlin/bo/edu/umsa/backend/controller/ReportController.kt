@@ -66,7 +66,7 @@ class ReportController @Autowired constructor(
     }
 
     @GetMapping("/tasks")
-    fun getProjectTasks(
+    fun getTaskReport(
         @RequestParam(defaultValue = "taskId") sortBy: String,
         @RequestParam(defaultValue = "asc") sortType: String,
         @RequestParam(defaultValue = "0") page: Int,
@@ -100,7 +100,7 @@ class ReportController @Autowired constructor(
     }
 
     @GetMapping("/projects")
-    fun getProjects(
+    fun getProjectReport(
         @RequestParam(defaultValue = "projectId") sortBy: String,
         @RequestParam(defaultValue = "asc") sortType: String,
         @RequestParam(defaultValue = "0") page: Int,

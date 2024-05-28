@@ -55,7 +55,7 @@ export class TaskDeadlineListComponent implements OnInit {
         this.isMobileDevice = this.utilService.checkIfMobile();
     }
 
-    ngOnInit(): void {
+    ngOnInit(){
         const token = localStorage.getItem('token');
         if (token) {
             const decoded = jwtDecode<JwtPayload>(token!);
@@ -78,7 +78,7 @@ export class TaskDeadlineListComponent implements OnInit {
         }
     }
 
-    public dropCard(event: CdkDragDrop<TaskDto[]>): void {
+    public dropCard(event: CdkDragDrop<TaskDto[]>){
         const itemBeingMoved = event.previousContainer.data[event.previousIndex];
         if (event.previousContainer === event.container) {
             moveItemInArray(event.container.data,
@@ -146,7 +146,7 @@ export class TaskDeadlineListComponent implements OnInit {
             task.taskPriority.taskPriorityId,
             taskAssigneeIds,
             taskFileIds).subscribe({
-            next: (data: ResponseDto<null>) => {
+            next: (data) => {
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Fecha límite de la tarea actualizada con éxito'
                 });

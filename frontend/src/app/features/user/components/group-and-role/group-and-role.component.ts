@@ -98,7 +98,7 @@ export class GroupAndRoleComponent implements OnInit {
                     }
                 });
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -113,7 +113,7 @@ export class GroupAndRoleComponent implements OnInit {
                     }
                 });
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -123,7 +123,7 @@ export class GroupAndRoleComponent implements OnInit {
             next: (data) => {
                 this.roles = data.data!;
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -147,7 +147,7 @@ export class GroupAndRoleComponent implements OnInit {
                 });
                 this.isPickListDisabled = false;
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -171,7 +171,7 @@ export class GroupAndRoleComponent implements OnInit {
                 this.selectedUser = {value: ''};
                 this.onClearUser();
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
@@ -216,7 +216,7 @@ export class GroupAndRoleComponent implements OnInit {
                 this.onClearUser();
                 this.getAllUsers();
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
         });
@@ -241,7 +241,7 @@ export class GroupAndRoleComponent implements OnInit {
                 });
                 this.isPickListDisabled = false;
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
             }
         });
     }
@@ -264,7 +264,7 @@ export class GroupAndRoleComponent implements OnInit {
                 this.isLoading = false;
                 this.onClearGroup();
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
@@ -308,7 +308,7 @@ export class GroupAndRoleComponent implements OnInit {
                 this.onClearGroup();
                 this.getGroups();
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
         });
@@ -338,7 +338,7 @@ export class GroupAndRoleComponent implements OnInit {
                 this.visibleAddGroup = false;
                 this.getGroups();
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
@@ -359,7 +359,7 @@ export class GroupAndRoleComponent implements OnInit {
                 this.getGroups();
                 this.onClearGroup();
             }, error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }

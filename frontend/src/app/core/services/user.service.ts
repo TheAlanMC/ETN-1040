@@ -3,7 +3,7 @@ import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {ResponseDto} from "../models/response.dto";
-import {Nullable} from "primeng/ts-helpers";
+
 import {PageDto} from "../models/page.dto";
 import {UserDto} from "../../features/user/models/user.dto";
 import {GroupDto} from "../../features/user/models/group.dto";
@@ -50,8 +50,8 @@ export class UserService {
         lastName: string,
         phone: string,
         description: string
-    ): Observable<ResponseDto<Nullable>> {
-        return this.http.post<ResponseDto<Nullable>>(`${this.baseUrl}`,
+    ): Observable<ResponseDto<null>> {
+        return this.http.post<ResponseDto<null>>(`${this.baseUrl}`,
             {
                 groupId, email, firstName, lastName, phone, description
             },
@@ -64,16 +64,16 @@ export class UserService {
         lastName: string,
         phone: string,
         description: string
-    ): Observable<ResponseDto<Nullable>> {
-        return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/${userId}`,
+    ): Observable<ResponseDto<null>> {
+        return this.http.put<ResponseDto<null>>(`${this.baseUrl}/${userId}`,
             {
                 firstName, lastName, phone, description
             },
             this.utilService.getHttpOptions());
     }
 
-    public deleteUser(userId: number): Observable<ResponseDto<Nullable>> {
-        return this.http.delete<ResponseDto<Nullable>>(`${this.baseUrl}/${userId}`,
+    public deleteUser(userId: number): Observable<ResponseDto<null>> {
+        return this.http.delete<ResponseDto<null>>(`${this.baseUrl}/${userId}`,
             this.utilService.getHttpOptions());
     }
 
@@ -85,11 +85,11 @@ export class UserService {
     public uploadUserProfilePicture(
         userId: number,
         file: File
-    ): Observable<ResponseDto<Nullable>> {
+    ): Observable<ResponseDto<null>> {
         const formData = new FormData();
         formData.append('file',
             file);
-        return this.http.put<ResponseDto<Nullable>>(`${this.baseUrl}/${userId}/profile-picture`,
+        return this.http.put<ResponseDto<null>>(`${this.baseUrl}/${userId}/profile-picture`,
             formData,
             this.utilService.getHttpOptions());
     }
@@ -102,8 +102,8 @@ export class UserService {
     public addUsersToGroup(
         userId: number,
         groupIds: number []
-    ): Observable<ResponseDto<Nullable>> {
-        return this.http.post<ResponseDto<Nullable>>(`${this.baseUrl}/${userId}/groups`,
+    ): Observable<ResponseDto<null>> {
+        return this.http.post<ResponseDto<null>>(`${this.baseUrl}/${userId}/groups`,
             {groupIds},
             this.utilService.getHttpOptions());
     }
