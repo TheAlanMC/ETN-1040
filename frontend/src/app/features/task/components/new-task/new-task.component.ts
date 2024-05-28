@@ -78,7 +78,7 @@ export class NewTaskComponent implements OnInit {
         private messageService: MessageService,
         private utilService: UtilService,
         private fileService: FileService,
-        private router: Router
+        private router: Router,
     ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         this.defaultDisplay = this.utilService.checkIfMobile() ? 'true' : 'none';

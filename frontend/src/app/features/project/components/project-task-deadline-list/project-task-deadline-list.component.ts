@@ -8,7 +8,6 @@ import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag
 import {UserDto} from "../../../user/models/user.dto";
 import {Router} from "@angular/router";
 import {TaskService} from "../../../../core/services/task.service";
-import {ResponseDto} from "../../../../core/models/response.dto";
 import {SharedService} from "../../../../core/services/shared.service";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
@@ -82,7 +81,7 @@ export class ProjectTaskDeadlineListComponent implements OnInit {
         }
     }
 
-    public dropCard(event: CdkDragDrop<TaskDto[]>){
+    public dropCard(event: CdkDragDrop<TaskDto[]>) {
         const itemBeingMoved = event.previousContainer.data[event.previousIndex];
         if (event.previousContainer === event.container) {
             moveItemInArray(event.container.data,

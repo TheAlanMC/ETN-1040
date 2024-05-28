@@ -118,7 +118,7 @@ export class TaskCalendarComponent implements OnInit, AfterViewInit {
     }
 
 
-    ngOnInit(){
+    ngOnInit() {
         // Initialize the today variable with the current date
         this.today = new Date().toISOString().split('T')[0];
         this.calendarOptions = {

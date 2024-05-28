@@ -3,11 +3,10 @@ import {TaskDto} from "../../../task/models/task.dto";
 import {MenuItem} from "primeng/api";
 import {UserDto} from "../../../user/models/user.dto";
 import {environment} from "../../../../../environments/environment";
-import {UtilService} from "../../../../core/services/util.service";
-import {Router} from "@angular/router";
 import {SharedService} from "../../../../core/services/shared.service";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
+import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
     selector: 'app-project-task-deadline-card',
@@ -52,10 +51,10 @@ export class ProjectTaskDeadlineCardComponent implements OnInit {
     canEditTask: boolean = false;
 
     constructor(
-        private utilService: UtilService,
-        private router: Router,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private utilService: UtilService
     ) {
+        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
     ngOnInit() {
@@ -66,7 +65,7 @@ export class ProjectTaskDeadlineCardComponent implements OnInit {
                 this.canEditTask = true;
             }
         }
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
+
         this.isOwner = this.sharedService.getData('isOwner')
         this.isModerator = this.sharedService.getData('isModerator')
         let subMenu = this.taskLists.map(d => ({id: d.listId, label: d.title, command: () => this.onMove(d.listId)}));

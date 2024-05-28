@@ -8,13 +8,13 @@ import {debounceTime, Subject} from "rxjs";
 import {SharedService} from "../../../../core/services/shared.service";
 import {ActivatedRoute} from "@angular/router";
 import {TaskService} from "../../../../core/services/task.service";
-import {UtilService} from "../../../../core/services/util.service";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {ResponseDto} from "../../../../core/models/response.dto";
 import {PageDto} from "../../../../core/models/page.dto";
 import {UserDto} from "../../../user/models/user.dto";
 import {TaskPriorityDto} from "../../models/task-priority.dto";
+import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
     selector: 'app-task-deadline',
@@ -80,7 +80,7 @@ export class TaskDeadlineComponent implements OnInit {
         private sharedService: SharedService,
         private activatedRoute: ActivatedRoute,
         private taskService: TaskService,
-        private utilService: UtilService,
+        private utilService: UtilService
     ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage

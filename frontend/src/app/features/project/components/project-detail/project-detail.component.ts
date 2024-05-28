@@ -3,11 +3,11 @@ import {environment} from "../../../../../environments/environment";
 import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
 import {ProjectDto} from "../../models/project.dto";
 import {ActivatedRoute, Router} from "@angular/router";
-import {UtilService} from "../../../../core/services/util.service";
 import {ProjectService} from "../../../../core/services/project.service";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {FormControl, Validators} from "@angular/forms";
+import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
     selector: 'app-project-detail',
@@ -77,11 +77,11 @@ export class ProjectDetailComponent implements OnInit {
 
     constructor(
         private activatedRoute: ActivatedRoute,
-        private utilService: UtilService,
         private projectService: ProjectService,
         private router: Router,
         private messageService: MessageService,
-        private confirmationService: ConfirmationService
+        private confirmationService: ConfirmationService,
+        private utilService: UtilService
     ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         const token = localStorage.getItem('token');

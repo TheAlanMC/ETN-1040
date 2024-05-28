@@ -4,7 +4,6 @@ import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {ResponseDto} from "../models/response.dto";
 import {AuthDto} from '../../features/auth/models/auth.dto';
-
 import {UtilService} from "./util.service";
 
 @Injectable({
@@ -15,7 +14,7 @@ export class AuthService {
 
     constructor(
         private http: HttpClient,
-        private utilService: UtilService,
+        private utilService: UtilService
     ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
@@ -25,8 +24,9 @@ export class AuthService {
         password: string,
         firebaseToken: string
     ): Observable<ResponseDto<AuthDto>> {
+        const isMobile = this.utilService.checkIfMobile();
         return this.http.post<ResponseDto<AuthDto>>(`${this.baseUrl}/login`,
-            {email, password, firebaseToken});
+            {email, password, firebaseToken, isMobile});
     }
 
     public refreshToken(refreshToken: string): Observable<ResponseDto<AuthDto>> {

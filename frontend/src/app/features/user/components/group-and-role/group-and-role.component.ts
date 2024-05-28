@@ -6,11 +6,11 @@ import {GroupDto} from "../../models/group.dto";
 import {RoleService} from "../../../../core/services/role.service";
 import {RoleDto} from '../../models/role.dto';
 import {FormControl, Validators} from "@angular/forms";
-import {UtilService} from "../../../../core/services/util.service";
 import {environment} from "../../../../../environments/environment";
 import {UserDto} from "../../models/user.dto";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
+import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
     selector: 'app-group-and-role',
@@ -61,7 +61,7 @@ export class GroupAndRoleComponent implements OnInit {
         private userService: UserService,
         private confirmationService: ConfirmationService,
         private groupsService: GroupService,
-        private rolseService: RoleService,
+        private roleService: RoleService,
         private messageService: MessageService,
         private utilService: UtilService
     ) {
@@ -119,7 +119,7 @@ export class GroupAndRoleComponent implements OnInit {
     }
 
     public getRoles() {
-        this.rolseService.getRoles().subscribe({
+        this.roleService.getRoles().subscribe({
             next: (data) => {
                 this.roles = data.data!;
             }, error: (error) => {

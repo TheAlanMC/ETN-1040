@@ -7,12 +7,15 @@ import {ProfileService} from "../core/services/profile.service";
     templateUrl: './app.topbar.component.html'
 })
 export class AppTopbarComponent {
-  profilePictureUrl: string = 'assets/layout/images/avatar.png';
+    profilePictureUrl: string = 'assets/layout/images/avatar.png';
 
-  @ViewChild('menubutton') menuButton!: ElementRef;
+    @ViewChild('menubutton') menuButton!: ElementRef;
 
-    constructor(public layoutService: LayoutService, private profileService: ProfileService) {
-      this.getProfilePictureUrl();
+    constructor(
+        public layoutService: LayoutService,
+        private profileService: ProfileService
+    ) {
+        this.getProfilePictureUrl();
     }
 
     onMenuButtonClick() {
@@ -22,19 +25,20 @@ export class AppTopbarComponent {
     onProfileButtonClick() {
         this.layoutService.showProfileSidebar();
     }
+
     onConfigButtonClick() {
         this.layoutService.showConfigSidebar();
     }
 
-  public getProfilePictureUrl(){
-      this.profileService.getProfilePicture().subscribe({
-        next: (data) => {
-          this.profilePictureUrl = URL.createObjectURL(data);
-        },
-        error: (error) => {
-          console.error(error);
-        }
-      });
-  }
+    public getProfilePictureUrl() {
+        this.profileService.getProfilePicture().subscribe({
+            next: (data) => {
+                this.profilePictureUrl = URL.createObjectURL(data);
+            },
+            error: (error) => {
+                console.error(error);
+            }
+        });
+    }
 
 }

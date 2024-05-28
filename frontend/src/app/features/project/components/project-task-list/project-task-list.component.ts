@@ -3,7 +3,6 @@ import {ProjectDto} from "../../models/project.dto";
 import {environment} from "../../../../../environments/environment";
 import {ActivatedRoute} from "@angular/router";
 import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
-import {UtilService} from "../../../../core/services/util.service";
 import {ProjectService} from "../../../../core/services/project.service";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
@@ -15,6 +14,7 @@ import {TaskService} from "../../../../core/services/task.service";
 import {TaskStatusDto} from "../../../task/models/task-status.dto";
 import {debounceTime, Subject} from "rxjs";
 import {TaskPriorityDto} from "../../../task/models/task-priority.dto";
+import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
     selector: 'app-project-task-list',
@@ -76,19 +76,17 @@ export class ProjectTaskListComponent implements OnInit {
     viewSidebarVisible: boolean = false;
 
     taskId: number = 0;
-
-    private searchSubject = new Subject<string>();
-
     projectEndDate: Date | null = null;
+    private searchSubject = new Subject<string>();
 
     constructor(
         private confirmationService: ConfirmationService,
         private messageService: MessageService,
-        private utilService: UtilService,
         private projectService: ProjectService,
         private sharedService: SharedService,
         private activatedRoute: ActivatedRoute,
-        private taskService: TaskService
+        private taskService: TaskService,
+        private utilService: UtilService
     ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage
@@ -258,10 +256,10 @@ export class ProjectTaskListComponent implements OnInit {
                 this.statusItems.push({
                     label: 'ATRASADO', value: 4
                 });
-                if(this.projectEndDate===null){
+                if (this.projectEndDate === null) {
                     this.selectedStatus = this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 1 || status.value === 2)) : this.selectedStatus;
                 } else {
-                    this.selectedStatus =  this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 3)) : this.selectedStatus;
+                    this.selectedStatus = this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 3)) : this.selectedStatus;
                 }
                 this.getData();
             }, error: (error) => {

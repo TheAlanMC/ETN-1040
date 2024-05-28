@@ -3,10 +3,10 @@ import {TaskDto} from "../../models/task.dto";
 import {UserDto} from "../../../user/models/user.dto";
 import {MenuItem} from "primeng/api";
 import {environment} from "../../../../../environments/environment";
-import {UtilService} from "../../../../core/services/util.service";
 import {SharedService} from "../../../../core/services/shared.service";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
+import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
     selector: 'app-task-deadline-card',
@@ -50,9 +50,10 @@ export class TaskDeadlineCardComponent implements OnInit {
     canEditTask: boolean = false;
 
     constructor(
-        private utilService: UtilService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private utilService: UtilService
     ) {
+        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
     ngOnInit() {
@@ -63,7 +64,7 @@ export class TaskDeadlineCardComponent implements OnInit {
                 this.canEditTask = true;
             }
         }
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
+
         this.isModerator = this.sharedService.getData('isModerator')
         let subMenu = this.taskLists.map(d => ({id: d.listId, label: d.title, command: () => this.onMove(d.listId)}));
         this.generateMenu(subMenu);

@@ -231,7 +231,7 @@ class TaskService @Autowired constructor(
 
         taskAssigneeEntities.forEach { taskAssigneeEntity ->
             val assigneeEmail = userRepository.findByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong())!!.email
-            val assigneeTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong()).map { it.firebaseToken }
+            val assigneeTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong())
             val assigneeMessageTittle = "Tarea asignada"
             val assigneeMessageBody = "Se le ha asignado la tarea '${taskEntity.taskName}' en el proyecto '${projectEntity.projectName}'"
             val notificationEntity = Notification()
@@ -241,7 +241,7 @@ class TaskService @Autowired constructor(
             notificationRepository.save(notificationEntity)
             emailService.sendEmail(assigneeEmail, assigneeMessageTittle, assigneeMessageBody)
             assigneeTokens.forEach { token ->
-                    firebaseMessagingService.sendNotification(token, assigneeMessageTittle, assigneeMessageBody)
+                    firebaseMessagingService.sendNotification(token.isMobile, token.firebaseToken, assigneeMessageTittle, assigneeMessageBody)
             }
         }
     }
@@ -402,7 +402,7 @@ class TaskService @Autowired constructor(
         if (originalAssignees.toSet() != newTaskDto.taskAssigneeIds.map { it }.toSet()) {
             taskAssigneeEntities.forEach { taskAssigneeEntity ->
                 val assigneeEmail = userRepository.findByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong())!!.email
-                val assigneeTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong()).map { it.firebaseToken }
+                val assigneeTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong())
                 val assigneeMessageTittle = "Tarea reasignada"
                 val assigneeMessageBody = "Se le ha reasignado la tarea '${taskEntity.taskName}' en el proyecto '${projectEntity.projectName}'"
                 val notificationEntity = Notification()
@@ -412,7 +412,7 @@ class TaskService @Autowired constructor(
                 notificationRepository.save(notificationEntity)
                 emailService.sendEmail(assigneeEmail, assigneeMessageTittle, assigneeMessageBody)
                 assigneeTokens.forEach { token ->
-                        firebaseMessagingService.sendNotification(token, assigneeMessageTittle, assigneeMessageBody)
+                        firebaseMessagingService.sendNotification(token.isMobile, token.firebaseToken, assigneeMessageTittle, assigneeMessageBody)
                 }
             }
         }
@@ -465,7 +465,7 @@ class TaskService @Autowired constructor(
                 val projectName = projectRepository.findByProjectIdAndStatusIsTrue(taskEntity.projectId.toLong())!!.projectName
                 val ownerEmail = userRepository.findByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong())!!.email
                 logger.info("Sending notification to project owner $ownerEmail")
-                val ownerTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong()).map { it.firebaseToken }
+                val ownerTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong())
                 val ownerMessageTittle = "Tarea completada"
                 val ownerMessageBody = "La tarea '${taskEntity.taskName}' del proyecto '$projectName' ha sido completada"
                 val notificationEntity = Notification()
@@ -475,7 +475,7 @@ class TaskService @Autowired constructor(
                 notificationRepository.save(notificationEntity)
                 emailService.sendEmail(ownerEmail, ownerMessageTittle, ownerMessageBody)
                 ownerTokens.forEach { token ->
-                        firebaseMessagingService.sendNotification(token, ownerMessageTittle, ownerMessageBody)
+                        firebaseMessagingService.sendNotification(token.isMobile, token.firebaseToken, ownerMessageTittle, ownerMessageBody)
                 }
             }
 
@@ -483,7 +483,7 @@ class TaskService @Autowired constructor(
                 val projectName = projectRepository.findByProjectIdAndStatusIsTrue(taskEntity.projectId.toLong())!!.projectName
                 val moderatorEmail = userRepository.findByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong())!!.email
                 logger.info("Sending notification to project moderator $moderatorEmail")
-                val moderatorTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong()).map { it.firebaseToken }
+                val moderatorTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong())
                 val moderatorMessageTittle = "Tarea completada"
                 val moderatorMessageBody = "La tarea ${taskEntity.taskName} en del proyecto '$projectName' ha sido completada"
                 val notificationEntity = Notification()
@@ -493,7 +493,7 @@ class TaskService @Autowired constructor(
                 notificationRepository.save(notificationEntity)
                 emailService.sendEmail(moderatorEmail, moderatorMessageTittle, moderatorMessageBody)
                 moderatorTokens.forEach { token ->
-                        firebaseMessagingService.sendNotification(token, moderatorMessageTittle, moderatorMessageBody)
+                        firebaseMessagingService.sendNotification(token.isMobile, token.firebaseToken, moderatorMessageTittle, moderatorMessageBody)
                 }
             }
         }
@@ -576,7 +576,7 @@ class TaskService @Autowired constructor(
             val projectName = projectRepository.findByProjectIdAndStatusIsTrue(taskAssigneeEntity.task!!.projectId.toLong())!!.projectName
             val assigneeEmail = userRepository.findByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong())!!.email
             logger.info("Sending notification to project assignee $assigneeEmail")
-            val assigneeTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong()).map { it.firebaseToken }
+            val assigneeTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(taskAssigneeEntity.userId.toLong())
             val assigneeMessageTittle = "Recordatorio: Tarea por finalizar"
             val assigneeMessageBody = "La tarea: '${taskAssigneeEntity.task!!.taskName}' en el proyecto: '$projectName' está por finalizar en las próximas 24 horas. Por favor, complete la tarea."
             val notificationEntity = Notification()
@@ -586,7 +586,7 @@ class TaskService @Autowired constructor(
             notificationRepository.save(notificationEntity)
             emailService.sendEmail(assigneeEmail, assigneeMessageTittle, assigneeMessageBody)
             assigneeTokens.forEach { token ->
-                firebaseMessagingService.sendNotification(token, assigneeMessageTittle, assigneeMessageBody)
+                firebaseMessagingService.sendNotification(token.isMobile, token.firebaseToken, assigneeMessageTittle, assigneeMessageBody)
             }
         }
 

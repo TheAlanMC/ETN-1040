@@ -1,10 +1,10 @@
-import { Component, OnDestroy, Renderer2, ViewChild } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { filter, Subscription } from 'rxjs';
-import { MenuService } from './app.menu.service';
-import { AppSidebarComponent } from './app.sidebar.component';
-import { AppTopbarComponent } from './app.topbar.component';
-import { LayoutService } from './service/app.layout.service';
+import {Component, OnDestroy, Renderer2, ViewChild} from '@angular/core';
+import {NavigationEnd, Router} from '@angular/router';
+import {filter, Subscription} from 'rxjs';
+import {MenuService} from './app.menu.service';
+import {AppSidebarComponent} from './app.sidebar.component';
+import {AppTopbarComponent} from './app.topbar.component';
+import {LayoutService} from './service/app.layout.service';
 
 @Component({
     selector: 'app-layout',
@@ -84,49 +84,6 @@ export class AppLayoutComponent implements OnDestroy {
             });
     }
 
-    blockBodyScroll(){
-        if (document.body.classList) {
-            document.body.classList.add('blocked-scroll');
-        } else {
-            document.body.className += ' blocked-scroll';
-        }
-    }
-
-    unblockBodyScroll(){
-        if (document.body.classList) {
-            document.body.classList.remove('blocked-scroll');
-        } else {
-            document.body.className = document.body.className.replace(
-                new RegExp(
-                    '(^|\\b)' +
-                        'blocked-scroll'.split(' ').join('|') +
-                        '(\\b|$)',
-                    'gi'
-                ),
-                ' '
-            );
-        }
-    }
-
-    hideMenu() {
-        this.layoutService.state.overlayMenuActive = false;
-        this.layoutService.state.staticMenuMobileActive = false;
-        this.layoutService.state.menuHoverActive = false;
-        this.menuService.reset();
-
-        if (this.menuOutsideClickListener) {
-            this.menuOutsideClickListener();
-            this.menuOutsideClickListener = null;
-        }
-
-        if (this.menuScrollListener) {
-            this.menuScrollListener();
-            this.menuScrollListener = null;
-        }
-
-        this.unblockBodyScroll();
-    }
-
     get containerClass() {
         return {
             'layout-light': this.layoutService.config().colorScheme === 'light',
@@ -153,13 +110,56 @@ export class AppLayoutComponent implements OnDestroy {
                 this.layoutService.config().menuMode === 'static',
             'layout-overlay-active': this.layoutService.state.overlayMenuActive,
             'layout-mobile-active':
-                this.layoutService.state.staticMenuMobileActive,
+            this.layoutService.state.staticMenuMobileActive,
             'p-input-filled':
                 this.layoutService.config().inputStyle === 'filled',
             'p-ripple-disabled': !this.layoutService.config().ripple,
             'layout-sidebar-active': this.layoutService.state.sidebarActive,
             'layout-sidebar-anchored': this.layoutService.state.anchored,
         };
+    }
+
+    blockBodyScroll() {
+        if (document.body.classList) {
+            document.body.classList.add('blocked-scroll');
+        } else {
+            document.body.className += ' blocked-scroll';
+        }
+    }
+
+    unblockBodyScroll() {
+        if (document.body.classList) {
+            document.body.classList.remove('blocked-scroll');
+        } else {
+            document.body.className = document.body.className.replace(
+                new RegExp(
+                    '(^|\\b)' +
+                    'blocked-scroll'.split(' ').join('|') +
+                    '(\\b|$)',
+                    'gi'
+                ),
+                ' '
+            );
+        }
+    }
+
+    hideMenu() {
+        this.layoutService.state.overlayMenuActive = false;
+        this.layoutService.state.staticMenuMobileActive = false;
+        this.layoutService.state.menuHoverActive = false;
+        this.menuService.reset();
+
+        if (this.menuOutsideClickListener) {
+            this.menuOutsideClickListener();
+            this.menuOutsideClickListener = null;
+        }
+
+        if (this.menuScrollListener) {
+            this.menuScrollListener();
+            this.menuScrollListener = null;
+        }
+
+        this.unblockBodyScroll();
     }
 
     ngOnDestroy() {

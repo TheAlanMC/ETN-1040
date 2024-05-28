@@ -45,6 +45,14 @@ export class AppProfileSidebarComponent implements OnInit, OnDestroy {
         this.messageSubscription = new Subscription(); // Initialize here
     }
 
+    get visible(): boolean {
+        return this.layoutService.state.profileSidebarVisible;
+    }
+
+    set visible(_val: boolean) {
+        this.layoutService.state.profileSidebarVisible = _val;
+    }
+
     ngOnInit() {
         this.getAllNotifications();
         this.messageSubscription = this.firebaseService.getMessageObservable().subscribe({
@@ -99,14 +107,6 @@ export class AppProfileSidebarComponent implements OnInit, OnDestroy {
                 console.error(error);
             }
         });
-    }
-
-    get visible(): boolean {
-        return this.layoutService.state.profileSidebarVisible;
-    }
-
-    set visible(_val: boolean) {
-        this.layoutService.state.profileSidebarVisible = _val;
     }
 
     onProfile() {

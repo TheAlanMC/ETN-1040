@@ -1,6 +1,6 @@
 <div class="layout-topbar">
     <div class="topbar-start">
-        <button #menubutton type="button" class="topbar-menubutton p-link p-trigger" (click)="onMenuButtonClick()">
+        <button #menubutton (click)="onMenuButtonClick()" class="topbar-menubutton p-link p-trigger" type="button">
             <i class="pi pi-bars"></i>
         </button>
 
@@ -9,11 +9,11 @@
 
     <div class="topbar-end">
         <ul class="topbar-menu">
-          <li class="ml-3">
-            <button type="button" class="p-link" (click)="onProfileButtonClick()">
-              <img [src]="profilePictureUrl" alt="Profile" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" />
-            </button>
-          </li>
+            <li class="ml-3">
+                <button (click)="onProfileButtonClick()" class="p-link" type="button">
+                    <img [src]="profilePictureUrl" alt="Profile" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;"/>
+                </button>
+            </li>
         </ul>
     </div>
 </div>

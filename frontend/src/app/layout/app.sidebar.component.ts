@@ -1,5 +1,5 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { LayoutService } from './service/app.layout.service';
+import {Component, ElementRef, ViewChild} from '@angular/core';
+import {LayoutService} from './service/app.layout.service';
 
 @Component({
     selector: 'app-sidebar',
@@ -9,8 +9,13 @@ export class AppSidebarComponent {
     timeout: any = null;
 
     @ViewChild('menuContainer') menuContainer!: ElementRef;
-    constructor(public layoutService: LayoutService, public el: ElementRef) {}
-    
+
+    constructor(
+        public layoutService: LayoutService,
+        public el: ElementRef
+    ) {
+    }
+
 
     onMouseEnter() {
         if (!this.layoutService.state.anchored) {
@@ -19,15 +24,16 @@ export class AppSidebarComponent {
                 this.timeout = null;
             }
             this.layoutService.state.sidebarActive = true;
-           
-    
+
+
         }
     }
 
     onMouseLeave() {
         if (!this.layoutService.state.anchored) {
             if (!this.timeout) {
-                this.timeout = setTimeout(() => this.layoutService.state.sidebarActive = false, 300);
+                this.timeout = setTimeout(() => this.layoutService.state.sidebarActive = false,
+                    300);
             }
         }
     }

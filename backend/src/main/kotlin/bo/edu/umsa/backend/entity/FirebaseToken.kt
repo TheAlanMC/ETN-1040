@@ -19,6 +19,9 @@ class FirebaseToken {
     @Column(name = "firebase_token")
     var firebaseToken: String = ""
 
+    @Column(name = "is_mobile")
+    var isMobile: Boolean = false
+
     @Column(name = "status")
     var status: Boolean = true
 

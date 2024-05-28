@@ -53,6 +53,7 @@ class AuthService @Autowired constructor(
                 val newFirebaseTokenEntity = FirebaseToken()
                 newFirebaseTokenEntity.firebaseToken = credentials.firebaseToken
                 newFirebaseTokenEntity.userId = userEntity.userId
+                newFirebaseTokenEntity.isMobile = credentials.isMobile
                 firebaseTokenRepository.save(newFirebaseTokenEntity)
             }
         }

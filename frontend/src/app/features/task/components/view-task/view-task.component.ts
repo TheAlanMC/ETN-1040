@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, Output, QueryList, ViewChildren} from '@angular/core';
 import {TaskDto} from "../../models/task.dto";
 import {ConfirmationService, MenuItem, MessageService, SelectItem} from "primeng/api";
 import {UserDto} from "../../../user/models/user.dto";
@@ -66,7 +66,7 @@ export class ViewTaskComponent {
 
     baseUrl: string = `${environment.API_URL}/api/v1/users`;
 
-    filesBaselUrl: string = `${environment.API_URL}/api/v1/files`;
+    filesBaseUrl: string = `${environment.API_URL}/api/v1/files`;
 
     imgLoaded: { [key: string]: boolean } = {};
 
@@ -144,10 +144,10 @@ export class ViewTaskComponent {
         private replacedPartService: ReplacedPartService
     ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
+        this.filesBaseUrl = this.utilService.getApiUrl(this.filesBaseUrl);
         this.defaultDisplay = this.utilService.checkIfMobile() ? 'true' : 'none';
         this.isMobile = this.utilService.checkIfMobile();
-        this.filesBaselUrl = this.utilService.getApiUrl(this.filesBaselUrl);
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
+
         const token = localStorage.getItem('token');
         // Check if token exists
         if (token) {
@@ -163,9 +163,9 @@ export class ViewTaskComponent {
             {label: 'Eliminar', icon: 'pi pi-trash', command: () => this.onReplacementDelete()}];
     }
 
-    public onSidebarShow(){
-    this.getStatuses()
-    this.getPriorities()
+    public onSidebarShow() {
+        this.getStatuses()
+        this.getPriorities()
         this.getTask()
         this.getHistory()
     }
@@ -607,7 +607,6 @@ export class ViewTaskComponent {
     }
 
 
-
     public saveTaskComment() {
         this.taskCommentService.createTaskComment(this.taskId,
             this.newCommentControl.value!,
@@ -685,8 +684,8 @@ export class ViewTaskComponent {
         this.focusedReplacement = false;
         this.showNewReplacementAttachment = false;
         this.newReplacementFiles = [];
-this.replacementUploadedFiles = [];
-this.valRadio = 'No';
+        this.replacementUploadedFiles = [];
+        this.valRadio = 'No';
     }
 
     public onEditCommentCancel() {
@@ -715,7 +714,7 @@ this.valRadio = 'No';
                 name: file.fileName,
                 size: file.fileSize,
                 type: file.contentType,
-                objectURL: (file.contentType.includes('image') ? `${this.filesBaselUrl}/${file.fileId}/thumbnail` : null)
+                objectURL: (file.contentType.includes('image') ? `${this.filesBaseUrl}/${file.fileId}/thumbnail` : null)
             });
         });
         if (this.editCommentFiles.length > 0) {
@@ -733,7 +732,7 @@ this.valRadio = 'No';
                 name: file.fileName,
                 size: file.fileSize,
                 type: file.contentType,
-                objectURL: (file.contentType.includes('image') ? `${this.filesBaselUrl}/${file.fileId}/thumbnail` : null)
+                objectURL: (file.contentType.includes('image') ? `${this.filesBaseUrl}/${file.fileId}/thumbnail` : null)
             });
         });
         if (this.editReplacementFiles.length > 0) {

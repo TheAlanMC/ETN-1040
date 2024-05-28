@@ -4,7 +4,6 @@ import {environment} from "../../../../../environments/environment";
 import {TaskStatusDto} from "../../models/task-status.dto";
 import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
 import {debounceTime, Subject} from "rxjs";
-import {UtilService} from "../../../../core/services/util.service";
 import {SharedService} from "../../../../core/services/shared.service";
 import {ActivatedRoute} from "@angular/router";
 import {TaskService} from "../../../../core/services/task.service";
@@ -13,6 +12,7 @@ import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {ResponseDto} from "../../../../core/models/response.dto";
 import {PageDto} from "../../../../core/models/page.dto";
 import {TaskPriorityDto} from "../../models/task-priority.dto";
+import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
     selector: 'app-task-list',
@@ -77,10 +77,10 @@ export class TaskListComponent implements OnInit {
     constructor(
         private confirmationService: ConfirmationService,
         private messageService: MessageService,
-        private utilService: UtilService,
         private sharedService: SharedService,
         private activatedRoute: ActivatedRoute,
-        private taskService: TaskService
+        private taskService: TaskService,
+        private utilService: UtilService
     ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage
@@ -192,7 +192,7 @@ export class TaskListComponent implements OnInit {
         });
     }
 
-    public deleteTask(taskId: number){
+    public deleteTask(taskId: number) {
         this.taskService.deleteTask(taskId).subscribe({
             next: (data) => {
                 this.getData();

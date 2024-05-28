@@ -10,7 +10,6 @@ import {environment} from "../../../../../environments/environment";
 import {UserDto} from "../../../user/models/user.dto";
 import {ActivatedRoute} from "@angular/router";
 import {ConfirmationService, MenuItem, MessageService, SelectItem} from "primeng/api";
-import {UtilService} from "../../../../core/services/util.service";
 import {ProjectService} from "../../../../core/services/project.service";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
@@ -20,7 +19,8 @@ import {TaskDto} from "../../../task/models/task.dto";
 import {TaskStatusDto} from "../../../task/models/task-status.dto";
 import {debounceTime, Subject} from "rxjs";
 import {FullCalendarComponent} from "@fullcalendar/angular";
-import {TaskPriorityDto} from "../../../task/models/task-priority.dto"; // Import Spanish locale
+import {TaskPriorityDto} from "../../../task/models/task-priority.dto";
+import {UtilService} from "../../../../core/services/util.service"; // Import Spanish locale
 
 @Component({
     selector: 'app-project-task-calendar',
@@ -102,17 +102,16 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
     projectEndDate: Date | null = null;
 
 
-
     private searchSubject = new Subject<string>();
 
     constructor(
         private confirmationService: ConfirmationService,
         private messageService: MessageService,
-        private utilService: UtilService,
         private projectService: ProjectService,
         private sharedService: SharedService,
         private activatedRoute: ActivatedRoute,
-        private taskService: TaskService
+        private taskService: TaskService,
+        private utilService: UtilService
     ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage
@@ -394,7 +393,7 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
         });
     }
 
-    public getAllStatuses(){
+    public getAllStatuses() {
         this.taskService.getStatuses().subscribe({
             next: (data) => {
                 this.statuses = data.data!;
@@ -406,11 +405,12 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
                 this.statusItems.push({
                     label: 'ATRASADO', value: 4
                 });
-                if(this.projectEndDate===null){
+                if (this.projectEndDate === null) {
                     this.selectedStatus = this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 1 || status.value === 2)) : this.selectedStatus;
                 } else {
-                    this.selectedStatus =  this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 3)) : this.selectedStatus;
-                }                this.getData();
+                    this.selectedStatus = this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 3)) : this.selectedStatus;
+                }
+                this.getData();
             }, error: (error) => {
                 console.error(error);
             }

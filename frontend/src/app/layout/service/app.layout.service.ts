@@ -1,5 +1,5 @@
-import { Injectable, effect, signal } from '@angular/core';
-import { Subject } from 'rxjs';
+import {effect, Injectable, signal} from '@angular/core';
+import {Subject} from 'rxjs';
 
 export type MenuMode =
     | 'static'
@@ -63,11 +63,8 @@ export class LayoutService {
     };
 
     private configUpdate = new Subject<AppConfig>();
-
-    private overlayOpen = new Subject<any>();
-
     configUpdate$ = this.configUpdate.asObservable();
-
+    private overlayOpen = new Subject<any>();
     overlayOpen$ = this.overlayOpen.asObservable();
 
     constructor() {
@@ -147,7 +144,7 @@ export class LayoutService {
     }
 
     onConfigUpdate() {
-        this._config = { ...this.config() };
+        this._config = {...this.config()};
         this.configUpdate.next(this.config());
     }
 
@@ -163,8 +160,8 @@ export class LayoutService {
                 el == this._config.theme
                     ? (el = config.theme)
                     : el == `theme-${this._config.colorScheme}`
-                    ? (el = `theme-${config.colorScheme}`)
-                    : el
+                        ? (el = `theme-${config.colorScheme}`)
+                        : el
             )
             .join('/');
 
@@ -176,17 +173,21 @@ export class LayoutService {
         let themeLink = <HTMLLinkElement>document.getElementById(id);
         const cloneLinkElement = <HTMLLinkElement>themeLink.cloneNode(true);
 
-        cloneLinkElement.setAttribute('href', href);
-        cloneLinkElement.setAttribute('id', id + '-clone');
+        cloneLinkElement.setAttribute('href',
+            href);
+        cloneLinkElement.setAttribute('id',
+            id + '-clone');
 
         themeLink.parentNode!.insertBefore(
             cloneLinkElement,
             themeLink.nextSibling
         );
-        cloneLinkElement.addEventListener('load', () => {
-            themeLink.remove();
-            cloneLinkElement.setAttribute('id', id);
-        });
+        cloneLinkElement.addEventListener('load',
+            () => {
+                themeLink.remove();
+                cloneLinkElement.setAttribute('id',
+                    id);
+            });
     }
 
     changeScale(value: number) {

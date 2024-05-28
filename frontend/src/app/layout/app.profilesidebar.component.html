@@ -1,11 +1,13 @@
-<p-sidebar [(visible)]="visible" position="right" [transitionOptions]="'.3s cubic-bezier(0, 0, 0.2, 1)'" styleClass="layout-profile-sidebar w-full sm:w-25rem">
+<p-sidebar [(visible)]="visible" [transitionOptions]="'.3s cubic-bezier(0, 0, 0.2, 1)'" position="right"
+           styleClass="layout-profile-sidebar w-full sm:w-25rem">
     <div class="flex flex-column mx-auto md:mx-0">
         <span class="mb-2 font-semibold">¡Hola de nuevo!</span>
         <span class="text-color-secondary font-medium mb-5">{{ decoded?.name }}</span>
 
         <ul class="list-none m-0 p-0">
             <li>
-                <a class="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150" (click)="onProfile()">
+                <a (click)="onProfile()"
+                   class="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
                     <span>
                         <i class="pi pi-user text-xl text-primary"></i>
                     </span>
@@ -15,10 +17,13 @@
                     </div>
                 </a>
             </li>
-          <p-confirmDialog header="Confirmation" key="confirmLogout" icon="pi pi-exclamation-triangle" message="¿Estás seguro de que deseas cerrar sesión?"
-                           [style]="{width: '350px'}" acceptButtonStyleClass="p-button-primary" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+            <p-confirmDialog [style]="{width: '350px'}" acceptButtonStyleClass="p-button-primary" header="Confirmation"
+                             icon="pi pi-exclamation-triangle"
+                             key="confirmLogout" message="¿Estás seguro de que deseas cerrar sesión?"
+                             rejectButtonStyleClass="p-button-text"></p-confirmDialog>
             <li>
-                <a class="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150" (click)="onLogout()">
+                <a (click)="onLogout()"
+                   class="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
                     <span>
                         <i class="pi pi-power-off text-xl text-primary"></i>
                     </span>
@@ -45,7 +50,8 @@
                         <span class="mb-2 font-semibold">{{ notification.messageBody }}</span>
                         <p class="text-color-secondary m-0">{{ notification.txDate | timeAgo }}</p>
                     </div>
-                    <button pButton pRipple type="button" icon="pi pi-check" class="p-button p-button-text" pTooltip="Marcar como leido" tooltipPosition="left" (click)="markAsRead(notification.notificationId)">
+                    <button (click)="markAsRead(notification.notificationId)" class="p-button p-button-text" icon="pi pi-check" pButton pRipple pTooltip="Marcar como leido"
+                            tooltipPosition="left" type="button">
                     </button>
                 </a>
             </li>

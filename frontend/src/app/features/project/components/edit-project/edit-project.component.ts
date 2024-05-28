@@ -4,13 +4,13 @@ import {environment} from "../../../../../environments/environment";
 import {UserDto} from "../../../user/models/user.dto";
 import {MessageService, SelectItem} from "primeng/api";
 import {UserService} from "../../../../core/services/user.service";
-import {UtilService} from "../../../../core/services/util.service";
 import {Location} from "@angular/common";
 import {ProjectService} from "../../../../core/services/project.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {ProjectDto} from "../../models/project.dto";
+import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
     selector: 'app-edit-project',
@@ -83,10 +83,10 @@ export class EditProjectComponent implements OnInit {
         private activatedRoute: ActivatedRoute,
         private userService: UserService,
         private messageService: MessageService,
-        private utilService: UtilService,
         private location: Location,
         private projectService: ProjectService,
-        private router: Router
+        private router: Router,
+        private utilService: UtilService
     ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         const token = localStorage.getItem('token');

@@ -91,7 +91,10 @@ export class ReportListComponent implements OnInit {
         });
     }
 
-    public onDownloadReport(fileName: string, file: FileDto) {
+    public onDownloadReport(
+        fileName: string,
+        file: FileDto
+    ) {
         this.isLoading = true;
         this.downloadingFileId = file.fileId;
         this.fileService.getFile(file.fileId).subscribe({

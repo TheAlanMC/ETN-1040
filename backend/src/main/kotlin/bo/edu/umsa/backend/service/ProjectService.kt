@@ -316,7 +316,7 @@ class ProjectService @Autowired constructor(
             val projectName = projectRepository.findByProjectIdAndStatusIsTrue(projectId)!!.projectName
             val ownerEmail = userRepository.findByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong())!!.email
             logger.info("Sending notification to project owner $ownerEmail")
-            val ownerTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong()).map { it.firebaseToken }
+            val ownerTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong())
             val ownerMessageTittle = "Proyecto cerrado"
             val ownerMessageBody = "El proyecto '$projectName' ha sido cerrado"
             val notificationEntity = Notification()
@@ -326,7 +326,7 @@ class ProjectService @Autowired constructor(
             notificationRepository.save(notificationEntity)
             emailService.sendEmail(ownerEmail, ownerMessageTittle, ownerMessageBody)
             ownerTokens.forEach { token ->
-                firebaseMessagingService.sendNotification(token, ownerMessageTittle, ownerMessageBody)
+                firebaseMessagingService.sendNotification(token.isMobile, token.firebaseToken, ownerMessageTittle, ownerMessageBody)
             }
         }
 
@@ -334,7 +334,7 @@ class ProjectService @Autowired constructor(
             val projectName = projectRepository.findByProjectIdAndStatusIsTrue(projectId)!!.projectName
             val moderatorEmail = userRepository.findByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong())!!.email
             logger.info("Sending notification to project moderator $moderatorEmail")
-            val moderatorTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong()).map { it.firebaseToken }
+            val moderatorTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong())
             val moderatorMessageTittle = "Proyecto cerrado"
             val moderatorMessageBody = "El proyecto '$projectName' ha sido cerrado"
             val notificationEntity = Notification()
@@ -344,7 +344,7 @@ class ProjectService @Autowired constructor(
             notificationRepository.save(notificationEntity)
             emailService.sendEmail(moderatorEmail, moderatorMessageTittle, moderatorMessageBody)
             moderatorTokens.forEach { token ->
-                firebaseMessagingService.sendNotification(token, moderatorMessageTittle, moderatorMessageBody)
+                firebaseMessagingService.sendNotification(token.isMobile, token.firebaseToken, moderatorMessageTittle, moderatorMessageBody)
             }
         }
 
@@ -412,7 +412,7 @@ class ProjectService @Autowired constructor(
             val projectName = projectRepository.findByProjectIdAndStatusIsTrue(projectOwnerEntity.projectId.toLong())!!.projectName
             val ownerEmail = userRepository.findByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong())!!.email
             logger.info("Sending notification to project owner ${ownerEmail}")
-            val ownerTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong()).map { it.firebaseToken }
+            val ownerTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong())
             val ownerMessageTittle = "Recordatorio: Proyecto por finalizar"
             val ownerMessageBody = "El proyecto: '$projectName' en el que participas como propietario está por finalizar en las próximas 24 horas. Por favor, asegúrate de que todas las tareas estén completadas."
             val notificationEntity = Notification()
@@ -422,7 +422,7 @@ class ProjectService @Autowired constructor(
             notificationRepository.save(notificationEntity)
             emailService.sendEmail(ownerEmail, ownerMessageTittle, ownerMessageBody)
             ownerTokens.forEach { token ->
-                    firebaseMessagingService.sendNotification(token, ownerMessageTittle, ownerMessageBody)
+                    firebaseMessagingService.sendNotification(token.isMobile, token.firebaseToken, ownerMessageTittle, ownerMessageBody)
             }
         }
 
@@ -430,7 +430,7 @@ class ProjectService @Autowired constructor(
             val projectName = projectRepository.findByProjectIdAndStatusIsTrue(projectModeratorEntity.projectId.toLong())!!.projectName
             val moderatorEmail = userRepository.findByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong())!!.email
             logger.info("Sending notification to project moderator ${moderatorEmail}")
-            val moderatorTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong()).map { it.firebaseToken }
+            val moderatorTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong())
             val moderatorMessageTittle = "Recordatorio: Proyecto por finalizar"
             val moderatorMessageBody = "El proyecto: '$projectName' en el que participas como colaborador está por finalizar en las próximas 24 horas. Por favor, asegúrate de que todas las tareas estén completadas."
             val notificationEntity = Notification()
@@ -439,7 +439,7 @@ class ProjectService @Autowired constructor(
             notificationEntity.userId = projectModeratorEntity.userId
             emailService.sendEmail(moderatorEmail, moderatorMessageTittle, moderatorMessageBody)
             moderatorTokens.forEach { token ->
-                    firebaseMessagingService.sendNotification(token, moderatorMessageTittle, moderatorMessageBody)
+                    firebaseMessagingService.sendNotification(token.isMobile, token.firebaseToken, moderatorMessageTittle, moderatorMessageBody)
             }
         }
     }

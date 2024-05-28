@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {TranslateService} from "@ngx-translate/core";
 import {PrimeNGConfig} from "primeng/api";
-import {getMessaging, getToken, onMessage} from "firebase/messaging";
-import {environment} from "../environments/environment";
 import {FirebaseService} from "./core/services/firebase.service";
+import {Capacitor} from "@capacitor/core";
 
 @Component({
   selector: 'app-root',
@@ -12,6 +11,7 @@ import {FirebaseService} from "./core/services/firebase.service";
 })
 export class AppComponent  implements OnInit {
   title = 'frontend';
+  private platform = Capacitor.getPlatform();
 
   constructor(private config: PrimeNGConfig, private translateService: TranslateService, private firebaseService: FirebaseService) {
     this.translateService.setDefaultLang('es');
@@ -22,6 +22,10 @@ export class AppComponent  implements OnInit {
   }
 
     ngOnInit() {
-        this.firebaseService.listenToMessages();
+      if (this.platform === 'ios' || this.platform === 'android') {
+        this.firebaseService.listenToMessagesNative();
+      } else {
+        this.firebaseService.listenToMessagesWeb();
+      }
     }
 }

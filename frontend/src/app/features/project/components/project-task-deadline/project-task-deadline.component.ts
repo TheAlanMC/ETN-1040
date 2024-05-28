@@ -5,7 +5,6 @@ import {TaskStatusDto} from "../../../task/models/task-status.dto";
 import {MessageService, SelectItem} from "primeng/api";
 import {debounceTime, Subject} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
-import {UtilService} from "../../../../core/services/util.service";
 import {ProjectService} from "../../../../core/services/project.service";
 import {SharedService} from "../../../../core/services/shared.service";
 import {TaskService} from "../../../../core/services/task.service";
@@ -17,6 +16,7 @@ import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {ProjectDto} from "../../models/project.dto";
 import {UserDto} from "../../../user/models/user.dto";
 import {TaskPriorityDto} from "../../../task/models/task-priority.dto";
+import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
     selector: 'app-project-task-deadline',
@@ -89,7 +89,7 @@ export class ProjectTaskDeadlineComponent implements OnInit {
         private sharedService: SharedService,
         private activatedRoute: ActivatedRoute,
         private taskService: TaskService,
-        private utilService: UtilService,
+        private utilService: UtilService
     ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage
@@ -273,11 +273,12 @@ export class ProjectTaskDeadlineComponent implements OnInit {
                 this.statusItems.push({
                     label: 'ATRASADO', value: 4
                 });
-                if(this.projectEndDate===null){
+                if (this.projectEndDate === null) {
                     this.selectedStatus = this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 1 || status.value === 2)) : this.selectedStatus;
                 } else {
-                    this.selectedStatus =  this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 3)) : this.selectedStatus;
-                }                this.getData();
+                    this.selectedStatus = this.selectedStatus.length == 0 ? this.statusItems.filter(status => (status.value === 3)) : this.selectedStatus;
+                }
+                this.getData();
             }, error: (error) => {
                 console.error(error);
             }

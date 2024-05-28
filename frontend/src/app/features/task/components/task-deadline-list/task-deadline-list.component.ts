@@ -10,7 +10,6 @@ import {SharedService} from "../../../../core/services/shared.service";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
-import {ResponseDto} from "../../../../core/models/response.dto";
 import {TaskDeadlineComponent} from "../task-deadline/task-deadline.component";
 
 @Component({
@@ -55,7 +54,7 @@ export class TaskDeadlineListComponent implements OnInit {
         this.isMobileDevice = this.utilService.checkIfMobile();
     }
 
-    ngOnInit(){
+    ngOnInit() {
         const token = localStorage.getItem('token');
         if (token) {
             const decoded = jwtDecode<JwtPayload>(token!);
@@ -78,7 +77,7 @@ export class TaskDeadlineListComponent implements OnInit {
         }
     }
 
-    public dropCard(event: CdkDragDrop<TaskDto[]>){
+    public dropCard(event: CdkDragDrop<TaskDto[]>) {
         const itemBeingMoved = event.previousContainer.data[event.previousIndex];
         if (event.previousContainer === event.container) {
             moveItemInArray(event.container.data,

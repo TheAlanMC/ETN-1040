@@ -4,4 +4,5 @@ data class AuthReqDto(
     val email: String,
     val password: String,
     val firebaseToken: String,
+    val isMobile: Boolean
 )

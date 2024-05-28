@@ -61,7 +61,7 @@ export class EditTaskComponent implements OnInit {
 
     task: TaskDto | null = null;
 
-    filesBaselUrl: string = `${environment.API_URL}/api/v1/files`;
+    filesBaseUrl: string = `${environment.API_URL}/api/v1/files`;
 
     defaultDisplay: string = 'none';
 
@@ -74,10 +74,9 @@ export class EditTaskComponent implements OnInit {
         private messageService: MessageService,
         private utilService: UtilService,
         private fileService: FileService,
-        private router: Router
+        private router: Router,
     ) {
         this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
-        this.filesBaselUrl = this.utilService.getApiUrl(this.filesBaselUrl);
         this.defaultDisplay = this.utilService.checkIfMobile() ? 'true' : 'none';
         this.isMobile = this.utilService.checkIfMobile();
     }
@@ -145,7 +144,7 @@ export class EditTaskComponent implements OnInit {
                         name: file.fileName,
                         size: file.fileSize,
                         type: file.contentType,
-                        objectURL: (file.contentType.includes('image') ? `${this.filesBaselUrl}/${file.fileId}/thumbnail` : null)
+                        objectURL: (file.contentType.includes('image') ? `${this.filesBaseUrl}/${file.fileId}/thumbnail` : null)
                     });
                 });
             }, error: (error) => {

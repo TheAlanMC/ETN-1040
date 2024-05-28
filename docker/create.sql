@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2024-05-27 00:40:25.688
+-- Last modification date: 2024-05-28 10:34:47.797
 
 -- tables
 -- Table: account_recovery
@@ -36,6 +36,7 @@ CREATE TABLE firebase_token (
     firebase_token_id serial  NOT NULL,
     user_id int  NOT NULL,
     firebase_token varchar(255)  NOT NULL,
+    is_mobile boolean  NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
     tx_user varchar(100)  NOT NULL,

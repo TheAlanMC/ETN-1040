@@ -51,7 +51,9 @@ export class PdfGenerationService {
                         heightLeft -= pageHeight;
                     }
                     const pdfOutput = doc.output('blob');
-                    const pdfFile = new File([pdfOutput], pdfFileName, {type: 'application/pdf'});
+                    const pdfFile = new File([pdfOutput],
+                        pdfFileName,
+                        {type: 'application/pdf'});
                     observer.next(pdfFile);
                     observer.complete();
                 });

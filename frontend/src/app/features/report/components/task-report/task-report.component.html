@@ -41,12 +41,12 @@
                  [totalRecords]="totalElements" [value]="tasks"
                  currentPageReportTemplate="Mostrando registros {first}-{last} de {totalRecords}">
             <ng-template pTemplate="caption">
-                <div class="grid p-fluid" *ngIf="generatedReport">
+                <div *ngIf="generatedReport" class="grid p-fluid">
                     <div class="col-12 lg:col-6">
                         <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatuses"
                                        [filter]="false"
                                        [options]="statusItems"
-                                       class="multiselect-custom"  optionLabel="label"
+                                       class="multiselect-custom" optionLabel="label"
                                        placeholder="Seleccionar Estado">
                         </p-multiSelect>
                     </div>
