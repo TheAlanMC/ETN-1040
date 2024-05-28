@@ -12,7 +12,8 @@ import {MessageService} from "primeng/api";
     providers: [MessageService]
 })
 export class DashboardComponent implements OnInit {
-    monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
+                  "Noviembre", "Diciembre"];
 
     taskDashboard: TaskDashboardDto | null = null;
 
@@ -71,10 +72,10 @@ export class DashboardComponent implements OnInit {
                                   documentStyle.getPropertyValue('--yellow-400'),
                                   documentStyle.getPropertyValue('--blue-400'),
                                   documentStyle.getPropertyValue('--red-400'),],
-                borderColor:[documentStyle.getPropertyValue('--green-300'),
-                             documentStyle.getPropertyValue('--yellow-300'),
-                             documentStyle.getPropertyValue('--blue-300'),
-                             documentStyle.getPropertyValue('--red-300'),],
+                borderColor: [documentStyle.getPropertyValue('--green-300'),
+                              documentStyle.getPropertyValue('--yellow-300'),
+                              documentStyle.getPropertyValue('--blue-300'),
+                              documentStyle.getPropertyValue('--red-300'),],
                 hoverBackgroundColor: [documentStyle.getPropertyValue('--green-500'),
                                        documentStyle.getPropertyValue('--yellow-500'),
                                        documentStyle.getPropertyValue('--blue-500'),
@@ -194,7 +195,6 @@ export class DashboardComponent implements OnInit {
         };
 
 
-
         this.taskBarData = {
             labels: ['Finalizado', 'Finalizado con Retraso', 'En Progreso', 'Pendiente', 'Atrasado',], datasets: [{
                 label: 'Tareas',
@@ -203,16 +203,16 @@ export class DashboardComponent implements OnInit {
                                   documentStyle.getPropertyValue('--blue-400'),
                                   documentStyle.getPropertyValue('--orange-400'),
                                   documentStyle.getPropertyValue('--red-400'),],
-                borderColor:[documentStyle.getPropertyValue('--green-300'),
-                             documentStyle.getPropertyValue('--yellow-300'),
-                             documentStyle.getPropertyValue('--blue-300'),
-                             documentStyle.getPropertyValue('--orange-300'),
-                             documentStyle.getPropertyValue('--red-300'),],
+                borderColor: [documentStyle.getPropertyValue('--green-300'),
+                              documentStyle.getPropertyValue('--yellow-300'),
+                              documentStyle.getPropertyValue('--blue-300'),
+                              documentStyle.getPropertyValue('--orange-300'),
+                              documentStyle.getPropertyValue('--red-300'),],
                 hoverBackgroundColor: [documentStyle.getPropertyValue('--green-500'),
-                                        documentStyle.getPropertyValue('--yellow-500'),
-                                        documentStyle.getPropertyValue('--blue-500'),
-                                        documentStyle.getPropertyValue('--orange-500'),
-                                        documentStyle.getPropertyValue('--red-500'),],
+                                       documentStyle.getPropertyValue('--yellow-500'),
+                                       documentStyle.getPropertyValue('--blue-500'),
+                                       documentStyle.getPropertyValue('--orange-500'),
+                                       documentStyle.getPropertyValue('--red-500'),],
                 data: [],
             }],
         };
@@ -411,9 +411,9 @@ export class DashboardComponent implements OnInit {
             next: (response) => {
                 this.projectDashboard = response.data;
                 this.projectBarData.datasets[0].data = [this.projectDashboard?.totalCompletedProjects,
-                                                     this.projectDashboard?.totalDelayedProjects,
-                                                     this.projectDashboard?.totalInProgressProjects,
-                                                     this.projectDashboard?.totalDelayedProjects,];
+                                                        this.projectDashboard?.totalDelayedProjects,
+                                                        this.projectDashboard?.totalInProgressProjects,
+                                                        this.projectDashboard?.totalDelayedProjects,];
                 this.projectBarData = {...this.projectBarData};
                 this.projectLineData.labels = this.projectDashboard?.projectByDate.map((item) =>
                     `${this.monthNames[item.month - 1]}, ${item.year}`);

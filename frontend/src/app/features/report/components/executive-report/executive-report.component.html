@@ -5,13 +5,13 @@
         <span class="text-900 text-xl font-bold mb-4 block">Reporte Ejecutivo</span>
         <div class="grid p-fluid">
             <div class="col-12 lg:col-4">
-                <p-calendar [formControl]="dateFromControl" [readonlyInput]="true"
-                            [showIcon]="true" dateFormat="dd/mm/yy" [disabled]="generatedReport"
+                <p-calendar [disabled]="generatedReport" [formControl]="dateFromControl"
+                            [readonlyInput]="true" [showIcon]="true" dateFormat="dd/mm/yy"
                             id="dateFrom" placeholder="Fecha de Inicio"></p-calendar>
             </div>
             <div class="col-12 lg:col-4">
-                <p-calendar [formControl]="dateToControl" [readonlyInput]="true"
-                            [showIcon]="true" dateFormat="dd/mm/yy" [disabled]="generatedReport"
+                <p-calendar [disabled]="generatedReport" [formControl]="dateToControl"
+                            [readonlyInput]="true" [showIcon]="true" dateFormat="dd/mm/yy"
                             id="dateTo" placeholder="Fecha de Finalización"></p-calendar>
             </div>
             <div *ngIf="!generatedReport" class="col-12 lg:col-4">
@@ -28,7 +28,7 @@
             </div>
 
             <div *ngIf="generatedReport" class="col-12 lg:col-2">
-                <button (click)="onClear()" class="p-button p-button-secondary" icon="pi pi-times" [loading]="isLoading" [loadingIcon]="'pi pi-times'"
+                <button (click)="onClear()" [loadingIcon]="'pi pi-times'" [loading]="isLoading" class="p-button p-button-secondary" icon="pi pi-times"
                         label="Limpiar" pButton
                 ></button>
             </div>

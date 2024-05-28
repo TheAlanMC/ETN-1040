@@ -1,30 +1,30 @@
-export interface ProjectReportFilterDto{
+export interface ProjectReportFilterDto {
     statuses: ProjectReportStatusDto[];
     projectOwners: ProjectReportOwnerDto[];
     projectModerators: ProjectReportModeratorDto[];
     projectMembers: ProjectReportMemberDto[];
 }
 
-export interface ProjectReportStatusDto{
+export interface ProjectReportStatusDto {
     statusId: number;
     statusName: string;
 }
 
-export interface ProjectReportOwnerDto{
+export interface ProjectReportOwnerDto {
     userId: number;
     firstName: string;
     lastName: string;
     email: string;
 }
 
-export interface ProjectReportModeratorDto{
+export interface ProjectReportModeratorDto {
     userId: number;
     firstName: string;
     lastName: string;
     email: string;
 }
 
-export interface ProjectReportMemberDto{
+export interface ProjectReportMemberDto {
     userId: number;
     firstName: string;
     lastName: string;

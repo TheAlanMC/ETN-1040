@@ -61,7 +61,7 @@ export class ExecutiveReportComponent implements OnInit {
         this.reportService.getExecutiveReport(
             (new Date(this.dateFromControl.value!)).toISOString(),
             (new Date(this.dateToControl.value!)).toISOString(),
-            ).subscribe({
+        ).subscribe({
             next: (data) => {
                 this.executiveReport = data.data;
                 this.isDataLoading = false;
@@ -81,7 +81,8 @@ export class ExecutiveReportComponent implements OnInit {
 
     public onExportPdf() {
         this.isLoading = true;
-        this.pdfGenerationService.generatePdf('executiveReportContent', 'Reporte Ejecutivo.pdf').subscribe(
+        this.pdfGenerationService.generatePdf('executiveReportContent',
+            'Reporte Ejecutivo.pdf').subscribe(
             {
                 next: (pdf) => {
                     this.upLoadFile(pdf);
@@ -182,7 +183,11 @@ export class ExecutiveReportComponent implements OnInit {
     }
 
     expandAll() {
-        this.expandedRows = this.executiveReport?.projectReports.reduce((acc: any, project:ProjectReportDto) => (acc[project.projectId] = true) && acc, {});
+        this.expandedRows = this.executiveReport?.projectReports.reduce((
+                acc: any,
+                project: ProjectReportDto
+            ) => (acc[project.projectId] = true) && acc,
+            {});
     }
 
     collapseAll() {

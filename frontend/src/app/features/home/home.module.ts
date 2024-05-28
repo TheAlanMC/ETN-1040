@@ -13,6 +13,13 @@ import {RatingModule} from "primeng/rating";
 import {CalendarModule} from "primeng/calendar";
 import {ToastModule} from "primeng/toast";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {DividerModule} from "primeng/divider";
+import {FieldsetModule} from "primeng/fieldset";
+import {CardModule} from "primeng/card";
+import {PanelModule} from "primeng/panel";
+import {CarouselModule} from "primeng/carousel";
+import {StyleClassModule} from "primeng/styleclass";
+import {RippleModule} from "primeng/ripple";
 
 
 @NgModule({
@@ -31,7 +38,14 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
         CalendarModule,
         ReactiveFormsModule,
         ToastModule,
-        ProgressSpinnerModule
+        ProgressSpinnerModule,
+        DividerModule,
+        FieldsetModule,
+        CardModule,
+        PanelModule,
+        CarouselModule,
+        StyleClassModule,
+        RippleModule
     ]
 })
 export class HomeModule {

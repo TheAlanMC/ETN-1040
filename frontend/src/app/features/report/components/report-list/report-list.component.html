@@ -18,9 +18,9 @@
                                 id="dateTo" placeholder="Fecha de Finalización"></p-calendar>
                 </div>
                 <div class="col-12 lg:col-2">
-                    <button (click)="getData()" class="p-button p-button-primary" pButton
-                            label="Buscar" [loading]="isDataLoading" icon="pi pi-search"
-                            [disabled]="dateFromControl.invalid || dateToControl.invalid"
+                    <button (click)="getData()" [disabled]="dateFromControl.invalid || dateToControl.invalid" [loading]="isDataLoading"
+                            class="p-button p-button-primary" icon="pi pi-search" label="Buscar"
+                            pButton
                     ></button>
                 </div>
             </div>
@@ -51,11 +51,11 @@
                 <td>
                     <div class="flex justify-content-center">
                         <button (click)="onDownloadReport(report.file)"
-                                class="p-button-rounded p-button p-button-secondary"
-                                icon="pi pi-download"
-                                pButton title="Descargar Reporte"
-                                pTooltip="{{ report.file.fileSize | fileSize}}"
                                 [loading]="isLoading &&downloadingFileId === report.file.fileId"
+                                class="p-button-rounded p-button p-button-secondary"
+                                icon="pi pi-download" pButton
+                                pTooltip="{{ report.file.fileSize | fileSize}}"
+                                title="Descargar Reporte"
                         ></button>
                     </div>
                 </td>

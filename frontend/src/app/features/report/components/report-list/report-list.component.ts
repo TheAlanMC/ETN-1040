@@ -27,8 +27,10 @@ export class ReportListComponent implements OnInit {
     page: number = 0;
     size: number = 10;
 
-    dateFromControl = new FormControl('',[Validators.required]);
-    dateToControl = new FormControl('',[Validators.required]);
+    dateFromControl = new FormControl('',
+        [Validators.required]);
+    dateToControl = new FormControl('',
+        [Validators.required]);
 
     totalElements: number = 0;
 
