@@ -1,264 +1,272 @@
 <p-toast></p-toast>
 
-<div class="card">
-    <span class="text-900 text-xl font-bold mb-4 block">Reporte Ejecutivo</span>
-    <div class="grid p-fluid">
-        <div class="col-12 lg:col-4">
-            <p-calendar [formControl]="dateFromControl" [readonlyInput]="true"
-                        [showIcon]="true" dateFormat="dd/mm/yy"
-                        id="dateFrom" placeholder="Fecha de Inicio"></p-calendar>
-        </div>
-        <div class="col-12 lg:col-4">
-            <p-calendar [formControl]="dateToControl" [readonlyInput]="true"
-                        [showIcon]="true" dateFormat="dd/mm/yy"
-                        id="dateTo" placeholder="Fecha de Finalización"></p-calendar>
-        </div>
-        <div *ngIf="!generatedReport" class="col-12 lg:col-4">
-            <button (click)="onSync()" [disabled]="dateFromControl.invalid || dateToControl.invalid" [loading]="isDataLoading"
-                    class="p-button p-button-primary" icon="pi pi-sync" label="Generar Reporte"
-                    pButton
-            ></button>
-        </div>
-        <div *ngIf="generatedReport" class="col-12 lg:col-2">
-            <button (click)="onClear()" class="p-button p-button-secondary" icon="pi pi-times"
-                    label="Limpiar" pButton
-            ></button>
-        </div>
-        <div *ngIf="generatedReport" class="col-12 lg:col-2">
-            <button (click)="onExportPdf()" [disabled]="dateFromControl.invalid || dateToControl.invalid" [loading]="isDataLoading"
-                    class="p-button p-button-primary" icon="pi pi-file-pdf" label="Exportar"
-                    pButton
-            ></button>
-        </div>
+<div id="executiveReportContent">
+    <div class="card">
+        <span class="text-900 text-xl font-bold mb-4 block">Reporte Ejecutivo</span>
+        <div class="grid p-fluid">
+            <div class="col-12 lg:col-4">
+                <p-calendar [formControl]="dateFromControl" [readonlyInput]="true"
+                            [showIcon]="true" dateFormat="dd/mm/yy" [disabled]="generatedReport"
+                            id="dateFrom" placeholder="Fecha de Inicio"></p-calendar>
+            </div>
+            <div class="col-12 lg:col-4">
+                <p-calendar [formControl]="dateToControl" [readonlyInput]="true"
+                            [showIcon]="true" dateFormat="dd/mm/yy" [disabled]="generatedReport"
+                            id="dateTo" placeholder="Fecha de Finalización"></p-calendar>
+            </div>
+            <div *ngIf="!generatedReport" class="col-12 lg:col-4">
+                <button (click)="onSync()" [disabled]="dateFromControl.invalid || dateToControl.invalid" [loading]="isDataLoading"
+                        class="p-button p-button-primary" icon="pi pi-sync" label="Generar Reporte"
+                        pButton
+                ></button>
+            </div>
+            <div *ngIf="generatedReport" class="col-12 lg:col-2">
+                <button (click)="onExportPdf()" [disabled]="dateFromControl.invalid || dateToControl.invalid" [loading]="isLoading"
+                        class="p-button p-button-primary" icon="pi pi-file-pdf" label="Exportar"
+                        pButton
+                ></button>
+            </div>
 
-        <div *ngIf="generatedReport" class="col-12 lg:col-4 font-normal">
-            <div class="card h-full">
-                <div class="flex flex-row justify-content-between align-items-center font-semibold pr-2">
-                    <span class="text-2xl">Proyectos</span>
-                    <i class="text-2xl pi pi-info-circle"></i>
+            <div *ngIf="generatedReport" class="col-12 lg:col-2">
+                <button (click)="onClear()" class="p-button p-button-secondary" icon="pi pi-times" [loading]="isLoading" [loadingIcon]="'pi pi-times'"
+                        label="Limpiar" pButton
+                ></button>
+            </div>
+
+            <div *ngIf="generatedReport" class="col-12 lg:col-4 font-normal">
+                <div class="card h-full">
+                    <div class="flex flex-row justify-content-between align-items-center font-semibold pr-2">
+                        <span class="text-2xl">Proyectos</span>
+                        <i class="text-2xl pi pi-info-circle"></i>
+                    </div>
+                    <ul class="px-3 py-0">
+                        <li>
+                            <div class="flex flex-row justify-content-between align-items-center">
+                                <span>Proyectos Totales: </span>
+                                <p>{{ executiveReport?.totalProjects }}</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex flex-row justify-content-between align-items-center">
+                                <p>Proyectos Completados: </p>
+                                <p>{{ executiveReport?.completedProjects }}</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex flex-row justify-content-between align-items-center">
+                                <p>Proyectos Completados con Retraso: </p>
+                                <p>{{ executiveReport?.delayedProjects }}</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex flex-row justify-content-between align-items-center">
+                                <p>Proyectos en Progreso: </p>
+                                <p>{{ executiveReport?.inProgressProjects }}</p>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
-                <ul class="px-3 py-0">
-                    <li>
-                        <div class="flex flex-row justify-content-between align-items-center">
-                            <span>Proyectos Totales: </span>
-                            <p>{{ executiveReport?.totalProjects }}</p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex flex-row justify-content-between align-items-center">
-                            <p>Proyectos Completados: </p>
-                            <p>{{ executiveReport?.completedProjects }}</p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex flex-row justify-content-between align-items-center">
-                            <p>Proyectos Completados con Retraso: </p>
-                            <p>{{ executiveReport?.delayedProjects }}</p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex flex-row justify-content-between align-items-center">
-                            <p>Proyectos en Progreso: </p>
-                            <p>{{ executiveReport?.inProgressProjects }}</p>
-                        </div>
-                    </li>
-                </ul>
+            </div>
+
+            <div *ngIf="generatedReport" class="col-12 lg:col-4 font-normal">
+                <div class="card h-full">
+                    <div class="flex flex-row justify-content-between align-items-center font-semibold pr-2">
+                        <span class="text-2xl">Tareas</span>
+                        <i class="text-2xl pi pi-info-circle"></i>
+                    </div>
+                    <ul class="px-3 py-0">
+                        <li>
+                            <div class="flex flex-row justify-content-between align-items-center">
+                                <span>Tareas Totales: </span>
+                                <p>{{ executiveReport?.totalTasks }}</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex flex-row justify-content-between align-items-center">
+                                <p>Tareas Completadas: </p>
+                                <p>{{ executiveReport?.completedTasks }}</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex flex-row justify-content-between align-items-center">
+                                <p>Tareas Completadas con Retraso: </p>
+                                <p>{{ executiveReport?.completedWithDelayTasks }}</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex flex-row justify-content-between align-items-center">
+                                <p>Tareas en Progreso: </p>
+                                <p>{{ executiveReport?.inProgressTasks }}</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex flex-row justify-content-between align-items-center">
+                                <p>Tareas Pendientes: </p>
+                                <p>{{ executiveReport?.pendingTasks }}</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex flex-row justify-content-between align-items-center">
+                                <p>Tareas con Retraso: </p>
+                                <p>{{ executiveReport?.delayedTasks }}</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div *ngIf="generatedReport" class="col-12 lg:col-4 font-normal">
+                <div class="card h-full">
+                    <div class="flex flex-row justify-content-between align-items-center font-semibold pr-2">
+                        <span class="text-2xl">Tareas por Prioridad</span>
+                        <i class="text-2xl pi pi-info-circle"></i>
+                    </div>
+                    <ul class="px-3 py-0">
+                        <li>
+                            <div class="flex flex-row justify-content-between align-items-center">
+                                <span>Alta Prioridad: </span>
+                                <p>{{ executiveReport?.highPriorityTasks }}</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex flex-row justify-content-between align-items-center">
+                                <p>Media Prioridad: </p>
+                                <p>{{ executiveReport?.mediumPriorityTasks }}</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex flex-row justify-content-between align-items-center">
+                                <p>Baja Prioridad: </p>
+                                <p>{{ executiveReport?.lowPriorityTasks }}</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
             </div>
         </div>
 
-        <div *ngIf="generatedReport" class="col-12 lg:col-4 font-normal">
-            <div class="card h-full">
-                <div class="flex flex-row justify-content-between align-items-center font-semibold pr-2">
-                    <span class="text-2xl">Tareas</span>
-                    <i class="text-2xl pi pi-info-circle"></i>
-                </div>
-                <ul class="px-3 py-0">
-                    <li>
-                        <div class="flex flex-row justify-content-between align-items-center">
-                            <span>Tareas Totales: </span>
-                            <p>{{ executiveReport?.totalTasks }}</p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex flex-row justify-content-between align-items-center">
-                            <p>Tareas Completadas: </p>
-                            <p>{{ executiveReport?.completedTasks }}</p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex flex-row justify-content-between align-items-center">
-                            <p>Tareas Completadas con Retraso: </p>
-                            <p>{{ executiveReport?.completedWithDelayTasks }}</p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex flex-row justify-content-between align-items-center">
-                            <p>Tareas en Progreso: </p>
-                            <p>{{ executiveReport?.inProgressTasks }}</p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex flex-row justify-content-between align-items-center">
-                            <p>Tareas Pendientes: </p>
-                            <p>{{ executiveReport?.pendingTasks }}</p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex flex-row justify-content-between align-items-center">
-                            <p>Tareas con Retraso: </p>
-                            <p>{{ executiveReport?.delayedTasks }}</p>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
 
-        <div *ngIf="generatedReport" class="col-12 lg:col-4 font-normal">
-            <div class="card h-full">
-                <div class="flex flex-row justify-content-between align-items-center font-semibold pr-2">
-                    <span class="text-2xl">Tareas por Prioridad</span>
-                    <i class="text-2xl pi pi-info-circle"></i>
+        <p-table [expandedRowKeys]="expandedRows" [tableStyle]="{ 'min-width': '60rem' }" [value]="executiveReport?.projectReports!"
+                 dataKey="projectId">
+            <ng-template pTemplate="caption">
+                <div *ngIf="generatedReport" class="flex flex-wrap justify-content-end gap-2">
+                    <p-button (onClick)="expandAll()" icon="pi pi-plus" label="Expandir Todo" text/>
+                    <p-button (onClick)="collapseAll()" icon="pi pi-minus" label="Colapsar Todo" text/>
                 </div>
-                <ul class="px-3 py-0">
-                    <li>
-                        <div class="flex flex-row justify-content-between align-items-center">
-                            <span>Alta Prioridad: </span>
-                            <p>{{ executiveReport?.highPriorityTasks }}</p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex flex-row justify-content-between align-items-center">
-                            <p>Media Prioridad: </p>
-                            <p>{{ executiveReport?.mediumPriorityTasks }}</p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex flex-row justify-content-between align-items-center">
-                            <p>Baja Prioridad: </p>
-                            <p>{{ executiveReport?.lowPriorityTasks }}</p>
-                        </div>
-                    </li>
-                </ul>
-            </div>
 
-        </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 5rem"></th>
+                    <th class="white-space-nowrap" pSortableColumn="projectName">Nombre del Proyecto
+                        <p-sortIcon field="projectName"/>
+                    </th>
+                    <th class="white-space-nowrap" pSortableColumn="projectStatusName">Estado del Proyecto
+                        <p-sortIcon field="projectStatusName"/>
+                    </th>
+                    <th class="white-space-nowrap">Progreso de Tareas</th>
+                    <th class="white-space-nowrap" pSortableColumn="projectDateFrom">Fecha de Inicio
+                        <p-sortIcon field="projectDateFrom"/>
+                    </th>
+                    <th class="white-space-nowrap" pSortableColumn="projectDateTo">Fecha de Finalización
+                        <p-sortIcon field="projectDateTo"/>
+                    </th>
+                    <th class="white-space-nowrap" pSortableColumn="projectEndDate">Fecha de Cierre
+                        <p-sortIcon field="projectEndDate"/>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template let-expanded="expanded" let-project pTemplate="body">
+                <tr>
+                    <td class="white-space-nowrap">
+                        <p-button [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" [pRowToggler]="project" [plain]="true"
+                                  [rounded]="true"
+                                  [text]="true" pRipple
+                                  type="button"/>
+                    </td>
+                    <td class="white-space-nowrap">{{ project.projectName }}</td>
+                    <td class="white-space-nowrap">{{ project.projectStatusName }}</td>
+                    <td class="white-space-nowrap">{{ project.projectFinishedTasks }} / {{ project.projectTotalTasks }}</td>
+                    <td class="white-space-nowrap">{{ project.projectDateFrom | date: 'dd/MM/yyyy' }}</td>
+                    <td class="white-space-nowrap">{{ project.projectDateTo | date: 'dd/MM/yyyy' }}</td>
+                    <td *ngIf="project.projectEndDate" class="white-space-nowrap">{{ project.projectEndDate | date: 'dd/MM/yyyy' }}</td>
+                    <td *ngIf="!project.projectEndDate" class="white-space-nowrap">En Progreso</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="7">
+                        <div class="flex justify-content-center align-items-center gap-2">
+                            <i class="pi pi-info-circle p-mr-2"></i>
+                            <span>No se encontraron registros</span>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template let-project pTemplate="rowexpansion">
+                <tr>
+                    <td colspan="7">
+                        <div class="p-3">
+                            <p-table [tableStyle]="{ 'min-width': '60rem' }" [value]="project.taskReports" dataKey="taskId">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th class="white-space-nowrap" pSortableColumn="taskName">Nombre de la Tarea
+                                            <p-sortIcon field="taskName"/>
+                                        </th>
+                                        <th class="white-space-nowrap" pSortableColumn="taskStatusName">Estado de la Tarea
+                                            <p-sortIcon field="taskStatusName"/>
+                                        </th>
+                                        <th class="white-space-nowrap" pSortableColumn="taskPriorityName">Prioridad de la Tarea
+                                            <p-sortIcon field="taskPriorityName"/>
+                                        </th>
+                                        <th class="white-space-nowrap" pSortableColumn="taskCreationDate">Fecha de Creación
+                                            <p-sortIcon field="taskCreationDate"/>
+                                        </th>
+                                        <th class="white-space-nowrap" pSortableColumn="taskDueDate">Fecha Límite
+                                            <p-sortIcon field="taskDueDate"/>
+                                        </th>
+                                        <th class="white-space-nowrap" pSortableColumn="taskEndDate">Fecha de Finalización
+                                            <p-sortIcon field="taskEndDate"/>
+                                        </th>
+                                        <th class="white-space-nowrap" pSortableColumn="taskRating">Calificación
+                                            <p-sortIcon field="taskRating"/>
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template let-task pTemplate="body">
+                                    <tr>
+                                        <td class="white-space-nowrap">{{ task.taskName }}</td>
+                                        <td class="white-space-nowrap">{{ task.taskStatusName }}</td>
+                                        <td class="white-space-nowrap">{{ task.taskPriorityName }}</td>
+                                        <td class="white-space-nowrap">{{ task.taskCreationDate | date: 'dd/MM/yyyy, HH:mm' }}</td>
+                                        <td class="white-space-nowrap">{{ task.taskDueDate | date: 'dd/MM/yyyy, HH:mm' }}</td>
+                                        <td *ngIf="task.taskEndDate" class="white-space-nowrap">{{ task.taskEndDate | date: 'dd/MM/yyyy, HH:mm' }}
+                                        </td>
+                                        <td *ngIf="!task.taskEndDate" class="white-space-nowrap">En Progreso</td>
+                                        <td class="white-space-nowrap">
+                                            <p-rating [cancel]="false" [disabled]="true" [iconOffStyle]="{'fontSize':'12px'}"
+                                                      [iconOnStyle]="{'fontSize':'12px'}"
+                                                      [ngModel]="task.taskRating" [readonly]="true"></p-rating>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="7">
+                                            <div class="flex justify-content-center align-items-center gap-2">
+                                                <i class="pi pi-info-circle p-mr-2"></i>
+                                                <span>No se encontraron registros</span>
+                                            </div>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
     </div>
-
-
-    <p-table [expandedRowKeys]="expandedRows" [tableStyle]="{ 'min-width': '60rem' }" [value]="executiveReport?.projectReports!" dataKey="projectId">
-        <ng-template pTemplate="caption">
-            <div *ngIf="generatedReport" class="flex flex-wrap justify-content-end gap-2">
-                <p-button (onClick)="expandAll()" icon="pi pi-plus" label="Expandir Todo" text/>
-                <p-button (onClick)="collapseAll()" icon="pi pi-minus" label="Colapsar Todo" text/>
-            </div>
-
-        </ng-template>
-        <ng-template pTemplate="header">
-            <tr>
-                <th style="width: 5rem"></th>
-                <th class="white-space-nowrap" pSortableColumn="projectName">Nombre del Proyecto
-                    <p-sortIcon field="projectName"/>
-                </th>
-                <th class="white-space-nowrap" pSortableColumn="projectStatusName">Estado del Proyecto
-                    <p-sortIcon field="projectStatusName"/>
-                </th>
-                <th class="white-space-nowrap">Progreso de Tareas</th>
-                <th class="white-space-nowrap" pSortableColumn="projectDateFrom">Fecha de Inicio
-                    <p-sortIcon field="projectDateFrom"/>
-                </th>
-                <th class="white-space-nowrap" pSortableColumn="projectDateTo">Fecha de Finalización
-                    <p-sortIcon field="projectDateTo"/>
-                </th>
-                <th class="white-space-nowrap" pSortableColumn="projectEndDate">Fecha de Cierre
-                    <p-sortIcon field="projectEndDate"/>
-                </th>
-            </tr>
-        </ng-template>
-        <ng-template let-expanded="expanded" let-project pTemplate="body">
-            <tr>
-                <td class="white-space-nowrap">
-                    <p-button [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" [pRowToggler]="project" [plain]="true" [rounded]="true"
-                              [text]="true" pRipple
-                              type="button"/>
-                </td>
-                <td class="white-space-nowrap">{{ project.projectName }}</td>
-                <td class="white-space-nowrap">{{ project.projectStatusName }}</td>
-                <td class="white-space-nowrap">{{ project.projectFinishedTasks }} / {{ project.projectTotalTasks }}</td>
-                <td class="white-space-nowrap">{{ project.projectDateFrom | date: 'dd/MM/yyyy' }}</td>
-                <td class="white-space-nowrap">{{ project.projectDateTo | date: 'dd/MM/yyyy' }}</td>
-                <td class="white-space-nowrap" *ngIf="project.projectEndDate">{{ project.projectEndDate | date: 'dd/MM/yyyy' }}</td>
-                <td class="white-space-nowrap" *ngIf="!project.projectEndDate">En Progreso</td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="7">
-                    <div class="flex justify-content-center align-items-center gap-2">
-                        <i class="pi pi-info-circle p-mr-2"></i>
-                        <span>No se encontraron registros</span>
-                    </div>
-                </td>
-            </tr>
-        </ng-template>
-        <ng-template let-project pTemplate="rowexpansion">
-            <tr>
-                <td colspan="7">
-                    <div class="p-3">
-                        <p-table [tableStyle]="{ 'min-width': '60rem' }" [value]="project.taskReports" dataKey="taskId">
-                            <ng-template pTemplate="header">
-                                <tr>
-                                    <th class="white-space-nowrap" pSortableColumn="taskName">Nombre de la Tarea
-                                        <p-sortIcon field="taskName"/>
-                                    </th>
-                                    <th class="white-space-nowrap" pSortableColumn="taskStatusName">Estado de la Tarea
-                                        <p-sortIcon field="taskStatusName"/>
-                                    </th>
-                                    <th class="white-space-nowrap" pSortableColumn="taskPriorityName">Prioridad de la Tarea
-                                        <p-sortIcon field="taskPriorityName"/>
-                                    </th>
-                                    <th class="white-space-nowrap" pSortableColumn="taskCreationDate">Fecha de Creación
-                                        <p-sortIcon field="taskCreationDate"/>
-                                    </th>
-                                    <th class="white-space-nowrap" pSortableColumn="taskDueDate">Fecha Límite
-                                        <p-sortIcon field="taskDueDate"/>
-                                    </th>
-                                    <th class="white-space-nowrap" pSortableColumn="taskEndDate">Fecha de Finalización
-                                        <p-sortIcon field="taskEndDate"/>
-                                    </th>
-                                    <th class="white-space-nowrap" pSortableColumn="taskRating">Calificación
-                                        <p-sortIcon field="taskRating"/>
-                                    </th>
-                                </tr>
-                            </ng-template>
-                            <ng-template let-task pTemplate="body">
-                                <tr>
-                                    <td class="white-space-nowrap">{{ task.taskName }}</td>
-                                    <td class="white-space-nowrap">{{ task.taskStatusName }}</td>
-                                    <td class="white-space-nowrap">{{ task.taskPriorityName }}</td>
-                                    <td class="white-space-nowrap">{{ task.taskCreationDate | date: 'dd/MM/yyyy, HH:mm' }}</td>
-                                    <td class="white-space-nowrap">{{ task.taskDueDate | date: 'dd/MM/yyyy, HH:mm' }}</td>
-                                    <td class="white-space-nowrap" *ngIf="task.taskEndDate">{{ task.taskEndDate | date: 'dd/MM/yyyy, HH:mm' }}</td>
-                                    <td class="white-space-nowrap" *ngIf="!task.taskEndDate">En Progreso</td>
-                                    <td class="white-space-nowrap">
-                                        <p-rating [cancel]="false" [disabled]="true" [iconOffStyle]="{'fontSize':'12px'}" [iconOnStyle]="{'fontSize':'12px'}"
-                                                  [ngModel]="task.taskRating" [readonly]="true"></p-rating>
-                                    </td>
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="emptymessage">
-                                <tr>
-                                    <td colspan="7">
-                                        <div class="flex justify-content-center align-items-center gap-2">
-                                            <i class="pi pi-info-circle p-mr-2"></i>
-                                            <span>No se encontraron registros</span>
-                                        </div>
-                                </tr>
-                            </ng-template>
-                        </p-table>
-                    </div>
-                </td>
-            </tr>
-        </ng-template>
-    </p-table>
 </div>
+
 
