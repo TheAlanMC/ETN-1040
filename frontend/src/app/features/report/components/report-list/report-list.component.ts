@@ -23,7 +23,7 @@ export class ReportListComponent implements OnInit {
 
     // Pagination variables
     sortBy: string = 'reportId';
-    sortType: string = 'asc';
+    sortType: string = 'desc';
     page: number = 0;
     size: number = 10;
 
@@ -91,7 +91,7 @@ export class ReportListComponent implements OnInit {
         });
     }
 
-    public onDownloadReport(file: FileDto) {
+    public onDownloadReport(fileName: string, file: FileDto) {
         this.isLoading = true;
         this.downloadingFileId = file.fileId;
         this.fileService.getFile(file.fileId).subscribe({
@@ -102,7 +102,7 @@ export class ReportListComponent implements OnInit {
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = file.fileName;
+                    a.download = fileName;
                     document.body.appendChild(a);
                     a.click();
                     URL.revokeObjectURL(url);
@@ -112,7 +112,7 @@ export class ReportListComponent implements OnInit {
                     reader.onloadend = async () => {
                         const base64Data = reader.result as string;
                         const savedFile = await Filesystem.writeFile({
-                            path: file.fileName,
+                            path: fileName,
                             data: base64Data,
                             directory: Directory.Documents,
                         });

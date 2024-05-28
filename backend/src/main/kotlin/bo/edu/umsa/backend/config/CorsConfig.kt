@@ -18,6 +18,8 @@ class CorsConfig {
             "http://localhost:4200", "http://localhost",
             // Production Server
             "http://167.172.144.172:4200", "http://167.172.144.172",
+            // Production Secure Server
+            "https://167.172.144.172:4200", "https://167.172.144.172",
             // VPN Server
             "http://10.244.150.84:4200", "http://10.244.150.84",
             // Mobile App

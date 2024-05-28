@@ -10,6 +10,7 @@ import {TaskReportFilterDto} from "../../features/report/models/task-report-filt
 import {TaskReportDto} from "../../features/report/models/task-report.dto";
 import {ProjectReportDto} from "../../features/report/models/project-report.dto";
 import {ExecutiveReportDto} from "../../features/report/models/executive-report.dto";
+import {ProjectReportFilterDto} from "../../features/report/models/project-report-filter.dto";
 
 
 @Injectable({
@@ -84,8 +85,8 @@ export class ReportService {
     public getProjectFilters(
         dateFrom: string,
         dateTo: string,
-    ): Observable<ResponseDto<TaskReportFilterDto>> {
-        return this.http.get<ResponseDto<TaskReportFilterDto>>(`${this.baseUrl}/projects/filters?dateFrom=${dateFrom}&dateTo=${dateTo}`,
+    ): Observable<ResponseDto<ProjectReportFilterDto>> {
+        return this.http.get<ResponseDto<ProjectReportFilterDto>>(`${this.baseUrl}/projects/filters?dateFrom=${dateFrom}&dateTo=${dateTo}`,
             this.utilService.getHttpOptions());
     }
 

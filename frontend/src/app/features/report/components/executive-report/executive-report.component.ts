@@ -31,8 +31,6 @@ export class ExecutiveReportComponent implements OnInit {
     dateToControl = new FormControl('',
         [Validators.required]);
 
-    totalElements: number = 0;
-
     isDataLoading: boolean = true;
 
     generatedReport: boolean = false;

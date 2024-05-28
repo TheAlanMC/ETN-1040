@@ -49,7 +49,7 @@ class ReportController @Autowired constructor(
         AuthUtil.verifyAuthTokenHasRoles(listOf("VER REPORTES DE TAREAS", "VER REPORTES DE PROYECTOS", "VER REPORTES EJECUTIVOS").toTypedArray())
         reportService.uploadReportFile(file, reportType, dateFrom, dateTo)
         logger.info("Success: Report file uploaded")
-        return ResponseEntity(ResponseDto(true, "Archivo de reporte subido", null), HttpStatus.OK)
+        return ResponseEntity(ResponseDto(true, "Reporte generado con éxito", null), HttpStatus.OK)
     }
 
     @GetMapping("/tasks/filters")

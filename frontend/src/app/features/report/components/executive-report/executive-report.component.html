@@ -187,7 +187,14 @@
                     </td>
                     <td class="white-space-nowrap">{{ project.projectName }}</td>
                     <td class="white-space-nowrap">{{ project.projectStatusName }}</td>
-                    <td class="white-space-nowrap">{{ project.projectFinishedTasks }} / {{ project.projectTotalTasks }}</td>
+                    <td class="white-space-nowrap">
+                        <p-progressBar [showValue]="false"
+                                       [style]="{'height': '1.5rem'}" [value]="project.projectFinishedTasks/project.projectTotalTasks*100">
+                            <ng-template pTemplate="content">
+                                <span>{{ project.projectFinishedTasks }}/{{ project.projectTotalTasks }}</span>
+                            </ng-template>
+                        </p-progressBar>
+                    </td>
                     <td class="white-space-nowrap">{{ project.projectDateFrom | date: 'dd/MM/yyyy' }}</td>
                     <td class="white-space-nowrap">{{ project.projectDateTo | date: 'dd/MM/yyyy' }}</td>
                     <td *ngIf="project.projectEndDate" class="white-space-nowrap">{{ project.projectEndDate | date: 'dd/MM/yyyy' }}</td>

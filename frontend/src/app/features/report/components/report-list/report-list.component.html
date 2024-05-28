@@ -50,7 +50,7 @@
                 <td>{{ report.user.firstName }} {{ report.user.lastName }}</td>
                 <td>
                     <div class="flex justify-content-center">
-                        <button (click)="onDownloadReport(report.file)"
+                        <button (click)="onDownloadReport(report.reportName, report.file)"
                                 [loading]="isLoading &&downloadingFileId === report.file.fileId"
                                 class="p-button-rounded p-button p-button-secondary"
                                 icon="pi pi-download" pButton

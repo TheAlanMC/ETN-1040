@@ -206,6 +206,10 @@ class ReportService @Autowired constructor(
         }
 
         val taskEntities: Page<Task> = taskRepository.findAll(specification, pageable)
+        taskEntities.forEach { task ->
+            task.replacedParts = task.replacedParts?.filter { it.status }?.distinctBy { it.replacedPartId }
+            task.taskAssignees = task.taskAssignees?.filter { it.status }?.distinctBy { it.taskAssigneeId }
+        }
         logger.info("Success: Tasks retrieved")
         return taskEntities.map {
             TaskReportDto(
@@ -337,6 +341,12 @@ class ReportService @Autowired constructor(
         }
 
         val projectEntities: Page<Project> = projectRepository.findAll(specification, pageable)
+        projectEntities.forEach { project ->
+            project.tasks = project.tasks?.filter { it.status }?.distinctBy { it.taskId }
+            project.projectOwners = project.projectOwners?.filter { it.status }?.distinctBy { it.projectOwnerId }
+            project.projectModerators = project.projectModerators?.filter { it.status }?.distinctBy { it.projectModeratorId }
+            project.projectMembers = project.projectMembers?.filter { it.status }?.distinctBy { it.projectMemberId }
+        }
 
         logger.info("Success: Projects retrieved")
         return projectEntities.map {
@@ -380,7 +390,13 @@ class ReportService @Autowired constructor(
 
         val projectEntities: List<Project> = projectRepository.findAllProjectsByDateRange(Timestamp.from(Instant.parse(dateFrom)), Timestamp.from(Instant.parse(dateTo).plusSeconds(60 * 60 * 24 - 1))).distinctBy { it.projectId }
         projectEntities.forEach { project ->
-            project.tasks = project.tasks?.filter { it.status }?.distinctBy { it.taskId }
+            project.tasks!!.forEach { task ->
+                task.replacedParts = task.replacedParts?.filter { it.status }?.distinctBy { it.replacedPartId }
+                task.taskAssignees = task.taskAssignees?.filter { it.status }?.distinctBy { it.taskAssigneeId }
+            }
+            project.projectOwners = project.projectOwners?.filter { it.status }?.distinctBy { it.projectOwnerId }
+            project.projectModerators = project.projectModerators?.filter { it.status }?.distinctBy { it.projectModeratorId }
+            project.projectMembers = project.projectMembers?.filter { it.status }?.distinctBy { it.projectMemberId }
         }
 
         return ExecutiveReportDto(

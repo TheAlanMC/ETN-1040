@@ -7,6 +7,5 @@ VOLUME /tmp
 
 ARG DIST_DIR=dist/frontend/browser
 COPY ${DIST_DIR} /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
 
 

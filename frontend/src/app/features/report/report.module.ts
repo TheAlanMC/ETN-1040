@@ -16,6 +16,12 @@ import {DockModule} from "primeng/dock";
 import {SharedModule} from "../../shared/shared.module";
 import {RippleModule} from "primeng/ripple";
 import {RatingModule} from "primeng/rating";
+import {AvatarGroupModule} from "primeng/avatargroup";
+import {AvatarModule} from "primeng/avatar";
+import {OverlayPanelModule} from "primeng/overlaypanel";
+import {TagModule} from "primeng/tag";
+import {MultiSelectModule} from "primeng/multiselect";
+import {FileUploadModule} from "primeng/fileupload";
 
 
 @NgModule({
@@ -39,6 +45,12 @@ import {RatingModule} from "primeng/rating";
         DockModule,
         RippleModule,
         RatingModule,
+        AvatarGroupModule,
+        AvatarModule,
+        OverlayPanelModule,
+        TagModule,
+        MultiSelectModule,
+        FileUploadModule,
     ]
 })
 export class ReportModule {
