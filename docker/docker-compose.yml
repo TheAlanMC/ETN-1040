@@ -38,7 +38,7 @@ services:
     restart: always
     user: root
     ports:
-      - "8080:8080"
+      # - "8080:8080"
     environment:
       PORT: ${BACKEND_PORT}
       POSTGRES_USERNAME: ${POSTGRES_USERNAME}
@@ -64,7 +64,7 @@ services:
     user: root
     restart: always
     ports:
-      - "80:80"
+      # - "80:80"
       - "443:443"
     environment:
       TZ: ${TZ}

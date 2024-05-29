@@ -7,6 +7,7 @@ import {ConfirmationService, MessageService} from "primeng/api";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {FirebaseService} from "../../../../core/services/firebase.service";
+import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
     selector: 'app-login', templateUrl: './login.component.html', styleUrl: './login.component.scss', providers: [
@@ -14,9 +15,10 @@ import {FirebaseService} from "../../../../core/services/firebase.service";
         ConfirmationService,
     ],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
     isLoading: boolean = false;
     isChromium: boolean = false;
+    isMobile: boolean = false;
     token: string = '';
     emailControl = new FormControl('',
         [
@@ -34,6 +36,7 @@ export class LoginComponent {
         private router: Router,
         private messageService: MessageService,
         private firebaseService: FirebaseService,
+        private utilService: UtilService,
     ) {
         // Get token from local storage
         const token = localStorage.getItem('token');
@@ -46,6 +49,10 @@ export class LoginComponent {
             }
         }
         this.isChromium = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+    }
+
+    ngOnInit(): void {
+        this.isMobile = this.utilService.checkIfMobile();
     }
 
     get dark(): boolean {
@@ -64,7 +71,7 @@ export class LoginComponent {
     }
 
     public onLogin() {
-        if (this.isChromium){
+        if (this.isChromium && !this.isMobile) {
             this.login();
         } else {
             this.isLoading = true;

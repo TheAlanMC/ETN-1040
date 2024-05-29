@@ -5,15 +5,9 @@ const config: CapacitorConfig = {
   appName: 'Laboratorio Multimedia',
   webDir: 'dist/frontend/browser',
   plugins: {
-    "CapacitorHttp": {
-      "enabled": true
-    },
     "PushNotifications": {
       "presentationOptions": ["badge", "sound", "alert"],
     },
-  },
-  android: {
-    "allowMixedContent": true
   },
 };
 

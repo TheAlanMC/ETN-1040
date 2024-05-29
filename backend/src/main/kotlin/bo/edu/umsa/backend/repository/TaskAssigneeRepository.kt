@@ -14,4 +14,5 @@ interface TaskAssigneeRepository : JpaRepository<TaskAssignee, Long> {
     fun findAllByUserIdAndStatusIsTrue(
         userId: Long
     ): List<TaskAssignee>
+
 }

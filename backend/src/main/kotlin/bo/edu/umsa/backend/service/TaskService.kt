@@ -312,7 +312,6 @@ class TaskService @Autowired constructor(
 
         val originalTaskDueDate = taskEntity.taskDueDate
         val originalTaskPriorityId = taskEntity.taskPriorityId
-        val originalTaskStatusId = taskEntity.taskStatusId
 
         val originalAssignees = taskAssigneeRepository.findAllByTaskIdAndStatusIsTrue(taskId).map { it.userId }
 

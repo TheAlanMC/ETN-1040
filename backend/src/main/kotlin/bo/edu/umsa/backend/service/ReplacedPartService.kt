@@ -121,8 +121,6 @@ class ReplacedPartService @Autowired constructor(
     }
 
     fun deleteReplacedPart(replacedPartId: Long) {
-        // Get the user id from the token
-        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
         // Validate the replaced part exists
         val replacedPartEntity = replacedPartRepository.findByReplacedPartIdAndStatusIsTrue(replacedPartId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Replaced part not found", "Reemplazo no encontrado")

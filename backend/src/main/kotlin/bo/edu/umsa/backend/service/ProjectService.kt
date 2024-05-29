@@ -208,6 +208,14 @@ class ProjectService @Autowired constructor(
         if (userRepository.findAllByUserIdInAndStatusIsTrue(projectDto.projectMemberIds).size != projectDto.projectMemberIds.size) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one member is invalid", "Al menos un miembro es inválido")
         }
+        // Validate that an old member has not task assigned
+        val taskAssigneeEntities = taskAssigneeRepository.findAllByTaskIdInAndStatusIsTrue(projectEntity.tasks!!.map { it.taskId })
+        if (taskAssigneeEntities.isNotEmpty()) {
+            val taskAssigneeUserIds = taskAssigneeEntities.map { it.userId }.toSet()
+            if (taskAssigneeUserIds.any { it !in projectDto.projectMemberIds }) {
+                throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one member has a task assigned", "Al menos un miembro tiene una tarea asignada")
+            }
+        }
         // Update the project
         projectEntity.projectName = projectDto.projectName
         projectEntity.projectDescription = projectDto.projectDescription
@@ -238,12 +246,6 @@ class ProjectService @Autowired constructor(
         val projectMemberEntities = projectMemberRepository.findAllByProjectIdAndStatusIsTrue(projectId)
         // If they are different, update the project members
         if (projectMemberEntities.map { it.userId }.toSet() != projectDto.projectMemberIds.map { it }.toSet()) {
-            // Validate that none of the members have been assigned to a task
-            val taskEntities = taskRepository.findAllByProjectIdAndStatusIsTrue(projectId)
-            val taskAssigneeEntities = taskAssigneeRepository.findAllByTaskIdInAndStatusIsTrue(taskEntities.map { it.taskId })
-            if (taskAssigneeEntities.isNotEmpty()) {
-                throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one member has been assigned to a task, cannot delete", "Al menos un miembro ha sido asignado a una tarea, no se puede eliminar")
-            }
             projectMemberEntities.forEach {
                 it.status = false
                 projectMemberRepository.save(it)

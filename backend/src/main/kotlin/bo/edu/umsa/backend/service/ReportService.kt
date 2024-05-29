@@ -190,7 +190,7 @@ class ReportService @Autowired constructor(
         specification = specification.and(TaskSpecification.dateBetweenAll(Timestamp.from(Instant.parse(dateFrom)), Timestamp.from(Instant.parse(dateTo).plusSeconds(60 * 60 * 24 - 1))))
 
         if (!statuses.isNullOrEmpty()) {
-            specification = specification.and(TaskSpecification.taskStatuses(statuses))
+            specification = specification.and(TaskSpecification.taskCustomStatuses(statuses))
         }
 
         if (!priorities.isNullOrEmpty()) {

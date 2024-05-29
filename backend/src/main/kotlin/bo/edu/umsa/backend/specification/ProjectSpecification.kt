@@ -60,15 +60,24 @@ class ProjectSpecification {
             return Specification { root, query, cb ->
                 query.distinct(true)
                 val openProjectPredicate = if (statuses.contains("ABIERTO"))
-                    cb.isNull(root.get<Any>("projectEndDate")) else null
+                    cb.and(
+                        cb.isNull(root.get<Any>("projectEndDate")),
+                        cb.greaterThanOrEqualTo(root.get<Date>("projectDateTo"), Date())
+                    ) else null
                 val closedProjectPredicate = if (statuses.contains("CERRADO"))
-                    cb.isNotNull(root.get<Any>("projectEndDate")) else null
+                    cb.and(
+                        cb.isNotNull(root.get<Any>("projectEndDate")),
+                        cb.lessThan(root.get<Date>("projectEndDate"), root.get<Date>("projectDateTo"))
+                    ) else null
                 val delayedProjectPredicate = if (statuses.contains("ATRASADO"))
-                    cb.lessThan(root.get("projectDateTo"), Date()) else null
+                    cb.and(
+                        cb.isNull(root.get<Any>("projectEndDate")),
+                        cb.lessThan(root.get("projectDateTo"), Date())
+                    ) else null
                 val closedWithDelayProjectPredicate = if (statuses.contains("CERRADO CON RETRASO"))
                     cb.and(
                         cb.isNotNull(root.get<Any>("projectEndDate")),
-                        cb.greaterThan(root.get<Date>("projectEndDate"), root.get<Date>("projectDateTo"))
+                        cb.greaterThanOrEqualTo(root.get<Date>("projectEndDate"), root.get<Date>("projectDateTo"))
                     ) else null
                 val predicates = listOfNotNull(openProjectPredicate, closedProjectPredicate, delayedProjectPredicate, closedWithDelayProjectPredicate)
                 cb.or(*predicates.toTypedArray())
