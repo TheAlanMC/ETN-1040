@@ -14,13 +14,13 @@
         <div *ngIf="task">
             <div class="grid p-fluid formgrid px-3">
                 <div class="col-12 field">
-                    <label class="font-semibold text-900" for="title">Título de la tarea <span style="color: red;">*</span></label>
+                    <label class="font-semibold text-900" for="title">Título de la Tarea <span style="color: red;">*</span></label>
                     <input [formControl]="taskNameControl" class="w-full" id="title" name="title" pInputText
                            placeholder="Título de la tarea"
                            type="text">
                 </div>
                 <div class="col-12 field">
-                    <label class="font-semibold text-900" for="description">Descripción de la tarea</label>
+                    <label class="font-semibold text-900" for="description">Descripción de la Tarea</label>
                     <textarea [formControl]="taskDescriptionControl" [rows]="3" class="w-full" id="description"
                               name="description"
                               pInputTextarea
@@ -28,7 +28,7 @@
                               type="text"></textarea>
                 </div>
                 <div class="col-12 lg:col-6 field">
-                    <label class="font-semibold text-900" for="deadline">Fecha límite <span
+                    <label class="font-semibold text-900" for="deadline">Fecha Límite <span
                             style="color: red;">*</span></label>
                     <p-calendar [appendTo]="sidebar" [formControl]="taskDueDateControl"
                                 [minDate]="today"

@@ -22,6 +22,7 @@ import {OverlayPanelModule} from "primeng/overlaypanel";
 import {TagModule} from "primeng/tag";
 import {MultiSelectModule} from "primeng/multiselect";
 import {FileUploadModule} from "primeng/fileupload";
+import {FloatLabelModule} from "primeng/floatlabel";
 
 
 @NgModule({
@@ -51,6 +52,7 @@ import {FileUploadModule} from "primeng/fileupload";
         TagModule,
         MultiSelectModule,
         FileUploadModule,
+        FloatLabelModule,
     ]
 })
 export class ReportModule {

@@ -42,6 +42,7 @@ import {CdkDrag, CdkDragHandle, CdkDropList} from "@angular/cdk/drag-drop";
 import {RatingModule} from "primeng/rating";
 import {PasswordModule} from "primeng/password";
 import {RadioButtonModule} from "primeng/radiobutton";
+import {FloatLabelModule} from "primeng/floatlabel";
 
 
 @NgModule({
@@ -96,6 +97,7 @@ import {RadioButtonModule} from "primeng/radiobutton";
         RatingModule,
         PasswordModule,
         RadioButtonModule,
+        FloatLabelModule,
     ]
 })
 export class TaskModule {

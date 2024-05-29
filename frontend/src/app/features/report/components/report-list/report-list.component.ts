@@ -64,6 +64,7 @@ export class ReportListComponent implements OnInit {
     }
 
     public onSortChange(event: any) {
+        if (this.reports.length == 0) return;
         this.sortBy = event.field;
         this.sortType = (event.order == 1) ? 'asc' : 'desc';
         this.getData();

@@ -9,10 +9,7 @@ import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.GroupMapper
 import bo.edu.umsa.backend.mapper.UserMapper
 import bo.edu.umsa.backend.mapper.UserPartialMapper
-import bo.edu.umsa.backend.repository.FileRepository
-import bo.edu.umsa.backend.repository.GroupRepository
-import bo.edu.umsa.backend.repository.UserGroupRepository
-import bo.edu.umsa.backend.repository.UserRepository
+import bo.edu.umsa.backend.repository.*
 import bo.edu.umsa.backend.specification.UserSpecification
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -33,7 +30,11 @@ class UserService @Autowired constructor(
     private val fileRepository: FileRepository,
     private val userGroupRepository: UserGroupRepository,
     private val fileService: FileService,
-    private val emailService: EmailService
+    private val emailService: EmailService,
+    private val projectOwnerRepository: ProjectOwnerRepository,
+    private val projectModeratorRepository: ProjectModeratorRepository,
+    private val projectMemberRepository: ProjectMemberRepository,
+    private val taskAssigneeRepository: TaskAssigneeRepository
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(UserService::class.java)
@@ -174,6 +175,16 @@ class UserService @Autowired constructor(
         // Get the user
         val userEntity: User = userRepository.findByUserIdAndStatusIsTrue(userId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found", "Usuario no encontrado")
+        // Validations for the user
+        // Check if the user is a project owner, project moderator, project member or task assignee
+        if (projectOwnerRepository.findAllByUserIdAndStatusIsTrue(userId).isNotEmpty() ||
+            projectModeratorRepository.findAllByUserIdAndStatusIsTrue(userId).isNotEmpty() ||
+            projectMemberRepository.findAllByUserIdAndStatusIsTrue(userId).isNotEmpty() ||
+            taskAssigneeRepository.findAllByUserIdAndStatusIsTrue(userId).isNotEmpty()
+        ) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: User is assigned to a project or task", "El usuario está asignado a un proyecto o tarea")
+        }
+
         // Change the status to false
         userEntity.status = false
         userRepository.save(userEntity)

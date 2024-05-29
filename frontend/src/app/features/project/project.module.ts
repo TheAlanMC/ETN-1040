@@ -48,6 +48,7 @@ import {
 import {TieredMenuModule} from "primeng/tieredmenu";
 import {TaskModule} from "../task/task.module";
 import {RatingModule} from "primeng/rating";
+import {FloatLabelModule} from "primeng/floatlabel";
 
 
 @NgModule({
@@ -100,7 +101,8 @@ import {RatingModule} from "primeng/rating";
         CdkDrag,
         TieredMenuModule,
         TaskModule,
-        RatingModule
+        RatingModule,
+        FloatLabelModule
     ]
 })
 export class ProjectModule {

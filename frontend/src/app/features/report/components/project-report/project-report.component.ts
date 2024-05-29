@@ -154,6 +154,7 @@ export class ProjectReportComponent implements OnInit {
     }
 
     public onSortChange(event: any) {
+        if (this.projects.length == 0) return;
         this.sortBy = event.field;
         this.sortType = (event.order == 1) ? 'asc' : 'desc';
         this.getData();

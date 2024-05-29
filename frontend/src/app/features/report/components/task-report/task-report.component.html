@@ -3,16 +3,22 @@
 <div id="executiveReportContent">
     <div class="card">
         <span class="text-900 text-xl font-bold mb-4 block">Reporte de Tareas</span>
-        <div class="grid p-fluid">
+        <div class="grid p-fluid mb-3">
             <div class="col-12 lg:col-4">
-                <p-calendar [disabled]="generatedReport" [formControl]="dateFromControl"
-                            [readonlyInput]="true" [showIcon]="true" dateFormat="dd/mm/yy"
-                            id="dateFrom" placeholder="Fecha de Inicio"></p-calendar>
+                <p-floatLabel>
+                    <p-calendar [disabled]="generatedReport" [formControl]="dateFromControl"
+                                [readonlyInput]="true" [showIcon]="true" dateFormat="dd/mm/yy"
+                                id="dateFrom" placeholder="Fecha de Inicio"></p-calendar>
+                    <label for="dateFrom">Fecha de Inicio</label>
+                </p-floatLabel>
             </div>
             <div class="col-12 lg:col-4">
-                <p-calendar [disabled]="generatedReport" [formControl]="dateToControl"
-                            [readonlyInput]="true" [showIcon]="true" dateFormat="dd/mm/yy"
-                            id="dateTo" placeholder="Fecha de Finalización"></p-calendar>
+                <p-floatLabel>
+                    <p-calendar [disabled]="generatedReport" [formControl]="dateToControl"
+                                [readonlyInput]="true" [showIcon]="true" dateFormat="dd/mm/yy"
+                                id="dateTo" placeholder="Fecha de Finalización"></p-calendar>
+                    <label for="dateTo">Fecha de Finalización</label>
+                </p-floatLabel>
             </div>
             <div *ngIf="!generatedReport" class="col-12 lg:col-4">
                 <button (click)="onSync()" [disabled]="dateFromControl.invalid || dateToControl.invalid" [loading]="isDataLoading"
@@ -34,48 +40,59 @@
             </div>
         </div>
 
+        <div *ngIf="generatedReport" class="grid p-fluid">
+            <div class="col-12 lg:col-6">
+                <p-floatLabel>
+                    <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatuses"
+                                   [filter]="false"
+                                   [options]="statusItems"
+                                   class="multiselect-custom" id="status" optionLabel="label"
+                                   placeholder="Seleccionar Estado">
+                    </p-multiSelect>
+                    <label for="status">Seleccionar Estado</label>
+                </p-floatLabel>
+            </div>
+            <div class="col-12 lg:col-6">
+                <p-floatLabel>
+                    <p-multiSelect (onChange)="onPriorityChange($event)" [(ngModel)]="selectedPriorities"
+                                   [filter]="false"
+                                   [options]="priorityItems"
+                                   class="multiselect-custom" id="priority" optionLabel="label"
+                                   placeholder="Seleccionar Prioridad">
+                    </p-multiSelect>
+                    <label for="priority">Seleccionar Prioridad</label>
+                </p-floatLabel>
+            </div>
+            <div class="col-12 lg:col-6">
+                <p-floatLabel>
+                    <p-multiSelect (onChange)="onProjectChange($event)" [(ngModel)]="selectedProjects"
+                                   [filter]="true"
+                                   [options]="projectItems"
+                                   class="multiselect-custom" id="project" optionLabel="label"
+                                   placeholder="Seleccionar Proyecto">
+                    </p-multiSelect>
+                    <label for="project">Seleccionar Proyecto</label>
+                </p-floatLabel>
+            </div>
+            <div class="col-12 lg:col-6">
+                <p-floatLabel>
+                    <p-multiSelect (onChange)="onAssigneeChange($event)" [(ngModel)]="selectedAssignees"
+                                   [filter]="true"
+                                   [options]="assigneeItems"
+                                   class="multiselect-custom" id="assignee" optionLabel="label"
+                                   placeholder="Seleccionar Responsable">
+                    </p-multiSelect>
+                    <label for="assignee">Seleccionar Responsable</label>
+                </p-floatLabel>
+            </div>
+        </div>
+
 
         <p-table (onPage)="onPageChange($event)" (onSort)="onSortChange($event)" [customSort]="true" [lazy]="true"
                  [loading]="isDataLoading"
                  [paginator]="true" [rowsPerPageOptions]="[5, 10, 25]" [rows]="10" [showCurrentPageReport]="true"
                  [totalRecords]="totalElements" [value]="tasks"
                  currentPageReportTemplate="Mostrando registros {first}-{last} de {totalRecords}">
-            <ng-template pTemplate="caption">
-                <div *ngIf="generatedReport" class="grid p-fluid">
-                    <div class="col-12 lg:col-6">
-                        <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatuses"
-                                       [filter]="false"
-                                       [options]="statusItems"
-                                       class="multiselect-custom" optionLabel="label"
-                                       placeholder="Seleccionar Estado">
-                        </p-multiSelect>
-                    </div>
-                    <div class="col-12 lg:col-6">
-                        <p-multiSelect (onChange)="onPriorityChange($event)" [(ngModel)]="selectedPriorities"
-                                       [filter]="false"
-                                       [options]="priorityItems"
-                                       class="multiselect-custom" optionLabel="label"
-                                       placeholder="Seleccionar Prioridad">
-                        </p-multiSelect>
-                    </div>
-                    <div class="col-12 lg:col-6">
-                        <p-multiSelect (onChange)="onProjectChange($event)" [(ngModel)]="selectedProjects"
-                                       [filter]="true"
-                                       [options]="projectItems"
-                                       class="multiselect-custom" optionLabel="label"
-                                       placeholder="Seleccionar Proyecto">
-                        </p-multiSelect>
-                    </div>
-                    <div class="col-12 lg:col-6">
-                        <p-multiSelect (onChange)="onAssigneeChange($event)" [(ngModel)]="selectedAssignees"
-                                       [filter]="true"
-                                       [options]="assigneeItems"
-                                       class="multiselect-custom" optionLabel="label"
-                                       placeholder="Seleccionar Responsable">
-                        </p-multiSelect>
-                    </div>
-                </div>
-            </ng-template>
             <ng-template pTemplate="header">
                 <tr>
                     <th class="white-space-nowrap" pSortableColumn="taskName">Nombre de la Tarea

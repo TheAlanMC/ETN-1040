@@ -37,13 +37,13 @@
         <div *ngIf="task">
             <div class="grid p-fluid formgrid px-3">
                 <div class="col-12 field">
-                    <label class="font-semibold text-900" for="title">Título de la tarea</label>
+                    <label class="font-semibold text-900" for="title">Título de la Tarea</label>
                     <input [(ngModel)]="taskName" [readonly]="true" class="w-full" id="title" name="title"
                            pInputText
                            placeholder="Título de la tarea" type="text">
                 </div>
                 <div class="col-12 field">
-                    <label class="font-semibold text-900" for="description">Descripción de la tarea</label>
+                    <label class="font-semibold text-900" for="description">Descripción de la Tarea</label>
                     <textarea [(ngModel)]="taskDescription" [readonly]="true" [rows]="3" class="w-full"
                               id="description"
                               name="description"
@@ -51,7 +51,7 @@
                               style="resize: none" type="text"></textarea>
                 </div>
                 <div class="col-12 lg:col-6 field">
-                    <label class="font-semibold text-900" for="deadline">Fecha límite</label>
+                    <label class="font-semibold text-900" for="deadline">Fecha Límite</label>
                     <p-calendar [(ngModel)]="taskDueDate" [appendTo]="sidebar" [disabled]="true"
                                 [minDate]="today"
                                 [readonlyInput]="true" [showIcon]="true"

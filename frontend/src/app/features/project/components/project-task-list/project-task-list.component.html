@@ -4,7 +4,7 @@
                  key="confirmDeleteTask"
                  message="'¿Estás seguro de que deseas eliminar esta tarea? Esta acción no se puede deshacer.'"
                  rejectButtonStyleClass="p-button-text"></p-confirmDialog>
-<div class="flex flex-wrap gap-3 align-items-center justify-content-between mb-3">
+<div class="flex flex-wrap gap-3 align-items-center justify-content-between mb-4">
         <span class="p-input-icon-left w-full sm:w-20rem flex-order-0 sm:flex-order-0">
           <i class="pi pi-search"></i>
           <input (input)="onSearch($event)" [(ngModel)]="keyword" class="input w-full right-search-input"
@@ -17,20 +17,26 @@
 </div>
 <div class="grid p-fluid">
     <div class="col-12 lg:col-6">
-        <p-multiSelect (onChange)="onPriorityChange($event)" [(ngModel)]="selectedPriority"
-                       [filter]="false"
-                       [options]="priorityItems"
-                       class="multiselect-custom" display="chip" optionLabel="label"
-                       placeholder="Seleccionar Prioridad">
-        </p-multiSelect>
+        <p-floatLabel>
+            <p-multiSelect (onChange)="onPriorityChange($event)" [(ngModel)]="selectedPriority"
+                           [filter]="false"
+                           [options]="priorityItems"
+                           class="multiselect-custom" display="chip" optionLabel="label"
+                           placeholder="Seleccionar Prioridad" id="priority">
+            </p-multiSelect>
+            <label for="priority">Seleccionar Prioridad</label>
+        </p-floatLabel>
     </div>
     <div class="col-12 lg:col-6">
+        <p-floatLabel>
         <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus"
                        [filter]="false"
                        [options]="statusItems"
-                       class="multiselect-custom" display="chip" optionLabel="label"
+                       class="multiselect-custom" display="chip" optionLabel="label" id="status"
                        placeholder="Seleccionar Estado">
         </p-multiSelect>
+        <label for="status">Seleccionar Estado</label>
+        </p-floatLabel>
     </div>
 </div>
 

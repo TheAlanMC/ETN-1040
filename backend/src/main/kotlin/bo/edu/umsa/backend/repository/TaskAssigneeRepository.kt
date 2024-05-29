@@ -10,4 +10,8 @@ interface TaskAssigneeRepository : JpaRepository<TaskAssignee, Long> {
     fun findAllByTaskIdAndStatusIsTrue(taskId: Long): List<TaskAssignee>
 
     fun findAllByTaskIdInAndStatusIsTrue(taskIds: List<Int>): List<TaskAssignee>
+
+    fun findAllByUserIdAndStatusIsTrue(
+        userId: Long
+    ): List<TaskAssignee>
 }

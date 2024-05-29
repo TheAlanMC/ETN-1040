@@ -14,8 +14,9 @@ import {FirebaseService} from "../../../../core/services/firebase.service";
         ConfirmationService,
     ],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
     isLoading: boolean = false;
+    isChromium: boolean = false;
     token: string = '';
     emailControl = new FormControl('',
         [
@@ -44,13 +45,14 @@ export class LoginComponent implements OnInit {
                 this.router.navigate(['/']).then(r => console.log('Already logged in'));
             }
         }
+        this.isChromium = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
     }
 
     get dark(): boolean {
         return this.layoutService.config().colorScheme !== 'light';
     }
 
-    ngOnInit() {
+    public requestToken() {
         this.firebaseService.getFirebaseToken().subscribe({
             next: (token) => {
                 this.token = token;
@@ -61,7 +63,27 @@ export class LoginComponent implements OnInit {
         });
     }
 
-    login() {
+    public onLogin() {
+        if (this.isChromium){
+            this.login();
+        } else {
+            this.isLoading = true;
+            this.firebaseService.getFirebaseToken().subscribe({
+                next: (token) => {
+                    this.token = token;
+                    this.login();
+                },
+                error: (error) => {
+                    console.error(error);
+                    this.isLoading = false;
+                    this.messageService.add({severity: 'error', summary: 'Error', detail: 'Por favor, permita las notificaciones para iniciar sesión'});
+                },
+            });
+        }
+    }
+
+
+    public login() {
         this.isLoading = true;
         this.authService.login(this.emailControl.value!,
             this.passwordControl.value!,
@@ -86,7 +108,7 @@ export class LoginComponent implements OnInit {
         });
     }
 
-    onEnter(
+    public onEnter(
         event: Event,
         loginButton: HTMLButtonElement
     ) {
