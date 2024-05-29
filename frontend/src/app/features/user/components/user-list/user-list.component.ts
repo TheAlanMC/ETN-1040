@@ -9,7 +9,6 @@ import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {jwtDecode} from "jwt-decode";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {environment} from "../../../../../environments/environment";
-import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
     selector: 'app-user-list',
@@ -52,9 +51,7 @@ export class UserListComponent implements OnInit {
         private router: Router,
         private confirmationService: ConfirmationService,
         private messageService: MessageService,
-        private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage
         const token = localStorage.getItem('token');
         if (token) {

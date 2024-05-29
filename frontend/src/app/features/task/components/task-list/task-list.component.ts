@@ -12,7 +12,6 @@ import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {ResponseDto} from "../../../../core/models/response.dto";
 import {PageDto} from "../../../../core/models/page.dto";
 import {TaskPriorityDto} from "../../models/task-priority.dto";
-import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
     selector: 'app-task-list',
@@ -80,9 +79,7 @@ export class TaskListComponent implements OnInit {
         private sharedService: SharedService,
         private activatedRoute: ActivatedRoute,
         private taskService: TaskService,
-        private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage
         const token = localStorage.getItem('token');
         if (token) {

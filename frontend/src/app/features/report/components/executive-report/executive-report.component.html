@@ -48,22 +48,28 @@
                         </li>
                         <li>
                             <div class="flex flex-row justify-content-between align-items-center">
-                                <p>Proyectos Completados: </p>
+                                <span>Proyectos Cerrados: </span>
                                 <p>{{ executiveReport?.completedProjects }}</p>
                             </div>
                         </li>
                         <li>
                             <div class="flex flex-row justify-content-between align-items-center">
-                                <p>Proyectos Completados con Retraso: </p>
-                                <p>{{ executiveReport?.delayedProjects }}</p>
+                                <span>Proyectos Cerrados con Retraso: </span>
+                                <p>{{ executiveReport?.completedWithDelayProjects }}</p>
+                            </div>
+                        <li>
+                            <div class="flex flex-row justify-content-between align-items-center">
+                                <span>Proyectos Abiertos: </span>
+                                <p>{{ executiveReport?.inProgressProjects }}</p>
                             </div>
                         </li>
                         <li>
                             <div class="flex flex-row justify-content-between align-items-center">
-                                <p>Proyectos en Progreso: </p>
-                                <p>{{ executiveReport?.inProgressProjects }}</p>
+                                <span>Proyectos Atrasados: </span>
+                                <p>{{ executiveReport?.delayedProjects }}</p>
                             </div>
                         </li>
+
                     </ul>
                 </div>
             </div>
@@ -83,31 +89,31 @@
                         </li>
                         <li>
                             <div class="flex flex-row justify-content-between align-items-center">
-                                <p>Tareas Completadas: </p>
+                                <span>Tareas Finalizadas: </span>
                                 <p>{{ executiveReport?.completedTasks }}</p>
                             </div>
                         </li>
                         <li>
                             <div class="flex flex-row justify-content-between align-items-center">
-                                <p>Tareas Completadas con Retraso: </p>
+                                <span>Tareas Finalizadas con Retraso: </span>
                                 <p>{{ executiveReport?.completedWithDelayTasks }}</p>
                             </div>
                         </li>
                         <li>
                             <div class="flex flex-row justify-content-between align-items-center">
-                                <p>Tareas en Progreso: </p>
+                                <span>Tareas en Progreso: </span>
                                 <p>{{ executiveReport?.inProgressTasks }}</p>
                             </div>
                         </li>
                         <li>
                             <div class="flex flex-row justify-content-between align-items-center">
-                                <p>Tareas Pendientes: </p>
+                                <span>Tareas Pendientes: </span>
                                 <p>{{ executiveReport?.pendingTasks }}</p>
                             </div>
                         </li>
                         <li>
                             <div class="flex flex-row justify-content-between align-items-center">
-                                <p>Tareas con Retraso: </p>
+                                <span>Tareas Atrasadas: </span>
                                 <p>{{ executiveReport?.delayedTasks }}</p>
                             </div>
                         </li>
@@ -124,19 +130,25 @@
                     <ul class="px-3 py-0">
                         <li>
                             <div class="flex flex-row justify-content-between align-items-center">
-                                <span>Alta Prioridad: </span>
+                                <span>Tareas Totales: </span>
+                                <p>{{ executiveReport?.totalTasks }}</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex flex-row justify-content-between align-items-center">
+                                <span>Prioridad Alta: </span>
                                 <p>{{ executiveReport?.highPriorityTasks }}</p>
                             </div>
                         </li>
                         <li>
                             <div class="flex flex-row justify-content-between align-items-center">
-                                <p>Media Prioridad: </p>
+                                <span>Prioridad Media: </span>
                                 <p>{{ executiveReport?.mediumPriorityTasks }}</p>
                             </div>
                         </li>
                         <li>
                             <div class="flex flex-row justify-content-between align-items-center">
-                                <p>Baja Prioridad: </p>
+                                <span>Prioridad Baja: </span>
                                 <p>{{ executiveReport?.lowPriorityTasks }}</p>
                             </div>
                         </li>
@@ -189,7 +201,8 @@
                     <td class="white-space-nowrap">{{ project.projectStatusName }}</td>
                     <td class="white-space-nowrap">
                         <p-progressBar [showValue]="false"
-                                       [style]="{'height': '1.5rem'}" [value]="project.projectFinishedTasks/project.projectTotalTasks*100">
+                                       [style]="{'height': '1.5rem'}"
+                                       [value]="(project.projectFinishedTasks/project.projectTotalTasks) == 0 ? 20 : (project.projectFinishedTasks/project.projectTotalTasks)*100">
                             <ng-template pTemplate="content">
                                 <span>{{ project.projectFinishedTasks }}/{{ project.projectTotalTasks }}</span>
                             </ng-template>

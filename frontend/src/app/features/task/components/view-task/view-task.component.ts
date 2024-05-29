@@ -143,8 +143,6 @@ export class ViewTaskComponent {
         private confirmationService: ConfirmationService,
         private replacedPartService: ReplacedPartService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
-        this.filesBaseUrl = this.utilService.getApiUrl(this.filesBaseUrl);
         this.defaultDisplay = this.utilService.checkIfMobile() ? 'true' : 'none';
         this.isMobile = this.utilService.checkIfMobile();
 
@@ -525,7 +523,6 @@ export class ViewTaskComponent {
 
     public updateTaskStatus(
         taskStatus: any,
-        addFeedback: boolean = false
     ) {
         this.isLoading = true;
         this.taskService.updateTaskStatus(this.taskId,
@@ -537,22 +534,19 @@ export class ViewTaskComponent {
                     summary: 'Éxito',
                     detail: 'Estado de la tarea actualizado correctamente'
                 });
-                if (addFeedback) {
-                    this.createTaskFeedback();
-                } else {
-                    setTimeout(() => {
-                            let currentRoute = this.router.url;
-                            this.router.navigateByUrl('/',
-                                {skipLocationChange: true}).then(() => {
-                                this.router.navigate([currentRoute]).then(r => console.log('Task status updated'));
-                                this.isLoading = true;
-                            });
-                        },
-                        500);
-                    this.onClose();
-                }
+                setTimeout(() => {
+                        let currentRoute = this.router.url;
+                        this.router.navigateByUrl('/',
+                            {skipLocationChange: true}).then(() => {
+                            this.router.navigate([currentRoute]).then(r => console.log('Task status updated'));
+                            this.isLoading = true;
+                        });
+                    },
+                    500);
+                this.onClose();
             }, error: (error) => {
-                console.error(error);
+                console.error(error)
+                this.isLoading = false;
             }
         });
 
@@ -1291,12 +1285,12 @@ export class ViewTaskComponent {
 
     public onAddFeedbackCancel() {
         this.visibleAddFeedback = false
+        this.taskRatingControl.setValue('');
         this.selectedStatus = this.task!.taskStatus.taskStatusId;
     }
 
     public onAddFeedback() {
-        this.updateTaskStatus({value: 3, label: 'FINALIZADO'},
-            true);
+        this.createTaskFeedback();
     }
 
     public createTaskFeedback() {
@@ -1310,15 +1304,7 @@ export class ViewTaskComponent {
                     detail: 'Retroalimentación de la tarea creada correctamente'
                 });
                 this.visibleAddFeedback = false;
-                setTimeout(() => {
-                        let currentRoute = this.router.url;
-                        this.router.navigateByUrl('/',
-                            {skipLocationChange: true}).then(() => {
-                            this.router.navigate([currentRoute]).then(r => console.log('Task feedback created'));
-                            this.isLoading = true;
-                        });
-                    },
-                    500);
+                this.updateTaskStatus({value: 3, label: 'FINALIZADO'});
                 this.onClose();
             }, error: (error) => {
                 console.error(error);

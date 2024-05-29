@@ -2,10 +2,10 @@
 <div class="card">
     <span class="text-900 text-xl font-bold mb-4 block">Mi Perfil</span>
     <div class="grid">
-        <div class="col-12 lg:col-2">
+        <div class="col-12 lg:col-3">
             <div class="flex justify-center items-center mb-4 justify-content-center">
                 <img [src]="profilePictureUrl" alt="Profile"
-                     style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover"/>
+                     style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover"/>
             </div>
             <div class="text-900 font-medium text-xl mb-3">Roles</div>
             <div *ngFor="let group of groups">
@@ -16,7 +16,7 @@
                 <p class="m-0 p-0 text-600 line-height-3 mr-3">-{{ rol }}</p>
             </div>
         </div>
-        <div *ngIf="profile; else loading" class="col-12 lg:col-10">
+        <div *ngIf="profile; else loading" class="col-12 lg:col-9">
             <div class="grid formgrid p-fluid">
                 <div class="field mb-4 col-12 md:col-6">
                     <label class="font-medium text-900" for="firstName">Nombres</label>

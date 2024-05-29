@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "770893644204",
-    "project_id": "etn-1040",
-    "storage_bucket": "etn-1040.appspot.com"
+    "project_number": "299630257084",
+    "project_id": "laboratorio-multimedia",
+    "storage_bucket": "laboratorio-multimedia.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:770893644204:android:9ed30b94f32a6997453a09",
+        "mobilesdk_app_id": "1:299630257084:android:59b3634254332c325901b9",
         "android_client_info": {
           "package_name": "bo.edu.umsa.app"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "770893644204-jpp5o320npah1lid55sl6c97adiomlmk.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCVmvYMc6tyF-IMELAjyRpkOWWSwdQVjzw"
+          "current_key": "AIzaSyCWvJiqJI-CxPO-9ypJ-4NmV8ryyFmSDbQ"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "770893644204-jpp5o320npah1lid55sl6c97adiomlmk.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

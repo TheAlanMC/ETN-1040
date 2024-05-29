@@ -10,7 +10,6 @@ import {environment} from "../../../../../environments/environment";
 import {UserDto} from "../../models/user.dto";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
-import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
     selector: 'app-group-and-role',
@@ -63,9 +62,7 @@ export class GroupAndRoleComponent implements OnInit {
         private groupsService: GroupService,
         private roleService: RoleService,
         private messageService: MessageService,
-        private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         const token = localStorage.getItem('token');
         // Check if token exists
         if (token) {

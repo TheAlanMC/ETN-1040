@@ -10,7 +10,6 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {ProjectDto} from "../../models/project.dto";
-import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
     selector: 'app-edit-project',
@@ -86,9 +85,7 @@ export class EditProjectComponent implements OnInit {
         private location: Location,
         private projectService: ProjectService,
         private router: Router,
-        private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         const token = localStorage.getItem('token');
         // Check if token exists
         if (token) {

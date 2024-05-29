@@ -9,7 +9,6 @@ import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {ProjectService} from "../../../../core/services/project.service";
 import {Router} from "@angular/router";
-import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
     selector: 'app-new-project',
@@ -79,9 +78,7 @@ export class NewProjectComponent implements OnInit {
         private location: Location,
         private projectService: ProjectService,
         private router: Router,
-        private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         const token = localStorage.getItem('token');
         // Check if token exists
         if (token) {

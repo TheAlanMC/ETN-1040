@@ -18,7 +18,6 @@ export class DashboardService {
         private http: HttpClient,
         private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
     public getTaskDashboard(

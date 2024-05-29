@@ -19,7 +19,6 @@ export class UserService {
         private http: HttpClient,
         private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
     public getAllUsers(): Observable<ResponseDto<UserDto[]>> {

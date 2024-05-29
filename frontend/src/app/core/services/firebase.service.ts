@@ -2,9 +2,9 @@ import {Injectable} from '@angular/core';
 import {getMessaging, getToken, onMessage} from "firebase/messaging";
 import {environment} from "../../../environments/environment";
 import {from, Subject} from "rxjs";
-import { FCM } from '@capacitor-community/fcm';
-import { Capacitor} from "@capacitor/core";
-import { PushNotifications } from '@capacitor/push-notifications';
+import {FCM} from '@capacitor-community/fcm';
+import {Capacitor} from "@capacitor/core";
+import {PushNotifications} from '@capacitor/push-notifications';
 
 
 @Injectable({
@@ -27,31 +27,35 @@ export class FirebaseService {
 
     public async getFirebaseTokenWeb() {
         const messaging = getMessaging();
-        return getToken(messaging, { vapidKey: environment.firebase.vapidKey });
+        return getToken(messaging,
+            {vapidKey: environment.firebase.vapidKey});
     }
 
     public async getFirebaseTokenNative() {
-        const { token } = await FCM.getToken();
+        const {token} = await FCM.getToken();
         return token;
     }
 
     public listenToMessagesWeb() {
         const messaging = getMessaging();
-        onMessage(messaging, (payload) => {
-            this.messageSubject.next(payload);
-            if (payload.data) {
-                new Notification(payload.data['title']!, {
-                    body: payload.data['body'],
-                    icon: payload.data['image'],
-                });
-            }
-        });
+        onMessage(messaging,
+            (payload) => {
+                this.messageSubject.next(payload);
+                if (payload.data) {
+                    new Notification(payload.data['title']!,
+                        {
+                            body: payload.data['body'],
+                            icon: payload.data['image'],
+                        });
+                }
+            });
     }
 
     public listenToMessagesNative() {
-        PushNotifications.addListener('pushNotificationReceived', (notification) => {
-            this.messageSubject.next(notification);
-        });
+        PushNotifications.addListener('pushNotificationReceived',
+            (notification) => {
+                this.messageSubject.next(notification);
+            });
     }
 
     public getMessageObservable() {

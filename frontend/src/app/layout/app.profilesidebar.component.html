@@ -50,7 +50,8 @@
                         <span class="mb-2 font-semibold">{{ notification.messageBody }}</span>
                         <p class="text-color-secondary m-0">{{ notification.txDate | timeAgo }}</p>
                     </div>
-                    <button (click)="markAsRead(notification.notificationId)" class="p-button p-button-text" icon="pi pi-check" pButton pRipple pTooltip="Marcar como leido"
+                    <button (click)="markAsRead(notification.notificationId)" class="p-button p-button-text" icon="pi pi-check" pButton pRipple
+                            pTooltip="Marcar como leido"
                             tooltipPosition="left" type="button">
                     </button>
                 </a>

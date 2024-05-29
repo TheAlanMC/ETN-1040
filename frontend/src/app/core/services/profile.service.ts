@@ -17,7 +17,6 @@ export class ProfileService {
         private http: HttpClient,
         private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
     public getProfilePicture(): Observable<Blob> {

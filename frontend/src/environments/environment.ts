@@ -1,13 +1,12 @@
 export const environment = {
   API_URL: 'http://localhost:8080',
-  ANGULAR_URL: 'http://localhost:4200',
   firebase:{
-    apiKey: "AIzaSyCwJ4OGwGWFwXUS_-TxOnz_EMj0aaWhZno",
-    authDomain: "etn-1040.firebaseapp.com",
-    projectId: "etn-1040",
-    storageBucket: "etn-1040.appspot.com",
-    messagingSenderId: "770893644204",
-    appId: "1:770893644204:web:8432d35a74c1c661453a09",
-    vapidKey: "BJX55waD_ge1cRIKdI1W05gx2IkVviVSnVf72bw5anUFEUOqA40InKwKziq_kCIiRTBFpT92Iy43uissuEVFzYg"
+    apiKey: "AIzaSyA6vP_lILs4xOGDK0FAXKcfpw3-Em75J7s",
+    authDomain: "laboratorio-multimedia.firebaseapp.com",
+    projectId: "laboratorio-multimedia",
+    storageBucket: "laboratorio-multimedia.appspot.com",
+    messagingSenderId: "299630257084",
+    appId: "1:299630257084:web:3ed2040af225c2905901b9",
+    vapidKey: "BNUY9rQfe78I4lDC2C4NX8GUcnTH_5Lxx1lsmx-SuUHpv7LtxGFZIf_5t8PsSVmMIp-SF9R069s1YGuoC4El8ms"
   }
 };

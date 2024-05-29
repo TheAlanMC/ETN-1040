@@ -21,7 +21,6 @@ export class TaskService {
         private http: HttpClient,
         private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
     public getStatuses(): Observable<ResponseDto<TaskStatusDto[]>> {

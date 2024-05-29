@@ -20,6 +20,7 @@ interface RoleRepository : JpaRepository<Role, Long> {
             AND g.status = true
             AND ug.status = true
             AND u.status = true
+            ORDER BY r.role_id
         """, nativeQuery = true)
     fun findAllByEmail(email: String): List<Role>
 

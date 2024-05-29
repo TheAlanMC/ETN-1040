@@ -10,7 +10,6 @@ import {PageDto} from "../../../../core/models/page.dto";
 import {ProjectService} from '../../../../core/services/project.service';
 import {debounceTime, Subject} from "rxjs";
 import {SharedService} from "../../../../core/services/shared.service";
-import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
     selector: 'app-project-list',
@@ -52,9 +51,7 @@ export class ProjectListComponent implements OnInit {
         private messageService: MessageService,
         private projectService: ProjectService,
         private sharedService: SharedService,
-        private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage
         const token = localStorage.getItem('token');
         if (token) {

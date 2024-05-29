@@ -6,7 +6,6 @@ import {environment} from "../../../../../environments/environment";
 import {SharedService} from "../../../../core/services/shared.service";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
-import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
     selector: 'app-project-task-deadline-card',
@@ -52,9 +51,7 @@ export class ProjectTaskDeadlineCardComponent implements OnInit {
 
     constructor(
         private sharedService: SharedService,
-        private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
     ngOnInit() {

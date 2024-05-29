@@ -16,7 +16,6 @@ export class FileService {
         private http: HttpClient,
         private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
     public getFile(fileId: number): Observable<Blob> {

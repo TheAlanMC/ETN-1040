@@ -71,8 +71,9 @@ services:
     volumes:
       - ~/Desktop/etn/frontend/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./cert.pem:/etc/nginx/cert.crt
-      - ./key_without_pass.pem:/etc/nginx/private.key
+      - ./key.pem:/etc/nginx/private.key
     depends_on:
       - etn-backend
     networks:
       - network-etn
+

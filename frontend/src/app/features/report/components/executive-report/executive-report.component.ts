@@ -176,8 +176,8 @@ export class ExecutiveReportComponent implements OnInit {
     public onClear() {
         this.generatedReport = false;
         this.executiveReport = null;
-        this.dateFromControl.reset();
-        this.dateToControl.reset();
+        this.dateFromControl.setValue('');
+        this.dateToControl.setValue('');
     }
 
     expandAll() {

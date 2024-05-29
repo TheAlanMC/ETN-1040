@@ -15,9 +15,12 @@ class ProjectMapper {
                 projectDateFrom = project.projectDateFrom,
                 projectDateTo = project.projectDateTo,
                 projectEndDate = project.projectEndDate,
-                projectOwners = project.projectOwners?.filter { it.status }?.map { UserPartialMapper.entityToDto(it.user!!) } ?: emptyList(),
-                projectModerators = project.projectModerators?.filter { it.status }?.map { UserPartialMapper.entityToDto(it.user!!) } ?: emptyList(),
-                projectMembers = project.projectMembers?.filter { it.status }?.map { UserPartialMapper.entityToDto(it.user!!) } ?: emptyList(),
+                projectOwners = project.projectOwners?.filter { it.status && it.user?.status == true }?.map { UserPartialMapper.entityToDto(it.user!!) }
+                    ?: emptyList(),
+                projectModerators = project.projectModerators?.filter { it.status && it.user?.status == true }?.map { UserPartialMapper.entityToDto(it.user!!) }
+                    ?: emptyList(),
+                projectMembers = project.projectMembers?.filter { it.status && it.user?.status == true }?.map { UserPartialMapper.entityToDto(it.user!!) }
+                    ?: emptyList(),
                 finishedTasks = project.tasks?.filter { it.status && it.taskEndDate != null }?.size ?: 0,
                 totalTasks = project.tasks?.filter { it.status }?.size ?: 0,
             )

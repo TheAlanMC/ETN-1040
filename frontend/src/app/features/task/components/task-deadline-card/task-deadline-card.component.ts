@@ -53,7 +53,6 @@ export class TaskDeadlineCardComponent implements OnInit {
         private sharedService: SharedService,
         private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
     ngOnInit() {

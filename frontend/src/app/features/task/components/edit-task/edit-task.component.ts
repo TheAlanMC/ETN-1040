@@ -72,11 +72,10 @@ export class EditTaskComponent implements OnInit {
     constructor(
         private taskService: TaskService,
         private messageService: MessageService,
-        private utilService: UtilService,
         private fileService: FileService,
         private router: Router,
+        private utilService: UtilService,
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         this.defaultDisplay = this.utilService.checkIfMobile() ? 'true' : 'none';
         this.isMobile = this.utilService.checkIfMobile();
     }
@@ -157,9 +156,9 @@ export class EditTaskComponent implements OnInit {
         this.sidebarVisibleChange.emit(false);
         this.sidebarVisible = false;
         this.task = null;
-        this.taskNameControl.reset();
-        this.taskDescriptionControl.reset();
-        this.taskDueDateControl.reset();
+        this.taskNameControl.setValue('');
+        this.taskDescriptionControl.setValue('');
+        this.taskDueDateControl.setValue('');
         this.selectedPriority = {value: ''};
         this.selectedAssignees = [];
         this.userItems = [];

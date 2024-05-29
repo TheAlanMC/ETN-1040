@@ -376,7 +376,7 @@ export class DashboardComponent implements OnInit {
             next: (response) => {
                 this.taskDashboard = response.data;
                 this.taskBarData.datasets[0].data = [this.taskDashboard?.totalCompletedTasks,
-                                                     this.taskDashboard?.totalDelayedTasks,
+                                                     this.taskDashboard?.totalCompletedWithDelayTasks,
                                                      this.taskDashboard?.totalInProgressTasks,
                                                      this.taskDashboard?.totalPendingTasks,
                                                      this.taskDashboard?.totalDelayedTasks,];
@@ -411,10 +411,11 @@ export class DashboardComponent implements OnInit {
             next: (response) => {
                 this.projectDashboard = response.data;
                 this.projectBarData.datasets[0].data = [this.projectDashboard?.totalCompletedProjects,
-                                                        this.projectDashboard?.totalDelayedProjects,
+                                                        this.projectDashboard?.totalCompletedWithDelayProjects,
                                                         this.projectDashboard?.totalInProgressProjects,
                                                         this.projectDashboard?.totalDelayedProjects,];
                 this.projectBarData = {...this.projectBarData};
+
                 this.projectLineData.labels = this.projectDashboard?.projectByDate.map((item) =>
                     `${this.monthNames[item.month - 1]}, ${item.year}`);
                 this.projectLineData.datasets[0].data = this.projectDashboard?.projectByDate.map((item) =>

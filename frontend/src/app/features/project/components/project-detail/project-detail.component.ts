@@ -7,7 +7,6 @@ import {ProjectService} from "../../../../core/services/project.service";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {FormControl, Validators} from "@angular/forms";
-import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
     selector: 'app-project-detail',
@@ -81,9 +80,7 @@ export class ProjectDetailComponent implements OnInit {
         private router: Router,
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
-        private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         const token = localStorage.getItem('token');
         // Check if token exists
         if (token) {
@@ -164,7 +161,7 @@ export class ProjectDetailComponent implements OnInit {
 
     public onAddCloseMessageCancel() {
         this.visibleAddCloseMessage = false;
-        this.projectCloseMessageControl.reset();
+        this.projectCloseMessageControl.setValue('');
     }
 
     public onAddCloseMessage() {

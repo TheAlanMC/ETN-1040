@@ -16,7 +16,6 @@ export class NotificationService {
         private http: HttpClient,
         private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
     getNotifications(): Observable<ResponseDto<NotificationDto[]>> {

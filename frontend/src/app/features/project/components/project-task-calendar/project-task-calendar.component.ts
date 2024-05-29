@@ -20,7 +20,6 @@ import {TaskStatusDto} from "../../../task/models/task-status.dto";
 import {debounceTime, Subject} from "rxjs";
 import {FullCalendarComponent} from "@fullcalendar/angular";
 import {TaskPriorityDto} from "../../../task/models/task-priority.dto";
-import {UtilService} from "../../../../core/services/util.service"; // Import Spanish locale
 
 @Component({
     selector: 'app-project-task-calendar',
@@ -111,9 +110,7 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
         private sharedService: SharedService,
         private activatedRoute: ActivatedRoute,
         private taskService: TaskService,
-        private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage
         const token = localStorage.getItem('token');
         if (token) {

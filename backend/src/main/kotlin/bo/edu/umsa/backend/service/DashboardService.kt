@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
 import java.time.Instant
+import java.time.ZoneId
 
 @Service
 class DashboardService @Autowired constructor(
@@ -39,17 +40,17 @@ class DashboardService @Autowired constructor(
         logger.info("Getting the task dashboard")
         val taskEntities = taskRepository.findAllTasksByDateRange(Timestamp.from(Instant.parse(dateFrom)), Timestamp.from(Instant.parse(dateTo).plusSeconds(60 * 60 * 24 - 1))).distinctBy { it.taskId }
 
-        val completedTaskEntities = taskEntities.filter { task -> task.taskEndDate != null && task.taskDueDate.after(task.taskEndDate) }
-        val completedWithDelayTaskEntities = taskEntities.filter { task -> task.taskEndDate != null && task.taskEndDate!!.after(task.taskDueDate) }
-        val inProgressTaskEntities = taskEntities.filter { task -> task.taskEndDate == null && task.taskDueDate.after(Timestamp.from(Instant.now())) && task.taskStatus!!.taskStatusName == "EN PROGRESO" }
-        val pendingTaskEntities = taskEntities.filter { task -> task.taskEndDate == null && task.taskDueDate.after(Timestamp.from(Instant.now())) && task.taskStatus!!.taskStatusName == "PENDIENTE" }
-        val delayedTaskEntities = taskEntities.filter { task -> task.taskEndDate == null && task.taskDueDate.before(Timestamp.from(Instant.now())) }
-        val highPriorityTaskEntities = taskEntities.filter { task -> task.taskPriority!!.taskPriorityName == "ALTA" }
-        val mediumPriorityTaskEntities = taskEntities.filter { task -> task.taskPriority!!.taskPriorityName == "MEDIA" }
-        val lowPriorityTaskEntities = taskEntities.filter { task -> task.taskPriority!!.taskPriorityName == "BAJA" }
+        val completedTaskEntities = taskEntities.count { task -> task.taskEndDate != null && task.taskDueDate.after(task.taskEndDate) }
+        val completedWithDelayTaskEntities = taskEntities.count { task -> task.taskEndDate != null && task.taskEndDate!!.after(task.taskDueDate) }
+        val inProgressTaskEntities = taskEntities.count { task -> task.taskEndDate == null && task.taskDueDate.after(Timestamp.from(Instant.now())) && task.taskStatus!!.taskStatusName == "EN PROGRESO" }
+        val pendingTaskEntities = taskEntities.count { task -> task.taskEndDate == null && task.taskDueDate.after(Timestamp.from(Instant.now())) && task.taskStatus!!.taskStatusName == "PENDIENTE" }
+        val delayedTaskEntities = taskEntities.count { task -> task.taskEndDate == null && task.taskDueDate.before(Timestamp.from(Instant.now())) }
+        val highPriorityTaskEntities = taskEntities.count { task -> task.taskPriority!!.taskPriorityName == "ALTA" }
+        val mediumPriorityTaskEntities = taskEntities.count { task -> task.taskPriority!!.taskPriorityName == "MEDIA" }
+        val lowPriorityTaskEntities = taskEntities.count { task -> task.taskPriority!!.taskPriorityName == "BAJA" }
 
-        val allMonths = generateSequence(Timestamp.from(Instant.parse(dateFrom)).toLocalDateTime().withDayOfMonth(1)) { it.plusMonths(1) }
-            .takeWhile { !it.isAfter(Timestamp.from(Instant.parse(dateTo)).toLocalDateTime().withDayOfMonth(1)) }
+        val zoneId = ZoneId.of("America/La_Paz")
+        val allMonths = generateSequence(Timestamp.from(Instant.parse(dateFrom)).toInstant().atZone(zoneId).withDayOfMonth(1)) { it.plusMonths(1) }.takeWhile { !it.isAfter(Timestamp.from(Instant.parse(dateTo)).toInstant().atZone(zoneId).withDayOfMonth(1)) }
             .toList()
 
         val taskGroups = taskEntities.groupBy { Pair(it.txDate.toLocalDateTime().year, it.txDate.toLocalDateTime().monthValue) }
@@ -74,14 +75,14 @@ class DashboardService @Autowired constructor(
 
         return TaskDashboardDto(
             totalTasks = taskEntities.size,
-            totalCompletedTasks = completedTaskEntities.size,
-            totalCompletedWithDelayTasks = completedWithDelayTaskEntities.size,
-            totalInProgressTasks = inProgressTaskEntities.size,
-            totalPendingTasks = pendingTaskEntities.size,
-            totalDelayedTasks = delayedTaskEntities.size,
-            totalHighPriorityTasks = highPriorityTaskEntities.size,
-            totalMediumPriorityTasks = mediumPriorityTaskEntities.size,
-            totalLowPriorityTasks = lowPriorityTaskEntities.size,
+            totalCompletedTasks = completedTaskEntities,
+            totalCompletedWithDelayTasks = completedWithDelayTaskEntities,
+            totalInProgressTasks = inProgressTaskEntities,
+            totalPendingTasks = pendingTaskEntities,
+            totalDelayedTasks = delayedTaskEntities,
+            totalHighPriorityTasks = highPriorityTaskEntities,
+            totalMediumPriorityTasks = mediumPriorityTaskEntities,
+            totalLowPriorityTasks = lowPriorityTaskEntities,
             taskByDate = taskByDate,
         )
     }
@@ -102,13 +103,13 @@ class DashboardService @Autowired constructor(
         logger.info("Getting the project dashboard")
         val projectEntities = projectRepository.findAllProjectsByDateRange(Timestamp.from(Instant.parse(dateFrom)), Timestamp.from(Instant.parse(dateTo).plusSeconds(60 * 60 * 24 - 1))).distinctBy { it.projectId }
 
-        val completedProjectEntities = projectEntities.filter { project -> project.projectEndDate != null && project.projectDateTo.after(project.projectEndDate) }
-        val completedWithDelayProjectEntities = projectEntities.filter { project -> project.projectEndDate != null && project.projectEndDate!!.after(project.projectDateTo) }
-        val inProgressProjectEntities = projectEntities.filter { project -> project.projectEndDate == null && project.projectDateTo.after(Timestamp.from(Instant.now())) }
-        val delayedProjectEntities = projectEntities.filter { project -> project.projectEndDate == null && project.projectDateTo.before(Timestamp.from(Instant.now())) }
+        val completedProjectEntities = projectEntities.count { project -> project.projectEndDate != null && project.projectDateTo.after(project.projectEndDate) }
+        val completedWithDelayProjectEntities = projectEntities.count { project -> project.projectEndDate != null && project.projectEndDate!!.after(project.projectDateTo) }
+        val inProgressProjectEntities = projectEntities.count { project -> project.projectEndDate == null && project.projectDateTo.after(Timestamp.from(Instant.now())) }
+        val delayedProjectEntities = projectEntities.count { project -> project.projectEndDate == null && project.projectDateTo.before(Timestamp.from(Instant.now())) }
 
-        val allMonths = generateSequence(Timestamp.from(Instant.parse(dateFrom)).toLocalDateTime().withDayOfMonth(1)) { it.plusMonths(1) }
-            .takeWhile { !it.isAfter(Timestamp.from(Instant.parse(dateTo)).toLocalDateTime().withDayOfMonth(1)) }
+        val zoneId = ZoneId.of("America/La_Paz")
+        val allMonths = generateSequence(Timestamp.from(Instant.parse(dateFrom)).toInstant().atZone(zoneId).withDayOfMonth(1)) { it.plusMonths(1) }.takeWhile { !it.isAfter(Timestamp.from(Instant.parse(dateTo)).toInstant().atZone(zoneId).withDayOfMonth(1)) }
             .toList()
 
         val projectGroups = projectEntities.groupBy { Pair(it.txDate.toLocalDateTime().year, it.txDate.toLocalDateTime().monthValue) }
@@ -132,10 +133,10 @@ class DashboardService @Autowired constructor(
 
         return ProjectDashboardDto(
             totalProjects = projectEntities.size,
-            totalCompletedProjects = completedProjectEntities.size,
-            totalCompletedWithDelayProjects = completedWithDelayProjectEntities.size,
-            totalInProgressProjects = inProgressProjectEntities.size,
-            totalDelayedProjects = delayedProjectEntities.size,
+            totalCompletedProjects = completedProjectEntities,
+            totalCompletedWithDelayProjects = completedWithDelayProjectEntities,
+            totalInProgressProjects = inProgressProjectEntities,
+            totalDelayedProjects = delayedProjectEntities,
             projectByDate = projectByDate,
         )
     }

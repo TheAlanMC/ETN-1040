@@ -5,7 +5,6 @@ import {environment} from "../../../../../environments/environment";
 import {TaskStatusDto} from "../../models/task-status.dto";
 import {ConfirmationService, MenuItem, MessageService, SelectItem} from "primeng/api";
 import {debounceTime, Subject} from "rxjs";
-import {UtilService} from "../../../../core/services/util.service";
 import {SharedService} from "../../../../core/services/shared.service";
 import {ActivatedRoute} from "@angular/router";
 import {TaskService} from "../../../../core/services/task.service";
@@ -92,12 +91,10 @@ export class TaskCalendarComponent implements OnInit, AfterViewInit {
     constructor(
         private confirmationService: ConfirmationService,
         private messageService: MessageService,
-        private utilService: UtilService,
         private sharedService: SharedService,
         private activatedRoute: ActivatedRoute,
         private taskService: TaskService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage
         const token = localStorage.getItem('token');
         if (token) {

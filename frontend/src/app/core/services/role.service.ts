@@ -16,7 +16,6 @@ export class RoleService {
         private http: HttpClient,
         private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
     getRoles(): Observable<ResponseDto<RoleDto[]>> {

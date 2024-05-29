@@ -288,8 +288,8 @@ export class ProjectReportComponent implements OnInit {
     public onClear() {
         this.generatedReport = false;
         this.projects = [];
-        this.dateFromControl.reset();
-        this.dateToControl.reset();
+        this.dateFromControl.setValue('');
+        this.dateToControl.setValue('');
     }
 
 }

@@ -172,9 +172,9 @@ export class ProfileComponent implements OnInit {
                 this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Contraseña actualizada'});
                 this.visibleChangePassword = false;
                 this.isLoading = false;
-                this.oldPasswordControl.reset();
-                this.passwordControl.reset();
-                this.confirmPasswordControl.reset();
+                this.oldPasswordControl.setValue('');
+                this.passwordControl.setValue('');
+                this.confirmPasswordControl.setValue('');
             }, error: (error) => {
                 this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});

@@ -59,10 +59,10 @@ class AuthService @Autowired constructor(
         }
         // Get the user roles
         val roleEntities = roleRepository.findAllByEmail(credentials.email)
-        val roles = roleEntities.map { role -> role.roleName }.toSet().toTypedArray()
+        val roles = roleEntities.filter { role -> role.status }.distinctBy { role -> role.roleName }.map { role -> role.roleName }.toTypedArray()
         // Get the user groups
         val groupEntities = groupRepository.findAllByEmail(credentials.email)
-        val groups = groupEntities.map { group -> group.groupName }.toSet().toTypedArray()
+        val groups = groupEntities.filter { group -> group.status }.distinctBy { group -> group.groupName }.map { group -> group.groupName }.toTypedArray()
         return AuthUtil.generateAuthAndRefreshToken(userEntity, roles, groups)
     }
 
@@ -79,10 +79,10 @@ class AuthService @Autowired constructor(
             ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: User not found", "Usuario no encontrado")
         // Get the user roles
         val roleEntities = roleRepository.findAllByEmail(email)
-        val roles = roleEntities.map { role -> role.roleName }.toTypedArray()
+        val roles = roleEntities.filter { role -> role.status }.distinctBy { role -> role.roleName }.map { role -> role.roleName }.toTypedArray()
         // Get the user groups
         val groupEntities = groupRepository.findAllByEmail(email)
-        val groups = groupEntities.map { group -> group.groupName }.toTypedArray()
+        val groups = groupEntities.filter { group -> group.status }.distinctBy { group -> group.groupName }.map { group -> group.groupName }.toTypedArray()
         return AuthUtil.generateAuthAndRefreshToken(userEntity, roles, groups)
     }
 

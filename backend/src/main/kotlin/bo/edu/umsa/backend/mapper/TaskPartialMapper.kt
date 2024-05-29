@@ -16,7 +16,8 @@ class TaskPartialMapper {
                 taskDueDate = task.taskDueDate,
                 taskEndDate = task.taskEndDate,
                 txDate = task.txDate,
-                taskAssignees = task.taskAssignees?.filter { it.status }?.map { UserPartialMapper.entityToDto(it.user!!) } ?: emptyList(),
+                taskAssignees = task.taskAssignees?.filter { it.status && it.user?.status == true }?.map { UserPartialMapper.entityToDto(it.user!!) }
+                    ?: emptyList(),
                 taskFiles = task.taskFiles?.filter { it.status }?.map { FilePartialMapper.entityToDto(it.file!!) } ?: emptyList(),
             )
         }

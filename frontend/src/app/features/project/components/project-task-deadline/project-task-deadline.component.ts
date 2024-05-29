@@ -16,7 +16,6 @@ import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import {ProjectDto} from "../../models/project.dto";
 import {UserDto} from "../../../user/models/user.dto";
 import {TaskPriorityDto} from "../../../task/models/task-priority.dto";
-import {UtilService} from "../../../../core/services/util.service";
 
 @Component({
     selector: 'app-project-task-deadline',
@@ -89,9 +88,7 @@ export class ProjectTaskDeadlineComponent implements OnInit {
         private sharedService: SharedService,
         private activatedRoute: ActivatedRoute,
         private taskService: TaskService,
-        private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         // Get token from local storage
         const token = localStorage.getItem('token');
         if (token) {

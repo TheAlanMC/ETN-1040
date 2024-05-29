@@ -19,7 +19,8 @@ class TaskMapper {
                 taskRatingComment = task.taskRatingComment,
                 txDate = task.txDate,
                 txHost = task.txHost,
-                taskAssignees = task.taskAssignees?.filter { it.status }?.map { UserPartialMapper.entityToDto(it.user!!) } ?: emptyList(),
+                taskAssignees = task.taskAssignees?.filter { it.status && it.user?.status == true }?.map { UserPartialMapper.entityToDto(it.user!!) }
+                    ?: emptyList(),
                 taskFiles = task.taskFiles?.filter { it.status }?.map { FilePartialMapper.entityToDto(it.file!!) } ?: emptyList(),
                 taskComments = task.taskComments?.filter { it.status }?.sortedByDescending { it.taskCommentNumber }?.map { TaskCommentMapper.entityToDto(it) }
                     ?: emptyList(),

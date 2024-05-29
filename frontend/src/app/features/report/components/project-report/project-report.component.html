@@ -101,7 +101,8 @@
                     <td class="white-space-nowrap">{{ project.projectStatusName }}</td>
                     <td class="white-space-nowrap">
                         <p-progressBar [showValue]="false"
-                                       [style]="{'height': '1.5rem'}" [value]="project.projectFinishedTasks/project.projectTotalTasks*100">
+                                       [style]="{'height': '1.5rem'}"
+                                       [value]="(project.projectFinishedTasks/project.projectTotalTasks) == 0 ? 20 : (project.projectFinishedTasks/project.projectTotalTasks)*100">
                             <ng-template pTemplate="content">
                                 <span>{{ project.projectFinishedTasks }}/{{ project.projectTotalTasks }}</span>
                             </ng-template>

@@ -36,13 +36,10 @@ class FirebaseMessagingService @Autowired constructor(
             } else {
                 Message.builder().setToken(token).putAllData(dataMap).build()
             }
-            // Send a message to the device corresponding to the provided token
             val response = FirebaseMessaging.getInstance().send(message)
-            // Log the response
             logger.info("Successfully sent message: $response")
         } catch (e: Exception) {
             logger.error("Error sending notification to token $token")
-            // Disable the token
             val firebaseTokenEntity = firebaseTokenRepository.findByFirebaseTokenAndStatusIsTrue(token) ?: return
             firebaseTokenEntity.status = false
             firebaseTokenRepository.save(firebaseTokenEntity)

@@ -19,7 +19,6 @@ export class ProjectService {
         private http: HttpClient,
         private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
     public getAllProjects(): Observable<ResponseDto<ProjectDto[]>> {

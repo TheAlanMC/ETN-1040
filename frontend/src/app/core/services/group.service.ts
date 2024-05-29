@@ -18,7 +18,6 @@ export class GroupService {
         private http: HttpClient,
         private utilService: UtilService
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
     }
 
     getGroups(): Observable<ResponseDto<GroupDto[]>> {

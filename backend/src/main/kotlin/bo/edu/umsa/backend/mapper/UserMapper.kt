@@ -16,9 +16,9 @@ class UserMapper {
                 description = user.description,
                 txUser = user.txUser,
                 txDate = user.txDate,
-                roles = user.userGroups?.filter { it.status }?.mapNotNull { it.group?.groupRoles?.filter { it.status }?.mapNotNull { it.role?.roleName } }?.flatten()?.distinct()
+                roles = user.userGroups?.filter { userGroup -> userGroup.status }?.mapNotNull { userGroup -> userGroup.group?.groupRoles?.filter { groupRole -> groupRole.status }?.map { groupRole -> groupRole.role } }?.flatten()?.filter { role -> role!!.status }?.distinctBy { role -> role!!.roleId }?.sortedBy { role -> role!!.roleId }?.mapNotNull { role -> role!!.roleName }
                     ?: emptyList(),
-                groups = user.userGroups?.filter { it.status }?.mapNotNull { it.group?.groupName } ?: emptyList(),
+                groups = user.userGroups?.filter { it.status }?.sortedBy { it.group?.groupId }?.mapNotNull { it.group?.groupName } ?: emptyList(),
             )
         }
     }

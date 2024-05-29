@@ -122,7 +122,7 @@ class TaskService @Autowired constructor(
 
     fun createTask(newTaskDto: NewTaskDto) {
         // Validate the name, description, and dueDate are not empty
-        if (newTaskDto.taskName.trim().isEmpty() || newTaskDto.taskDueDate.trim().isEmpty()) {
+        if (newTaskDto.taskName.trim().isEmpty() || newTaskDto.taskDueDate.trim().isEmpty() || newTaskDto.projectId == 0 || newTaskDto.taskPriorityId == 0) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one required field is blank", "Al menos un campo requerido está en blanco")
         }
         // Validate the dates have the correct format
@@ -134,7 +134,6 @@ class TaskService @Autowired constructor(
         if (Timestamp.from(Instant.parse(newTaskDto.taskDueDate)).before(Timestamp.from(Instant.now()))) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: DueDate is in the past", "La fecha límite está en el pasado")
         }
-        // Validate the task priority exists
         taskPriorityRepository.findByTaskPriorityIdAndStatusIsTrue(newTaskDto.taskPriorityId.toLong())
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Task priority not found", "Prioridad de la tarea no encontrada")
 
@@ -550,10 +549,10 @@ class TaskService @Autowired constructor(
         if (projectOwnerRepository.findByProjectIdAndUserIdAndStatusIsTrue(taskEntity.projectId.toLong(), userId) == null && projectModeratorRepository.findByProjectIdAndUserIdAndStatusIsTrue(taskEntity.projectId.toLong(), userId) == null && projectMemberRepository.findByProjectIdAndUserIdAndStatusIsTrue(taskEntity.projectId.toLong(), userId) == null) {
             throw EtnException(HttpStatus.FORBIDDEN, "Error: User is not the project owner or a project moderator", "El usuario no es el propietario del proyecto o un colaborador del proyecto")
         }
-        // Validate the task status is 3
-        if (taskEntity.taskStatusId != 3) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Task status is not completed", "La tarea no está completada")
-        }
+//        // Validate the task status is 3
+//        if (taskEntity.taskStatusId != 3) {
+//            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Task status is not completed", "La tarea no está completada")
+//        }
         // Validate the task rating and comment are not empty
         if (taskEntity.taskRatingComment.isNotEmpty() && taskEntity.taskRating != 0) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Task feedback already exists", "La retroalimentación de la tarea ya existe")

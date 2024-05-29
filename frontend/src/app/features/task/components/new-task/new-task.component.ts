@@ -80,7 +80,6 @@ export class NewTaskComponent implements OnInit {
         private fileService: FileService,
         private router: Router,
     ) {
-        this.baseUrl = this.utilService.getApiUrl(this.baseUrl);
         this.defaultDisplay = this.utilService.checkIfMobile() ? 'true' : 'none';
         this.isMobile = this.utilService.checkIfMobile();
     }
@@ -161,9 +160,9 @@ export class NewTaskComponent implements OnInit {
     public onClose() {
         this.sidebarVisibleChange.emit(false);
         this.sidebarVisible = false;
-        this.taskNameControl.reset();
-        this.taskDescriptionControl.reset();
-        this.taskDueDateControl.reset();
+        this.taskNameControl.setValue('');
+        this.taskDescriptionControl.setValue('');
+        this.taskDueDateControl.setValue('');
         this.selectedAssignees = [];
         this.selectedPriority = {value: ''};
         this.files = [];
