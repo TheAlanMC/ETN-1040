@@ -27,7 +27,10 @@ class TaskSpecification {
 
         fun taskAssignee(userId: Int): Specification<Task> {
             return Specification { root, _, cb ->
-                cb.equal(root.get<Task>("taskAssignees").get<TaskAssignee>("userId"), userId)
+                cb.and (
+                    cb.equal(root.get<Task>("taskAssignees").get<TaskAssignee>("userId"), userId),
+                    cb.equal(root.get<Task>("taskAssignees").get<TaskAssignee>("status"), true)
+                )
             }
         }
 
@@ -75,7 +78,8 @@ class TaskSpecification {
                     cb.`in`(root.get<Any>("taskStatus").get<Any>("taskStatusName")).value(taskStatuses)
                 }
             } else {
-                Specification { root, _, cb ->
+                Specification { root, query, cb ->
+                    query.distinct(true)
                     cb.or(
                         cb.`in`(root.get<Any>("taskStatus").get<Any>("taskStatusName")).value(taskStatuses),
                         cb.and(cb.lessThan(root.get("taskDueDate"), Timestamp(System.currentTimeMillis())), cb.notEqual(root.get<Task>("taskStatusId"), 3)),
@@ -126,7 +130,10 @@ class TaskSpecification {
 
         fun taskAssignees(userIds: List<Int>): Specification<Task> {
             return Specification { root, _, cb ->
-                cb.`in`(root.get<Any>("taskAssignees").get<Any>("userId")).value(userIds)
+                cb.and(
+                    cb.`in`(root.get<Any>("taskAssignees").get<Any>("userId")).value(userIds),
+                    cb.equal(root.get<Task>("taskAssignees").get<TaskAssignee>("status"), true)
+                )
             }
         }
 

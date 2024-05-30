@@ -162,7 +162,7 @@ export class GroupAndRoleComponent implements OnInit {
             this.targetGroups.map(group => group.code)).subscribe({
             next: (data) => {
                 this.messageService.add({
-                    severity: 'success', summary: 'Éxito', detail: 'Grupos asignados correctamente'
+                    severity: 'success', summary: 'Éxito', detail: 'Permisos asignados correctamente'
                 });
                 this.isLoading = false;
                 this.selectedUser = {value: ''};
@@ -256,7 +256,7 @@ export class GroupAndRoleComponent implements OnInit {
             this.targetRoles.map(role => role.code)).subscribe({
             next: (data) => {
                 this.messageService.add({
-                    severity: 'success', summary: 'Éxito', detail: 'Roles asignados correctamente'
+                    severity: 'success', summary: 'Éxito', detail: 'Permisos asignados correctamente'
                 });
                 this.isLoading = false;
                 this.onClearGroup();
@@ -300,7 +300,7 @@ export class GroupAndRoleComponent implements OnInit {
         this.groupsService.deleteGroup(this.selectedGroupId).subscribe({
             next: (data) => {
                 this.messageService.add({
-                    severity: 'success', summary: 'Éxito', detail: 'Grupo eliminado correctamente'
+                    severity: 'success', summary: 'Éxito', detail: 'Rol eliminado correctamente'
                 });
                 this.onClearGroup();
                 this.getGroups();
@@ -329,7 +329,7 @@ export class GroupAndRoleComponent implements OnInit {
             this.groupDescriptionControl.value!).subscribe({
             next: (data) => {
                 this.messageService.add({
-                    severity: 'success', summary: 'Éxito', detail: 'Grupo creado correctamente'
+                    severity: 'success', summary: 'Éxito', detail: 'Rol creado correctamente'
                 });
                 this.isLoading = false;
                 this.visibleAddGroup = false;
@@ -349,7 +349,7 @@ export class GroupAndRoleComponent implements OnInit {
             this.groupDescriptionControl.value!).subscribe({
             next: (data) => {
                 this.messageService.add({
-                    severity: 'success', summary: 'Éxito', detail: 'Grupo actualizado correctamente'
+                    severity: 'success', summary: 'Éxito', detail: 'Rol actualizado correctamente'
                 });
                 this.isLoading = false;
                 this.visibleEditGroup = false;

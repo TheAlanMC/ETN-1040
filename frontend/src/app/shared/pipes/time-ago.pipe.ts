@@ -30,9 +30,13 @@ export class TimeAgoPipe implements PipeTransform {
             for (const i in intervals) {
                 counter = Math.floor(seconds / intervals[i]);
                 if (counter > 0) if (counter === 1) {
-                    return 'hace ' + counter + ' ' + i; // singular (1 day ago)
+                    return 'hace ' + counter + ' ' + i;
                 } else {
-                    return 'hace ' + counter + ' ' + i + 's'; // plural (2 days ago)
+                    if (i === 'mes') {
+                        return 'hace ' + counter + ' ' + i + 'es';
+                    } else {
+                        return 'hace ' + counter + ' ' + i + 's';
+                    }
                 }
             }
         }

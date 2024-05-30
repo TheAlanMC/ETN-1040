@@ -52,7 +52,7 @@ class GroupService @Autowired constructor(
         if (groupDto.groupName.isBlank() || groupDto.groupDescription.isBlank()) throw EtnException(HttpStatus.BAD_REQUEST, "Error: Empty fields", "Al menos un campo está vacío")
         logger.info("Updating group")
         val groupEntity = groupRepository.findByGroupIdAndStatusIsTrue(groupId)
-            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Group not found", "Grupo no encontrado")
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Group not found", "Rol no encontrado")
         groupEntity.groupName = groupDto.groupName.uppercase(Locale.getDefault())
         groupEntity.groupDescription = groupDto.groupDescription
         groupRepository.save(groupEntity)
@@ -61,12 +61,12 @@ class GroupService @Autowired constructor(
     fun deleteGroup(groupId: Long) {
         logger.info("Deleting group")
         val groupEntity = groupRepository.findByGroupIdAndStatusIsTrue(groupId)
-            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Group not found", "Grupo no encontrado")
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Group not found", "Rol no encontrado")
         // Validate that the group has no roles nor users assigned
         val groupRoleEntities = groupRoleRepository.findAllByGroupIdAndStatusIsTrue(groupId)
-        if (groupRoleEntities.isNotEmpty()) throw EtnException(HttpStatus.BAD_REQUEST, "Error: Group has roles assigned", "El grupo tiene roles asignados")
+        if (groupRoleEntities.isNotEmpty()) throw EtnException(HttpStatus.BAD_REQUEST, "Error: Group has roles assigned", "El rol tiene permisos asignados")
         val userGroupEntities = userGroupRepository.findAllByGroupIdAndStatusIsTrue(groupId)
-        if (userGroupEntities.isNotEmpty()) throw EtnException(HttpStatus.BAD_REQUEST, "Error: Group has users assigned", "El grupo tiene usuarios asignados")
+        if (userGroupEntities.isNotEmpty()) throw EtnException(HttpStatus.BAD_REQUEST, "Error: Group has users assigned", "El rol tiene usuarios asignados")
         groupEntity.status = false
         groupRepository.save(groupEntity)
     }
@@ -75,7 +75,7 @@ class GroupService @Autowired constructor(
         logger.info("Getting roles for group with id $groupId")
         // Validate that the group exists
         groupRepository.findByGroupIdAndStatusIsTrue(groupId)
-            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Group not found", "Grupo no encontrado")
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Group not found", "Rol no encontrado")
         // Get the roles
         val roleEntities = roleRepository.findAllByGroupId(groupId)
         return roleEntities.map { RoleMapper.entityToDto(it) }

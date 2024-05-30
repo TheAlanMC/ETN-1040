@@ -40,19 +40,28 @@ class ProjectSpecification {
 
         fun projectOwners(userIds: List<Int>): Specification<Project> {
             return Specification { root, _, cb ->
-                cb.`in`(root.get<Any>("projectOwners").get<Any>("userId")).value(userIds)
+                cb.and(
+                    cb.`in`(root.get<Any>("projectOwners").get<Any>("userId")).value(userIds),
+                    cb.equal(root.get<Any>("projectOwners").get<Any>("status"), true)
+                )
             }
         }
 
         fun projectModerators(userIds: List<Int>): Specification<Project> {
             return Specification { root, _, cb ->
-                cb.`in`(root.get<Any>("projectModerators").get<Any>("userId")).value(userIds)
+                cb.and(
+                    cb.`in`(root.get<Any>("projectModerators").get<Any>("userId")).value(userIds),
+                    cb.equal(root.get<Any>("projectModerators").get<Any>("status"), true)
+                )
             }
         }
 
         fun projectMembers(userIds: List<Int>): Specification<Project> {
             return Specification { root, _, cb ->
-                cb.`in`(root.get<Any>("projectMembers").get<Any>("userId")).value(userIds)
+                cb.and(
+                    cb.`in`(root.get<Any>("projectMembers").get<Any>("userId")).value(userIds),
+                    cb.equal(root.get<Any>("projectMembers").get<Any>("status"), true)
+                )
             }
         }
 

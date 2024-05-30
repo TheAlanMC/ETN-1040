@@ -5,19 +5,22 @@
         <div class="col-12 lg:col-8">
             <div class="grid formgrid">
                 <div class="col-12 field">
-                    <label class="font-bold text-900" for="projectName">Nombre del Proyecto</label>
+                    <label class="font-bold text-900" for="projectName">Nombre del Proyecto <span
+                            style="color: red;">*</span></label>
                     <input [formControl]="projectNameControl" id="projectName" label="Nombre del Proyecto" pInputText
                            placeholder="Nombre del Proyecto"
                            type="text">
                 </div>
                 <div class="col-12 lg:col-6 field">
-                    <label class="font-bold text-900" for="dateFrom">Fecha de Inicio</label>
+                    <label class="font-bold text-900" for="dateFrom">Fecha de Inicio <span
+                            style="color: red;">*</span></label>
                     <p-calendar [formControl]="dateFromControl" [readonlyInput]="true" [showIcon]="true"
                                 dateFormat="dd/mm/yy"
                                 id="dateFrom" placeholder="Fecha de Inicio"></p-calendar>
                 </div>
                 <div class="col-12 lg:col-6 field">
-                    <label class="font-bold text-900" for="dateTo">Fecha de Finalización</label>
+                    <label class="font-bold text-900" for="dateTo">Fecha de Finalización <span
+                            style="color: red;">*</span></label>
                     <p-calendar [formControl]="dateToControl" [readonlyInput]="true" [showIcon]="true"
                                 dateFormat="dd/mm/yy"
                                 id="dateTo" placeholder="Fecha de Finalización"></p-calendar>

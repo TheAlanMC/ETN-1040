@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.time.Instant
+import java.time.ZoneId
+import java.util.*
 
 @Service
 class ReportService @Autowired constructor(
@@ -90,8 +92,10 @@ class ReportService @Autowired constructor(
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found", "Archivo no encontrado")
         logger.info("Starting the service call to upload the report file")
 
+        val zoneId = ZoneId.of("America/La_Paz")
         val fileName = file.fileName.split(".")
         val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
+        simpleDateFormat.timeZone = TimeZone.getTimeZone(zoneId)
         val simpleDateFrom = simpleDateFormat.format(Timestamp.from(Instant.parse(dateFrom)))
         val simpleDateTo = simpleDateFormat.format(Timestamp.from(Instant.parse(dateTo)))
         val reportEntity = Report()

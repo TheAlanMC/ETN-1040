@@ -139,7 +139,12 @@ class UserService @Autowired constructor(
         logger.info("User group created with id ${userGroupEntity.userGroupId}")
 
         // Send the email with the password
-        emailService.sendEmail(newUserDto.email, "Bienvenido a la plataforma", "Bienvenido ${newUserDto.firstName} ${newUserDto.lastName} a la plataforma del Laboratorio Multimedia.\n" + "Se le asignó el rol de ${groupEntity.groupName}.\n" + "Su contraseña es: $password\n" + "Por favor, cambie su contraseña en su primer inicio de sesión.")
+        emailService.sendEmail(newUserDto.email, "Bienvenido a la plataforma",
+            "Bienvenido ${newUserDto.firstName} ${newUserDto.lastName} a la plataforma del Laboratorio Multimedia.\n" +
+                    "Puede acceder a la plataforma en el siguiente enlace: https://167.172.144.172\n" +
+                    "Se le asignó el rol de ${groupEntity.groupName}.\n" +
+                    "Su contraseña es: $password\n" +
+                    "Por favor, cambie su contraseña en su primer inicio de sesión.")
     }
 
     fun updateUser(
