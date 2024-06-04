@@ -402,8 +402,7 @@ class ProjectService @Autowired constructor(
 
     @Scheduled(cron = "0 0 20 * * *")
     fun sendNotification() {
-        // find all project wich PROJECT END DATE IS in the next 24 hours
-        logger.info("Starting sending notifications")
+        logger.info("Starting sending notifications for projects")
         val secondsToAdd: Long = 60 * 60 * 24 // 24 hours
         val projectEntities = projectRepository.findAllByProjectDateToBetweenAndProjectEndDateIsNullAndStatusIsTrueOrderByProjectDateTo(Timestamp.from(Instant.now()), Timestamp.from(Instant.now().plusSeconds(secondsToAdd)))
 
@@ -444,5 +443,6 @@ class ProjectService @Autowired constructor(
                     firebaseMessagingService.sendNotification(token.isMobile, token.firebaseToken, moderatorMessageTittle, moderatorMessageBody)
             }
         }
+        logger.info("Notifications sent for projects")
     }
 }

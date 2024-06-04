@@ -140,12 +140,14 @@
     <div class="flex flex-column">
 
         <div class="field col-12 p-0">
-            <label class="font-medium text-900" for="roleName">Nombre del Rol</label>
+            <label class="font-medium text-900" for="roleName">Nombre del Rol <span
+                    style="color: red;">*</span></label>
             <input [formControl]="groupNameControl" class="w-full" id="roleName" pInputText placeholder="Nombre del Rol"
                    type="text">
         </div>
         <div class="field col-12 p-0">
-            <label class="font-medium text-900" for="roleDescription">Descripción del Rol</label>
+            <label class="font-medium text-900" for="roleDescription">Descripción del Rol <span
+                    style="color: red;">*</span></label>
             <textarea [autoResize]="true" [formControl]="groupDescriptionControl" class="w-full h-5rem" id="roleDescription" pInputTextarea
                       placeholder="Descripción del Rol" rows="3" type="text"></textarea>
         </div>
@@ -167,12 +169,14 @@
     <div class="flex flex-column">
 
         <div class="field col-12 p-0">
-            <label class="font-medium text-900" for="newRoleName">Nombre del Rol</label>
+            <label class="font-medium text-900" for="newRoleName">Nombre del Rol <span
+                    style="color: red;">*</span></label>
             <input [formControl]="groupNameControl" class="w-full" id="newRoleName" pInputText placeholder="Nombre del Rol"
                    type="text">
         </div>
         <div class="field col-12 p-0">
-            <label class="font-medium text-900" for="newRoleDescription">Descripción del Rol</label>
+            <label class="font-medium text-900" for="newRoleDescription">Descripción del Rol <span
+                    style="color: red;">*</span></label>
             <textarea [autoResize]="true" [formControl]="groupDescriptionControl" class="w-full h-5rem" id="newRoleDescription" pInputTextarea
                       placeholder="Descripción del Rol" rows="3" type="text"></textarea>
         </div>

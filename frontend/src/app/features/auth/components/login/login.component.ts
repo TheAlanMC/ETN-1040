@@ -59,17 +59,6 @@ export class LoginComponent implements OnInit {
         return this.layoutService.config().colorScheme !== 'light';
     }
 
-    public requestToken() {
-        this.firebaseService.getFirebaseToken().subscribe({
-            next: (token) => {
-                this.token = token;
-            },
-            error: (error) => {
-                console.error(error);
-            },
-        });
-    }
-
     public onLogin() {
         if (this.isChromium && !this.isMobile) {
             this.login();

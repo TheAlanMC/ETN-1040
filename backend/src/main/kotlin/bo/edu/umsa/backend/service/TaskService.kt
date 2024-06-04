@@ -5,6 +5,7 @@ import bo.edu.umsa.backend.entity.*
 import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.*
 import bo.edu.umsa.backend.repository.*
+import bo.edu.umsa.backend.service.ProjectService.Companion
 import bo.edu.umsa.backend.specification.TaskSpecification
 import bo.edu.umsa.backend.util.AuthUtil
 import org.slf4j.LoggerFactory
@@ -565,6 +566,7 @@ class TaskService @Autowired constructor(
 
     @Scheduled(cron = "0 0 21 * * *")
     fun sendNotification() {
+        logger.info("Starting sending notifications for tasks")
         val secondsToAdd: Long = 60 * 60 * 24 // 24 hours
         val taskEntities = taskRepository.findAllByTaskDueDateBetweenAndTaskEndDateIsNullAndStatusIsTrueOrderByTaskDueDate(Timestamp.from(Instant.now()), Timestamp.from(Instant.now().plusSeconds(secondsToAdd)))
 
@@ -587,6 +589,6 @@ class TaskService @Autowired constructor(
                 firebaseMessagingService.sendNotification(token.isMobile, token.firebaseToken, assigneeMessageTittle, assigneeMessageBody)
             }
         }
-
+        logger.info("Notifications sent for tasks")
     }
 }

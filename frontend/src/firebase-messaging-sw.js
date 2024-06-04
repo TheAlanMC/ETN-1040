@@ -12,6 +12,9 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
+const channel = new BroadcastChannel('firebase-messaging');
+
+
 messaging.onBackgroundMessage(function(payload) {
     const notificationTitle = payload.data.title;
     const notificationOptions = {
@@ -19,4 +22,6 @@ messaging.onBackgroundMessage(function(payload) {
         icon: payload.data.image,
     };
     self.registration.showNotification(notificationTitle, notificationOptions);
+
+    channel.postMessage(payload);
 });

@@ -15,6 +15,12 @@ export class FirebaseService {
     public messageSubject = new Subject<any>();
 
     constructor() {
+        if (this.platform === 'ios' || this.platform === 'android') {
+            this.listenToMessagesNative();
+            this.listenToBackgroundMessages();
+        } else {
+            this.listenToMessagesWeb();
+        }
     }
 
     public getFirebaseToken() {
@@ -56,6 +62,13 @@ export class FirebaseService {
             (notification) => {
                 this.messageSubject.next(notification);
             });
+    }
+
+    public listenToBackgroundMessages() {
+        const channel = new BroadcastChannel('firebase-messaging');
+        channel.addEventListener('message', (event) => {
+            this.messageSubject.next(event.data);
+        });
     }
 
     public getMessageObservable() {

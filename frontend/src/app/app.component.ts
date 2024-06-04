@@ -9,14 +9,12 @@ import {Capacitor} from "@capacitor/core";
     templateUrl: './app.component.html',
     styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
     title = 'frontend';
-    private platform = Capacitor.getPlatform();
 
     constructor(
         private config: PrimeNGConfig,
         private translateService: TranslateService,
-        private firebaseService: FirebaseService
     ) {
         this.translateService.setDefaultLang('es');
         this.translateService.use('es');
@@ -25,11 +23,4 @@ export class AppComponent implements OnInit {
         });
     }
 
-    ngOnInit() {
-        if (this.platform === 'ios' || this.platform === 'android') {
-            this.firebaseService.listenToMessagesNative();
-        } else {
-            this.firebaseService.listenToMessagesWeb();
-        }
-    }
 }
