@@ -1,7 +1,8 @@
 export const environment = {
   // Zero Tier IP
   // API_URL: 'https://10.244.150.84/backend',
-  API_URL: 'https://167.172.144.172/backend',
+  // API_URL: 'https://167.172.144.172/backend',
+  API_URL: 'https://laboratoriomultimedia.xyz/backend',
   firebase:{
     apiKey: "AIzaSyA6vP_lILs4xOGDK0FAXKcfpw3-Em75J7s",
     authDomain: "laboratorio-multimedia.firebaseapp.com",

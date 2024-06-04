@@ -11,7 +11,7 @@
             <div *ngIf="!loadingRoles; else loading">
                 <div *ngIf="roles.length > 0; else noRoles">
                     <div *ngFor="let rol of roles">
-                        <p npm list -g --depth=0class="m-0 p-0 text-600 line-height-3 mr-3">-{{ rol }}</p>
+                        <p class="m-0 p-0 text-600 line-height-3 mr-3">-{{ rol }}</p>
                     </div>
                 </div>
                 <ng-template #noRoles>

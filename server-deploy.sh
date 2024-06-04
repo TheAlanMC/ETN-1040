@@ -72,8 +72,14 @@ echo 'Deployment completed successfully!'"
 # Go back to the root directory
 cd ..
 
-# Android deployment
+# Deploy the frontend application
 cd ./frontend || exit 1
+
+# Deploy on firebase
+echo "Deploying the frontend application on Firebase..."
+firebase deploy --only hosting > /dev/null 2>&1
+
+# Android deployment
 echo "Building the Android application..."
 "$ANDROID_BUILD_SCRIPT" > /dev/null 2>&1 <<EOF
 $version_tag

@@ -51,16 +51,16 @@ export class LoginComponent implements OnInit {
         this.isChromium = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
     }
 
-    ngOnInit(): void {
-        this.isMobile = this.utilService.checkIfMobile();
-    }
-
     get dark(): boolean {
         return this.layoutService.config().colorScheme !== 'light';
     }
 
+    ngOnInit(): void {
+        this.isMobile = this.utilService.checkIfMobile();
+    }
+
     public onLogin() {
-        if (this.isChromium && !this.isMobile) {
+        if (this.isChromium && !this.isMobile && !this.checkHost()) {
             this.login();
         } else {
             this.isLoading = true;
@@ -72,10 +72,19 @@ export class LoginComponent implements OnInit {
                 error: (error) => {
                     console.error(error);
                     this.isLoading = false;
-                    this.messageService.add({severity: 'error', summary: 'Error', detail: 'Por favor, permita las notificaciones para iniciar sesión'});
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: 'Por favor, permita las notificaciones para iniciar sesión'
+                    });
                 },
             });
         }
+    }
+
+    public checkHost() {
+        const currentHost = window.location.host;
+        return currentHost === 'laboratorio-multimedia.firebaseapp.com' || currentHost === 'laboratorio-multimedia.web.app';
     }
 
 

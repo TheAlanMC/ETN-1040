@@ -1073,7 +1073,6 @@ export class ViewTaskComponent {
     }
 
     public downloadEditReplacementFile(file: any) {
-        console.log(file);
         if (file.id === undefined) {
             if (!this.isMobile) {
                 const url = URL.createObjectURL(file);

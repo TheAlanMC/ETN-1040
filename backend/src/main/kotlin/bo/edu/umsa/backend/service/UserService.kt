@@ -13,6 +13,7 @@ import bo.edu.umsa.backend.repository.*
 import bo.edu.umsa.backend.specification.UserSpecification
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
@@ -34,11 +35,16 @@ class UserService @Autowired constructor(
     private val projectOwnerRepository: ProjectOwnerRepository,
     private val projectModeratorRepository: ProjectModeratorRepository,
     private val projectMemberRepository: ProjectMemberRepository,
-    private val taskAssigneeRepository: TaskAssigneeRepository
+    private val taskAssigneeRepository: TaskAssigneeRepository,
 ) {
+
+    @Value("\${frontend.url}")
+    private val url: String? = null
+
     companion object {
         private val logger = LoggerFactory.getLogger(UserService::class.java)
     }
+
 
     fun getAllUsers(): List<UserPartialDto> {
         logger.info("Getting all users")
@@ -138,10 +144,11 @@ class UserService @Autowired constructor(
         userGroupRepository.save(userGroupEntity)
         logger.info("User group created with id ${userGroupEntity.userGroupId}")
 
+
         // Send the email with the password
         emailService.sendEmail(newUserDto.email, "Bienvenido a la plataforma",
             "Bienvenido ${newUserDto.firstName} ${newUserDto.lastName} a la plataforma del Laboratorio Multimedia.\n" +
-                    "Puede acceder a la plataforma en el siguiente enlace: https://167.172.144.172\n" +
+                    "Puede acceder a la plataforma en el siguiente enlace: $url\n" +
                     "Se le asignó el rol de ${groupEntity.groupName}.\n" +
                     "Su contraseña es: $password\n" +
                     "Por favor, cambie su contraseña en su primer inicio de sesión.")

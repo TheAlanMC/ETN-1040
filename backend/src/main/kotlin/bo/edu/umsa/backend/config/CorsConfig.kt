@@ -22,6 +22,10 @@ class CorsConfig {
             "https://167.172.144.172:4200", "https://167.172.144.172",
             // VPN Server
             "http://10.244.150.84:4200", "http://10.244.150.84",
+            // Firebase Hosting
+            "https://laboratorio-multimedia.web.app", "https://laboratorio-multimedia.firebaseapp.com",
+            // Reverse Proxy
+            "https://laboratoriomultimedia.xyz",
             // Mobile App
             "capacitor://localhost")
         corsConfiguration.allowedHeaders = listOf(
