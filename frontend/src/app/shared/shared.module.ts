@@ -10,6 +10,7 @@ import {ButtonModule} from "primeng/button";
 import {RouterLink} from "@angular/router";
 import {TimeAgoPipe} from "./pipes/time-ago.pipe";
 import {FileSizePipe} from "./pipes/file-size.pipe";
+import {BreakLinePipe} from "./pipes/breakline.pipe";
 
 @NgModule({
     declarations: [
@@ -17,10 +18,12 @@ import {FileSizePipe} from "./pipes/file-size.pipe";
         NotFoundComponent,
         TimeAgoPipe,
         FileSizePipe,
+        BreakLinePipe
     ],
     exports: [
         TimeAgoPipe,
         FileSizePipe,
+        BreakLinePipe
     ],
     imports: [
         CommonModule,

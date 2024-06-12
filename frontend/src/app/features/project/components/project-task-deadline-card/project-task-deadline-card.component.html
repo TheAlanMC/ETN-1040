@@ -10,7 +10,8 @@
             <p-tieredMenu #menu [model]="menuItems" [popup]="true" appendTo="body"></p-tieredMenu>
         </div>
     </div>
-    <div *ngIf="card.taskDescription" class="text-700" style="word-break: break-word">{{ card.taskDescription }}</div>
+    <div *ngIf="card.taskDescription" class="text-700" style="word-break: break-word"
+            [innerHTML]="card.taskDescription | breakLine"></div>
     <div class="flex align-items-center gap-1 flex-wrap">
         <p-tag [style]="{background: getPriorityColor(card.taskPriority.taskPriorityId)}"
                value="{{card.taskPriority.taskPriorityName}}"></p-tag>

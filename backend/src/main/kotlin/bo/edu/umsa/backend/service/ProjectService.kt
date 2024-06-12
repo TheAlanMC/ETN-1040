@@ -106,7 +106,7 @@ class ProjectService @Autowired constructor(
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date range is incorrect", "El rango de fechas es incorrecto")
         }
         // Validate the end date is after current date
-        if (Timestamp.from(Instant.parse(newProjectDto.projectDateTo)).before(Timestamp.from(Instant.now()))) {
+        if ((Timestamp.from(Instant.parse(newProjectDto.projectDateTo).plusSeconds(60 * 60 * 24 - 1))).before(Timestamp.from(Instant.now()))) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: End date is before current date", "La fecha de finalización es anterior a la fecha actual")
         }
         // Validate the project moderators are not empty and valid

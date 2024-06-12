@@ -219,7 +219,7 @@
                         <div *ngIf="valRadio==='Yes'" class="flex p-3">
                             <div class="w-full">
                                 <div class="flex justify-content-between align-items-center mb-2">
-                                    <textarea (focus)="onReplacementFocus()" (keydown.enter)="onReplacement($event)"
+                                    <textarea (focus)="onReplacementFocus()"
                                               [formControl]="replacementControl"
                                               class="w-full" name="replacement"
                                               pInputTextarea placeholder="Escribe una descripción del cambio de equipo..."
@@ -336,8 +336,8 @@
                                             icon="pi pi-paperclip" pButton pRipple></button>
                                     <button (click)="onReplacement()" [loading]="isLoading"
                                             class="p-button-primary p-button-sm p-button-outlined mr-3 w-auto"
-                                            icon="pi pi-send"
-                                            label="Enviar"
+                                            icon="pi pi-save"
+                                            label="Guardar"
                                             pButton pRipple>
                                     </button>
                                     <button (click)="onReplacementCancel()" [loadingIcon]="'pi pi-times'" [loading]="isLoading"
@@ -366,7 +366,7 @@
                             </div>
                         </div>
                         <div class="p-3">
-                            <span class="block text-900" style="word-break: break-all;">{{ task.replacedParts[0].replacedPartDescription }}</span>
+                            <span class="block text-900" style="word-break: break-all;" [innerHTML] = "task.replacedParts[0].replacedPartDescription | breakLine"></span>
                             <div *ngIf="task.replacedParts[0].replacedPartFiles.length > 0" class="grid p-fluid formgrid">
                                 <div class="col-12">
                                     <p-fileUpload #fileUploader [auto]="true"
@@ -483,12 +483,12 @@
                         <div class="p-3">
                             <div class="w-full">
                                 <div class="flex justify-content-between align-items-center mb-2">
-                                    <textarea (keydown.enter)="onEditReplacement($event)"
-                                              [formControl]="editReplacementControl"
-                                              class="w-full" name="replacement"
-                                              pInputTextarea placeholder="Escribe una descripción del cambio de equipo..."
-                                              style="resize: none"
-                                              type="text"></textarea>
+                                    <textarea
+                                            [formControl]="editReplacementControl"
+                                            class="w-full" name="replacement"
+                                            pInputTextarea placeholder="Escribe una descripción del cambio de equipo..."
+                                            style="resize: none"
+                                            type="text"></textarea>
                                 </div>
                                 <div *ngIf="showEditReplacementAttachment" class="grid p-fluid formgrid">
                                     <div class="col-12">
@@ -601,8 +601,8 @@
                                             icon="pi pi-paperclip" pButton pRipple></button>
                                     <button (click)="onEditReplacement()" [loading]="isLoading"
                                             class="p-button-primary p-button-sm p-button-outlined mr-3 w-auto"
-                                            icon="pi pi-send"
-                                            label="Enviar"
+                                            icon="pi pi-save"
+                                            label="Guardar"
                                             pButton pRipple>
                                     </button>
                                     <button (click)="onEditReplacementCancel()" [loadingIcon]="'pi pi-times'" [loading]="isLoading"
@@ -668,7 +668,7 @@
                                 style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover;">
                         <div class="card w-full ml-3 p-4">
                             <div class="flex justify-content-between align-items-center mb-2">
-                                <textarea (focus)="onCommentFocus()" (keydown.enter)="onComment($event)" [formControl]="newCommentControl"
+                                <textarea (focus)="onCommentFocus()" [formControl]="newCommentControl"
                                           class="w-full" name="comment"
                                           pInputTextarea placeholder="Escribe un comentario..." style="resize: none"
                                           type="text"></textarea>
@@ -813,7 +813,7 @@
                                     <p-tieredMenu #menu [model]="menuItems" [popup]="true" appendTo="body"></p-tieredMenu>
                                 </div>
                             </div>
-                            <span class="block text-900" style="word-break: break-all;">{{ comment.taskComment }}</span>
+                            <span class="block text-900" style="word-break: break-all;" [innerHTML]="comment.taskComment | breakLine"></span>
                             <div *ngIf="comment.taskCommentFiles.length > 0" class="grid p-fluid formgrid">
                                 <div class="col-12">
                                     <p-fileUpload #fileUploader [auto]="true"
@@ -923,7 +923,7 @@
                                 <span class="block text-700">{{ comment.txDate | date: 'dd/MM/yyyy, HH:mm' }}</span>
                             </div>
                             <div class="flex justify-content-between align-items-center mb-2">
-                                <textarea (keydown.enter)="onEditComment($event)" [formControl]="editCommentControl" class="w-full" name="comment"
+                                <textarea [formControl]="editCommentControl" class="w-full" name="comment"
                                           pInputTextarea
                                           placeholder="Escribe un comentario..." style="resize: none"
                                           type="text"></textarea>
@@ -1036,8 +1036,8 @@
                                         class="p-button-secondary p-button-sm p-button-outlined mr-3"
                                         icon="pi pi-paperclip" pButton pRipple></button>
                                 <button (click)="onEditComment()" [loading]="isLoading" class="p-button-primary p-button-sm p-button-outlined mr-3"
-                                        icon="pi pi-send"
-                                        label="Enviar"
+                                        icon="pi pi-save"
+                                        label="Guardar"
                                         pButton pRipple>
                                 </button>
                                 <button (click)="onEditCommentCancel()" [loadingIcon]="'pi pi-times'" [loading]="isLoading"

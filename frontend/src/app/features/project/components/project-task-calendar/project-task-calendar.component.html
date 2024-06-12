@@ -69,8 +69,7 @@
     <ng-template pTemplate="content">
         <div [id]="selectedTask.taskId" class="flex flex-column w-full gap-3 border-round">
             <div *ngIf="selectedTask.taskDescription" class="text-700"
-                 style="word-break: break-word">{{ selectedTask.taskDescription }}
-            </div>
+                 style="word-break: break-word" [innerHTML]="selectedTask.taskDescription | breakLine"></div>
             <div class="flex align-items-center gap-1 flex-wrap">
                 <p-tag [style]="{background: getPriorityColor(selectedTask.taskPriority.taskPriorityId)}"
                        value="{{selectedTask.taskPriority.taskPriorityName}}"></p-tag>
