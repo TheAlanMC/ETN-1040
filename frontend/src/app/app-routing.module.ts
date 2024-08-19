@@ -14,6 +14,11 @@ const routes: Routes = [
             },
             {
                 path: '',
+                data: {breadcrumb: 'Horario'},
+                loadChildren: () => import('./features/schedule/schedule.module').then(m => m.ScheduleModule)
+            },
+            {
+                path: '',
                 data: {breadcrumb: 'Proyectos'},
                 loadChildren: () => import('./features/project/project.module').then(m => m.ProjectModule)
             },

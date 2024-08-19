@@ -5,7 +5,7 @@ import {FileUpload} from "primeng/fileupload";
 import {ActivatedRoute, Router} from "@angular/router";
 import {MessageService} from "primeng/api";
 import {UserService} from "../../../../core/services/user.service";
-import {GroupService} from "../../../../core/services/group.service";
+import {RoleService} from "../../../../core/services/role.service";
 import {Location} from "@angular/common";
 
 @Component({
@@ -23,8 +23,8 @@ export class EditUserComponent implements OnInit {
     profilePictureUrl: string = 'assets/layout/images/avatar.png';
     backupProfilePictureUrl: string = 'assets/layout/images/avatar.png';
 
+    permissions: string[] = [];
     roles: string[] = [];
-    groups: string[] = [];
 
     email = '';
 
@@ -44,7 +44,6 @@ export class EditUserComponent implements OnInit {
     constructor(
         private activatedRoute: ActivatedRoute,
         private userService: UserService,
-        private groupService: GroupService,
         private router: Router,
         private messageService: MessageService,
         private location: Location
@@ -76,8 +75,8 @@ export class EditUserComponent implements OnInit {
                 this.lastNameControl.setValue(this.user?.lastName ?? '');
                 this.phoneControl.setValue(this.user?.phone ?? '');
                 this.descriptionControl.setValue(this.user?.description ?? '');
-                this.groups = this.user?.groups ?? [];
                 this.roles = this.user?.roles ?? [];
+                this.permissions = this.user?.permissions ?? [];
                 this.email = this.user?.email ?? '';
             }, error: (error) => {
                 console.error(error);

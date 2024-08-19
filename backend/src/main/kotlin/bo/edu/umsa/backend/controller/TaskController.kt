@@ -24,7 +24,7 @@ class TaskController @Autowired constructor(
     fun getAllStatuses(): ResponseEntity<ResponseDto<List<TaskStatusDto>>> {
         logger.info("Starting the API call to get all task statuses")
         logger.info("GET /api/v1/tasks/statuses")
-        AuthUtil.verifyAuthTokenHasRoles(listOf("VER TAREAS", "CREAR TAREAS", "EDITAR TAREAS").toTypedArray())
+        AuthUtil.verifyAuthTokenHasPermissions(listOf("VER TAREAS", "CREAR TAREAS", "EDITAR TAREAS").toTypedArray())
         val statuses: List<TaskStatusDto> = taskService.getAllStatuses()
         logger.info("Success: Task statuses retrieved")
         return ResponseEntity(ResponseDto(true, "Estados de tareas recuperados", statuses), HttpStatus.OK)
@@ -34,7 +34,7 @@ class TaskController @Autowired constructor(
     fun getAllPriorities(): ResponseEntity<ResponseDto<List<TaskPriorityDto>>> {
         logger.info("Starting the API call to get all task priorities")
         logger.info("GET /api/v1/tasks/priorities")
-        AuthUtil.verifyAuthTokenHasRoles(listOf("VER TAREAS", "CREAR TAREAS", "EDITAR TAREAS").toTypedArray())
+        AuthUtil.verifyAuthTokenHasPermissions(listOf("VER TAREAS", "CREAR TAREAS", "EDITAR TAREAS").toTypedArray())
         val priorities: List<TaskPriorityDto> = taskService.getAllPriorities()
         logger.info("Success: Task priorities retrieved")
         return ResponseEntity(ResponseDto(true, "Prioridades de tareas recuperadas", priorities), HttpStatus.OK)
@@ -54,7 +54,7 @@ class TaskController @Autowired constructor(
     ): ResponseEntity<ResponseDto<Page<TaskPartialDto>>> {
         logger.info("Starting the API call to get the tasks")
         logger.info("GET /api/v1/tasks")
-        AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
+        AuthUtil.verifyAuthTokenHasPermission("VER TAREAS")
         val tasks: Page<TaskPartialDto> = taskService.getTasks(sortBy, sortType, page, size, keyword, statuses, priorities, dateFrom, dateTo)
         logger.info("Success: Tasks retrieved")
         return ResponseEntity(ResponseDto(true, "Tareas recuperadas", tasks), HttpStatus.OK)
@@ -64,7 +64,7 @@ class TaskController @Autowired constructor(
     fun getTaskById(@PathVariable taskId: Long): ResponseEntity<ResponseDto<TaskDto>> {
         logger.info("Starting the API call to get the task by id")
         logger.info("GET /api/v1/tasks/$taskId")
-        AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
+        AuthUtil.verifyAuthTokenHasPermission("VER TAREAS")
         val task: TaskDto = taskService.getTaskById(taskId)
         logger.info("Success: Task retrieved")
         return ResponseEntity(ResponseDto(true, "Tarea recuperada", task), HttpStatus.OK)
@@ -74,7 +74,7 @@ class TaskController @Autowired constructor(
     fun createTask(@RequestBody newTaskDto: NewTaskDto): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to create the task")
         logger.info("POST /api/v1/tasks")
-        AuthUtil.verifyAuthTokenHasRole("CREAR TAREAS")
+        AuthUtil.verifyAuthTokenHasPermission("CREAR TAREAS")
         taskService.createTask(newTaskDto)
         logger.info("Success: Task created")
         return ResponseEntity(ResponseDto(true, "La tarea se ha creado", null), HttpStatus.CREATED)
@@ -87,7 +87,7 @@ class TaskController @Autowired constructor(
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the task")
         logger.info("PUT /api/v1/tasks/$taskId")
-        AuthUtil.verifyAuthTokenHasRole("EDITAR TAREAS")
+        AuthUtil.verifyAuthTokenHasPermission("EDITAR TAREAS")
         taskService.updateTask(taskId, newTaskDto)
         logger.info("Success: Task updated")
         return ResponseEntity(ResponseDto(true, "La tarea se ha actualizado", null), HttpStatus.OK)
@@ -100,7 +100,7 @@ class TaskController @Autowired constructor(
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the task status")
         logger.info("PUT /api/v1/tasks/$taskId/status")
-        AuthUtil.verifyAuthTokenHasRoles(listOf("VER TAREAS", "EDITAR TAREAS").toTypedArray())
+        AuthUtil.verifyAuthTokenHasPermissions(listOf("VER TAREAS", "EDITAR TAREAS").toTypedArray())
         taskService.updateTaskStatus(taskId, taskStatusDto.taskStatusId.toLong())
         logger.info("Success: Task status updated")
         return ResponseEntity(ResponseDto(true, "El estado de la tarea se ha actualizado", null), HttpStatus.OK)
@@ -110,7 +110,7 @@ class TaskController @Autowired constructor(
     fun deleteTask(@PathVariable taskId: Long): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to delete the task")
         logger.info("DELETE /api/v1/tasks/$taskId")
-        AuthUtil.verifyAuthTokenHasRole("EDITAR TAREAS")
+        AuthUtil.verifyAuthTokenHasPermission("EDITAR TAREAS")
         taskService.deleteTask(taskId)
         logger.info("Success: Task deleted")
         return ResponseEntity(ResponseDto(true, "La tarea se ha eliminado", null), HttpStatus.OK)
@@ -120,7 +120,7 @@ class TaskController @Autowired constructor(
     fun getTaskHistory(@PathVariable taskId: Long): ResponseEntity<ResponseDto<List<TaskHistoryDto>>> {
         logger.info("Starting the API call to get the task history")
         logger.info("GET /api/v1/tasks/$taskId/history/all")
-        AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
+        AuthUtil.verifyAuthTokenHasPermission("VER TAREAS")
         val taskHistory: List<TaskHistoryDto> = taskService.getTaskHistory(taskId)
         logger.info("Success: Task history retrieved")
         return ResponseEntity(ResponseDto(true, "Historial de la tarea recuperado", taskHistory), HttpStatus.OK)
@@ -133,7 +133,7 @@ class TaskController @Autowired constructor(
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to create the task feedback")
         logger.info("POST /api/v1/tasks/$taskId/feedback")
-        AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
+        AuthUtil.verifyAuthTokenHasPermission("VER TAREAS")
         taskService.createTaskFeedback(taskId, newTaskFeedbackDto)
         logger.info("Success: Task feedback created")
         return ResponseEntity(ResponseDto(true, "El feedback de la tarea se ha creado", null), HttpStatus.CREATED)

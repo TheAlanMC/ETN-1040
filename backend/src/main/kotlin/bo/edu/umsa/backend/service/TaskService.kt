@@ -5,7 +5,6 @@ import bo.edu.umsa.backend.entity.*
 import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.*
 import bo.edu.umsa.backend.repository.*
-import bo.edu.umsa.backend.service.ProjectService.Companion
 import bo.edu.umsa.backend.specification.TaskSpecification
 import bo.edu.umsa.backend.util.AuthUtil
 import org.slf4j.LoggerFactory

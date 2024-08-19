@@ -4,7 +4,7 @@ import {FormControl, Validators} from "@angular/forms";
 import {FileUpload} from "primeng/fileupload";
 import {Router} from "@angular/router";
 import {UserService} from "../../../../core/services/user.service";
-import {GroupService} from "../../../../core/services/group.service";
+import {RoleService} from "../../../../core/services/role.service";
 import {MessageService, SelectItem} from "primeng/api";
 import {Location} from '@angular/common';
 
@@ -18,13 +18,13 @@ export class NewUserComponent implements OnInit {
 
     isLoading: boolean = false;
 
-    selectedGroupId: number = 0;
+    selectedRoleId: number = 0;
 
-    roles: string[] = [];
-    selectedGroup: SelectItem = {value: ''};
-    groups: SelectItem[] = [];
+    permission: string[] = [];
+    selectedRole: SelectItem = {value: ''};
+    roles: SelectItem[] = [];
 
-    loadingRoles = false;
+    loadingPermissions = false;
 
     firstNameControl = new FormControl('',
         [Validators.required]);
@@ -41,7 +41,7 @@ export class NewUserComponent implements OnInit {
 
     constructor(
         private userService: UserService,
-        private groupService: GroupService,
+        private roleService: RoleService,
         private router: Router,
         private messageService: MessageService,
         private location: Location
@@ -49,15 +49,15 @@ export class NewUserComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.getGroups();
+        this.getRoles();
     }
 
-    public getGroups() {
-        this.groupService.getGroups().subscribe({
+    public getRoles() {
+        this.roleService.getRoles().subscribe({
             next: (data) => {
-                this.groups = data.data!.map(group => {
+                this.roles = data.data!.map(role => {
                     return {
-                        label: group.groupName, value: group.groupId
+                        label: role.roleName, value: role.roleId
                     }
                 });
             }, error: (error) => {
@@ -66,27 +66,27 @@ export class NewUserComponent implements OnInit {
         });
     }
 
-    public onSelectGroup(event: any) {
-        this.loadingRoles = true;
-        this.groupService.getGroupRoles(event.value).subscribe({
+    public onSelectPermission(event: any) {
+        this.loadingPermissions = true;
+        this.roleService.getRolePermissions(event.value).subscribe({
             next: (data) => {
-                this.roles = data.data!.map(role => role.roleName);
-                this.selectedGroupId = event.value;
-                this.loadingRoles = false;
+                this.permission = data.data!.map(permission => permission.permissionName);
+                this.selectedRoleId = event.value;
+                this.loadingPermissions = false;
             }, error: (error) => {
                 console.error(error);
-                this.loadingRoles = false;
+                this.loadingPermissions = false;
             }
         });
     }
 
-    public onClearGroup() {
-        this.roles = [];
+    public onClearPermission() {
+        this.permission = [];
     }
 
     public onSave() {
         this.isLoading = true;
-        this.userService.createUser(this.selectedGroupId,
+        this.userService.createUser(this.selectedRoleId,
             this.emailControl.value!,
             this.firstNameControl.value!,
             this.lastNameControl.value!,

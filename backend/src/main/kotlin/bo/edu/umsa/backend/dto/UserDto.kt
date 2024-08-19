@@ -11,6 +11,6 @@ data class UserDto(
     val description: String,
     val txUser: String,
     val txDate: Timestamp,
-    val groups: List<String>,
     val roles: List<String>,
+    val permissions: List<String>,
 )

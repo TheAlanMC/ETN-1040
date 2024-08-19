@@ -11,8 +11,10 @@ export class ViewProjectComponent implements OnInit {
     routeItems: MenuItem[] = [];
 
     ngOnInit() {
-        this.routeItems = [{label: 'Proyecto', routerLink: 'detail'}, {
-            label: 'Tareas', routerLink: 'task-list'
-        }, {label: 'Plazos', routerLink: 'task-deadline'}, {label: 'Calendario', routerLink: 'task-calendar'}];
+        this.routeItems = [
+            {label: 'Proyecto', routerLink: 'detail'},
+            {label: 'Tareas', routerLink: 'task-list'},
+            {label: 'Plazos', routerLink: 'task-deadline'},
+            {label: 'Calendario', routerLink: 'task-calendar'}];
     }
 }

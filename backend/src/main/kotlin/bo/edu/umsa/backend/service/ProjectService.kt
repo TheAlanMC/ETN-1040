@@ -161,6 +161,41 @@ class ProjectService @Autowired constructor(
             projectMemberRepository.save(projectMemberEntity)
         }
         logger.info("Project members created for project ${projectEntity.projectId}")
+
+        // Send the notification to the project moderators
+        newProjectDto.projectModeratorIds.forEach { moderatorId ->
+            val moderatorEmail = userRepository.findByUserIdAndStatusIsTrue(moderatorId.toLong())!!.email
+            val moderatorTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(moderatorId.toLong())
+            val moderatorMessageTittle = "Nuevo proyecto"
+            val moderatorMessageBody = "Se te ha asignado como colaborador en el proyecto '${newProjectDto.projectName}'"
+            val notificationEntity = Notification()
+            notificationEntity.messageTitle = moderatorMessageTittle
+            notificationEntity.messageBody = moderatorMessageBody
+            notificationEntity.userId = moderatorId
+            notificationRepository.save(notificationEntity)
+            emailService.sendEmail(moderatorEmail, moderatorMessageTittle, moderatorMessageBody)
+            moderatorTokens.forEach { token ->
+                firebaseMessagingService.sendNotification(token.isMobile, token.firebaseToken, moderatorMessageTittle, moderatorMessageBody)
+            }
+        }
+
+        // Send the notification to the project members
+        newProjectDto.projectMemberIds.forEach { memberId ->
+            val memberEmail = userRepository.findByUserIdAndStatusIsTrue(memberId.toLong())!!.email
+            val memberTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(memberId.toLong())
+            val memberMessageTittle = "Nuevo proyecto"
+            val memberMessageBody = "Se te ha asignado como miembro del equipo en el proyecto '${newProjectDto.projectName}'"
+            val notificationEntity = Notification()
+            notificationEntity.messageTitle = memberMessageTittle
+            notificationEntity.messageBody = memberMessageBody
+            notificationEntity.userId = memberId
+            notificationRepository.save(notificationEntity)
+            emailService.sendEmail(memberEmail, memberMessageTittle, memberMessageBody)
+            memberTokens.forEach { token ->
+                firebaseMessagingService.sendNotification(token.isMobile, token.firebaseToken, memberMessageTittle, memberMessageBody)
+            }
+        }
+
     }
 
     fun updateProject(
@@ -259,6 +294,44 @@ class ProjectService @Autowired constructor(
             }
         }
         logger.info("Project moderators and members updated for project $projectId")
+
+        // Send the notification to the project moderators if they are different
+        if (projectModeratorEntities.map { it.userId }.toSet() != projectDto.projectModeratorIds.map { it }.toSet()) {
+            projectDto.projectModeratorIds.forEach { moderatorId ->
+                val moderatorEmail = userRepository.findByUserIdAndStatusIsTrue(moderatorId.toLong())!!.email
+                val moderatorTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(moderatorId.toLong())
+                val moderatorMessageTittle = "Proyecto actualizado"
+                val moderatorMessageBody = "Se te ha asignado como colaborador en el proyecto '${projectDto.projectName}'"
+                val notificationEntity = Notification()
+                notificationEntity.messageTitle = moderatorMessageTittle
+                notificationEntity.messageBody = moderatorMessageBody
+                notificationEntity.userId = moderatorId
+                notificationRepository.save(notificationEntity)
+                emailService.sendEmail(moderatorEmail, moderatorMessageTittle, moderatorMessageBody)
+                moderatorTokens.forEach { token ->
+                    firebaseMessagingService.sendNotification(token.isMobile, token.firebaseToken, moderatorMessageTittle, moderatorMessageBody)
+                }
+            }
+        }
+
+        // Send the notification to the project members if they are different
+        if (projectMemberEntities.map { it.userId }.toSet() != projectDto.projectMemberIds.map { it }.toSet()) {
+            projectDto.projectMemberIds.forEach { memberId ->
+                val memberEmail = userRepository.findByUserIdAndStatusIsTrue(memberId.toLong())!!.email
+                val memberTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(memberId.toLong())
+                val memberMessageTittle = "Proyecto actualizado"
+                val memberMessageBody = "Se te ha asignado como miembro del equipo en el proyecto '${projectDto.projectName}'"
+                val notificationEntity = Notification()
+                notificationEntity.messageTitle = memberMessageTittle
+                notificationEntity.messageBody = memberMessageBody
+                notificationEntity.userId = memberId
+                notificationRepository.save(notificationEntity)
+                emailService.sendEmail(memberEmail, memberMessageTittle, memberMessageBody)
+                memberTokens.forEach { token ->
+                    firebaseMessagingService.sendNotification(token.isMobile, token.firebaseToken, memberMessageTittle, memberMessageBody)
+                }
+            }
+        }
     }
 
     fun deleteProject(projectId: Long) {
@@ -412,7 +485,7 @@ class ProjectService @Autowired constructor(
         projectOwnerEntities.forEach { projectOwnerEntity ->
             val projectName = projectRepository.findByProjectIdAndStatusIsTrue(projectOwnerEntity.projectId.toLong())!!.projectName
             val ownerEmail = userRepository.findByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong())!!.email
-            logger.info("Sending notification to project owner ${ownerEmail}")
+            logger.info("Sending notification to project owner $ownerEmail")
             val ownerTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectOwnerEntity.userId.toLong())
             val ownerMessageTittle = "Recordatorio: Proyecto por finalizar"
             val ownerMessageBody = "El proyecto: '$projectName' en el que participas como propietario está por finalizar en las próximas 24 horas. Por favor, asegúrate de que todas las tareas estén completadas."
@@ -430,7 +503,7 @@ class ProjectService @Autowired constructor(
         projectModeratorEntities.forEach { projectModeratorEntity ->
             val projectName = projectRepository.findByProjectIdAndStatusIsTrue(projectModeratorEntity.projectId.toLong())!!.projectName
             val moderatorEmail = userRepository.findByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong())!!.email
-            logger.info("Sending notification to project moderator ${moderatorEmail}")
+            logger.info("Sending notification to project moderator $moderatorEmail")
             val moderatorTokens = firebaseTokenRepository.findAllByUserIdAndStatusIsTrue(projectModeratorEntity.userId.toLong())
             val moderatorMessageTittle = "Recordatorio: Proyecto por finalizar"
             val moderatorMessageBody = "El proyecto: '$projectName' en el que participas como colaborador está por finalizar en las próximas 24 horas. Por favor, asegúrate de que todas las tareas estén completadas."

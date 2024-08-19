@@ -13,7 +13,7 @@ interface MenuItem {
 interface SubMenuItem {
     label: string;
     icon: string;
-    role: string;
+    permission: string;
     routerLink: string[];
 }
 
@@ -31,8 +31,26 @@ export class AppMenuComponent {
                 {
                     label: 'Ver Dashboard',
                     icon: 'pi pi-fw pi-home',
-                    role: 'VER DASHBOARD',
+                    permission: 'VER DASHBOARD',
                     routerLink: ['/dashboard']
+                },
+            ]
+        },
+        {
+          label: 'Horario',
+            icon: 'pi pi-fw pi-calendar',
+            items: [
+                {
+                    label: 'Ver Horario',
+                    icon: 'pi pi-fw pi-list',
+                    permission: 'VER HORARIOS',
+                    routerLink: ['/schedule/manage/schedule']
+                },
+                {
+                    label: 'Semestre',
+                    icon: 'pi pi-fw pi-calendar-plus',
+                        permission: 'CREAR HORARIOS',
+                    routerLink: ['/schedule/manage/semester']
                 },
             ]
         },
@@ -43,13 +61,13 @@ export class AppMenuComponent {
                 {
                     label: 'Todos los Proyectos',
                     icon: 'pi pi-fw pi-list',
-                    role: 'VER PROYECTOS',
+                    permission: 'VER PROYECTOS',
                     routerLink: ['/projects']
                 },
                 {
                     label: 'Crear Proyecto',
                     icon: 'pi pi-fw pi-plus',
-                    role: 'CREAR PROYECTOS',
+                    permission: 'CREAR PROYECTOS',
                     routerLink: ['/projects/create']
                 },
             ]
@@ -61,19 +79,19 @@ export class AppMenuComponent {
                 {
                     label: 'Ver Lista de Tareas',
                     icon: 'pi pi-fw pi-list',
-                    role: 'VER TAREAS',
+                    permission: 'VER TAREAS',
                     routerLink: ['/tasks/view/list']
                 },
                 {
                     label: 'Plazos de Tareas',
                     icon: 'pi pi-fw pi-clock',
-                    role: 'VER TAREAS',
+                    permission: 'VER TAREAS',
                     routerLink: ['/tasks/view/deadline']
                 },
                 {
                     label: 'Calendario de Tareas',
                     icon: 'pi pi-fw pi-calendar',
-                    role: 'VER TAREAS',
+                    permission: 'VER TAREAS',
                     routerLink: ['/tasks/view/calendar']
                 }
             ]
@@ -85,25 +103,25 @@ export class AppMenuComponent {
                 {
                     label: 'Reportes Generados',
                     icon: 'pi pi-fw pi-chart-bar',
-                    role: 'VER REPORTES GENERADOS',
+                    permission: 'VER REPORTES GENERADOS',
                     routerLink: ['/reports/list']
                 },
                 {
                     label: 'Reportes Ejecutivos',
                     icon: 'pi pi-fw pi-chart-line',
-                    role: 'VER REPORTES EJECUTIVOS',
+                    permission: 'VER REPORTES EJECUTIVOS',
                     routerLink: ['/reports/executive']
                 },
                 {
                     label: 'Reportes de Proyectos',
                     icon: 'pi pi-fw pi-file',
-                    role: 'VER REPORTES DE PROYECTOS',
+                    permission: 'VER REPORTES DE PROYECTOS',
                     routerLink: ['/reports/projects']
                 },
                 {
                     label: 'Reportes de Tareas',
                     icon: 'pi pi-fw pi-file',
-                    role: 'VER REPORTES DE TAREAS',
+                    permission: 'VER REPORTES DE TAREAS',
                     routerLink: ['/reports/tasks']
                 }
             ]
@@ -115,19 +133,19 @@ export class AppMenuComponent {
                 {
                     label: 'Lista de Usuarios',
                     icon: 'pi pi-fw pi-user-edit',
-                    role: 'VER USUARIOS',
+                    permission: 'VER USUARIOS',
                     routerLink: ['/users']
                 },
                 {
                     label: 'Crear Usuario',
                     icon: 'pi pi-fw pi-user-plus',
-                    role: 'CREAR USUARIOS',
+                    permission: 'CREAR USUARIOS',
                     routerLink: ['/users/create']
                 },
                 {
                     label: 'Roles y Permisos',
                     icon: 'pi pi-fw pi-key',
-                    role: 'GESTIONAR ROLES Y PERMISOS',
+                    permission: 'GESTIONAR ROLES Y PERMISOS',
                     routerLink: ['/users/management']
                 }
             ]
@@ -140,14 +158,14 @@ export class AppMenuComponent {
         // Check if token exists
         if (token) {
             const decoded = jwtDecode<JwtPayload>(token!);
-            // Extract roles from token
-            const roles = decoded.roles;
-            // Filter menu items based on roles
+            // Extract permissions from token
+            const permissions = decoded.permissions;
+            // Filter menu items based on permissions
             this.model = this.model.map(item => {
                 if (item.items) {
                     item.items = item.items.filter(subItem => {
-                        if (subItem.role) {
-                            return roles.includes(subItem.role);
+                        if (subItem.permission) {
+                            return permissions.includes(subItem.permission);
                         }
                         return true;
                     });

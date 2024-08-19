@@ -21,11 +21,10 @@ import org.springframework.stereotype.Service
 class AuthService @Autowired constructor(
     private val firebaseTokenRepository: FirebaseTokenRepository,
     private val userRepository: UserRepository,
-    private val groupRepository: GroupRepository,
     private val roleRepository: RoleRepository,
+    private val permissionRepository: PermissionRepository,
     private val emailService: EmailService,
     private val accountRecoveryRepository: AccountRecoveryRepository,
-    private val firebaseMessagingService: FirebaseMessagingService
 ) {
     companion object {
         val logger: Logger = LoggerFactory.getLogger(AuthController::class.java)
@@ -36,9 +35,9 @@ class AuthService @Autowired constructor(
         if (credentials.email.isBlank() || credentials.password.isBlank()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Empty fields", "Al menos un campo está vacío")
         }
-        logger.info("User ${credentials.email} is trying to authenticate")
+        logger.info("User ${credentials.email.lowercase()} is trying to authenticate")
         // Verify if the user exists
-        val userEntity: User = userRepository.findByEmailAndStatusIsTrue(credentials.email)
+        val userEntity: User = userRepository.findByEmailAndStatusIsTrue(credentials.email.lowercase())
             ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: User not found", "Usuario no encontrado")
         val currentPasswordInBCrypt = userEntity.password
         // Verify if the password is correct
@@ -57,13 +56,13 @@ class AuthService @Autowired constructor(
                 firebaseTokenRepository.save(newFirebaseTokenEntity)
             }
         }
+        // Get the user permissions
+        val permissionEntities = permissionRepository.findAllByEmail(credentials.email.lowercase())
+        val permissions = permissionEntities.filter { permission -> permission.status }.distinctBy { permission -> permission.permissionName }.map { permission -> permission.permissionName }.toTypedArray()
         // Get the user roles
-        val roleEntities = roleRepository.findAllByEmail(credentials.email)
+        val roleEntities = roleRepository.findAllByEmail(credentials.email.lowercase())
         val roles = roleEntities.filter { role -> role.status }.distinctBy { role -> role.roleName }.map { role -> role.roleName }.toTypedArray()
-        // Get the user groups
-        val groupEntities = groupRepository.findAllByEmail(credentials.email)
-        val groups = groupEntities.filter { group -> group.status }.distinctBy { group -> group.groupName }.map { group -> group.groupName }.toTypedArray()
-        return AuthUtil.generateAuthAndRefreshToken(userEntity, roles, groups)
+        return AuthUtil.generateAuthAndRefreshToken(userEntity, permissions, roles)
     }
 
     fun refreshToken(token: String): AuthResDto {
@@ -72,22 +71,22 @@ class AuthService @Autowired constructor(
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Empty fields", "Al menos un campo está vacío")
         }
         AuthUtil.verifyIsRefreshToken(token)
-        val email = AuthUtil.getSubjectFromAuthToken(token)
+        val email = AuthUtil.getSubjectFromAuthToken(token)!!.lowercase()
         logger.info("User $email is trying to refresh the token")
         // Verify if the user exists
-        val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email!!)
+        val userEntity: User = userRepository.findByEmailAndStatusIsTrue(email)
             ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: User not found", "Usuario no encontrado")
+        // Get the user permissions
+        val permissionEntities = permissionRepository.findAllByEmail(email)
+        val permissions = permissionEntities.filter { permission -> permission.status }.distinctBy { permission -> permission.permissionName }.map { permission -> permission.permissionName }.toTypedArray()
         // Get the user roles
         val roleEntities = roleRepository.findAllByEmail(email)
         val roles = roleEntities.filter { role -> role.status }.distinctBy { role -> role.roleName }.map { role -> role.roleName }.toTypedArray()
-        // Get the user groups
-        val groupEntities = groupRepository.findAllByEmail(email)
-        val groups = groupEntities.filter { group -> group.status }.distinctBy { group -> group.groupName }.map { group -> group.groupName }.toTypedArray()
-        return AuthUtil.generateAuthAndRefreshToken(userEntity, roles, groups)
+        return AuthUtil.generateAuthAndRefreshToken(userEntity, permissions, roles)
     }
 
     fun forgotPassword(passwordChangeDto: PasswordChangeDto) {
-        val email = passwordChangeDto.email
+        val email = passwordChangeDto.email.lowercase()
         // Validate the fields
         if (email.isBlank()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Empty fields", "Al menos un campo está vacío")
@@ -121,7 +120,7 @@ class AuthService @Autowired constructor(
     }
 
     fun verification(passwordChangeDto: PasswordChangeDto) {
-        val email = passwordChangeDto.email
+        val email = passwordChangeDto.email.lowercase()
         val code = passwordChangeDto.code
         // Validate the fields
         if (email.isBlank() || code.isBlank()) {
@@ -143,7 +142,7 @@ class AuthService @Autowired constructor(
     }
 
     fun resetPassword(passwordChangeDto: PasswordChangeDto) {
-        val email = passwordChangeDto.email
+        val email = passwordChangeDto.email.lowercase()
         val code = passwordChangeDto.code
         val password = passwordChangeDto.password
         val confirmPassword = passwordChangeDto.confirmPassword

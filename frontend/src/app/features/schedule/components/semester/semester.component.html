@@ -1,0 +1,133 @@
+<p-toast></p-toast>
+
+<p-confirmDialog [style]="{width: '350px'}" acceptButtonStyleClass="p-button-primary" header="Confirmation"
+                 icon="pi pi-exclamation-triangle"
+                 key="confirmDeleteSemester" message="'¿Estás seguro de que deseas eliminar este semestre? Esta acción no se puede deshacer.'"
+                 rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+<div class="text-900 font-medium text-xl mb-3">Asignar Auxiliares a Semestre</div>
+<div class="grid p-fluid">
+    <div class="col-12 lg:col-6">
+        <p-dropdown (onChange)="onSelectSemester($event)" (onClear)="onClearSemester()" [(ngModel)]="selectedSemester"
+                    [filter]="false" [options]="semesterItems" [showClear]="true"
+                    placeholder="Seleccione un Semestre"></p-dropdown>
+    </div>
+    <div class="col-12 lg:col-6">
+        <div class="grid p-fluid">
+            <div *ngIf="selectedSemesterId==0 && canCreateSemester" class="col-12 lg:col-6 md:col-6">
+                <button (click)="onAddSemester()" class="flex-auto p-button-outlined " icon="pi pi-plus" label="Crear Semestre"
+                        pButton
+                        pRipple></button>
+            </div>
+            <div *ngIf="selectedSemesterId!=0 && canEditSemester" class="col-12 lg:col-6 md:col-6">
+                <button (click)="onEditSemester()" class="flex-auto p-button-outlined p-button-secondary" icon="pi pi-user-plus"
+                        label="Editar Semestre"
+                        pButton pRipple></button>
+            </div>
+            <div *ngIf="selectedSemesterId!=0 && canEditSemester" class="col-12 lg:col-6 md:col-6">
+                <button (click)="onDeleteSemester()" class="flex-auto p-button-outlined p-button-secondary" icon="pi pi-minus"
+                        label="Eliminar Semestre"
+                        pButton pRipple></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-pickList (onMoveAllToSource)="sortSourceAssistants()" (onMoveAllToTarget)="sortTargetAssistants()" (onMoveToSource)="sortSourceAssistants()"
+            (onMoveToTarget)="sortTargetAssistants()"
+            [responsive]="true" [showSourceControls]="false"
+            [showTargetControls]="false" [sourceStyle]="{'height':'250px'}" [source]="sourceAssistants"
+            [targetStyle]="{'height':'250px'}" [target]="targetAssistants"
+            filterBy="name"
+            sourceFilterPlaceholder="Buscar por nombre" sourceHeader="Usuarios Disponibles"
+            targetFilterPlaceholder="Buscar por nombre" targetHeader="Usuarios Asignados">
+    <ng-template let-assistants pTemplate="item">
+        <div>{{ assistants.name }}</div>
+    </ng-template>
+</p-pickList>
+<div *ngIf="selectedSemesterId!=0" class="grid p-fluid mt-3">
+    <div class="col-12 lg:col-2 md:col-3">
+        <button (click)="saveSemesterAssistants()" [loading]="isLoading" class="flex-auto p-button" icon="pi pi-save" label="Guardar" pButton
+                pRipple></button>
+    </div>
+    <div class="col-12 lg:col-2 md:col-3">
+        <button (click)="onClearSemester()" [loadingIcon]="'pi pi-times'" [loading]="isLoading" class="flex-auto p-button-outlined"
+                icon="pi pi-times"
+                label="Cancelar" pButton
+                pRipple></button>
+    </div>
+</div>
+
+
+<p-dialog #dialog [(visible)]="visibleAddSemester" [draggable]="false" [modal]="true" [resizable]="false" header="Crear Nuevo Semestre"
+          showEffect="fade">
+    <div class="flex flex-column">
+        <div class="field col-12 p-0">
+            <label class="font-medium text-900" for="semesterName">Nombre del Semestre <span
+                    style="color: red;">*</span></label>
+            <input [formControl]="semesterNameControl" class="w-full" id="semesterName" pInputText placeholder="Nombre del Semestre"
+                   type="text">
+        </div>
+        <div class="grid p-fluid pb-0">
+            <div class="field col-12 lg:col-6 mb-0 pb-0">
+                <label class="font-medium text-900" for="semesterDateFrom">Fecha de Inicio <span style="color: red;">*</span></label>
+                <p-calendar [appendTo]="dialog" [formControl]="semesterDateFromControl" [readonlyInput]="true" [showIcon]="true" class="w-full"
+                            dateFormat="dd/mm/yy"
+                            id="semesterDateFrom" placeholder="Fecha de Inicio"></p-calendar>
+            </div>
+            <div class="field col-12 lg:col-6">
+                <label class="font-medium text-900" for="semesterDateTo">Fecha de Fin <span style="color: red;">*</span></label>
+                <p-calendar [appendTo]="dialog" [formControl]="semesterDateToControl" [readonlyInput]="true" [showIcon]="true" class="w-full"
+                            dateFormat="dd/mm/yy"
+                            id="semesterDateTo" placeholder="Fecha de Fin"></p-calendar>
+            </div>
+        </div>
+
+
+        <div class="flex flex-wrap gap-2 justify-content-between">
+            <button (click)="visibleAddSemester = false" [loadingIcon]="'pi pi-times'" [loading]="isLoading" class="flex-auto p-button-outlined"
+                    icon="pi pi-times"
+                    label="Cancelar" pButton
+                    pRipple></button>
+            <button (click)="onSaveSemester()" [loading]="isLoading" class="flex-auto" icon="pi pi-save" label="Guardar" pButton pRipple
+            ></button>
+        </div>
+    </div>
+</p-dialog>
+
+<p-dialog [(visible)]="visibleEditSemester" [draggable]="false" [modal]="true" [resizable]="false" header="Editar Semestre"
+          showEffect="fade">
+    <div class="flex flex-column">
+
+        <div class="field col-12 p-0">
+            <label class="font-medium text-900" for="newSemesterName">Nombre del Semestre <span
+                    style="color: red;">*</span></label>
+            <input [formControl]="semesterNameControl" class="w-full" id="newSemesterName" pInputText placeholder="Nombre del Semestre"
+                   type="text">
+        </div>
+        <div class="grid p-fluid pb-0">
+            <div class="field col-12 lg:col-6 mb-0 pb-0">
+                <label class="font-medium text-900" for="newSemesterDateFrom">Fecha de Inicio <span style="color: red;">*</span></label>
+                <p-calendar [appendTo]="dialog" [formControl]="semesterDateFromControl" [readonlyInput]="true" [showIcon]="true" class="w-full"
+                            dateFormat="dd/mm/yy"
+                            id="newSemesterDateFrom" placeholder="Fecha de Inicio"></p-calendar>
+            </div>
+            <div class="field col-12 lg:col-6">
+                <label class="font-medium text-900" for="newSemesterDateTo">Fecha de Fin <span style="color: red;">*</span></label>
+                <p-calendar [appendTo]="dialog" [formControl]="semesterDateToControl" [readonlyInput]="true" [showIcon]="true" class="w-full"
+                            dateFormat="dd/mm/yy"
+                            id="newSemesterDateTo" placeholder="Fecha de Fin"></p-calendar>
+            </div>
+        </div>
+
+
+        <div class="flex flex-wrap gap-2 justify-content-between">
+            <button (click)="visibleEditSemester = false" [loadingIcon]="'pi pi-times'" [loading]="isLoading" class="flex-auto p-button-outlined"
+                    icon="pi pi-times"
+                    label="Cancelar" pButton
+                    pRipple></button>
+            <button (click)="onUpdateSemester()" [loading]="isLoading" class="flex-auto" icon="pi pi-save" label="Guardar" pButton pRipple
+
+            ></button>
+        </div>
+    </div>
+</p-dialog>

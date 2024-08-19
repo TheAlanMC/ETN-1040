@@ -52,11 +52,11 @@
                 </div>
             </div>
 
-            <p-pickList (onMoveAllToSource)="sortSourceGroups()" (onMoveAllToTarget)="sortTargetGroups()" (onMoveToSource)="sortSourceGroups()"
-                        (onMoveToTarget)="sortTargetGroups()"
+            <p-pickList (onMoveAllToSource)="sortSourceRoles()" (onMoveAllToTarget)="sortTargetRoles()" (onMoveToSource)="sortSourceRoles()"
+                        (onMoveToTarget)="sortTargetRoles()"
                         [disabled]="isPickListDisabled" [responsive]="true" [showSourceControls]="false"
-                        [showTargetControls]="false" [sourceStyle]="{'height':'250px'}" [source]="sourceGroups"
-                        [targetStyle]="{'height':'250px'}" [target]="targetGroups"
+                        [showTargetControls]="false" [sourceStyle]="{'height':'250px'}" [source]="sourceRoles"
+                        [targetStyle]="{'height':'250px'}" [target]="targetRoles"
                         sourceHeader="Roles Disponibles" targetHeader="Roles Asignados">
                 <ng-template let-groups pTemplate="item">
                     <div>{{ groups.name }}</div>
@@ -64,7 +64,7 @@
             </p-pickList>
             <div *ngIf="selectedUserId!=0" class="grid p-fluid mt-3">
                 <div class="col-12 lg:col-2 md:col-3">
-                    <button (click)="saveUserGroups()" [loading]="isLoading" class="flex-auto p-button" icon="pi pi-save" label="Guardar" pButton
+                    <button (click)="saveUserRoles()" [loading]="isLoading" class="flex-auto p-button" icon="pi pi-save" label="Guardar" pButton
                             pRipple></button>
                 </div>
                 <div class="col-12 lg:col-2 md:col-3">
@@ -79,29 +79,29 @@
         <p-tabPanel class="line-height-3 m-0" header="Gestionar Permisos">
             <p-confirmDialog [style]="{width: '350px'}" acceptButtonStyleClass="p-button-primary" header="Confirmation"
                              icon="pi pi-exclamation-triangle"
-                             key="confirmDeleteGroup" message="'¿Estás seguro de que deseas eliminar este rol? Esta acción no se puede deshacer.'"
+                             key="confirmDeleteRole" message="'¿Estás seguro de que deseas eliminar este rol? Esta acción no se puede deshacer.'"
                              rejectButtonStyleClass="p-button-text"></p-confirmDialog>
             <div class="text-900 font-medium text-xl mb-3">Asignar Permisos a Roles</div>
             <div class="grid p-fluid">
                 <div class="col-12 lg:col-6">
-                    <p-dropdown (onChange)="onSelectRole($event)" (onClear)="onClearGroup()" [(ngModel)]="selectedGroup"
-                                [filter]="false" [options]="groupItems" [showClear]="true"
+                    <p-dropdown (onChange)="onSelectPermission($event)" (onClear)="onClearRole()" [(ngModel)]="selectedRole"
+                                [filter]="false" [options]="roleItems" [showClear]="true"
                                 placeholder="Seleccione un rol"></p-dropdown>
                 </div>
                 <div class="col-12 lg:col-6">
                     <div class="grid p-fluid">
-                        <div *ngIf="selectedGroupId==0" class="col-12 lg:col-6 md:col-6">
-                            <button (click)="onAddGroup()" class="flex-auto p-button-outlined " icon="pi pi-plus" label="Crear Rol"
+                        <div *ngIf="selectedRoleId==0" class="col-12 lg:col-6 md:col-6">
+                            <button (click)="onAddRole()" class="flex-auto p-button-outlined " icon="pi pi-plus" label="Crear Rol"
                                     pButton
                                     pRipple></button>
                         </div>
-                        <div *ngIf="selectedGroupId!=0" class="col-12 lg:col-6 md:col-6">
-                            <button (click)="onEditGroup()" class="flex-auto p-button-outlined p-button-secondary" icon="pi pi-user-plus"
+                        <div *ngIf="selectedRoleId!=0" class="col-12 lg:col-6 md:col-6">
+                            <button (click)="onEditRole()" class="flex-auto p-button-outlined p-button-secondary" icon="pi pi-user-plus"
                                     label="Editar Rol"
                                     pButton pRipple></button>
                         </div>
-                        <div *ngIf="selectedGroupId!=0" class="col-12 lg:col-6 md:col-6">
-                            <button (click)="onDeleteGroup()" class="flex-auto p-button-outlined p-button-secondary" icon="pi pi-minus"
+                        <div *ngIf="selectedRoleId!=0" class="col-12 lg:col-6 md:col-6">
+                            <button (click)="onDeleteRole()" class="flex-auto p-button-outlined p-button-secondary" icon="pi pi-minus"
                                     label="Eliminar Rol"
                                     pButton pRipple></button>
                         </div>
@@ -109,23 +109,23 @@
                 </div>
             </div>
 
-            <p-pickList (onMoveAllToSource)="sortSourceRoles()" (onMoveAllToTarget)="sortTargetRoles()" (onMoveToSource)="sortSourceRoles()"
-                        (onMoveToTarget)="sortTargetRoles()"
+            <p-pickList (onMoveAllToSource)="sortSourcePermissions()" (onMoveAllToTarget)="sortTargetPermission()" (onMoveToSource)="sortSourcePermissions()"
+                        (onMoveToTarget)="sortTargetPermission()"
                         [disabled]="isPickListDisabled" [responsive]="true" [showSourceControls]="false"
-                        [showTargetControls]="false" [sourceStyle]="{'height':'250px'}" [source]="sourceRoles"
-                        [targetStyle]="{'height':'250px'}" [target]="targetRoles"
+                        [showTargetControls]="false" [sourceStyle]="{'height':'250px'}" [source]="sourcePermissions"
+                        [targetStyle]="{'height':'250px'}" [target]="targetPermissions"
                         sourceHeader="Permisos Disponibles" targetHeader="Permisos Asignados">
                 <ng-template let-permissions pTemplate="item">
                     <div>{{ permissions.name }}</div>
                 </ng-template>
             </p-pickList>
-            <div *ngIf="selectedGroupId!=0" class="grid p-fluid mt-3">
+            <div *ngIf="selectedRoleId!=0" class="grid p-fluid mt-3">
                 <div class="col-12 lg:col-2 md:col-3">
-                    <button (click)="saveGroupRoles()" [loading]="isLoading" class="flex-auto p-button" icon="pi pi-save" label="Guardar" pButton
+                    <button (click)="saveRolePermissions()" [loading]="isLoading" class="flex-auto p-button" icon="pi pi-save" label="Guardar" pButton
                             pRipple></button>
                 </div>
                 <div class="col-12 lg:col-2 md:col-3">
-                    <button (click)="onClearGroup()" [loadingIcon]="'pi pi-times'" [loading]="isLoading" class="flex-auto p-button-outlined"
+                    <button (click)="onClearRole()" [loadingIcon]="'pi pi-times'" [loading]="isLoading" class="flex-auto p-button-outlined"
                             icon="pi pi-times"
                             label="Cancelar" pButton
                             pRipple></button>
@@ -135,58 +135,58 @@
     </p-tabView>
 </div>
 
-<p-dialog [(visible)]="visibleAddGroup" [draggable]="false" [modal]="true" [resizable]="false" header="Crear Nuevo Rol"
+<p-dialog [(visible)]="visibleAddRole" [draggable]="false" [modal]="true" [resizable]="false" header="Crear Nuevo Rol"
           showEffect="fade">
     <div class="flex flex-column">
 
         <div class="field col-12 p-0">
             <label class="font-medium text-900" for="roleName">Nombre del Rol <span
                     style="color: red;">*</span></label>
-            <input [formControl]="groupNameControl" class="w-full" id="roleName" pInputText placeholder="Nombre del Rol"
+            <input [formControl]="roleNameControl" class="w-full" id="roleName" pInputText placeholder="Nombre del Rol"
                    type="text">
         </div>
         <div class="field col-12 p-0">
             <label class="font-medium text-900" for="roleDescription">Descripción del Rol <span
                     style="color: red;">*</span></label>
-            <textarea [autoResize]="true" [formControl]="groupDescriptionControl" class="w-full h-5rem" id="roleDescription" pInputTextarea
+            <textarea [autoResize]="true" [formControl]="roleDescriptionControl" class="w-full h-5rem" id="roleDescription" pInputTextarea
                       placeholder="Descripción del Rol" rows="3" type="text"></textarea>
         </div>
 
         <div class="flex flex-wrap gap-2 justify-content-between">
-            <button (click)="visibleAddGroup = false" [loadingIcon]="'pi pi-times'" [loading]="isLoading" class="flex-auto p-button-outlined"
+            <button (click)="visibleAddRole = false" [loadingIcon]="'pi pi-times'" [loading]="isLoading" class="flex-auto p-button-outlined"
                     icon="pi pi-times"
                     label="Cancelar" pButton
                     pRipple></button>
-            <button (click)="onSaveGroup()" [loading]="isLoading" class="flex-auto" icon="pi pi-save" label="Guardar" pButton pRipple
+            <button (click)="onSaveRole()" [loading]="isLoading" class="flex-auto" icon="pi pi-save" label="Guardar" pButton pRipple
                     pRipple
             ></button>
         </div>
     </div>
 </p-dialog>
 
-<p-dialog [(visible)]="visibleEditGroup" [draggable]="false" [modal]="true" [resizable]="false" header="Editar Rol"
+<p-dialog [(visible)]="visibleEditRole" [draggable]="false" [modal]="true" [resizable]="false" header="Editar Rol"
           showEffect="fade">
     <div class="flex flex-column">
 
         <div class="field col-12 p-0">
             <label class="font-medium text-900" for="newRoleName">Nombre del Rol <span
                     style="color: red;">*</span></label>
-            <input [formControl]="groupNameControl" class="w-full" id="newRoleName" pInputText placeholder="Nombre del Rol"
+            <input [formControl]="roleNameControl" class="w-full" id="newRoleName" pInputText placeholder="Nombre del Rol"
                    type="text">
         </div>
         <div class="field col-12 p-0">
             <label class="font-medium text-900" for="newRoleDescription">Descripción del Rol <span
                     style="color: red;">*</span></label>
-            <textarea [autoResize]="true" [formControl]="groupDescriptionControl" class="w-full h-5rem" id="newRoleDescription" pInputTextarea
+            <textarea [autoResize]="true" [formControl]="roleDescriptionControl" class="w-full h-5rem" id="newRoleDescription" pInputTextarea
                       placeholder="Descripción del Rol" rows="3" type="text"></textarea>
         </div>
 
         <div class="flex flex-wrap gap-2 justify-content-between">
-            <button (click)="visibleEditGroup = false" [loadingIcon]="'pi pi-times'" [loading]="isLoading" class="flex-auto p-button-outlined"
+            <button (click)="visibleEditRole = false" [loadingIcon]="'pi pi-times'" [loading]="isLoading" class="flex-auto p-button-outlined"
                     icon="pi pi-times"
                     label="Cancelar" pButton
                     pRipple></button>
-            <button (click)="onUpdateGroup()" [loading]="isLoading" class="flex-auto" icon="pi pi-save" label="Guardar" pButton pRipple
+            <button (click)="onUpdateRole()" [loading]="isLoading" class="flex-auto" icon="pi pi-save" label="Guardar" pButton pRipple
 
             ></button>
         </div>

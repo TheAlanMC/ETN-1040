@@ -34,8 +34,8 @@ export class ProfileComponent implements OnInit {
     profilePictureUrl: string = 'assets/layout/images/avatar.png';
     backupProfilePictureUrl: string = 'assets/layout/images/avatar.png';
 
+    permissions: string[] = [];
     roles: string[] = [];
-    groups: string[] = [];
 
     email = '';
 
@@ -66,8 +66,8 @@ export class ProfileComponent implements OnInit {
         if (token) {
             this.decoded = jwtDecode<JwtPayload>(token!);
         }
+        this.permissions = this.decoded?.permissions || [];
         this.roles = this.decoded?.roles || [];
-        this.groups = this.decoded?.groups || [];
         this.email = this.decoded?.email || '';
     }
 

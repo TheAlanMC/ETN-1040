@@ -16,9 +16,9 @@ class UserMapper {
                 description = user.description,
                 txUser = user.txUser,
                 txDate = user.txDate,
-                roles = user.userGroups?.filter { userGroup -> userGroup.status }?.mapNotNull { userGroup -> userGroup.group?.groupRoles?.filter { groupRole -> groupRole.status }?.map { groupRole -> groupRole.role } }?.flatten()?.filter { role -> role!!.status }?.distinctBy { role -> role!!.roleId }?.sortedBy { role -> role!!.roleId }?.mapNotNull { role -> role!!.roleName }
+                permissions = user.userRoles?.filter { userRole -> userRole.status }?.mapNotNull { userRole -> userRole.role?.rolePermissions?.filter { rolePermission -> rolePermission.status }?.map { rolePermission -> rolePermission.permission } }?.flatten()?.filter { permission -> permission!!.status }?.distinctBy { permission -> permission!!.permissionId }?.sortedBy { permission -> permission!!.permissionId }?.mapNotNull { permission -> permission!!.permissionName }
                     ?: emptyList(),
-                groups = user.userGroups?.filter { it.status }?.sortedBy { it.group?.groupId }?.mapNotNull { it.group?.groupName } ?: emptyList(),
+                roles = user.userRoles?.filter { it.status }?.sortedBy { it.role?.roleId }?.mapNotNull { it.role?.roleName } ?: emptyList(),
             )
         }
     }

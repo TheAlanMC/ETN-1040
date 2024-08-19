@@ -1,5 +1,29 @@
 <div class="relative overflow-hidden flex flex-column justify-content-center">
     <div class="landing-wrapper">
+        <!--        <div class="flex justify-content-between align-items-center px-3 py-2 bg-primary text-white border-round" style="background: linear-gradient(to right, #2e86de, #48c6ef);">-->
+        <!--            <h1 class="m-0">System Name</h1>-->
+        <!--            <div class="flex align-items-center">-->
+        <!--                <img [src]="profilePictureUrl" alt="Profile Picture" class="mr-2" style="width: 40px; height: 40px; border-radius: 50%;">-->
+        <!--                <span>Bienvenido, {{ decoded?.name }}</span>-->
+        <!--            </div>-->
+        <!--        </div>-->
+        <div class="landing-wrapper">
+            <div class="card flex justify-content-between align-items-center px-3 py-2 h-10rem banner">
+                <div class="flex align-items-center">
+                    <div>
+                        <div class="text-white text-4xl font-bold">SmartTasks</div>
+                        <div class="text-gray-100 text-lg">Sistema de Gestión de Tareas y Soporte Técnico</div>
+                    </div>
+                </div>
+                <div class="card flex align-items-center justify-content-between px-3 py-2 h-5rem profile-card">
+                    <div class="flex align-items-center">
+                        <img [src]="profilePictureUrl" alt="Profile Picture" class="mr-2"
+                             style="width: 40px; height: 40px; border-radius: 50%;">
+                        <span class="text-white">Bienvenido, <br>{{ decoded?.name }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="px-3 z-2">
             <div class="grid grid-nogutter justify-content-between align-items-center mb-6 py-6 md:mb-8 md:py-8"
                  id="home">

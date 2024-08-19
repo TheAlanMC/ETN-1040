@@ -6,7 +6,7 @@ import {ResponseDto} from "../models/response.dto";
 
 import {PageDto} from "../models/page.dto";
 import {UserDto} from "../../features/user/models/user.dto";
-import {GroupDto} from "../../features/user/models/group.dto";
+import {RoleDto} from "../../features/user/models/role.dto";
 import {UtilService} from "./util.service";
 
 @Injectable({
@@ -43,7 +43,7 @@ export class UserService {
     }
 
     public createUser(
-        groupId: number,
+        roleId: number,
         email: string,
         firstName: string,
         lastName: string,
@@ -52,7 +52,7 @@ export class UserService {
     ): Observable<ResponseDto<null>> {
         return this.http.post<ResponseDto<null>>(`${this.baseUrl}`,
             {
-                groupId, email, firstName, lastName, phone, description
+                roleId, email, firstName, lastName, phone, description
             },
             this.utilService.getHttpOptions());
     }
@@ -93,17 +93,17 @@ export class UserService {
             this.utilService.getHttpOptions());
     }
 
-    public getUserGroups(userId: number): Observable<ResponseDto<GroupDto[]>> {
-        return this.http.get<ResponseDto<GroupDto[]>>(`${this.baseUrl}/${userId}/groups`,
+    public getUserRoles(userId: number): Observable<ResponseDto<RoleDto[]>> {
+        return this.http.get<ResponseDto<RoleDto[]>>(`${this.baseUrl}/${userId}/roles`,
             this.utilService.getHttpOptions());
     }
 
-    public addUsersToGroup(
+    public addUsersToRole(
         userId: number,
-        groupIds: number []
+        roleIds: number []
     ): Observable<ResponseDto<null>> {
-        return this.http.post<ResponseDto<null>>(`${this.baseUrl}/${userId}/groups`,
-            {groupIds},
+        return this.http.post<ResponseDto<null>>(`${this.baseUrl}/${userId}/roles`,
+            {roleIds},
             this.utilService.getHttpOptions());
     }
 }

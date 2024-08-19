@@ -90,10 +90,10 @@ export class ProjectTaskListComponent implements OnInit {
         const token = localStorage.getItem('token');
         if (token) {
             const decoded = jwtDecode<JwtPayload>(token!);
-            if (decoded.roles.includes('CREAR TAREAS')) {
+            if (decoded.permissions.includes('CREAR TAREAS')) {
                 this.canAddTask = true;
             }
-            if (decoded.roles.includes('EDITAR TAREAS')) {
+            if (decoded.permissions.includes('EDITAR TAREAS')) {
                 this.canEditTask = true;
             }
             this.userId = decoded.userId;

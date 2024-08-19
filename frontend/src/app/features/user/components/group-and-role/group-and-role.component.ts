@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
 import {UserService} from "../../../../core/services/user.service";
-import {GroupService} from "../../../../core/services/group.service";
-import {GroupDto} from "../../models/group.dto";
 import {RoleService} from "../../../../core/services/role.service";
-import {RoleDto} from '../../models/role.dto';
+import {RoleDto} from "../../models/role.dto";
+import {PermissionService} from "../../../../core/services/permission.service";
+import {PermissionDto} from '../../models/permission.dto';
 import {FormControl, Validators} from "@angular/forms";
 import {environment} from "../../../../../environments/environment";
 import {UserDto} from "../../models/user.dto";
@@ -22,32 +22,32 @@ export class GroupAndRoleComponent implements OnInit {
     isLoading: boolean = false;
 
     selectedUserId = 0;
-    selectedGroupId = 0;
+    selectedRoleId = 0;
 
     selectedUser: SelectItem = {value: ''};
-    selectedGroup: SelectItem = {value: ''};
+    selectedRole: SelectItem = {value: ''};
 
     userItems: SelectItem[] = [];
-    groupItems: SelectItem[] = [];
-
-    groups: GroupDto[] = [];
+    roleItems: SelectItem[] = [];
 
     roles: RoleDto[] = [];
 
-    sourceGroups: any[] = [{name: 'Seleccione un usuario', code: ''}];
-    targetGroups: any[] = [{name: 'Seleccione un usuario', code: ''}];
+    permissions: PermissionDto[] = [];
 
-    sourceRoles: any[] = [{name: 'Seleccione un rol', code: ''}];
-    targetRoles: any[] = [{name: 'Seleccione un rol', code: ''}];
+    sourceRoles: any[] = [{name: 'Seleccione un usuario', code: ''}];
+    targetRoles: any[] = [{name: 'Seleccione un usuario', code: ''}];
+
+    sourcePermissions: any[] = [{name: 'Seleccione un rol', code: ''}];
+    targetPermissions: any[] = [{name: 'Seleccione un rol', code: ''}];
 
     isPickListDisabled = true;
 
-    visibleAddGroup = false
-    visibleEditGroup = false
+    visibleAddRole = false
+    visibleEditRole = false
 
-    groupNameControl = new FormControl('',
+    roleNameControl = new FormControl('',
         [Validators.required]);
-    groupDescriptionControl = new FormControl('',
+    roleDescriptionControl = new FormControl('',
         [Validators.required]);
 
     baseUrl: string = `${environment.API_URL}/api/v1/users`;
@@ -59,8 +59,8 @@ export class GroupAndRoleComponent implements OnInit {
     constructor(
         private userService: UserService,
         private confirmationService: ConfirmationService,
-        private groupsService: GroupService,
         private roleService: RoleService,
+        private permissionService: PermissionService,
         private messageService: MessageService,
     ) {
         const token = localStorage.getItem('token');
@@ -72,8 +72,8 @@ export class GroupAndRoleComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.getGroups();
         this.getRoles();
+        this.getPermissions();
         this.getAllUsers();
     }
 
@@ -100,13 +100,13 @@ export class GroupAndRoleComponent implements OnInit {
         });
     }
 
-    public getGroups() {
-        this.groupsService.getGroups().subscribe({
+    public getRoles() {
+        this.roleService.getRoles().subscribe({
             next: (data) => {
-                this.groups = data.data!;
-                this.groupItems = data.data!.map(group => {
+                this.roles = data.data!;
+                this.roleItems = data.data!.map(role => {
                     return {
-                        label: group.groupName, value: group.groupId
+                        label: role.roleName, value: role.roleId
                     }
                 });
             }, error: (error) => {
@@ -115,10 +115,10 @@ export class GroupAndRoleComponent implements OnInit {
         });
     }
 
-    public getRoles() {
-        this.roleService.getRoles().subscribe({
+    public getPermissions() {
+        this.permissionService.getPermissions().subscribe({
             next: (data) => {
-                this.roles = data.data!;
+                this.permissions = data.data!;
             }, error: (error) => {
                 console.error(error);
             }
@@ -129,17 +129,17 @@ export class GroupAndRoleComponent implements OnInit {
         if (event.value == null) {
             return
         }
-        this.userService.getUserGroups(event.value).subscribe({
+        this.userService.getUserRoles(event.value).subscribe({
             next: (data) => {
                 this.selectedUserId = event.value;
-                this.targetGroups = data.data!.map(group => {
+                this.targetRoles = data.data!.map(role => {
                     return {
-                        name: group.groupName, code: group.groupId
+                        name: role.roleName, code: role.roleId
                     }
                 });
-                this.sourceGroups = this.groups.filter(group => data.data!.findIndex(userGroup => userGroup.groupId === group.groupId) === -1).map(group => {
+                this.sourceRoles = this.roles.filter(role => data.data!.findIndex(userGroup => userGroup.roleId === role.roleId) === -1).map(role => {
                     return {
-                        name: group.groupName, code: group.groupId
+                        name: role.roleName, code: role.roleId
                     }
                 });
                 this.isPickListDisabled = false;
@@ -152,14 +152,14 @@ export class GroupAndRoleComponent implements OnInit {
     public onClearUser() {
         this.selectedUserId = 0;
         this.selectedUser = {value: ''};
-        this.sourceGroups = [{name: 'Seleccione un usuario', code: ''}];
-        this.targetGroups = [{name: 'Seleccione un usuario', code: ''}];
+        this.sourceRoles = [{name: 'Seleccione un usuario', code: ''}];
+        this.targetRoles = [{name: 'Seleccione un usuario', code: ''}];
     }
 
-    public saveUserGroups() {
+    public saveUserRoles() {
         this.isLoading = true;
-        this.userService.addUsersToGroup(this.selectedUserId,
-            this.targetGroups.map(group => group.code)).subscribe({
+        this.userService.addUsersToRole(this.selectedUserId,
+            this.targetRoles.map(role => role.code)).subscribe({
             next: (data) => {
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Permisos asignados correctamente'
@@ -175,15 +175,15 @@ export class GroupAndRoleComponent implements OnInit {
         });
     }
 
-    public sortSourceGroups() {
-        this.sourceGroups.sort((
+    public sortSourceRoles() {
+        this.sourceRoles.sort((
             a,
             b
         ) => a.code - b.code);
     }
 
-    public sortTargetGroups() {
-        this.targetGroups.sort((
+    public sortTargetRoles() {
+        this.targetRoles.sort((
             a,
             b
         ) => a.code - b.code);
@@ -219,21 +219,21 @@ export class GroupAndRoleComponent implements OnInit {
         });
     }
 
-    public onSelectRole(event: any) {
+    public onSelectPermission(event: any) {
         if (event.value == null) {
             return
         }
-        this.groupsService.getGroupRoles(event.value).subscribe({
+        this.roleService.getRolePermissions(event.value).subscribe({
             next: (data) => {
-                this.selectedGroupId = event.value;
-                this.targetRoles = data.data!.map(role => {
+                this.selectedRoleId = event.value;
+                this.targetPermissions = data.data!.map(permission => {
                     return {
-                        name: role.roleName, code: role.roleId
+                        name: permission.permissionName, code: permission.permissionId
                     }
                 });
-                this.sourceRoles = this.roles.filter(role => data.data!.findIndex(userRole => userRole.roleId === role.roleId) === -1).map(role => {
+                this.sourcePermissions = this.permissions.filter(permission => data.data!.findIndex(userRole => userRole.permissionId === permission.permissionId) === -1).map(permission => {
                     return {
-                        name: role.roleName, code: role.roleId
+                        name: permission.permissionName, code: permission.permissionId
                     }
                 });
                 this.isPickListDisabled = false;
@@ -243,23 +243,23 @@ export class GroupAndRoleComponent implements OnInit {
         });
     }
 
-    public onClearGroup() {
-        this.selectedGroup = {value: ''};
-        this.selectedGroupId = 0;
-        this.sourceRoles = [{name: 'Seleccione un rol', code: ''}];
-        this.targetRoles = [{name: 'Seleccione un rol', code: ''}];
+    public onClearRole() {
+        this.selectedRole = {value: ''};
+        this.selectedRoleId = 0;
+        this.sourcePermissions = [{name: 'Seleccione un rol', code: ''}];
+        this.targetPermissions = [{name: 'Seleccione un rol', code: ''}];
     }
 
-    public saveGroupRoles() {
+    public saveRolePermissions() {
         this.isLoading = true;
-        this.groupsService.addRolesToGroup(this.selectedGroupId,
-            this.targetRoles.map(role => role.code)).subscribe({
+        this.roleService.addPermissionsToRole(this.selectedRoleId,
+            this.targetPermissions.map(permission => permission.code)).subscribe({
             next: (data) => {
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Permisos asignados correctamente'
                 });
                 this.isLoading = false;
-                this.onClearGroup();
+                this.onClearRole();
             }, error: (error) => {
                 console.error(error);
                 this.isLoading = false;
@@ -268,42 +268,42 @@ export class GroupAndRoleComponent implements OnInit {
         });
     }
 
-    public sortSourceRoles() {
-        this.sourceRoles.sort((
+    public sortSourcePermissions() {
+        this.sourcePermissions.sort((
             a,
             b
         ) => a.code - b.code);
     }
 
-    public sortTargetRoles() {
-        this.targetRoles.sort((
+    public sortTargetPermission() {
+        this.targetPermissions.sort((
             a,
             b
         ) => a.code - b.code);
     }
 
-    public onDeleteGroup() {
+    public onDeleteRole() {
         this.confirmationService.confirm({
-            key: 'confirmDeleteGroup',
+            key: 'confirmDeleteRole',
             message: '¿Estás seguro de que deseas eliminar este rol? Esta acción no se puede deshacer.',
             header: 'Confirmar',
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: 'Sí',
             rejectLabel: 'No',
             accept: () => {
-                this.deleteGroup();
+                this.deleteRole();
             },
         });
     }
 
-    public deleteGroup() {
-        this.groupsService.deleteGroup(this.selectedGroupId).subscribe({
+    public deleteRole() {
+        this.roleService.deleteRole(this.selectedRoleId).subscribe({
             next: (data) => {
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Rol eliminado correctamente'
                 });
-                this.onClearGroup();
-                this.getGroups();
+                this.onClearRole();
+                this.getRoles();
             }, error: (error) => {
                 console.error(error);
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
@@ -311,29 +311,29 @@ export class GroupAndRoleComponent implements OnInit {
         });
     }
 
-    public onAddGroup() {
-        this.visibleAddGroup = true;
-        this.groupNameControl.setValue('');
-        this.groupDescriptionControl.setValue('');
+    public onAddRole() {
+        this.visibleAddRole = true;
+        this.roleNameControl.setValue('');
+        this.roleDescriptionControl.setValue('');
     }
 
-    public onEditGroup() {
-        this.visibleEditGroup = true;
-        this.groupNameControl.setValue(this.groups.find(group => group.groupId === this.selectedGroupId)!.groupName);
-        this.groupDescriptionControl.setValue(this.groups.find(group => group.groupId === this.selectedGroupId)!.groupDescription);
+    public onEditRole() {
+        this.visibleEditRole = true;
+        this.roleNameControl.setValue(this.roles.find(role => role.roleId === this.selectedRoleId)!.roleName);
+        this.roleDescriptionControl.setValue(this.roles.find(role => role.roleId === this.selectedRoleId)!.roleDescription);
     }
 
-    onSaveGroup() {
+    public onSaveRole() {
         this.isLoading = true;
-        this.groupsService.createGroup(this.groupNameControl.value!,
-            this.groupDescriptionControl.value!).subscribe({
+        this.roleService.createRole(this.roleNameControl.value!,
+            this.roleDescriptionControl.value!).subscribe({
             next: (data) => {
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Rol creado correctamente'
                 });
                 this.isLoading = false;
-                this.visibleAddGroup = false;
-                this.getGroups();
+                this.visibleAddRole = false;
+                this.getRoles();
             }, error: (error) => {
                 console.error(error);
                 this.isLoading = false;
@@ -342,19 +342,19 @@ export class GroupAndRoleComponent implements OnInit {
         });
     }
 
-    public onUpdateGroup() {
+    public onUpdateRole() {
         this.isLoading = true;
-        this.groupsService.updateGroup(this.selectedGroupId,
-            this.groupNameControl.value!,
-            this.groupDescriptionControl.value!).subscribe({
+        this.roleService.updateRole(this.selectedRoleId,
+            this.roleNameControl.value!,
+            this.roleDescriptionControl.value!).subscribe({
             next: (data) => {
                 this.messageService.add({
                     severity: 'success', summary: 'Éxito', detail: 'Rol actualizado correctamente'
                 });
                 this.isLoading = false;
-                this.visibleEditGroup = false;
-                this.getGroups();
-                this.onClearGroup();
+                this.visibleEditRole = false;
+                this.getRoles();
+                this.onClearRole();
             }, error: (error) => {
                 console.error(error);
                 this.isLoading = false;
@@ -367,7 +367,7 @@ export class GroupAndRoleComponent implements OnInit {
         if (event.index === 0) {
             this.onClearUser();
         } else if (event.index === 1) {
-            this.onClearGroup();
+            this.onClearRole();
         }
     }
 }

@@ -3,7 +3,7 @@ import {RouterModule, Routes} from '@angular/router';
 import {HomePageComponent} from "./components/home-page/home-page.component";
 import {AuthGuard} from "../../core/guards/auth.guard";
 import {DashboardComponent} from "./components/dashboard/dashboard.component";
-import {RoleGuard} from "../../core/guards/role.guard";
+import {PermissionGuard} from "../../core/guards/permission.guard";
 
 const routes: Routes = [
     {
@@ -12,8 +12,8 @@ const routes: Routes = [
             {
                 path: 'dashboard',
                 component: DashboardComponent,
-                canActivate: [RoleGuard],
-                data: {roles: ['VER DASHBOARD'], breadcrumb: 'Dashboard'}
+                canActivate: [PermissionGuard],
+                data: {permissions: ['VER DASHBOARD'], breadcrumb: 'Dashboard'}
             }
         ]
     }

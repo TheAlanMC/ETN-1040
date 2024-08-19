@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
-import {RoleGuard} from "../../core/guards/role.guard";
+import {PermissionGuard} from "../../core/guards/permission.guard";
 import {TaskListComponent} from "./components/task-list/task-list.component";
 import {TaskCalendarComponent} from "./components/task-calendar/task-calendar.component";
 import {TaskDeadlineComponent} from "./components/task-deadline/task-deadline.component";
@@ -12,8 +12,8 @@ const routes: Routes = [
     {
         path: 'tasks/view',
         component: ViewAssignedTaskComponent,
-        canActivate: [RoleGuard],
-        data: {roles: ['VER TAREAS'], breadcrumb: 'Ver'},
+        canActivate: [PermissionGuard],
+        data: {permissions: ['VER TAREAS'], breadcrumb: 'Ver'},
         children: [
             {path: 'list', component: TaskListComponent, data: {breadcrumb: 'Tareas'}},
             {path: 'deadline', component: TaskDeadlineComponent, data: {breadcrumb: 'Plazos'}},

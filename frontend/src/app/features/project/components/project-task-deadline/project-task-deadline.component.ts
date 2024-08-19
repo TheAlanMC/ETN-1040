@@ -93,7 +93,7 @@ export class ProjectTaskDeadlineComponent implements OnInit {
         const token = localStorage.getItem('token');
         if (token) {
             const decoded = jwtDecode<JwtPayload>(token!);
-            if (decoded.roles.includes('CREAR TAREAS')) {
+            if (decoded.permissions.includes('CREAR TAREAS')) {
                 this.canAddTask = true;
             }
 

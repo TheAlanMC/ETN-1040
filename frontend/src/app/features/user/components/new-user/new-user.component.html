@@ -4,17 +4,17 @@
     <div class="grid p-fluid">
         <div class="col-12 lg:col-3">
             <div class="text-900 font-medium text-xl mb-3">Rol de Usuario</div>
-            <p-dropdown (onChange)="onSelectGroup($event)" (onClear)="onClearGroup()" [(ngModel)]="selectedGroup"
-                        [options]="groups"
+            <p-dropdown (onChange)="onSelectPermission($event)" (onClear)="onClearPermission()" [(ngModel)]="selectedRole"
+                        [options]="roles"
                         placeholder="Seleccione un rol"></p-dropdown>
             <div class="text-900 font-medium text-xl mt-4 mb-3">Permisos Asignados</div>
-            <div *ngIf="!loadingRoles; else loading">
-                <div *ngIf="roles.length > 0; else noRoles">
-                    <div *ngFor="let rol of roles">
+            <div *ngIf="!loadingPermissions; else loading">
+                <div *ngIf="permission.length > 0; else noPermissions">
+                    <div *ngFor="let rol of permission">
                         <p class="m-0 p-0 text-600 line-height-3 mr-3">-{{ rol }}</p>
                     </div>
                 </div>
-                <ng-template #noRoles>
+                <ng-template #noPermissions>
                     <p>Seleccione un rol para ver los permisos</p>
                 </ng-template>
             </div>

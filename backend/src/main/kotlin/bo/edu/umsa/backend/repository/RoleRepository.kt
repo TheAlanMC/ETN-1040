@@ -9,41 +9,36 @@ import org.springframework.stereotype.Repository
 interface RoleRepository : JpaRepository<Role, Long> {
 
     @Query("""
-            SELECT r.* FROM role r
-            JOIN group_role gr ON r.role_id = gr.role_id
-            JOIN "group" g ON gr.group_id = g.group_id
-            JOIN user_group ug ON g.group_id = ug.group_id
-            JOIN "user" u ON ug.user_id = u.user_id
+            SELECT r.* FROM "role" r
+            JOIN user_role ur ON r.role_id = ur.role_id
+            JOIN "user" u ON ur.user_id = u.user_id
             WHERE u.email = :email
             AND r.status = true
-            AND gr.status = true
-            AND g.status = true
-            AND ug.status = true
+            AND ur.status = true
             AND u.status = true
             ORDER BY r.role_id
         """, nativeQuery = true)
     fun findAllByEmail(email: String): List<Role>
 
-    @Query("""
-            SELECT r.* FROM role r
-            JOIN group_role gr ON r.role_id = gr.role_id
-            JOIN "group" g ON gr.group_id = g.group_id
-            WHERE g.group_id = :groupId
-            AND r.status = true
-            AND gr.status = true
-            AND g.status = true
-            ORDER BY r.role_id
-        """, nativeQuery = true)
-    fun findAllByGroupId(groupId: Long): List<Role>
+    fun findByRoleIdAndStatusIsTrue(roleId: Long): Role?
+
+    fun findAllByStatusIsTrueOrderByRoleId(): List<Role>
 
     @Query("""
-            SELECT r.* FROM role r
+            SELECT r.* FROM "role" r
             WHERE r.role_id IN :roleIds
             AND r.status = true
             ORDER BY r.role_id
         """, nativeQuery = true)
     fun findAllByRoleIds(roleIds: List<Long>): List<Role>
 
-    fun findAllByStatusIsTrueOrderByRoleId(): List<Role>
-
+    @Query("""
+            SELECT r.* FROM "role" r
+            JOIN user_role ur ON r.role_id = ur.role_id
+            WHERE ur.user_id = :userId
+            AND r.status = true
+            AND ur.status = true
+            ORDER BY r.role_id
+        """, nativeQuery = true)
+    fun findAllByUserId(userId: Long): List<Role>
 }

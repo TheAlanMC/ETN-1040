@@ -1,11 +1,11 @@
 export interface JwtPayload {
     sub: string;
-    roles: string[];
+    permissions: string[];
     givenName: string;
     familyName: string;
     iss: string;
     name: string;
-    groups: string[];
+    roles: string[];
     refresh: boolean;
     exp: number;
     userId: number;

@@ -99,11 +99,11 @@ export class TaskCalendarComponent implements OnInit, AfterViewInit {
         const token = localStorage.getItem('token');
         if (token) {
             const decoded = jwtDecode<JwtPayload>(token!);
-            if (decoded.roles.includes('CREAR TAREAS')) {
+            if (decoded.permissions.includes('CREAR TAREAS')) {
                 this.canAddTask = true;
                 this.isModerator = true;
             }
-            if (decoded.roles.includes('EDITAR TAREAS')) {
+            if (decoded.permissions.includes('EDITAR TAREAS')) {
                 this.canEditTask = true;
                 this.isModerator = true;
             }

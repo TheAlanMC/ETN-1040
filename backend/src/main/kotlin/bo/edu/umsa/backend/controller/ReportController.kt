@@ -20,7 +20,7 @@ class ReportController @Autowired constructor(
         private val logger = LoggerFactory.getLogger(ReportController::class.java.name)
     }
 
-    @GetMapping()
+    @GetMapping
     fun getReports(
         @RequestParam(defaultValue = "reportId") sortBy: String,
         @RequestParam(defaultValue = "asc") sortType: String,
@@ -31,7 +31,7 @@ class ReportController @Autowired constructor(
     ): ResponseEntity<ResponseDto<Page<ReportDto>>> {
         logger.info("Starting the API call to get the reports")
         logger.info("GET /api/v1/reports")
-        AuthUtil.verifyAuthTokenHasRole("VER REPORTES GENERADOS")
+        AuthUtil.verifyAuthTokenHasPermission("VER REPORTES GENERADOS")
         val reports: Page<ReportDto> = reportService.getReports(sortBy, sortType, page, size, dateFrom, dateTo)
         logger.info("Success: Reports retrieved")
         return ResponseEntity(ResponseDto(true, "Reportes recuperados", reports), HttpStatus.OK)
@@ -46,7 +46,7 @@ class ReportController @Autowired constructor(
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to upload the report file")
         logger.info("POST /api/v1/reports")
-        AuthUtil.verifyAuthTokenHasRoles(listOf("VER REPORTES DE TAREAS", "VER REPORTES DE PROYECTOS", "VER REPORTES EJECUTIVOS").toTypedArray())
+        AuthUtil.verifyAuthTokenHasPermissions(listOf("VER REPORTES DE TAREAS", "VER REPORTES DE PROYECTOS", "VER REPORTES EJECUTIVOS").toTypedArray())
         reportService.uploadReportFile(file, reportType, dateFrom, dateTo)
         logger.info("Success: Report file uploaded")
         return ResponseEntity(ResponseDto(true, "Reporte generado con éxito", null), HttpStatus.OK)
@@ -59,7 +59,7 @@ class ReportController @Autowired constructor(
     ): ResponseEntity<ResponseDto<TaskReportFiltersDto>> {
         logger.info("Starting the API call to get the task filters")
         logger.info("GET /api/v1/reports/tasks/filters")
-        AuthUtil.verifyAuthTokenHasRole("VER REPORTES DE TAREAS")
+        AuthUtil.verifyAuthTokenHasPermission("VER REPORTES DE TAREAS")
         val taskFilters: TaskReportFiltersDto = reportService.getTaskFilters(dateFrom, dateTo)
         logger.info("Success: Task filters retrieved")
         return ResponseEntity(ResponseDto(true, "Filtros de tareas recuperados", taskFilters), HttpStatus.OK)
@@ -80,7 +80,7 @@ class ReportController @Autowired constructor(
     ): ResponseEntity<ResponseDto<Page<TaskReportDto>>> {
         logger.info("Starting the API call to get the tasks")
         logger.info("GET /api/v1/reports/tasks")
-        AuthUtil.verifyAuthTokenHasRole("VER REPORTES DE TAREAS")
+        AuthUtil.verifyAuthTokenHasPermission("VER REPORTES DE TAREAS")
         val tasks: Page<TaskReportDto> = reportService.getProjectTasks(sortBy, sortType, page, size, dateFrom, dateTo, projects, taskAssignees, statuses, priorities)
         logger.info("Success: Tasks retrieved")
         return ResponseEntity(ResponseDto(true, "Tareas recuperadas", tasks), HttpStatus.OK)
@@ -93,7 +93,7 @@ class ReportController @Autowired constructor(
     ): ResponseEntity<ResponseDto<ProjectReportFiltersDto>> {
         logger.info("Starting the API call to get the project filters")
         logger.info("GET /api/v1/reports/projects/filters")
-        AuthUtil.verifyAuthTokenHasRole("VER REPORTES DE PROYECTOS")
+        AuthUtil.verifyAuthTokenHasPermission("VER REPORTES DE PROYECTOS")
         val projectFilters: ProjectReportFiltersDto = reportService.getProjectFilters(dateFrom, dateTo)
         logger.info("Success: Project filters retrieved")
         return ResponseEntity(ResponseDto(true, "Filtros de proyectos recuperados", projectFilters), HttpStatus.OK)
@@ -114,7 +114,7 @@ class ReportController @Autowired constructor(
     ): ResponseEntity<ResponseDto<Page<ProjectReportDto>>> {
         logger.info("Starting the API call to get the projects")
         logger.info("GET /api/v1/reports/projects")
-        AuthUtil.verifyAuthTokenHasRole("VER REPORTES DE PROYECTOS")
+        AuthUtil.verifyAuthTokenHasPermission("VER REPORTES DE PROYECTOS")
         val projects: Page<ProjectReportDto> = reportService.getProjects(sortBy, sortType, page, size, dateFrom, dateTo, projectOwners, projectModerators, projectMembers, statuses)
         logger.info("Success: Projects retrieved")
         return ResponseEntity(ResponseDto(true, "Proyectos recuperados", projects), HttpStatus.OK)
@@ -127,7 +127,7 @@ class ReportController @Autowired constructor(
     ): ResponseEntity<ResponseDto<ExecutiveReportDto>> {
         logger.info("Starting the API call to get the executive report")
         logger.info("GET /api/v1/reports/executive")
-        AuthUtil.verifyAuthTokenHasRole("VER REPORTES EJECUTIVOS")
+        AuthUtil.verifyAuthTokenHasPermission("VER REPORTES EJECUTIVOS")
         val executiveReport: ExecutiveReportDto = reportService.getExecutiveReport(dateFrom, dateTo)
         logger.info("Success: Executive report retrieved")
         return ResponseEntity(ResponseDto(true, "Reporte ejecutivo recuperado", executiveReport), HttpStatus.OK)

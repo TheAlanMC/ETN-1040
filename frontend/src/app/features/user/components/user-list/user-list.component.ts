@@ -56,10 +56,10 @@ export class UserListComponent implements OnInit {
         const token = localStorage.getItem('token');
         if (token) {
             const decoded = jwtDecode<JwtPayload>(token!);
-            if (decoded.roles.includes('CREAR USUARIOS')) {
+            if (decoded.permissions.includes('CREAR USUARIOS')) {
                 this.canAddUser = true;
             }
-            if (decoded.roles.includes('EDITAR USUARIOS')) {
+            if (decoded.permissions.includes('EDITAR USUARIOS')) {
                 this.canEditUser = true;
             }
             this.userId = decoded.userId;

@@ -24,7 +24,7 @@ class ProjectController @Autowired constructor(
     fun getAllProjects(): ResponseEntity<ResponseDto<List<ProjectPartialDto>>> {
         logger.info("Starting the API call to get all projects")
         logger.info("GET /api/v1/projects/all")
-        AuthUtil.verifyAuthTokenHasRoles(listOf("VER TAREAS", "CREAR TAREAS", "EDITAR TAREAS").toTypedArray())
+        AuthUtil.verifyAuthTokenHasPermissions(listOf("VER TAREAS", "CREAR TAREAS", "EDITAR TAREAS").toTypedArray())
         val projects: List<ProjectPartialDto> = projectService.getAllProjects()
         logger.info("Success: All projects retrieved")
         return ResponseEntity(ResponseDto(true, "Proyectos recuperados", projects), HttpStatus.OK)
@@ -40,7 +40,7 @@ class ProjectController @Autowired constructor(
         ): ResponseEntity<ResponseDto<Page<ProjectPartialDto>>> {
         logger.info("Starting the API call to get the projects")
         logger.info("GET /api/v1/projects")
-        AuthUtil.verifyAuthTokenHasRole("VER PROYECTOS")
+        AuthUtil.verifyAuthTokenHasPermission("VER PROYECTOS")
         val projects: Page<ProjectPartialDto> = projectService.getProjects(sortBy, sortType, page, size, keyword)
         logger.info("Success: Projects retrieved")
         return ResponseEntity(ResponseDto(true, "Proyectos recuperados", projects), HttpStatus.OK)
@@ -52,7 +52,7 @@ class ProjectController @Autowired constructor(
     ): ResponseEntity<ResponseDto<ProjectDto>> {
         logger.info("Starting the API call to get the project by id")
         logger.info("GET /api/v1/projects/$projectId")
-        AuthUtil.verifyAuthTokenHasRole("VER PROYECTOS")
+        AuthUtil.verifyAuthTokenHasPermission("VER PROYECTOS")
         val project: ProjectDto = projectService.getProjectById(projectId)
         logger.info("Success: Project retrieved")
         return ResponseEntity(ResponseDto(true, "Proyecto recuperado", project), HttpStatus.OK)
@@ -62,7 +62,7 @@ class ProjectController @Autowired constructor(
     fun createProject(@RequestBody newProjectDto: NewProjectDto): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to create the project")
         logger.info("POST /api/v1/projects")
-        AuthUtil.verifyAuthTokenHasRole("CREAR PROYECTOS")
+        AuthUtil.verifyAuthTokenHasPermission("CREAR PROYECTOS")
         projectService.createProject(newProjectDto)
         logger.info("Success: Project created")
         return ResponseEntity(ResponseDto(true, "El proyecto se ha creado", null), HttpStatus.CREATED)
@@ -75,7 +75,7 @@ class ProjectController @Autowired constructor(
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the project")
         logger.info("PUT /api/v1/projects/$projectId")
-        AuthUtil.verifyAuthTokenHasRole("EDITAR PROYECTOS")
+        AuthUtil.verifyAuthTokenHasPermission("EDITAR PROYECTOS")
         projectService.updateProject(projectId, projectDto)
         logger.info("Success: Project updated")
         return ResponseEntity(ResponseDto(true, "El proyecto se ha actualizado", null), HttpStatus.OK)
@@ -87,7 +87,7 @@ class ProjectController @Autowired constructor(
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to delete the project")
         logger.info("DELETE /api/v1/projects/$projectId")
-        AuthUtil.verifyAuthTokenHasRole("EDITAR PROYECTOS")
+        AuthUtil.verifyAuthTokenHasPermission("EDITAR PROYECTOS")
         projectService.deleteProject(projectId)
         logger.info("Success: Project deleted")
         return ResponseEntity(ResponseDto(true, "El proyecto se ha eliminado", null), HttpStatus.OK)
@@ -100,7 +100,7 @@ class ProjectController @Autowired constructor(
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to close the project")
         logger.info("PUT /api/v1/projects/$projectId/close")
-        AuthUtil.verifyAuthTokenHasRole("EDITAR PROYECTOS")
+        AuthUtil.verifyAuthTokenHasPermission("EDITAR PROYECTOS")
         projectService.closeProject(projectId, closeProjectDto)
         logger.info("Success: Project closed")
         return ResponseEntity(ResponseDto(true, "El proyecto se ha cerrado", null), HttpStatus.OK)
@@ -121,7 +121,7 @@ class ProjectController @Autowired constructor(
     ): ResponseEntity<ResponseDto<Page<TaskPartialDto>>> {
         logger.info("Starting the API call to get the tasks")
         logger.info("GET /api/v1/projects/$projectId/tasks")
-        AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
+        AuthUtil.verifyAuthTokenHasPermission("VER TAREAS")
         val tasks: Page<TaskPartialDto> = projectService.getProjectTasks(projectId, sortBy, sortType, page, size, keyword, statuses, priorities, dateFrom, dateTo)
         logger.info("Success: Tasks retrieved")
         return ResponseEntity(ResponseDto(true, "Tareas recuperadas", tasks), HttpStatus.OK)

@@ -74,6 +74,8 @@ export class ProjectDetailComponent implements OnInit {
 
     daysOfDifference: number = 0;
 
+    canEditProject: boolean = false;
+
     constructor(
         private activatedRoute: ActivatedRoute,
         private projectService: ProjectService,
@@ -86,6 +88,9 @@ export class ProjectDetailComponent implements OnInit {
         if (token) {
             const decoded = jwtDecode<JwtPayload>(token!);
             this.userId = decoded.userId;
+            if (decoded.permissions.includes('EDITAR PROYECTOS')) {
+                this.canEditProject = true;
+            }
         }
     }
 
@@ -183,4 +188,38 @@ export class ProjectDetailComponent implements OnInit {
         });
     }
 
+    public onDeleteProject(projectId: number) {
+        this.confirmationService.confirm({
+            key: 'confirmDeleteProject',
+            message: '¿Estás seguro de que deseas eliminar este proyecto? Esta acción no se puede deshacer.',
+            header: 'Confirmar',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Sí',
+            rejectLabel: 'No',
+            accept: () => {
+                this.deleteProject(projectId);
+            },
+        });
+    }
+
+    public deleteProject(projectId: number) {
+        this.projectService.deleteProject(projectId).subscribe({
+            next: (data) => {
+                this.messageService.add({
+                    severity: 'success', summary: 'Éxito', detail: 'Proyecto eliminado correctamente'
+                });
+                setTimeout(() => {
+                    this.router.navigate(['/projects']).then(r => console.log('Redirect to projects page'));
+                    },
+                    500);
+            }, error: (error) => {
+                console.error(error);
+                this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
+            }
+        });
+    }
+
+    public navigateToEditProject(projectId: number) {
+        this.router.navigate(['/projects/edit/' + projectId]).then(r => console.log('Navigate to edit project'));
+    }
 }

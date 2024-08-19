@@ -56,10 +56,10 @@ export class ProjectListComponent implements OnInit {
         const token = localStorage.getItem('token');
         if (token) {
             const decoded = jwtDecode<JwtPayload>(token!);
-            if (decoded.roles.includes('CREAR PROYECTOS')) {
+            if (decoded.permissions.includes('CREAR PROYECTOS')) {
                 this.canAddProject = true;
             }
-            if (decoded.roles.includes('EDITAR PROYECTOS')) {
+            if (decoded.permissions.includes('EDITAR PROYECTOS')) {
                 this.canEditProject = true;
             }
         }

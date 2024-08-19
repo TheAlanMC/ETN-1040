@@ -58,7 +58,7 @@ export class ProjectTaskDeadlineCardComponent implements OnInit {
         const token = localStorage.getItem('token');
         if (token) {
             const decoded = jwtDecode<JwtPayload>(token!);
-            if (decoded.roles.includes('EDITAR TAREAS')) {
+            if (decoded.permissions.includes('EDITAR TAREAS')) {
                 this.canEditTask = true;
             }
         }

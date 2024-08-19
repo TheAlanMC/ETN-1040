@@ -22,7 +22,7 @@ class FileController @Autowired constructor(private val fileService: FileService
     fun getFile(@PathVariable fileId: Long): ResponseEntity<ByteArray> {
         logger.info("Starting the API call to get the file")
         logger.info("GET /api/v1/files/$fileId")
-        AuthUtil.verifyAuthTokenHasRoles(listOf("VER TAREAS", "CREAR TAREAS", "EDITAR TAREAS", "VER REPORTES DE TAREAS", "VER REPORTES DE PROYECTOS", "VER REPORTES EJECUTIVOS").toTypedArray())
+        AuthUtil.verifyAuthTokenHasPermissions(listOf("VER TAREAS", "CREAR TAREAS", "EDITAR TAREAS", "VER REPORTES DE TAREAS", "VER REPORTES DE PROYECTOS", "VER REPORTES EJECUTIVOS").toTypedArray())
         val fileDto: FileDto = fileService.getFile(fileId)
         val headers = HttpHeaders()
         headers.contentType = MediaType.parseMediaType(fileDto.contentType)
@@ -47,7 +47,7 @@ class FileController @Autowired constructor(private val fileService: FileService
     fun uploadFile(@RequestParam("file") file: MultipartFile): ResponseEntity<ResponseDto<FilePartialDto>> {
         logger.info("Starting the API call to upload a file")
         logger.info("POST /api/v1/files")
-        AuthUtil.verifyAuthTokenHasRoles(listOf("VER TAREAS", "CREAR TAREAS", "EDITAR TAREAS").toTypedArray())
+        AuthUtil.verifyAuthTokenHasPermissions(listOf("VER TAREAS", "CREAR TAREAS", "EDITAR TAREAS").toTypedArray())
         val filePartialDto: FilePartialDto = fileService.uploadFile(file)
         logger.info("Success: File uploaded")
         return ResponseEntity(ResponseDto(true, "Archivo subido", filePartialDto), HttpStatus.CREATED)

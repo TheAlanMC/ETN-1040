@@ -32,7 +32,11 @@ class Role {
     var txHost: String = HttpUtil.getRequestHost() ?: "localhost"
 
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+    var userRoles: List<UserRole>? = null
 
-    var groupRoles: List<GroupRole>? = null
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+    var rolePermissions: List<RolePermission>? = null
+
 
 }
+

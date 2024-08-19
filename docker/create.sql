@@ -1,5 +1,4 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2024-05-28 10:34:47.797
 
 -- tables
 -- Table: account_recovery
@@ -13,6 +12,31 @@ CREATE TABLE account_recovery (
     tx_user varchar(255)  NOT NULL,
     tx_host varchar(255)  NOT NULL,
     CONSTRAINT account_recovery_pk PRIMARY KEY (account_recovery_id)
+);
+
+-- Table: assistant
+CREATE TABLE assistant (
+    assistant_id serial  NOT NULL,
+    user_id int  NOT NULL,
+    semester_id int  NOT NULL,
+    status boolean  NOT NULL,
+    tx_date timestamp  NOT NULL,
+    tx_user varchar(100)  NOT NULL,
+    tx_host varchar(100)  NOT NULL,
+    CONSTRAINT assistant_pk PRIMARY KEY (assistant_id)
+);
+
+-- Table: assistant_schedule
+CREATE TABLE assistant_schedule (
+    assistant_schedule_id serial  NOT NULL,
+    assistant_id int  NOT NULL,
+    schedule_id int  NOT NULL,
+    semester_id int  NOT NULL,
+    status boolean  NOT NULL,
+    tx_date timestamp  NOT NULL,
+    tx_user varchar(100)  NOT NULL,
+    tx_host varchar(100)  NOT NULL,
+    CONSTRAINT assistant_schedule_pk PRIMARY KEY (assistant_schedule_id)
 );
 
 -- Table: file
@@ -44,30 +68,6 @@ CREATE TABLE firebase_token (
     CONSTRAINT firebase_token_pk PRIMARY KEY (firebase_token_id)
 );
 
--- Table: group
-CREATE TABLE "group" (
-    group_id serial  NOT NULL,
-    group_name varchar(100)  NOT NULL,
-    group_description varchar(255)  NOT NULL,
-    status boolean  NOT NULL,
-    tx_date timestamp  NOT NULL,
-    tx_user varchar(100)  NOT NULL,
-    tx_host varchar(100)  NOT NULL,
-    CONSTRAINT group_pk PRIMARY KEY (group_id)
-);
-
--- Table: group_role
-CREATE TABLE group_role (
-    group_role_id serial  NOT NULL,
-    group_id int  NOT NULL,
-    role_id int  NOT NULL,
-    status boolean  NOT NULL,
-    tx_date timestamp  NOT NULL,
-    tx_user varchar(100)  NOT NULL,
-    tx_host varchar(100)  NOT NULL,
-    CONSTRAINT group_role_pk PRIMARY KEY (group_role_id)
-);
-
 -- Table: notification
 CREATE TABLE notification (
     notification_id serial  NOT NULL,
@@ -79,6 +79,18 @@ CREATE TABLE notification (
     tx_user varchar(100)  NOT NULL,
     tx_host varchar(100)  NOT NULL,
     CONSTRAINT notification_pk PRIMARY KEY (notification_id)
+);
+
+-- Table: permission
+CREATE TABLE permission (
+    permission_id serial  NOT NULL,
+    permission_name varchar(100)  NOT NULL,
+    permission_description varchar(255)  NOT NULL,
+    status boolean  NOT NULL,
+    tx_date timestamp  NOT NULL,
+    tx_user varchar(100)  NOT NULL,
+    tx_host varchar(100)  NOT NULL,
+    CONSTRAINT permission_pk PRIMARY KEY (permission_id)
 );
 
 -- Table: project
@@ -163,8 +175,8 @@ CREATE TABLE report (
     report_id serial  NOT NULL,
     user_id int  NOT NULL,
     file_id int  NOT NULL,
-    report_start_date timestamp NOT NULL,
-    report_end_date timestamp NOT NULL,
+    report_start_date timestamp  NOT NULL,
+    report_end_date timestamp  NOT NULL,
     report_type varchar(100)  NOT NULL,
     report_name varchar(100)  NOT NULL,
     status boolean  NOT NULL,
@@ -184,6 +196,45 @@ CREATE TABLE role (
     tx_user varchar(100)  NOT NULL,
     tx_host varchar(100)  NOT NULL,
     CONSTRAINT role_pk PRIMARY KEY (role_id)
+);
+
+-- Table: role_permission
+CREATE TABLE role_permission (
+    role_permission_id serial  NOT NULL,
+    role_id int  NOT NULL,
+    permission_id int  NOT NULL,
+    status boolean  NOT NULL,
+    tx_date timestamp  NOT NULL,
+    tx_user varchar(100)  NOT NULL,
+    tx_host varchar(100)  NOT NULL,
+    CONSTRAINT role_permission_pk PRIMARY KEY (role_permission_id)
+);
+
+-- Table: schedule
+CREATE TABLE schedule (
+    schedule_id serial  NOT NULL,
+    day_of_week varchar(50)  NOT NULL,
+    day_number int  NOT NULL,
+    hour_from time  NOT NULL,
+    hour_to time  NOT NULL,
+    status boolean  NOT NULL,
+    tx_date timestamp  NOT NULL,
+    tx_user varchar(100)  NOT NULL,
+    tx_host varchar(100)  NOT NULL,
+    CONSTRAINT schedule_pk PRIMARY KEY (schedule_id)
+);
+
+-- Table: semester
+CREATE TABLE semester (
+    semester_id serial  NOT NULL,
+    semester_name varchar(100)  NOT NULL,
+    semester_date_from date  NOT NULL,
+    semester_date_to date  NOT NULL,
+    status boolean  NOT NULL,
+    tx_date timestamp  NOT NULL,
+    tx_user varchar(100)  NOT NULL,
+    tx_host varchar(100)  NOT NULL,
+    CONSTRAINT semester_pk PRIMARY KEY (semester_id)
 );
 
 -- Table: task
@@ -310,16 +361,16 @@ CREATE TABLE "user" (
     CONSTRAINT user_id PRIMARY KEY (user_id)
 );
 
--- Table: user_group
-CREATE TABLE user_group (
-    user_group_id serial  NOT NULL,
+-- Table: user_role
+CREATE TABLE user_role (
+    user_role_id serial  NOT NULL,
     user_id int  NOT NULL,
-    group_id int  NOT NULL,
+    role_id int  NOT NULL,
     status boolean  NOT NULL,
     tx_date timestamp  NOT NULL,
     tx_user varchar(100)  NOT NULL,
     tx_host varchar(100)  NOT NULL,
-    CONSTRAINT user_group_pk PRIMARY KEY (user_group_id)
+    CONSTRAINT user_role_pk PRIMARY KEY (user_role_id)
 );
 
 -- foreign keys
@@ -331,26 +382,50 @@ ALTER TABLE account_recovery ADD CONSTRAINT account_recovery_user
     INITIALLY IMMEDIATE
 ;
 
--- Reference: firebase_token_user (table: firebase_token)
-ALTER TABLE firebase_token ADD CONSTRAINT firebase_token_user
+-- Reference: assistant_schedule_assistant (table: assistant_schedule)
+ALTER TABLE assistant_schedule ADD CONSTRAINT assistant_schedule_assistant
+    FOREIGN KEY (assistant_id)
+    REFERENCES assistant (assistant_id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: assistant_schedule_schedule (table: assistant_schedule)
+ALTER TABLE assistant_schedule ADD CONSTRAINT assistant_schedule_schedule
+    FOREIGN KEY (schedule_id)
+    REFERENCES schedule (schedule_id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: assistant_schedule_semester (table: assistant_schedule)
+ALTER TABLE assistant_schedule ADD CONSTRAINT assistant_schedule_semester
+    FOREIGN KEY (semester_id)
+    REFERENCES semester (semester_id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: assistant_semester (table: assistant)
+ALTER TABLE assistant ADD CONSTRAINT assistant_semester
+    FOREIGN KEY (semester_id)
+    REFERENCES semester (semester_id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: assistant_user (table: assistant)
+ALTER TABLE assistant ADD CONSTRAINT assistant_user
     FOREIGN KEY (user_id)
     REFERENCES "user" (user_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: group_role_group (table: group_role)
-ALTER TABLE group_role ADD CONSTRAINT group_role_group
-    FOREIGN KEY (group_id)
-    REFERENCES "group" (group_id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: group_role_role (table: group_role)
-ALTER TABLE group_role ADD CONSTRAINT group_role_role
-    FOREIGN KEY (role_id)
-    REFERENCES role (role_id)  
+-- Reference: firebase_token_user (table: firebase_token)
+ALTER TABLE firebase_token ADD CONSTRAINT firebase_token_user
+    FOREIGN KEY (user_id)
+    REFERENCES "user" (user_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
@@ -447,6 +522,22 @@ ALTER TABLE report ADD CONSTRAINT report_file
 ALTER TABLE report ADD CONSTRAINT report_user
     FOREIGN KEY (user_id)
     REFERENCES "user" (user_id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: role_permission_permission (table: role_permission)
+ALTER TABLE role_permission ADD CONSTRAINT role_permission_permission
+    FOREIGN KEY (permission_id)
+    REFERENCES permission (permission_id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: role_permission_role (table: role_permission)
+ALTER TABLE role_permission ADD CONSTRAINT role_permission_role
+    FOREIGN KEY (role_id)
+    REFERENCES role (role_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
@@ -563,16 +654,16 @@ ALTER TABLE "user" ADD CONSTRAINT user_file
     INITIALLY IMMEDIATE
 ;
 
--- Reference: user_group_group (table: user_group)
-ALTER TABLE user_group ADD CONSTRAINT user_group_group
-    FOREIGN KEY (group_id)
-    REFERENCES "group" (group_id)  
+-- Reference: user_role_role (table: user_role)
+ALTER TABLE user_role ADD CONSTRAINT user_role_role
+    FOREIGN KEY (role_id)
+    REFERENCES role (role_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: user_group_user (table: user_group)
-ALTER TABLE user_group ADD CONSTRAINT user_group_user
+-- Reference: user_role_user (table: user_role)
+ALTER TABLE user_role ADD CONSTRAINT user_role_user
     FOREIGN KEY (user_id)
     REFERENCES "user" (user_id)  
     NOT DEFERRABLE 

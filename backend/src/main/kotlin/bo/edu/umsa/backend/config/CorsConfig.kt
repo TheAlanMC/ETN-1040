@@ -16,16 +16,14 @@ class CorsConfig {
         corsConfiguration.allowedOrigins = listOf(
             // Development Server
             "http://localhost:4200", "http://localhost",
-            // Production Server
-            "http://167.172.144.172:4200", "http://167.172.144.172",
-            // Production Secure Server
-            "https://167.172.144.172:4200", "https://167.172.144.172",
             // VPN Server
-            "http://10.244.150.84:4200", "http://10.244.150.84",
+            "http://192.168.192.168:4200", "http://192.168.192.168",
+            // VPN Secure Server
+            "https://192.168.192.168:4200", "https://192.168.192.168",
             // Firebase Hosting
             "https://laboratorio-multimedia.web.app", "https://laboratorio-multimedia.firebaseapp.com",
             // Reverse Proxy
-            "https://laboratoriomultimedia.xyz",
+            "https://laboratoriomultimedia.xyz", "https://www.laboratoriomultimedia.xyz",
             // Mobile App
             "capacitor://localhost")
         corsConfiguration.allowedHeaders = listOf(

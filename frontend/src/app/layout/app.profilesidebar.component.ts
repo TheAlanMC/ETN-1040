@@ -22,13 +22,6 @@ export class AppProfileSidebarComponent implements OnInit, OnDestroy {
 
     messageSubscription: Subscription;
 
-
-    // notifications: Notification[] = [
-    //   {icon: 'pi pi-envelope text-xl text-primary', message: 'Nuevo mensaje de contacto', time: new Date("2024-05-02 12:00:00")},
-    //   {icon: 'pi pi-user-plus text-xl text-primary', message: 'Nueva solicitud de contacto', time: new Date('2024-05-01 12:00:00')},
-    //   {icon: 'pi pi-comment text-xl text-primary', message: 'Nuevo comentario en una publicación', time: new Date('2024-04-30 12:00:00')},
-    // ]
-
     constructor(
         private layoutService: LayoutService,
         private confirmationService: ConfirmationService,

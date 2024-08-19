@@ -4,9 +4,9 @@ import at.favre.lib.crypto.bcrypt.BCrypt
 import bo.edu.umsa.backend.dto.*
 import bo.edu.umsa.backend.entity.File
 import bo.edu.umsa.backend.entity.User
-import bo.edu.umsa.backend.entity.UserGroup
+import bo.edu.umsa.backend.entity.UserRole
 import bo.edu.umsa.backend.exception.EtnException
-import bo.edu.umsa.backend.mapper.GroupMapper
+import bo.edu.umsa.backend.mapper.RoleMapper
 import bo.edu.umsa.backend.mapper.UserMapper
 import bo.edu.umsa.backend.mapper.UserPartialMapper
 import bo.edu.umsa.backend.repository.*
@@ -22,14 +22,15 @@ import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import java.util.*
 
 @Service
 class UserService @Autowired constructor(
     private val assetService: AssetService,
     private val userRepository: UserRepository,
-    private val groupRepository: GroupRepository,
+    private val roleRepository: RoleRepository,
     private val fileRepository: FileRepository,
-    private val userGroupRepository: UserGroupRepository,
+    private val userRoleRepository: UserRoleRepository,
     private val fileService: FileService,
     private val emailService: EmailService,
     private val projectOwnerRepository: ProjectOwnerRepository,
@@ -86,21 +87,21 @@ class UserService @Autowired constructor(
         if (newUserDto.email.isBlank() || newUserDto.firstName.isBlank() || newUserDto.lastName.isBlank()) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: At least one required field is blank", "Al menos un campo requerido está en blanco")
         }
-        // Validate that the group id is greater than 0
-        if (newUserDto.groupId <= 0) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Group was not selected", "Rol no seleccionado")
+        // Validate that the role id is greater than 0
+        if (newUserDto.roleId <= 0) {
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Role was not selected", "Rol no seleccionado")
         }
         // Validate the email format
         if (!newUserDto.email.matches(Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}\$"))) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Invalid email format", "Formato de correo inválido")
         }
         // Phone must be a number
-        if (newUserDto.phone.isNotBlank() && !newUserDto.phone.matches(Regex("\\d+"))) {
+        if (newUserDto.phone.isNotBlank() && !newUserDto.phone.matches(Regex("\\AssistantScheduleDto+"))) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Phone must be a number", "El teléfono debe ser un número")
         }
-        // Validate that the group exists
-        val groupEntity = groupRepository.findByGroupIdAndStatusIsTrue(newUserDto.groupId.toLong())
-            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Group not found", "Grupo no encontrado")
+        // Validate that the role exists
+        val roleEntity = roleRepository.findByRoleIdAndStatusIsTrue(newUserDto.roleId.toLong())
+            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Role not found", "Rol no encontrado")
         // Validate that the email is unique
         if (userRepository.existsByEmailAndStatusIsTrue(newUserDto.email)) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Email already exists", "El correo ya existe, por favor elija otro")
@@ -127,7 +128,7 @@ class UserService @Autowired constructor(
         // Create the user
         val userEntity = User()
         userEntity.filePhotoId = savedFile.fileId
-        userEntity.email = newUserDto.email
+        userEntity.email = newUserDto.email.lowercase()
         userEntity.firstName = newUserDto.firstName
         userEntity.lastName = newUserDto.lastName
         userEntity.username = newUserDto.email
@@ -137,19 +138,19 @@ class UserService @Autowired constructor(
         userRepository.save(userEntity)
         logger.info("User created with id ${userEntity.userId}")
 
-        // Create the user group
-        val userGroupEntity = UserGroup()
-        userGroupEntity.userId = userEntity.userId
-        userGroupEntity.groupId = newUserDto.groupId
-        userGroupRepository.save(userGroupEntity)
-        logger.info("User group created with id ${userGroupEntity.userGroupId}")
+        // Create the user role
+        val userRoleEntity = UserRole()
+        userRoleEntity.userId = userEntity.userId
+        userRoleEntity.roleId = newUserDto.roleId
+        userRoleRepository.save(userRoleEntity)
+        logger.info("User role created with id ${userRoleEntity.userRoleId}")
 
 
         // Send the email with the password
         emailService.sendEmail(newUserDto.email, "Bienvenido a la plataforma",
             "Bienvenido ${newUserDto.firstName} ${newUserDto.lastName} a la plataforma del Laboratorio Multimedia.\n" +
                     "Puede acceder a la plataforma en el siguiente enlace: $url\n" +
-                    "Se le asignó el rol de ${groupEntity.groupName}.\n" +
+                    "Se le asignó el rol de ${roleEntity.roleName}.\n" +
                     "Su contraseña es: $password\n" +
                     "Por favor, cambie su contraseña en su primer inicio de sesión.")
     }
@@ -167,7 +168,7 @@ class UserService @Autowired constructor(
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Firstname and lastname cannot be blank", "Nombre y apellido no pueden estar en blanco")
         }
         // Phone must be a number
-        if (profileDto.phone.isNotBlank() && !profileDto.phone.matches(Regex("\\d+"))) {
+        if (profileDto.phone.isNotBlank() && !profileDto.phone.matches(Regex("\\AssistantScheduleDto+"))) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Phone must be a number", "El teléfono debe ser un número")
         }
         logger.info("Updating the user with id $userId")
@@ -225,41 +226,43 @@ class UserService @Autowired constructor(
         fileService.overwriteThumbnail(file, userEntity.filePhotoId)
     }
 
-    fun getGroupsByUserId(userId: Long): List<GroupDto> {
-        logger.info("Getting groups for user with id $userId")
+    fun getRolesByUserId(userId: Long): List<RoleDto> {
+        logger.info("Getting roles for user with id $userId")
         // Validate that the user exists
         userRepository.findByUserIdAndStatusIsTrue(userId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found", "Usuario no encontrado")
-        // Get the groups
-        val groupEntities = groupRepository.findAllByUserId(userId)
-        return groupEntities.map { GroupMapper.entityToDto(it) }
+        // Get the roles
+        val roleEntities = roleRepository.findAllByUserId(userId)
+        return roleEntities.map { RoleMapper.entityToDto(it) }
     }
 
-    fun addGroupsToUser(
+    fun addRolesToUser(
         userId: Long,
-        groupIds: List<Long>
+        roleIds: List<Long>
     ) {
-        logger.info("Adding groups to the user with id $userId")
+        logger.info("Adding roles to the user with id $userId")
+        // Validate roleIds are unique
+        if (roleIds.distinct().size != roleIds.size) throw EtnException(HttpStatus.BAD_REQUEST, "Error: Duplicate roles are not allowed", "No se permiten roles duplicados")
         // Get the user
         userRepository.findByUserIdAndStatusIsTrue(userId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found", "Usuario no encontrado")
-        // Validate that the groups exist
-        val groupEntities = groupRepository.findAllByGroupIds(groupIds)
-        if (groupEntities.size != groupIds.size) throw EtnException(HttpStatus.NOT_FOUND, "Error: Group not found", "Al menos un grupo no fue encontrado")
+        // Validate that the roles exist
+        val roleEntities = roleRepository.findAllByRoleIds(roleIds)
+        if (roleEntities.size != roleIds.size) throw EtnException(HttpStatus.NOT_FOUND, "Error: Role not found", "Al menos un rol no fue encontrado")
         // Delete previous roles changing the status to false
-        logger.info("Deleting previous groups")
-        val userGroupEntities = userGroupRepository.findAllByUserIdAndStatusIsTrue(userId)
-        userGroupEntities.forEach {
+        logger.info("Deleting previous roles")
+        val userRoleEntities = userRoleRepository.findAllByUserIdAndStatusIsTrue(userId)
+        userRoleEntities.forEach {
             it.status = false
-            userGroupRepository.save(it)
+            userRoleRepository.save(it)
         }
-        // Add the new groups
-        logger.info("Adding new groups")
-        groupEntities.forEach {
-            val userGroupEntity = UserGroup()
-            userGroupEntity.userId = userId.toInt()
-            userGroupEntity.groupId = it.groupId
-            userGroupRepository.save(userGroupEntity)
+        // Add the new roles
+        logger.info("Adding new roles")
+        roleEntities.forEach {
+            val userRoleEntity = UserRole()
+            userRoleEntity.userId = userId.toInt()
+            userRoleEntity.roleId = it.roleId
+            userRoleRepository.save(userRoleEntity)
         }
     }
 

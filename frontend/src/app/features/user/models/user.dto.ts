@@ -7,6 +7,6 @@ export interface UserDto {
     description: string;
     txUser: string;
     txDate: Date;
-    groups: string[];
     roles: string[];
+    permissions: string[];
 }

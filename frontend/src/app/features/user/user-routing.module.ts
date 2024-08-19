@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
-import {RoleGuard} from "../../core/guards/role.guard";
+import {PermissionGuard} from "../../core/guards/permission.guard";
 import {UserListComponent} from "./components/user-list/user-list.component";
 import {NewUserComponent} from "./components/new-user/new-user.component";
 import {EditUserComponent} from "./components/edit-user/edit-user.component";
@@ -14,31 +14,31 @@ import {ViewUserComponent} from "./components/view-user/view-user.component";
 const routes: Routes = [
     {
         path: 'users', children: [
-            {path: '', component: UserListComponent, canActivate: [RoleGuard], data: {roles: ['VER USUARIOS']}},
+            {path: '', component: UserListComponent, canActivate: [PermissionGuard], data: {permissions: ['VER USUARIOS']}},
             {
                 path: 'create',
                 component: NewUserComponent,
-                canActivate: [RoleGuard],
-                data: {roles: ['CREAR USUARIOS'], breadcrumb: 'Nuevo'}
+                canActivate: [PermissionGuard],
+                data: {permissions: ['CREAR USUARIOS'], breadcrumb: 'Nuevo'}
             },
             {
                 path: 'view/:id',
                 component: ViewUserComponent,
-                canActivate: [RoleGuard],
-                data: {roles: ['VER USUARIOS'], breadcrumb: 'Ver'}
+                canActivate: [PermissionGuard],
+                data: {permissions: ['VER USUARIOS'], breadcrumb: 'Ver'}
             },
             {
                 path: 'edit/:id',
                 component: EditUserComponent,
-                canActivate: [RoleGuard],
-                data: {roles: ['EDITAR USUARIOS'], breadcrumb: 'Editar'}
+                canActivate: [PermissionGuard],
+                data: {permissions: ['EDITAR USUARIOS'], breadcrumb: 'Editar'}
             },
             {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard], data: {breadcrumb: 'Perfil'}},
             {
                 path: 'management',
                 component: GroupAndRoleComponent,
-                canActivate: [RoleGuard],
-                data: {roles: ['GESTIONAR ROLES Y PERMISOS'], breadcrumb: 'Roles y Permisos'}
+                canActivate: [PermissionGuard],
+                data: {permissions: ['GESTIONAR ROLES Y PERMISOS'], breadcrumb: 'Roles y Permisos'}
             },
         ]
     },

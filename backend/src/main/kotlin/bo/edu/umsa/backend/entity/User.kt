@@ -50,7 +50,7 @@ class User {
     var txHost: String = HttpUtil.getRequestHost() ?: "localhost"
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    var userGroups: List<UserGroup>? = null
+    var userRoles: List<UserRole>? = null
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     var firebaseTokens: List<FirebaseToken>? = null

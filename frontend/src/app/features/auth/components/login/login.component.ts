@@ -60,33 +60,20 @@ export class LoginComponent implements OnInit {
     }
 
     public onLogin() {
-        if (this.isChromium && !this.isMobile && !this.checkHost()) {
-            this.login();
-        } else {
-            this.isLoading = true;
-            this.firebaseService.getFirebaseToken().subscribe({
-                next: (token) => {
-                    this.token = token;
-                    this.login();
-                },
-                error: (error) => {
-                    console.error(error);
-                    this.isLoading = false;
-                    this.messageService.add({
-                        severity: 'error',
-                        summary: 'Error',
-                        detail: 'Por favor, permita las notificaciones para iniciar sesión'
-                    });
-                },
-            });
-        }
+        this.isLoading = true;
+        this.firebaseService.getFirebaseToken().subscribe({
+            next: (token) => {
+                this.token = token;
+                this.login();
+            },
+            error: (error) => {
+                console.error(error);
+                this.isLoading = false;
+                this.messageService.add({severity: 'warn', summary: 'Advertencia', detail: 'No se activaron las notificaciones'});
+                this.login();
+            },
+        });
     }
-
-    public checkHost() {
-        const currentHost = window.location.host;
-        return currentHost === 'laboratorio-multimedia.firebaseapp.com' || currentHost === 'laboratorio-multimedia.web.app';
-    }
-
 
     public login() {
         this.isLoading = true;

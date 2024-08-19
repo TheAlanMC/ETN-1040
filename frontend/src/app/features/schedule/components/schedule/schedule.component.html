@@ -1,0 +1,70 @@
+<p-toast></p-toast>
+<div class="mb-4">
+
+    <div class="flex flex-wrap gap-2 align-items-center justify-content-between">
+        <span class="w-full sm:w-20rem ">
+                    <p-floatLabel>
+            <p-dropdown (onChange)="onSelectSemester($event)" [(ngModel)]="selectedSemester"
+                        [filter]="false" [options]="semesterItems" [showClear]="false"
+                        [style]="{'width':'100%'}"
+                        id="semester"
+                        placeholder="Seleccione un Semestre"
+            ></p-dropdown>
+            <label for="semester">Seleccione un Semestre</label>
+        </p-floatLabel>
+                </span>
+        <div *ngIf="canManageSchedule" class="flex flex-wrap gap-2 align-items-center justify-content-between">
+            <button *ngIf="assistantsSchedule.length > 0 && !enableSaveButton" (click)="editSchedule()"
+                    class="p-button-outlined w-full sm:w-auto flex-order-1 sm:flex-order-1" icon="pi pi-pencil"
+                    label="Editar Horarios" pButton></button>
+            <button *ngIf="assistantsSchedule.length === 0 && !enableSaveButton" (click)="editSchedule()"
+                    class="p-button-outlined w-full sm:w-auto flex-order-1 sm:flex-order-1" icon="pi pi-palette"
+                    label="Crear Horarios Personalizados" pButton></button>
+            <button *ngIf="assistantsSchedule.length === 0 && !enableSaveButton" (click)="createRandomSchedule()"
+                    class="p-button-outlined w-full sm:w-auto flex-order-1 sm:flex-order-1" icon="pi pi-objects-column"
+                    label="Crear Horarios Aleatorios" pButton></button>
+            <button *ngIf="enableSaveButton" (click)="saveSchedule()"
+                    class="p-button-outlined w-full sm:w-auto" icon="pi pi-save"
+                    label="Guardar Horarios" pButton></button>
+            <button *ngIf="enableSaveButton"  (click)="cancelSchedule()"
+                    class="p-button-outlined w-full sm:w-auto" icon="pi pi-times"
+                    label="Cancelar" pButton></button>
+        </div>
+
+
+    </div>
+</div>
+
+<full-calendar #calendar [options]="calendarOptions">
+</full-calendar>
+
+<p-dialog #body *ngIf="selectedSchedule" [(visible)]="showAssistantDialog" [breakpoints]="{'960px': '75vw', '640px': '90vw'}"
+          [closable]="true" [draggable]="false" [modal]="true" [resizable]="false" [style]="{width: '32rem'}">
+    <ng-template pTemplate="header">
+        <div class="flex justify-content-between align-items-center w-full">
+            <span class="text-900 font-semibold">{{ schedule?.dayOfWeek }} ({{ schedule?.hourFrom }} - {{ schedule?.hourTo }})</span>        </div>
+    </ng-template>
+    <ng-template pTemplate="content">
+        <div class="flex flex-wrap gap-2 align-items-center justify-content-between mb-3">
+            <div class="w-full">
+                <p-floatLabel>
+                    <p-dropdown [(ngModel)]="selectedAssistant" [options]="assistantItems" [showClear]="false"
+                                [style]="{'width':'100%'}"
+                                [appendTo]="body"
+                                id="assistant"
+                                placeholder="Seleccione un Asistente"
+                    ></p-dropdown>
+                    <label for="assistant">Seleccione un Asistente</label>
+                </p-floatLabel>
+            </div>
+        </div>
+        <div class="flex justify-content-between align-items-center w-full">
+            <button class="p-button-outlined w-full sm:w-auto" icon="pi pi-save" (click)="saveAssistant()"
+                    label="Guardar" pButton></button>
+            <button class="p-button-outlined w-full sm:w-auto" icon="pi pi-times" (click)="showAssistantDialog = false"
+                    label="Cancelar" pButton></button>
+        </div>
+    </ng-template>
+
+</p-dialog>
+

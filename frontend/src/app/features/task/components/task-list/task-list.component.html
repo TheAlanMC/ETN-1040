@@ -78,7 +78,12 @@
                 <p-tag [style]="{background: getPriorityColor(task.taskPriority.taskPriorityId), fontSize: '14px'}"
                        value="{{task.taskPriority.taskPriorityName}}"></p-tag>
             </td>
-            <td>{{ task.taskName }}</td>
+<!--            <td>{{ task.taskName }}</td>-->
+            <td>
+                <a (click)="navigateToViewTask(task.taskId)" pTooltip="Ver Tarea" tooltipPosition="top" style="cursor: pointer; text-decoration: underline;">
+                    {{ task.taskName }}
+                </a>
+            </td>
             <td>{{ task.txDate | date: 'dd/MM/yyyy, HH:mm' }}</td>
             <td>{{ task.taskDueDate | date: 'dd/MM/yyyy, HH:mm' }}</td>
             <!--        <td>{{ task.createdBy }}</td>-->

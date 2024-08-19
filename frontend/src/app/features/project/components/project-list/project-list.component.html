@@ -46,7 +46,12 @@
         </ng-template>
         <ng-template let-project pTemplate="body">
             <tr>
-                <td>{{ project.projectName }}</td>
+<!--                <td>{{ project.projectName }}</td>-->
+                <td>
+                    <a (click)="navigateToViewProject(project.projectId)" pTooltip="Ver Proyecto" tooltipPosition="top" style="cursor: pointer; text-decoration: underline;">
+                        {{ project.projectName }}
+                    </a>
+                </td>
                 <td>{{ project.projectDateFrom | date: 'dd/MM/yyyy' }}</td>
                 <td>{{ project.projectDateTo | date: 'dd/MM/yyyy' }}</td>
                 <td *ngIf="project.projectEndDate">{{ project.projectEndDate | date: 'dd/MM/yyyy' }}</td>

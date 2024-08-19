@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {RoleGuard} from "../../core/guards/role.guard";
+import {PermissionGuard} from "../../core/guards/permission.guard";
 import {ProjectReportComponent} from "./components/project-report/project-report.component";
 import {TaskReportComponent} from "./components/task-report/task-report.component";
 import {ExecutiveReportComponent} from "./components/executive-report/executive-report.component";
@@ -13,26 +13,26 @@ const routes: Routes = [
             {
                 path: 'list',
                 component: ReportListComponent,
-                canActivate: [RoleGuard],
-                data: {roles: ['VER REPORTES GENERADOS'], breadcrumb: 'Lista'}
+                canActivate: [PermissionGuard],
+                data: {permissions: ['VER REPORTES GENERADOS'], breadcrumb: 'Lista'}
             },
             {
                 path: 'executive',
                 component: ExecutiveReportComponent,
-                canActivate: [RoleGuard],
-                data: {roles: ['VER REPORTES EJECUTIVOS'], breadcrumb: 'Ejecutivos'}
+                canActivate: [PermissionGuard],
+                data: {permissions: ['VER REPORTES EJECUTIVOS'], breadcrumb: 'Ejecutivos'}
             },
             {
                 path: 'projects',
                 component: ProjectReportComponent,
-                canActivate: [RoleGuard],
-                data: {roles: ['VER REPORTES DE PROYECTOS'], breadcrumb: 'Proyectos'}
+                canActivate: [PermissionGuard],
+                data: {permissions: ['VER REPORTES DE PROYECTOS'], breadcrumb: 'Proyectos'}
             },
             {
                 path: 'tasks',
                 component: TaskReportComponent,
-                canActivate: [RoleGuard],
-                data: {roles: ['VER REPORTES DE TAREAS'], breadcrumb: 'Tareas'}
+                canActivate: [PermissionGuard],
+                data: {permissions: ['VER REPORTES DE TAREAS'], breadcrumb: 'Tareas'}
             },
             {path: '', redirectTo: 'projects', pathMatch: 'full'}
         ]

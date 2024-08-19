@@ -115,10 +115,10 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
         const token = localStorage.getItem('token');
         if (token) {
             const decoded = jwtDecode<JwtPayload>(token!);
-            if (decoded.roles.includes('CREAR TAREAS')) {
+            if (decoded.permissions.includes('CREAR TAREAS')) {
                 this.canAddTask = true;
             }
-            if (decoded.roles.includes('EDITAR TAREAS')) {
+            if (decoded.permissions.includes('EDITAR TAREAS')) {
                 this.canEditTask = true;
             }
             this.userId = decoded.userId;
@@ -127,7 +127,6 @@ export class ProjectTaskCalendarComponent implements OnInit, AfterViewInit {
         this.selectedStatus = this.sharedService.getData('selectedStatus') ?? [];
         this.selectedPriority = this.sharedService.getData('selectedPriority') ?? [];
         this.projectEndDate = this.sharedService.getData('projectEndDate') ?? null;
-
     }
 
 

@@ -25,7 +25,7 @@ class TaskCommentController @Autowired constructor(
     fun getCommentById(@PathVariable commentId: Long): ResponseEntity<ResponseDto<TaskCommentDto>> {
         logger.info("Starting the API call to get the comment by id")
         logger.info("GET /api/v1/task-comments/$commentId")
-        AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
+        AuthUtil.verifyAuthTokenHasPermission("VER TAREAS")
         val comment: TaskCommentDto = taskCommentService.getCommentById(commentId)
         logger.info("Success: Comment retrieved")
         return ResponseEntity(ResponseDto(true, "Comentario recuperado", comment), HttpStatus.OK)
@@ -35,7 +35,7 @@ class TaskCommentController @Autowired constructor(
     fun createComment(@RequestBody newTaskCommentDto: NewTaskCommentDto): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to create the comment")
         logger.info("POST /api/v1/task-comments")
-        AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
+        AuthUtil.verifyAuthTokenHasPermission("VER TAREAS")
         taskCommentService.createComment(newTaskCommentDto)
         logger.info("Success: Comment created")
         return ResponseEntity(ResponseDto(true, "El comentario se ha creado", null), HttpStatus.CREATED)
@@ -48,7 +48,7 @@ class TaskCommentController @Autowired constructor(
     ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to update the comment")
         logger.info("PUT /api/v1/task-comments/$commentId")
-        AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
+        AuthUtil.verifyAuthTokenHasPermission("VER TAREAS")
         taskCommentService.updateComment(commentId, newTaskCommentDto)
         logger.info("Success: Comment updated")
         return ResponseEntity(ResponseDto(true, "El comentario se ha actualizado", null), HttpStatus.OK)
@@ -58,7 +58,7 @@ class TaskCommentController @Autowired constructor(
     fun deleteComment(@PathVariable commentId: Long): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to delete the comment")
         logger.info("DELETE /api/v1/task-comments/$commentId")
-        AuthUtil.verifyAuthTokenHasRole("VER TAREAS")
+        AuthUtil.verifyAuthTokenHasPermission("VER TAREAS")
         taskCommentService.deleteComment(commentId)
         logger.info("Success: Comment deleted")
         return ResponseEntity(ResponseDto(true, "El comentario se ha eliminado", null), HttpStatus.OK)
