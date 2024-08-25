@@ -37,22 +37,6 @@ export class ReportService {
             this.utilService.getHttpOptions());
     }
 
-    public uploadReport(
-        dateFrom: string,
-        dateTo: string,
-        reportType: string,
-        fileId: number,
-        fileName: string,
-        contentType: string,
-        fileSize: number,
-    ): Observable<ResponseDto<null>> {
-        return this.http.post<ResponseDto<null>>(`${this.baseUrl}/${reportType}?dateFrom=${dateFrom}&dateTo=${dateTo}`,
-            {
-                fileId, fileName, contentType, fileSize,
-            },
-            this.utilService.getHttpOptions());
-    }
-
     public getTaskFilters(
         dateFrom: string,
         dateTo: string,
@@ -115,5 +99,45 @@ export class ReportService {
     ): Observable<ResponseDto<ExecutiveReportDto>> {
         return this.http.get<ResponseDto<ExecutiveReportDto>>(`${this.baseUrl}/executives?dateFrom=${dateFrom}&dateTo=${dateTo}`,
             this.utilService.getHttpOptions());
+    }
+
+    public getTaskReportPdf(
+        dateFrom: string,
+        dateTo: string,
+        projects: number[],
+        taskAssignees: number[],
+        statuses: string[],
+        priorities: string[],
+    ): Observable<Blob> {
+        const projectList = projects.join(',');
+        const taskAssigneeList = taskAssignees.join(',');
+        const statusList = statuses.join(',');
+        const priorityList = priorities.join(',');
+        return this.http.get<Blob>(`${this.baseUrl}/tasks/pdfs?dateFrom=${dateFrom}&dateTo=${dateTo}&projects=${projectList}&taskAssignees=${taskAssigneeList}&statuses=${statusList}&priorities=${priorityList}`,
+            this.utilService.getHttpOptions('blob'));
+    }
+
+    public getProjectReportPdf(
+        dateFrom: string,
+        dateTo: string,
+        projectOwners: number[],
+        projectModerators: number[],
+        projectMembers: number[],
+        statuses: string[],
+    ): Observable<Blob> {
+        const projectOwnerList = projectOwners.join(',');
+        const projectModeratorList = projectModerators.join(',');
+        const projectMemberList = projectMembers.join(',');
+        const statusList = statuses.join(',');
+        return this.http.get<Blob>(`${this.baseUrl}/projects/pdfs?dateFrom=${dateFrom}&dateTo=${dateTo}&projectOwners=${projectOwnerList}&projectModerators=${projectModeratorList}&projectMembers=${projectMemberList}&statuses=${statusList}`,
+            this.utilService.getHttpOptions('blob'));
+    }
+
+    public getExecutiveReportPdf(
+        dateFrom: string,
+        dateTo: string,
+    ): Observable<Blob> {
+        return this.http.get<Blob>(`${this.baseUrl}/executives/pdfs?dateFrom=${dateFrom}&dateTo=${dateTo}`,
+            this.utilService.getHttpOptions('blob'));
     }
 }

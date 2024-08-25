@@ -31,7 +31,7 @@ class FileService @Autowired constructor(
     }
 
     fun uploadFile(file: MultipartFile): FilePartialDto {
-        logger.info("Uploading the file ${file.originalFilename}")
+        logger.info("Uploading the file ${file.originalFilename}, from MultipartFile")
         val fileEntity = File()
         fileEntity.fileName = sanitizeFilename(file.originalFilename!!)
         fileEntity.contentType = file.contentType!!
@@ -47,6 +47,22 @@ class FileService @Autowired constructor(
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: File is not an image", "La imagen con extensión ${file.originalFilename?.substringAfterLast(".")} no es válida")
         }
 
+        // Save the file
+        val savedFile: File = fileRepository.save(fileEntity)
+        return FilePartialMapper.entityToDto(savedFile)
+    }
+
+    fun uploadFileByteArray(
+        file: ByteArray,
+        fileName: String,
+        contentType: String
+    ): FilePartialDto {
+        logger.info("Uploading the file $fileName, from ByteArray")
+        val fileEntity = File()
+        fileEntity.fileName = sanitizeFilename(fileName)
+        fileEntity.contentType = contentType
+        fileEntity.fileData = file
+        fileEntity.fileSize = file.size
         // Save the file
         val savedFile: File = fileRepository.save(fileEntity)
         return FilePartialMapper.entityToDto(savedFile)

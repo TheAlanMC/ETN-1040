@@ -6,9 +6,11 @@ import bo.edu.umsa.backend.util.AuthUtil
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.http.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1/reports")
@@ -35,21 +37,6 @@ class ReportController @Autowired constructor(
         val reports: Page<ReportDto> = reportService.getReports(sortBy, sortType, page, size, dateFrom, dateTo)
         logger.info("Success: Reports retrieved")
         return ResponseEntity(ResponseDto(true, "Reportes recuperados", reports), HttpStatus.OK)
-    }
-
-    @PostMapping("/{reportType}")
-    fun uploadReportFile(
-        @RequestParam(defaultValue = "dateFrom") dateFrom: String,
-        @RequestParam(defaultValue = "dateTo") dateTo: String,
-        @PathVariable reportType: ReportType,
-        @RequestBody file: FilePartialDto
-    ): ResponseEntity<ResponseDto<Nothing>> {
-        logger.info("Starting the API call to upload the report file")
-        logger.info("POST /api/v1/reports")
-        AuthUtil.verifyAuthTokenHasPermissions(listOf("VER REPORTES DE TAREAS", "VER REPORTES DE PROYECTOS", "VER REPORTES EJECUTIVOS").toTypedArray())
-        reportService.uploadReportFile(file, reportType, dateFrom, dateTo)
-        logger.info("Success: Report file uploaded")
-        return ResponseEntity(ResponseDto(true, "Reporte generado con éxito", null), HttpStatus.OK)
     }
 
     @GetMapping("/tasks/filters")
@@ -131,5 +118,61 @@ class ReportController @Autowired constructor(
         val executiveReport: ExecutiveReportDto = reportService.getExecutiveReport(dateFrom, dateTo)
         logger.info("Success: Executive report retrieved")
         return ResponseEntity(ResponseDto(true, "Reporte ejecutivo recuperado", executiveReport), HttpStatus.OK)
+    }
+
+    @GetMapping("/tasks/pdfs")
+    fun getTaskReportPdf(
+        @RequestParam(required = true) dateFrom: String,
+        @RequestParam(required = true) dateTo: String,
+        @RequestParam(required = false) projects: List<Int>?,
+        @RequestParam(required = false) taskAssignees: List<Int>?,
+        @RequestParam(required = false) statuses: List<String>?,
+        @RequestParam(required = false) priorities: List<String>?,
+    ): ResponseEntity<ByteArray> {
+        logger.info("Starting the API call to get the task report PDF")
+        logger.info("GET /api/v1/reports/tasks/pdfs")
+        AuthUtil.verifyAuthTokenHasPermission("VER REPORTES DE TAREAS")
+        val taskReportPdf: ByteArray = reportService.getTaskReportPdf(dateFrom, dateTo, projects, taskAssignees, statuses, priorities)
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.parseMediaType("application/pdf")
+        headers.contentDisposition = ContentDisposition.parse("inline; filename=Reporte de Tareas.pdf")
+        logger.info("Success: Task report PDF retrieved")
+        return ResponseEntity(taskReportPdf, headers, HttpStatus.OK)
+    }
+
+    @GetMapping("/projects/pdfs")
+    fun getProjectReportPdf(
+        @RequestParam(required = true) dateFrom: String,
+        @RequestParam(required = true) dateTo: String,
+        @RequestParam(required = false) projectOwners: List<Int>?,
+        @RequestParam(required = false) projectModerators: List<Int>?,
+        @RequestParam(required = false) projectMembers: List<Int>?,
+        @RequestParam(required = false) statuses: List<String>?,
+    ): ResponseEntity<ByteArray> {
+        logger.info("Starting the API call to get the project report PDF")
+        logger.info("GET /api/v1/reports/projects/pdfs")
+        AuthUtil.verifyAuthTokenHasPermission("VER REPORTES DE PROYECTOS")
+        val projectReportPdf: ByteArray = reportService.getProjectsReportPdf(dateFrom, dateTo, projectOwners, projectModerators, projectMembers, statuses)
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.parseMediaType("application/pdf")
+        headers.contentDisposition = ContentDisposition.parse("inline; filename=Reporte de Proyectos.pdf")
+        logger.info("Success: Project report PDF retrieved")
+        return ResponseEntity(projectReportPdf, headers, HttpStatus.OK)
+    }
+
+    @GetMapping("/executives/pdfs")
+    fun getExecutiveReportPdf(
+        @RequestParam(required = true) dateFrom: String,
+        @RequestParam(required = true) dateTo: String,
+    ): ResponseEntity<ByteArray> {
+        logger.info("Starting the API call to get the executive report PDF")
+        logger.info("GET /api/v1/reports/executive/pdfs")
+        AuthUtil.verifyAuthTokenHasPermission("VER REPORTES EJECUTIVOS")
+        val executiveReportPdf: ByteArray = reportService.getExecutiveReportPdf(dateFrom, dateTo)
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.parseMediaType("application/pdf")
+        headers.contentDisposition = ContentDisposition.parse("inline; filename=Reporte Ejecutivo.pdf")
+        logger.info("Success: Executive report PDF retrieved")
+        return ResponseEntity(executiveReportPdf, headers, HttpStatus.OK)
     }
 }

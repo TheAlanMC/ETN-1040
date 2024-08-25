@@ -1,9 +1,9 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ScheduleComponent } from './components/schedule/schedule.component';
-import { SemesterComponent } from './components/semester/semester.component';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {ScheduleComponent} from './components/schedule/schedule.component';
+import {SemesterComponent} from './components/semester/semester.component';
 import {ScheduleRoutingModule} from "./schedule-routing.module";
-import { ViewScheduleComponent } from './components/view-schedule/view-schedule.component';
+import {ViewScheduleComponent} from './components/view-schedule/view-schedule.component';
 import {TabMenuModule} from "primeng/tabmenu";
 import {ButtonModule} from "primeng/button";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
@@ -28,13 +28,12 @@ import {TagModule} from "primeng/tag";
 import {TieredMenuModule} from "primeng/tieredmenu";
 
 
-
 @NgModule({
-  declarations: [
-    ScheduleComponent,
-    SemesterComponent,
-    ViewScheduleComponent
-  ],
+    declarations: [
+        ScheduleComponent,
+        SemesterComponent,
+        ViewScheduleComponent
+    ],
     imports: [
         CommonModule,
         ScheduleRoutingModule,
@@ -63,4 +62,5 @@ import {TieredMenuModule} from "primeng/tieredmenu";
         TieredMenuModule
     ]
 })
-export class ScheduleModule { }
+export class ScheduleModule {
+}

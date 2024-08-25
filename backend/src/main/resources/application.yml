@@ -38,3 +38,6 @@ security:
 
 frontend:
   url: ${FRONTEND_URL:http://localhost:4200}
+
+pdf-turtle:
+  url: ${PDF_TURTLE_URL:http://localhost:8000}

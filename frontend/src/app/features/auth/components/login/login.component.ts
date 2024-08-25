@@ -69,7 +69,11 @@ export class LoginComponent implements OnInit {
             error: (error) => {
                 console.error(error);
                 this.isLoading = false;
-                this.messageService.add({severity: 'warn', summary: 'Advertencia', detail: 'No se activaron las notificaciones'});
+                this.messageService.add({
+                    severity: 'warn',
+                    summary: 'Advertencia',
+                    detail: 'No se activaron las notificaciones'
+                });
                 this.login();
             },
         });

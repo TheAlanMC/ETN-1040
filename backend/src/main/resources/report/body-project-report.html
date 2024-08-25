@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+        }
+
+        .table-wrapper {
+            margin-bottom: 20px;
+        }
+
+        .project-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        .project-table th,
+        .project-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .project-table th {
+            background-color: #f2f2f2;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar div {
+            height: 100%;
+            background-color: #3b82f6;
+            width: 0;
+            position: absolute;
+        }
+
+        .nowrap {
+            white-space: nowrap;
+        }
+
+        .center-text {
+            display: block;
+            text-align: center;
+        }
+    </style>
+    <title></title>
+</head>
+
+<body class="pdf-turtle">
+
+<!-- Summary Section -->
+<h2 class="date-range" data-date-from="{{ .dateFrom }}" data-date-to="{{ .dateTo }}"></h2>
+
+<!-- Project Tables -->
+<div class="table-wrapper">
+    <table class="project-table">
+        <tr>
+            <th>Nombre del Proyecto</th>
+            <th>Estado del Proyecto</th>
+            <th>Progreso de Tareas</th>
+            <th>Fecha de Inicio</th>
+            <th>Fecha de Finalización</th>
+            <th>Fecha de Cierre</th>
+        </tr>
+        {{ range .content }}
+        <tr>
+            <td>{{ .projectName }}</td>
+            <td>{{ .projectStatusName }}</td>
+            <td>
+                <div class="progress-bar">
+                    <div style="width: calc(100% * {{ .projectFinishedTasks }} / {{ .projectTotalTasks }})">
+                    </div>
+                </div>
+                <span class="center-text">{{ .projectFinishedTasks }}/{{ .projectTotalTasks }}</span>
+            </td>
+            <td class="nowrap date" data-date="{{ .projectDateFrom }}"></td>
+            <td class="nowrap date" data-date="{{ .projectDateTo }}"></td>
+            <td class="nowrap date"
+                data-date="{{ if .projectEndDate }}{{ .projectEndDate }}{{ else }}En Progreso{{ end }}"></td>
+        </tr>
+        {{ end }}
+    </table>
+</div>
+
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ratingElements = document.querySelectorAll('.rating');
+        ratingElements.forEach(function (element) {
+            const rating = parseInt(element.getAttribute('data-rating'), 10);
+            let stars = '☆☆☆☆☆';
+            if (rating > 0) {
+                stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+            }
+            element.textContent = stars;
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const dateElements = document.querySelectorAll('.date, .date-time');
+        dateElements.forEach(function (element) {
+            const dateStr = element.getAttribute('data-date');
+            const includeTime = element.classList.contains('date-time');
+            element.textContent = formatDate(dateStr, includeTime);
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const dateRangeElement = document.querySelector('.date-range');
+        const dateFromStr = dateRangeElement.getAttribute('data-date-from');
+        const dateToStr = dateRangeElement.getAttribute('data-date-to');
+        dateRangeElement.textContent = `Reporte de Proyectos del ${formatDate(dateFromStr)} al ${formatDate(dateToStr)}`;
+    });
+
+    function formatDate(dateStr, includeTime = false) {
+        if (dateStr === "En Progreso") {
+            return dateStr;
+        }
+        const date = new Date(dateStr);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        if (includeTime) {
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${day}/${month}/${year}, ${hours}:${minutes}`;
+        }
+        return `${day}/${month}/${year}`;
+    }
+</script>
+
+</html>

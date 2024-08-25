@@ -109,7 +109,8 @@
                 </div>
             </div>
 
-            <p-pickList (onMoveAllToSource)="sortSourcePermissions()" (onMoveAllToTarget)="sortTargetPermission()" (onMoveToSource)="sortSourcePermissions()"
+            <p-pickList (onMoveAllToSource)="sortSourcePermissions()" (onMoveAllToTarget)="sortTargetPermission()"
+                        (onMoveToSource)="sortSourcePermissions()"
                         (onMoveToTarget)="sortTargetPermission()"
                         [disabled]="isPickListDisabled" [responsive]="true" [showSourceControls]="false"
                         [showTargetControls]="false" [sourceStyle]="{'height':'250px'}" [source]="sourcePermissions"

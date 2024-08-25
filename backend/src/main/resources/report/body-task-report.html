@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+        }
+
+        .table-wrapper {
+            margin-bottom: 20px;
+        }
+
+        .task-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        .task-table th,
+        .task-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .task-table th {
+            background-color: #f2f2f2;
+        }
+
+        .task-table {
+            width: 95%;
+            margin: 10px auto;
+            border: 1px solid #ccc;
+        }
+
+        .task-table th,
+        .task-table td {
+            border: 1px solid #bbb;
+            padding: 6px;
+            text-align: left;
+        }
+
+        .task-table th {
+            background-color: #e9e9e9;
+        }
+
+        .nowrap {
+            white-space: nowrap;
+        }
+    </style>
+    <title></title>
+</head>
+
+<body class="pdf-turtle">
+
+<!-- Summary Section -->
+<h2 class="date-range" data-date-from="{{ .dateFrom }}" data-date-to="{{ .dateTo }}"></h2>
+
+<!-- Task Tables -->
+<div class="table-wrapper">
+
+    <table class="task-table">
+        <tr>
+            <th>Nombre de la Tarea</th>
+            <th>Estado de la Tarea</th>
+            <th>Prioridad de la Tarea</th>
+            <th>Fecha de Creación</th>
+            <th>Fecha Límite</th>
+            <th>Fecha de Finalización</th>
+            <th>Calificación</th>
+        </tr>
+        {{ range .content }}
+        <tr>
+            <td>{{ .taskName }}</td>
+            <td>{{ .taskStatusName }}</td>
+            <td>{{ .taskPriorityName }}</td>
+            <td class="nowrap date-time" data-date="{{ .taskCreationDate }}"></td>
+            <td class="nowrap date-time" data-date="{{ .taskDueDate }}"></td>
+            <td class="nowrap date-time"
+                data-date="{{ if .taskEndDate }}{{ .taskEndDate }}{{ else }}En Progreso{{ end }}">
+            </td>
+            <td class="rating" data-rating="{{ .taskRating }}"></td>
+        </tr>
+        {{ end }}
+    </table>
+
+</div>
+
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ratingElements = document.querySelectorAll('.rating');
+        ratingElements.forEach(function (element) {
+            const rating = parseInt(element.getAttribute('data-rating'), 10);
+            let stars = '☆☆☆☆☆';
+            if (rating > 0) {
+                stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+            }
+            element.textContent = stars;
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const dateElements = document.querySelectorAll('.date, .date-time');
+        dateElements.forEach(function (element) {
+            const dateStr = element.getAttribute('data-date');
+            const includeTime = element.classList.contains('date-time');
+            element.textContent = formatDate(dateStr, includeTime);
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const dateRangeElement = document.querySelector('.date-range');
+        const dateFromStr = dateRangeElement.getAttribute('data-date-from');
+        const dateToStr = dateRangeElement.getAttribute('data-date-to');
+        dateRangeElement.textContent = `Reporte de Tareas del ${formatDate(dateFromStr)} al ${formatDate(dateToStr)}`;
+    });
+
+    function formatDate(dateStr, includeTime = false) {
+        if (dateStr === "En Progreso") {
+            return dateStr;
+        }
+        const date = new Date(dateStr);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        if (includeTime) {
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${day}/${month}/${year}, ${hours}:${minutes}`;
+        }
+        return `${day}/${month}/${year}`;
+    }
+</script>
+
+</html>

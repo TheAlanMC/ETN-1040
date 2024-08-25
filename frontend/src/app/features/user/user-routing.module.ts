@@ -14,7 +14,12 @@ import {ViewUserComponent} from "./components/view-user/view-user.component";
 const routes: Routes = [
     {
         path: 'users', children: [
-            {path: '', component: UserListComponent, canActivate: [PermissionGuard], data: {permissions: ['VER USUARIOS']}},
+            {
+                path: '',
+                component: UserListComponent,
+                canActivate: [PermissionGuard],
+                data: {permissions: ['VER USUARIOS']}
+            },
             {
                 path: 'create',
                 component: NewUserComponent,

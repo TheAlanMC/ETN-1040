@@ -1,4 +1,24 @@
 <!--<p-toast></p-toast>-->
+<div *ngIf="assistantSchedule.length > 0" class="card">
+    <span class="text-900 text-xl font-bold mb-4 block">Auxiliares en Turno</span>
+    <p-table [responsive]="true"
+             [scrollHeight]="'200px'" [scrollable]="true" [value]="assistantSchedule">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Nombres</th>
+                <th>Apellidos</th>
+                <th>Horario</th>
+            </tr>
+        </ng-template>
+        <ng-template let-assistant pTemplate="body">
+            <tr>
+                <td>{{ assistant.assistant.firstName }}</td>
+                <td>{{ assistant.assistant.lastName }}</td>
+                <td>{{ assistant.schedule.hourFrom }} - {{ assistant.schedule.hourTo }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
 <div class="card">
     <span class="text-900 text-xl font-bold mb-4 block">Dashboard</span>
     <div class="grid p-fluid">

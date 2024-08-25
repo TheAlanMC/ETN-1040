@@ -1,6 +1,7 @@
 package bo.edu.umsa.backend.controller
 
 import bo.edu.umsa.backend.dto.AssistantScheduleDto
+import bo.edu.umsa.backend.dto.CurrentAssistantScheduleDto
 import bo.edu.umsa.backend.dto.NewAssistantScheduleDto
 import bo.edu.umsa.backend.dto.ResponseDto
 import bo.edu.umsa.backend.service.AssistantScheduleService
@@ -41,7 +42,10 @@ class  AssistantScheduleController @Autowired constructor(private val assistantS
     }
 
     @PostMapping("/semesters/{semesterId}/custom")
-    fun addCustomAssistantsScheduleToSemester(@PathVariable semesterId: Long, @RequestBody newAssistantScheduleDto: List<NewAssistantScheduleDto>): ResponseEntity<ResponseDto<Nothing>> {
+    fun addCustomAssistantsScheduleToSemester(
+        @PathVariable semesterId: Long,
+        @RequestBody newAssistantScheduleDto: List<NewAssistantScheduleDto>
+    ): ResponseEntity<ResponseDto<Nothing>> {
         logger.info("Starting the API call to add the assistant schedules to the semester with id $semesterId")
         logger.info("POST /api/v1/assistant-schedules/semester/$semesterId/custom")
         AuthUtil.verifyAuthTokenHasPermissions(listOf("CREAR HORARIOS", "EDITAR HORARIOS").toTypedArray())
@@ -58,5 +62,15 @@ class  AssistantScheduleController @Autowired constructor(private val assistantS
         assistantScheduleService.addRandomAssistantsScheduleToSemester(semesterId)
         logger.info("Success: Random assistant schedules added to semester")
         return ResponseEntity(ResponseDto(true, "Horarios de auxiliares aleatorios añadidos al semestre", null), HttpStatus.OK)
+    }
+
+    @GetMapping("/current")
+    fun getLastSemesterAssistantSchedules(): ResponseEntity<ResponseDto<List<CurrentAssistantScheduleDto>>> {
+        logger.info("Starting the API call to get the assistant schedules for today")
+        logger.info("GET /api/v1/assistant-schedules/today")
+        AuthUtil.verifyAuthTokenHasPermission("VER DASHBOARD")
+        val assistantSchedules: List<CurrentAssistantScheduleDto> = assistantScheduleService.getAssistantSchedulesForToday()
+        logger.info("Success: Assistant schedules retrieved for today")
+        return ResponseEntity(ResponseDto(true, "Horarios de auxiliares recuperados para hoy", assistantSchedules), HttpStatus.OK)
     }
 }

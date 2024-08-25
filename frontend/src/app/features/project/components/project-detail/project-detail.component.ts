@@ -209,7 +209,7 @@ export class ProjectDetailComponent implements OnInit {
                     severity: 'success', summary: 'Éxito', detail: 'Proyecto eliminado correctamente'
                 });
                 setTimeout(() => {
-                    this.router.navigate(['/projects']).then(r => console.log('Redirect to projects page'));
+                        this.router.navigate(['/projects']).then(r => console.log('Redirect to projects page'));
                     },
                     500);
             }, error: (error) => {

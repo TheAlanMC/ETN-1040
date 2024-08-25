@@ -1,13 +1,14 @@
 package bo.edu.umsa.backend.service
 
-import bo.edu.umsa.backend.dto.*
+import bo.edu.umsa.backend.dto.AssistantDto
+import bo.edu.umsa.backend.dto.NewSemesterDto
+import bo.edu.umsa.backend.dto.SemesterDto
 import bo.edu.umsa.backend.entity.Assistant
 import bo.edu.umsa.backend.entity.Semester
 import bo.edu.umsa.backend.exception.EtnException
 import bo.edu.umsa.backend.mapper.SemesterMapper
 import bo.edu.umsa.backend.mapper.UserPartialMapper
 import bo.edu.umsa.backend.repository.AssistantRepository
-import bo.edu.umsa.backend.repository.AssistantScheduleRepository
 import bo.edu.umsa.backend.repository.SemesterRepository
 import bo.edu.umsa.backend.repository.UserRepository
 import org.slf4j.LoggerFactory
@@ -140,12 +141,14 @@ class SemesterService @Autowired constructor(
         // Validate the semester exists
         semesterRepository.findBySemesterIdAndStatusIsTrue(semesterId)
             ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Semester not found", "Semestre no encontrado")
+        // Validate the semester has no assistants assigned
+        val assistantEntities = assistantRepository.findAllBySemesterIdAndStatusIsTrue(semesterId)
+        if (assistantEntities.isNotEmpty()) throw EtnException(HttpStatus.BAD_REQUEST, "Error: Semester has assistants assigned", "El semestre tiene auxiliares asignados")
         // Validate the users exists
         val userEntities = userRepository.findAllByUserIdInAndStatusIsTrue(assistantIds.map { it.toInt() })
         if (userEntities.size != assistantIds.size) throw EtnException(HttpStatus.NOT_FOUND, "Error: User not found", "Al menos un usuario no fue encontrado")
         // Delete previous assistants changing the status to false
         logger.info("Deleting previous assistants")
-        val assistantEntities = assistantRepository.findAllBySemesterIdAndStatusIsTrue(semesterId)
         assistantEntities.forEach {
             it.status = false
             assistantRepository.save(it)

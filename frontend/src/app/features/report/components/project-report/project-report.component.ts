@@ -2,9 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FileDto} from "../../../../core/models/file.dto";
 import {FormControl, Validators} from "@angular/forms";
 import {ReportService} from "../../../../core/services/report.service";
-import {FileService} from "../../../../core/services/file.service";
 import {MessageService, SelectItem} from "primeng/api";
-import {PdfGenerationService} from "../../../../core/services/pdf-generation.service";
 import {UtilService} from "../../../../core/services/util.service";
 import {Directory, Filesystem} from "@capacitor/filesystem";
 import {FileOpener} from "@capacitor-community/file-opener";
@@ -37,7 +35,7 @@ export class ProjectReportComponent implements OnInit {
 
     // Pagination variables
     sortBy: string = 'projectId';
-    sortType: string = 'desc';
+    sortType: string = 'asc';
     page: number = 0;
     size: number = 10;
 
@@ -67,9 +65,7 @@ export class ProjectReportComponent implements OnInit {
 
     constructor(
         private reportService: ReportService,
-        private fileService: FileService,
         private messageService: MessageService,
-        private pdfGenerationService: PdfGenerationService,
         private utilService: UtilService,
     ) {
         this.isMobile = this.utilService.checkIfMobile();
@@ -192,69 +188,25 @@ export class ProjectReportComponent implements OnInit {
 
     public onExportPdf() {
         this.isLoading = true;
-        this.pdfGenerationService.generatePdf('executiveReportContent',
-            'Reporte de Proyectos.pdf').subscribe(
-            {
-                next: (pdf) => {
-                    this.upLoadFile(pdf);
-                },
-                error: (error) => {
-                    console.error(error);
-                    this.isLoading = false;
-                    this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
-                }
-            }
-        );
-    }
-
-    public upLoadFile(file: File) {
-        this.isLoading = true;
-        this.fileService.uploadFile(file).subscribe({
-            next: (response) => {
-                this.file = response.data;
-                this.saveReport();
-            },
-            error: (error) => {
-                console.error(error);
-                this.isLoading = false;
-                this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
-            }
-        });
-    }
-
-    public saveReport() {
-        this.reportService.uploadReport(
+        this.reportService.getProjectReportPdf(
             (new Date(this.dateFromControl.value!)).toISOString(),
             (new Date(this.dateToControl.value!)).toISOString(),
-            'PROYECTO',
-            this.file!.fileId,
-            this.file!.fileName,
-            this.file!.contentType,
-            this.file!.fileSize,
+            this.ownerItems.map((owner) => owner.value),
+            this.moderatorItems.map((moderator) => moderator.value),
+            this.memberItems.map((member) => member.value),
+            this.statusItems.map((status) => status.label!!)
         ).subscribe({
-            next: (response) => {
-                this.downloadReport();
-                this.isLoading = false;
-                this.messageService.add({severity: 'success', summary: 'Éxito', detail: response.message});
-            },
-            error: (error) => {
-                console.error(error);
-                this.isLoading = false;
-                this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
-            }
-        });
-    }
-
-    public downloadReport() {
-        this.fileService.getFile(this.file!.fileId).subscribe({
-            next: (data) => {
-                const blob = new Blob([data],
-                    {type: data.type});
+            next: (pdf) => {
+                const blob = new Blob([pdf],
+                    {type: pdf.type});
+                const dateFrom = (new Date(this.dateFromControl.value!)).toISOString().split('T')[0].split('-').reverse().join('-');
+                const dateTo = (new Date(this.dateToControl.value!)).toISOString().split('T')[0].split('-').reverse().join('-');
+                const fileName = `Reporte de Proyectos ${dateFrom} - ${dateTo}.pdf`;
                 if (!this.isMobile) {
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = this.file!.fileName;
+                    a.download = fileName;
                     document.body.appendChild(a);
                     a.click();
                     URL.revokeObjectURL(url);
@@ -264,27 +216,24 @@ export class ProjectReportComponent implements OnInit {
                     reader.onloadend = async () => {
                         const base64Data = reader.result as string;
                         const savedFile = await Filesystem.writeFile({
-                            path: this.file!.fileName,
-                            data: base64Data,
-                            directory: Directory.Documents,
+                            path: fileName, data: base64Data, directory: Directory.Documents,
                         });
                         const fileOpenerOptions = {
-                            filePath: savedFile.uri,
-                            contentType: this.file!.contentType,
-                            openWithDefault: true,
+                            filePath: savedFile.uri, contentType: 'application/pdf', openWithDefault: true,
                         };
                         await FileOpener.open(fileOpenerOptions);
                     };
                     reader.readAsDataURL(blob);
                 }
-            },
-            error: (error) => {
+                this.isLoading = false;
+            }, error: (error) => {
                 console.error(error);
                 this.isLoading = false;
                 this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
             }
         });
     }
+
 
     public onClear() {
         this.generatedReport = false;

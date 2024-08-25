@@ -366,7 +366,8 @@
                             </div>
                         </div>
                         <div class="p-3">
-                            <span class="block text-900" style="word-break: break-all;" [innerHTML] = "task.replacedParts[0].replacedPartDescription | breakLine"></span>
+                            <span [innerHTML]="task.replacedParts[0].replacedPartDescription | breakLine" class="block text-900"
+                                  style="word-break: break-all;"></span>
                             <div *ngIf="task.replacedParts[0].replacedPartFiles.length > 0" class="grid p-fluid formgrid">
                                 <div class="col-12">
                                     <p-fileUpload #fileUploader [auto]="true"
@@ -813,7 +814,7 @@
                                     <p-tieredMenu #menu [model]="menuItems" [popup]="true" appendTo="body"></p-tieredMenu>
                                 </div>
                             </div>
-                            <span class="block text-900" style="word-break: break-all;" [innerHTML]="comment.taskComment | breakLine"></span>
+                            <span [innerHTML]="comment.taskComment | breakLine" class="block text-900" style="word-break: break-all;"></span>
                             <div *ngIf="comment.taskCommentFiles.length > 0" class="grid p-fluid formgrid">
                                 <div class="col-12">
                                     <p-fileUpload #fileUploader [auto]="true"

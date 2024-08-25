@@ -21,21 +21,21 @@
             <p-multiSelect (onChange)="onPriorityChange($event)" [(ngModel)]="selectedPriority"
                            [filter]="false"
                            [options]="priorityItems"
-                           class="multiselect-custom" display="chip" optionLabel="label"
-                           placeholder="Seleccionar Prioridad" id="priority">
+                           class="multiselect-custom" display="chip" id="priority"
+                           optionLabel="label" placeholder="Seleccionar Prioridad">
             </p-multiSelect>
             <label for="priority">Seleccionar Prioridad</label>
         </p-floatLabel>
     </div>
     <div class="col-12 lg:col-6">
         <p-floatLabel>
-        <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus"
-                       [filter]="false"
-                       [options]="statusItems"
-                       class="multiselect-custom" display="chip" optionLabel="label" id="status"
-                       placeholder="Seleccionar Estado">
-        </p-multiSelect>
-        <label for="status">Seleccionar Estado</label>
+            <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus"
+                           [filter]="false"
+                           [options]="statusItems"
+                           class="multiselect-custom" display="chip" id="status" optionLabel="label"
+                           placeholder="Seleccionar Estado">
+            </p-multiSelect>
+            <label for="status">Seleccionar Estado</label>
         </p-floatLabel>
     </div>
 </div>
@@ -79,9 +79,10 @@
                 <p-tag [style]="{background: getPriorityColor(task.taskPriority.taskPriorityId), fontSize: '14px'}"
                        value="{{task.taskPriority.taskPriorityName}}"></p-tag>
             </td>
-<!--            <td>{{ task.taskName }}</td>-->
+            <!--            <td>{{ task.taskName }}</td>-->
             <td>
-                <a (click)="navigateToViewTask(task.taskId)" pTooltip="Ver Tarea" tooltipPosition="top" style="cursor: pointer; text-decoration: underline;">
+                <a (click)="navigateToViewTask(task.taskId)" pTooltip="Ver Tarea" style="cursor: pointer; text-decoration: underline;"
+                   tooltipPosition="top">
                     {{ task.taskName }}
                 </a>
             </td>

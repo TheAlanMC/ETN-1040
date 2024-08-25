@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
 import {FormControl, Validators} from "@angular/forms";
-import {environment} from "../../../../../environments/environment";
 import {UserDto} from "../../../user/models/user.dto";
 import {UserService} from "../../../../core/services/user.service";
 import {jwtDecode} from "jwt-decode";

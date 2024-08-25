@@ -66,9 +66,10 @@ export class FirebaseService {
 
     public listenToBackgroundMessages() {
         const channel = new BroadcastChannel('firebase-messaging');
-        channel.addEventListener('message', (event) => {
-            this.messageSubject.next(event.data);
-        });
+        channel.addEventListener('message',
+            (event) => {
+                this.messageSubject.next(event.data);
+            });
     }
 
     public getMessageObservable() {

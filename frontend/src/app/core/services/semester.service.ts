@@ -3,9 +3,7 @@ import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {ResponseDto} from "../models/response.dto";
-import {PermissionDto} from "../../features/user/models/permission.dto";
 import {UtilService} from "./util.service";
-import {ScheduleDto} from "../../features/schedule/models/schedule.dto";
 import {SemesterDto} from "../../features/schedule/models/semester.dto";
 import {AssistantDto} from "../../features/schedule/models/assistant.dto";
 
@@ -32,20 +30,33 @@ export class SemesterService {
 
     }
 
-    createSemester(semesterName: string, semesterDateFrom: string, semesterDateTo: string): Observable<ResponseDto<SemesterDto>> {
-        return this.http.post<ResponseDto<SemesterDto>>(this.baseUrl, {
-            semesterName,
-            semesterDateFrom,
-            semesterDateTo
-        }, this.utilService.getHttpOptions());
+    createSemester(
+        semesterName: string,
+        semesterDateFrom: string,
+        semesterDateTo: string
+    ): Observable<ResponseDto<SemesterDto>> {
+        return this.http.post<ResponseDto<SemesterDto>>(this.baseUrl,
+            {
+                semesterName,
+                semesterDateFrom,
+                semesterDateTo
+            },
+            this.utilService.getHttpOptions());
     }
 
-    updateSemester(semesterId: number, semesterName: string, semesterDateFrom: string, semesterDateTo: string): Observable<ResponseDto<SemesterDto>> {
-        return this.http.put<ResponseDto<SemesterDto>>(`${this.baseUrl}/${semesterId}`, {
-            semesterName,
-            semesterDateFrom,
-            semesterDateTo
-        }, this.utilService.getHttpOptions());
+    updateSemester(
+        semesterId: number,
+        semesterName: string,
+        semesterDateFrom: string,
+        semesterDateTo: string
+    ): Observable<ResponseDto<SemesterDto>> {
+        return this.http.put<ResponseDto<SemesterDto>>(`${this.baseUrl}/${semesterId}`,
+            {
+                semesterName,
+                semesterDateFrom,
+                semesterDateTo
+            },
+            this.utilService.getHttpOptions());
     }
 
     deleteSemester(semesterId: number): Observable<ResponseDto<SemesterDto>> {
@@ -58,10 +69,15 @@ export class SemesterService {
             this.utilService.getHttpOptions());
     }
 
-    addAssistantToSemester(semesterId: number, assistantIds: number[]): Observable<ResponseDto<AssistantDto>> {
-        return this.http.post<ResponseDto<AssistantDto>>(`${this.baseUrl}/${semesterId}/assistants`, {
-            assistantIds
-        }, this.utilService.getHttpOptions());
+    addAssistantToSemester(
+        semesterId: number,
+        assistantIds: number[]
+    ): Observable<ResponseDto<AssistantDto>> {
+        return this.http.post<ResponseDto<AssistantDto>>(`${this.baseUrl}/${semesterId}/assistants`,
+            {
+                assistantIds
+            },
+            this.utilService.getHttpOptions());
     }
 
 

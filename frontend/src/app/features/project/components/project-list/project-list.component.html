@@ -46,9 +46,10 @@
         </ng-template>
         <ng-template let-project pTemplate="body">
             <tr>
-<!--                <td>{{ project.projectName }}</td>-->
+                <!--                <td>{{ project.projectName }}</td>-->
                 <td>
-                    <a (click)="navigateToViewProject(project.projectId)" pTooltip="Ver Proyecto" tooltipPosition="top" style="cursor: pointer; text-decoration: underline;">
+                    <a (click)="navigateToViewProject(project.projectId)" pTooltip="Ver Proyecto" style="cursor: pointer; text-decoration: underline;"
+                       tooltipPosition="top">
                         {{ project.projectName }}
                     </a>
                 </td>

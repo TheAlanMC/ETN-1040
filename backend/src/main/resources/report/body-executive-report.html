@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+        }
+
+        .summary-cards {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background-color: #f7f7f7;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: left;
+            flex: 1;
+            margin: 0 10px;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            font-size: 14pt;
+        }
+
+        .card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .card li {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .card li span {
+            flex: 1;
+        }
+
+        .card li .value {
+            text-align: right;
+            flex: 0 0 50px;
+        }
+
+        .table-wrapper {
+            margin-bottom: 20px;
+        }
+
+        /* Styles for the parent tables */
+        .project-table,
+        .task-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        .project-table th,
+        .task-table th,
+        .project-table td,
+        .task-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .project-table th,
+        .task-table th {
+            background-color: #f2f2f2;
+        }
+
+        /* Styles for nested tables */
+        .project-table .task-table {
+            width: 95%;
+            margin: 10px auto;
+            border: 1px solid #ccc;
+        }
+
+        .project-table .task-table th,
+        .project-table .task-table td {
+            border: 1px solid #bbb;
+            padding: 6px;
+            text-align: left;
+        }
+
+        .project-table .task-table th {
+            background-color: #e9e9e9;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar div {
+            height: 100%;
+            background-color: #3b82f6;
+            width: 0;
+            position: absolute;
+        }
+
+        .nowrap {
+            white-space: nowrap;
+        }
+
+        .center-text {
+            display: block;
+            text-align: center;
+        }
+    </style>
+    <title></title>
+</head>
+
+<body class="pdf-turtle">
+
+<!-- Summary Section -->
+<h2 class="date-range" data-date-from="{{ .dateFrom }}" data-date-to="{{ .dateTo }}"></h2>
+<div class="summary-cards">
+    <div class="card">
+        <h3>Proyectos</h3>
+        <ul>
+            <li><span>Proyectos Totales:</span> <span class="value">{{ .totalProjects }}</span></li>
+            <li><span>Proyectos Cerrados:</span> <span class="value">{{ .completedProjects }}</span></li>
+            <li><span>Proyectos Cerrados con Retraso:</span> <span class="value">{{
+                            .completedWithDelayProjects }}</span></li>
+            <li><span>Proyectos Abiertos:</span> <span class="value">{{ .inProgressProjects }}</span></li>
+            <li><span>Proyectos Atrasados:</span> <span class="value">{{ .delayedProjects }}</span></li>
+        </ul>
+    </div>
+    <div class="card">
+        <h3>Tareas</h3>
+        <ul>
+            <li><span>Tareas Totales:</span> <span class="value">{{ .totalTasks }}</span></li>
+            <li><span>Tareas Finalizadas:</span> <span class="value">{{ .completedTasks }}</span></li>
+            <li><span>Tareas Finalizadas con Retraso:</span> <span class="value">{{
+                            .completedWithDelayTasks }}</span></li>
+            <li><span>Tareas en Progreso:</span> <span class="value">{{ .inProgressTasks }}</span></li>
+            <li><span>Tareas Pendientes:</span> <span class="value">{{ .pendingTasks }}</span></li>
+            <li><span>Tareas Atrasadas:</span> <span class="value">{{ .delayedTasks }}</span></li>
+        </ul>
+    </div>
+    <div class="card">
+        <h3>Prioridad</h3>
+        <ul>
+            <li><span>Tareas Totales:</span> <span class="value">{{ .totalTasks }}</span></li>
+            <li><span>Prioridad Alta:</span> <span class="value">{{ .highPriorityTasks }}</span></li>
+            <li><span>Prioridad Media:</span> <span class="value">{{ .mediumPriorityTasks }}</span></li>
+            <li><span>Prioridad Baja:</span> <span class="value">{{ .lowPriorityTasks }}</span></li>
+        </ul>
+    </div>
+</div>
+
+<!-- Project Tables -->
+{{ range .projectReports }}
+<div class="table-wrapper">
+    <table class="project-table">
+        <tr>
+            <th>Nombre del Proyecto</th>
+            <th>Estado del Proyecto</th>
+            <th>Progreso de Tareas</th>
+            <th>Fecha de Inicio</th>
+            <th>Fecha de Finalización</th>
+            <th>Fecha de Cierre</th>
+        </tr>
+        <tr>
+            <td>{{ .projectName }}</td>
+            <td>{{ .projectStatusName }}</td>
+            <td>
+                <div class="progress-bar">
+                    <div style="width: calc(100% * {{ .projectFinishedTasks }} / {{ .projectTotalTasks }})">
+                    </div>
+                </div>
+                <span class="center-text">{{ .projectFinishedTasks }}/{{ .projectTotalTasks }}</span>
+            </td>
+            <td class="nowrap date" data-date="{{ .projectDateFrom }}"></td>
+            <td class="nowrap date" data-date="{{ .projectDateTo }}"></td>
+            <td class="nowrap date"
+                data-date="{{ if .projectEndDate }}{{ .projectEndDate }}{{ else }}En Progreso{{ end }}"></td>
+        </tr>
+        <tr>
+            <td colspan="6">
+                <table class="task-table">
+                    <tr>
+                        <th>Nombre de la Tarea</th>
+                        <th>Estado de la Tarea</th>
+                        <th>Prioridad de la Tarea</th>
+                        <th>Fecha de Creación</th>
+                        <th>Fecha Límite</th>
+                        <th>Fecha de Finalización</th>
+                        <th>Calificación</th>
+                    </tr>
+                    {{ range .taskReports }}
+                    <tr>
+                        <td>{{ .taskName }}</td>
+                        <td>{{ .taskStatusName }}</td>
+                        <td>{{ .taskPriorityName }}</td>
+                        <td class="nowrap date-time" data-date="{{ .taskCreationDate }}"></td>
+                        <td class="nowrap date-time" data-date="{{ .taskDueDate }}"></td>
+                        <td class="nowrap date-time"
+                            data-date="{{ if .taskEndDate }}{{ .taskEndDate }}{{ else }}En Progreso{{ end }}">
+                        </td>
+                        <td class="rating" data-rating="{{ .taskRating }}"></td>
+                    </tr>
+                    {{ end }}
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+{{ end }}
+
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ratingElements = document.querySelectorAll('.rating');
+        ratingElements.forEach(function (element) {
+            const rating = parseInt(element.getAttribute('data-rating'), 10);
+            let stars = '☆☆☆☆☆';
+            if (rating > 0) {
+                stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+            }
+            element.textContent = stars;
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const dateElements = document.querySelectorAll('.date, .date-time');
+        dateElements.forEach(function (element) {
+            const dateStr = element.getAttribute('data-date');
+            const includeTime = element.classList.contains('date-time');
+            element.textContent = formatDate(dateStr, includeTime);
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const dateRangeElement = document.querySelector('.date-range');
+        const dateFromStr = dateRangeElement.getAttribute('data-date-from');
+        const dateToStr = dateRangeElement.getAttribute('data-date-to');
+        dateRangeElement.textContent = `Reporte Ejecutivo del ${formatDate(dateFromStr)} al ${formatDate(dateToStr)}`;
+    });
+
+    function formatDate(dateStr, includeTime = false) {
+        if (dateStr === "En Progreso") {
+            return dateStr;
+        }
+        const date = new Date(dateStr);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        if (includeTime) {
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${day}/${month}/${year}, ${hours}:${minutes}`;
+        }
+        return `${day}/${month}/${year}`;
+    }
+</script>
+
+</html>

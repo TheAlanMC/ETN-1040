@@ -11,6 +11,9 @@ import bo.edu.umsa.backend.specification.ProjectSpecification
 import bo.edu.umsa.backend.specification.ReportSpecification
 import bo.edu.umsa.backend.specification.TaskSpecification
 import bo.edu.umsa.backend.util.AuthUtil
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -28,12 +31,13 @@ import java.util.*
 
 @Service
 class ReportService @Autowired constructor(
-    private val fileRepository: FileRepository,
     private val reportRepository: ReportRepository,
     private val projectRepository: ProjectRepository,
     private val taskRepository: TaskRepository,
     private val taskStatusRepository: TaskStatusRepository,
-    private val taskPriorityRepository: TaskPriorityRepository
+    private val taskPriorityRepository: TaskPriorityRepository,
+    private val pdfTurtleService: PdfTurtleService,
+    private val fileService: FileService,
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(ReportService::class.java.name)
@@ -68,46 +72,6 @@ class ReportService @Autowired constructor(
         return reportEntities.map { ReportMapper.entityToDto(it) }
     }
 
-
-    fun uploadReportFile(
-        file: FilePartialDto,
-        reportType: ReportType,
-        dateFrom: String,
-        dateTo: String
-    ) {
-        if (file.fileName.isBlank()) throw EtnException(HttpStatus.BAD_REQUEST, "Error: Empty fields", "Al menos un campo está vacío")
-        try {
-            Timestamp.from(Instant.parse(dateFrom))
-            Timestamp.from(Instant.parse(dateTo))
-        } catch (e: Exception) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date format is incorrect", "El formato de fecha es incorrecto")
-        }
-        if (Timestamp.from(Instant.parse(dateFrom)).after(Timestamp.from(Instant.parse(dateTo)))) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Date range is incorrect", "El rango de fechas es incorrecto")
-        }
-        // Get the user id from the token
-        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
-        // Validate the file exists
-        val fileEntity = fileRepository.findByFileIdAndStatusIsTrue(file.fileId.toLong())
-            ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: File not found", "Archivo no encontrado")
-        logger.info("Starting the service call to upload the report file")
-
-        val zoneId = ZoneId.of("America/La_Paz")
-        val fileName = file.fileName.split(".")
-        val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
-        simpleDateFormat.timeZone = TimeZone.getTimeZone(zoneId)
-        val simpleDateFrom = simpleDateFormat.format(Timestamp.from(Instant.parse(dateFrom)))
-        val simpleDateTo = simpleDateFormat.format(Timestamp.from(Instant.parse(dateTo)))
-        val reportEntity = Report()
-        reportEntity.userId = userId.toInt()
-        reportEntity.fileId = file.fileId
-        reportEntity.reportType = reportType
-        reportEntity.reportStartDate = Timestamp.from(Instant.parse(dateFrom))
-        reportEntity.reportEndDate = Timestamp.from(Instant.parse(dateTo))
-        reportEntity.reportName = "${fileName[0]}: $simpleDateFrom - $simpleDateTo.${fileName[1]}"
-        reportRepository.save(reportEntity)
-        logger.info("Success: Report file uploaded")
-    }
 
     fun getTaskFilters(
         dateFrom: String,
@@ -460,5 +424,102 @@ class ReportService @Autowired constructor(
                 )
             },
         )
+    }
+
+    val objectMapper = ObjectMapper().apply {
+        registerModule(JavaTimeModule())
+        disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+    }
+
+    fun getTaskReportPdf(
+        dateFrom: String,
+        dateTo: String,
+        projects: List<Int>?,
+        taskAssignees: List<Int>?,
+        statuses: List<String>?,
+        priorities: List<String>?,
+    ): ByteArray {
+        logger.info("Starting the service call to get the tasks PDF")
+        val taskReportDto = getProjectTasks("taskId", "asc", 0, Int.MAX_VALUE, dateFrom, dateTo, projects, taskAssignees, statuses, priorities)
+        // create the json as string and add two more fields, dateFrom and dateTo
+
+
+        val taskReport = pdfTurtleService.generatePdfWithHtmlTemplate(
+            "body-task-report",
+            createModel(dateFrom, dateTo, objectMapper.writeValueAsString(taskReportDto)),
+        )
+        val filePartial = fileService.uploadFileByteArray(taskReport, "Reporte de Tareas", "application/pdf")
+        saveReport(filePartial, ReportType.TAREA, dateFrom, dateTo)
+        return taskReport
+    }
+
+    fun getProjectsReportPdf(
+        dateFrom: String,
+        dateTo: String,
+        projectOwners: List<Int>?,
+        projectModerators: List<Int>?,
+        projectMembers: List<Int>?,
+        statuses: List<String>?,
+    ): ByteArray {
+        logger.info("Starting the service call to get the projects PDF")
+        val projectReportDto = getProjects("projectId", "asc", 0, Int.MAX_VALUE, dateFrom, dateTo, projectOwners, projectModerators, projectMembers, statuses)
+        val projectReport = pdfTurtleService.generatePdfWithHtmlTemplate(
+            "body-project-report",
+            createModel(dateFrom, dateTo, objectMapper.writeValueAsString(projectReportDto)),
+        )
+        val filePartial = fileService.uploadFileByteArray(projectReport, "Reporte de Proyectos", "application/pdf")
+        saveReport(filePartial, ReportType.PROYECTO, dateFrom, dateTo)
+        return projectReport
+    }
+
+    fun getExecutiveReportPdf(
+        dateFrom: String,
+        dateTo: String
+    ): ByteArray {
+        logger.info("Starting the service call to get the executive report PDF")
+        val executiveReportDto = getExecutiveReport(dateFrom, dateTo)
+        val executiveReport = pdfTurtleService.generatePdfWithHtmlTemplate(
+            "body-executive-report",
+            createModel(dateFrom, dateTo, objectMapper.writeValueAsString(executiveReportDto)),
+        )
+
+        val filePartial = fileService.uploadFileByteArray(executiveReport, "Reporte Ejecutivo", "application/pdf")
+        saveReport(filePartial, ReportType.EJECUTIVO, dateFrom, dateTo)
+        return executiveReport
+    }
+
+    fun createModel(
+        dateFrom: String,
+        dateTo: String,
+        reportJson: String
+    ): String {
+        val taskReportMap: MutableMap<String, Any> = objectMapper.readValue(reportJson, mutableMapOf<String, Any>().javaClass)
+        taskReportMap["dateFrom"] = dateFrom
+        taskReportMap["dateTo"] = dateTo
+        return objectMapper.writeValueAsString(taskReportMap)
+    }
+
+    fun saveReport(
+        filePartial: FilePartialDto,
+        reportType: ReportType,
+        dateFrom: String,
+        dateTo: String
+    ) {
+        logger.info("Starting the service call to save the report")
+        val userId = AuthUtil.getUserIdFromAuthToken() ?: throw EtnException(HttpStatus.UNAUTHORIZED, "Error: Unauthorized", "No autorizado")
+        val zoneId = ZoneId.of("America/La_Paz")
+        val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
+        simpleDateFormat.timeZone = TimeZone.getTimeZone(zoneId)
+        val simpleDateFrom = simpleDateFormat.format(Timestamp.from(Instant.parse(dateFrom)))
+        val simpleDateTo = simpleDateFormat.format(Timestamp.from(Instant.parse(dateTo)))
+        val reportEntity = Report()
+        reportEntity.userId = userId.toInt()
+        reportEntity.fileId = filePartial.fileId
+        reportEntity.reportType = reportType
+        reportEntity.reportStartDate = Timestamp.from(Instant.parse(dateFrom))
+        reportEntity.reportEndDate = Timestamp.from(Instant.parse(dateTo))
+        reportEntity.reportName = "Reporte ${reportType.name.lowercase().replaceFirstChar { it.uppercase() }} $simpleDateFrom - $simpleDateTo.pdf"
+        reportRepository.save(reportEntity)
+        logger.info("Success: Report saved")
     }
 }

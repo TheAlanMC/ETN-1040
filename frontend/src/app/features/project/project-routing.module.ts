@@ -14,7 +14,12 @@ import {ProjectTaskCalendarComponent} from "./components/project-task-calendar/p
 const routes: Routes = [
     {
         path: 'projects', children: [
-            {path: '', component: ProjectListComponent, canActivate: [PermissionGuard], data: {permissions: ['VER PROYECTOS']}},
+            {
+                path: '',
+                component: ProjectListComponent,
+                canActivate: [PermissionGuard],
+                data: {permissions: ['VER PROYECTOS']}
+            },
             {
                 path: 'view/:id',
                 component: ViewProjectComponent,

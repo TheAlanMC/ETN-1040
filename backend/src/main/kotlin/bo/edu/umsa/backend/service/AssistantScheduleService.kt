@@ -1,6 +1,7 @@
 package bo.edu.umsa.backend.service
 
 import bo.edu.umsa.backend.dto.AssistantScheduleDto
+import bo.edu.umsa.backend.dto.CurrentAssistantScheduleDto
 import bo.edu.umsa.backend.dto.NewAssistantScheduleDto
 import bo.edu.umsa.backend.entity.AssistantSchedule
 import bo.edu.umsa.backend.exception.EtnException
@@ -8,11 +9,14 @@ import bo.edu.umsa.backend.mapper.ScheduleMapper
 import bo.edu.umsa.backend.mapper.UserPartialMapper
 import bo.edu.umsa.backend.repository.AssistantRepository
 import bo.edu.umsa.backend.repository.AssistantScheduleRepository
+import bo.edu.umsa.backend.repository.ScheduleRepository
 import bo.edu.umsa.backend.repository.SemesterRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import java.time.LocalDate
+import java.time.LocalTime
 import kotlin.math.abs
 
 @Service
@@ -20,6 +24,7 @@ class AssistantScheduleService @Autowired constructor(
     private val semesterRepository: SemesterRepository,
     private val assistantRepository: AssistantRepository,
     private val assistantScheduleRepository: AssistantScheduleRepository,
+    private val scheduleRepository: ScheduleRepository,
 ) {
 
     companion object {
@@ -71,7 +76,9 @@ class AssistantScheduleService @Autowired constructor(
         if (newAssistantScheduleDto.size != 6) throw EtnException(HttpStatus.BAD_REQUEST, "Error: Exactly 6 assistants are required", "Se requieren exactamente 6 auxiliares")
         // Validate that each assistant has exactly 3 schedules
         if (newAssistantScheduleDto.any { it.scheduleIds.size != 3 }) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Exactly 3 half-time schedules are required", "Se requieren exactamente 3 horarios de medio tiempo por auxiliar")
+            val assistantEntity = assistantRepository.findByAssistantIdAndStatusIsTrue(newAssistantScheduleDto.first { it.scheduleIds.size != 3 }.assistantId.toLong())
+                ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Assistant not found", "Auxiliar no encontrado")
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: Exactly 3 half-time schedules are required", "Se requieren exactamente 3 horarios de medio tiempo por auxiliar, el auxiliar ${assistantEntity.user!!.firstName} ${assistantEntity.user!!.lastName} no cumple con esta condición")
         }
         val scheduleIds = newAssistantScheduleDto.map { it.scheduleIds }.flatten()
         // Validate that schedules are in the range from 1 to 20
@@ -84,16 +91,18 @@ class AssistantScheduleService @Autowired constructor(
         }
         // Validate that at least ids from 1 to 15 are present
         if (!scheduleIds.containsAll((1..15).toList())) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: It does not meet the required schedules", "No cumple con los horarios requeridos")
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: It does not meet the required schedules", "Por norma, el turno de la mañana debe tener dos auxiliares, y el turno de la tarde debe tener al menos un auxiliar")
         }
         // Validate that at least 3 ids from 16 to 20 are present
         if (scheduleIds.filter { it in (16..20) }.size < 3) {
-            throw EtnException(HttpStatus.BAD_REQUEST, "Error: It does not meet the required schedules", "No cumple con los horarios requeridos")
+            throw EtnException(HttpStatus.BAD_REQUEST, "Error: It does not meet the required schedules", "Por norma, el turno de la mañana debe tener dos auxiliares, y el turno de la tarde debe tener al menos un auxiliar")
         }
-        // Validate that the abs difference between the schedules is at least 4
+        // Validate that the abs difference between the schedules is at least 5
         newAssistantScheduleDto.forEach { newAssistantSchedule ->
-            if(!isValidScheduleIds(newAssistantSchedule.scheduleIds)) {
-                throw EtnException(HttpStatus.BAD_REQUEST, "Error: The schedules are too close", "Los horarios se superponen")
+            if (!isValidScheduleIds(newAssistantSchedule.scheduleIds)) {
+                val assistantEntity = assistantRepository.findByAssistantIdAndStatusIsTrue(newAssistantSchedule.assistantId.toLong())
+                    ?: throw EtnException(HttpStatus.NOT_FOUND, "Error: Assistant not found", "Auxiliar no encontrado")
+                throw EtnException(HttpStatus.BAD_REQUEST, "Error: The schedules are too close", "Los horarios del auxiliar ${assistantEntity.user!!.firstName} ${assistantEntity.user!!.lastName} se superponen")
             }
         }
         // Validate the semester exists
@@ -181,7 +190,24 @@ class AssistantScheduleService @Autowired constructor(
                 }
             }
         }
-
         return true
     }
+
+    fun getAssistantSchedulesForToday(): List<CurrentAssistantScheduleDto> {
+        logger.info("Getting assistant schedules for today")
+        val semesterEntity = semesterRepository.findFirstByStatusIsTrueOrderBySemesterIdDesc() ?: return emptyList()
+
+        val currentDayOfWeekNumber = LocalDate.now().dayOfWeek.value
+        val currentHour = LocalTime.now().hour
+        val scheduleEntities = scheduleRepository.findAllByStatusIsTrueOrderByScheduleId()
+        val currentScheduleIds = scheduleEntities.filter { schedule ->
+            schedule.dayNumber == currentDayOfWeekNumber && schedule.hourFrom.hour <= currentHour && schedule.hourTo.hour > currentHour
+        }.map { it.scheduleId }
+
+        val assistantScheduleEntities = assistantScheduleRepository.findAllBySemesterIdAndScheduleIdInAndStatusIsTrue(semesterEntity.semesterId.toLong(), currentScheduleIds.map { it.toLong() })
+        return assistantScheduleEntities.map {
+            CurrentAssistantScheduleDto(it.assistantId, UserPartialMapper.entityToDto(it.assistant!!.user!!), ScheduleMapper.entityToDto(it.schedule!!))
+        }
+    }
 }
+

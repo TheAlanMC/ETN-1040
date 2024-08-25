@@ -6,6 +6,7 @@ import {ResponseDto} from "../models/response.dto";
 
 import {UtilService} from "./util.service";
 import {AssistantDto} from "../../features/schedule/models/assistant.dto";
+import {AssistantScheduleDto} from "../../features/schedule/models/assistant-schedule.dto";
 
 @Injectable({
     providedIn: 'root'
@@ -35,9 +36,17 @@ export class AssistantScheduleService {
             this.utilService.getHttpOptions());
     }
 
-    createCustomSchedule(semesterId: number, assistant: AssistantDto[]): Observable<ResponseDto<null>> {
+    createCustomSchedule(
+        semesterId: number,
+        assistant: AssistantDto[]
+    ): Observable<ResponseDto<null>> {
         return this.http.post<ResponseDto<null>>(`${this.baseUrl}/semesters/${semesterId}/custom`,
             assistant,
+            this.utilService.getHttpOptions());
+    }
+
+    getLastSemesterSchedule(): Observable<ResponseDto<AssistantScheduleDto[]>> {
+        return this.http.get<ResponseDto<AssistantScheduleDto[]>>(`${this.baseUrl}/current`,
             this.utilService.getHttpOptions());
     }
 

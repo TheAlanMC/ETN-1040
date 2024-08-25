@@ -3,7 +3,6 @@ import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {ResponseDto} from "../models/response.dto";
-import {PermissionDto} from "../../features/user/models/permission.dto";
 import {UtilService} from "./util.service";
 import {ScheduleDto} from "../../features/schedule/models/schedule.dto";
 
@@ -22,7 +21,6 @@ export class ScheduleService {
     getSchedules(): Observable<ResponseDto<ScheduleDto[]>> {
         return this.http.get<ResponseDto<ScheduleDto[]>>(this.baseUrl,
             this.utilService.getHttpOptions());
-
     }
 
 }

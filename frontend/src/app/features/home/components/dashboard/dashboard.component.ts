@@ -4,6 +4,9 @@ import {DashboardService} from "../../../../core/services/dashboard.service";
 import {TaskDashboardDto} from "../../models/task-dashboard.dto";
 import {ProjectDashboardDto} from "../../models/project-dashboard.dto";
 import {MessageService} from "primeng/api";
+import {UserService} from "../../../../core/services/user.service";
+import {AssistantScheduleService} from "../../../../core/services/assistant-schedule.service";
+import {AssistantScheduleDto} from "../../../schedule/models/assistant-schedule.dto";
 
 @Component({
     selector: 'app-dashboard',
@@ -45,9 +48,13 @@ export class DashboardComponent implements OnInit {
     projectLineData: any;
     projectLineOptions: any;
 
+    assistantSchedule: AssistantScheduleDto[] = [];
+
     constructor(
         private dashboardService: DashboardService,
         private messageService: MessageService,
+        private userService: UserService,
+        private assistantScheduleService: AssistantScheduleService,
     ) {
         this.dateFromControl.setValue(new Date(this.defaultDateFrom).toLocaleDateString('en-GB'));
         this.dateToControl.setValue(new Date(this.defaultDateTo).toLocaleDateString('en-GB'));
@@ -57,6 +64,7 @@ export class DashboardComponent implements OnInit {
         this.initCharts();
         this.getTaskDashboard();
         this.getProjectDashboard();
+        this.getCurrentSchedule();
     }
 
     public initCharts() {
@@ -460,5 +468,16 @@ export class DashboardComponent implements OnInit {
         this.currentDateTo = event;
         this.getTaskDashboard();
         this.getProjectDashboard();
+    }
+
+    public getCurrentSchedule() {
+        this.assistantScheduleService.getLastSemesterSchedule().subscribe({
+            next: (response) => {
+                this.assistantSchedule = response.data!!;
+            }, error: (error) => {
+                console.error(error);
+                this.messageService.add({severity: 'error', summary: 'Error', detail: error.error.message});
+            }
+        });
     }
 }

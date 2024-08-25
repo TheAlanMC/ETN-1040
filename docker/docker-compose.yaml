@@ -14,8 +14,8 @@ services:
     container_name: etn-postgres
     image: postgres:16
     restart: always
-    ports:
-     - "5432:5432"
+    # ports:
+    #  - "5432:5432"
     environment:
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_USERNAME: ${POSTGRES_USERNAME}
@@ -49,6 +49,7 @@ services:
       EMAIL_USERNAME: ${EMAIL_USERNAME}
       EMAIL_PASSWORD: ${EMAIL_PASSWORD}
       FRONTEND_URL: ${FRONTEND_URL}
+      PDF_TURTLE_URL: ${PDF_TURTLE_URL}
       TZ: ${TZ}
     volumes:
       - ~/Desktop/etn/backend/logs:/opt/etn/logs/backend
@@ -74,3 +75,18 @@ services:
       - etn-backend
     networks:
       - network-etn
+
+  etn-pdf-turtle:
+    container_name: etn-pdf-turtle
+    image: lucasgaitzsch/pdf-turtle
+    restart: always
+    ports:
+      # - "8000:8000"
+    environment:
+      PORT: ${PDF_TURTLE_DEV_PORT}
+      SERVE_PLAYGROUND: ${PDF_TURTLE_DEV_SERVE_PLAYGROUND}
+      RENDER_TIMEOUT: 3600
+      TZ: ${TZ}
+    networks:
+      - network-etn
+  

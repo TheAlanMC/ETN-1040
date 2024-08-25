@@ -9,4 +9,6 @@ interface SemesterRepository : JpaRepository<Semester, Long> {
     fun findAllByStatusIsTrueOrderBySemesterIdDesc(): List<Semester>
 
     fun findBySemesterIdAndStatusIsTrue(semesterId: Long): Semester?
+
+    fun findFirstByStatusIsTrueOrderBySemesterIdDesc(): Semester?
 }

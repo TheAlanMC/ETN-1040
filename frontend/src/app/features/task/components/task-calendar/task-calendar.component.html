@@ -21,8 +21,8 @@
             <p-multiSelect (onChange)="onPriorityChange($event)" [(ngModel)]="selectedPriority"
                            [filter]="false"
                            [options]="priorityItems"
-                           class="multiselect-custom" display="chip" optionLabel="label"
-                           placeholder="Seleccionar Prioridad" id="priority">
+                           class="multiselect-custom" display="chip" id="priority"
+                           optionLabel="label" placeholder="Seleccionar Prioridad">
             </p-multiSelect>
             <label for="priority">Seleccionar Prioridad</label>
         </p-floatLabel>
@@ -32,7 +32,7 @@
             <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus"
                            [filter]="false"
                            [options]="statusItems"
-                           class="multiselect-custom" display="chip" optionLabel="label" id="status"
+                           class="multiselect-custom" display="chip" id="status" optionLabel="label"
                            placeholder="Seleccionar Estado">
             </p-multiSelect>
             <label for="status">Seleccionar Estado</label>
@@ -68,8 +68,8 @@
     </ng-template>
     <ng-template pTemplate="content">
         <div [id]="selectedTask.taskId" class="flex flex-column w-full gap-3 border-round">
-            <div *ngIf="selectedTask.taskDescription" class="text-700"
-                 style="word-break: break-word" [innerHTML]="selectedTask.taskDescription | breakLine"></div>
+            <div *ngIf="selectedTask.taskDescription" [innerHTML]="selectedTask.taskDescription | breakLine"
+                 class="text-700" style="word-break: break-word"></div>
             <div class="flex align-items-center gap-1 flex-wrap">
                 <p-tag [style]="{background: getPriorityColor(selectedTask.taskPriority.taskPriorityId)}"
                        value="{{selectedTask.taskPriority.taskPriorityName}}"></p-tag>

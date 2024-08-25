@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {FullCalendarComponent} from "@fullcalendar/angular";
-import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
+import {MessageService, SelectItem} from "primeng/api";
 import {jwtDecode} from "jwt-decode";
 import {JwtPayload} from "../../../../core/models/jwt-payload.dto";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -19,7 +19,6 @@ import esLocale from "@fullcalendar/core/locales/es";
     templateUrl: './schedule.component.html',
     styleUrl: './schedule.component.scss',
     providers: [
-        ConfirmationService,
         MessageService
     ],
 })
@@ -58,8 +57,7 @@ export class ScheduleComponent implements OnInit {
         private semesterService: SemesterService,
         private assistantScheduleService: AssistantScheduleService,
         private scheduleService: ScheduleService,
-        private confirmationService: ConfirmationService,
-        private messageService: MessageService,
+        private messageService: MessageService
     ) {
         // Get token from local storage
         const token = localStorage.getItem('token');
@@ -100,9 +98,6 @@ export class ScheduleComponent implements OnInit {
             dayMaxEvents: true,
             eventDurationEditable: false,
             hiddenDays: [0, 6], // Hide Sunday (0) and Saturday (6)
-            columnHeaderFormat: {
-                weekday: 'long' // Show only the day names
-            },
             slotMinTime: '08:00:00',
             slotMaxTime: '18:00:00',
             allDaySlot: false,
@@ -195,6 +190,9 @@ export class ScheduleComponent implements OnInit {
     public generateEventsForCurrentWeek() {
         const events: any = [];
         const currentDate = new Date();
+        if (currentDate.getDay() === 0) {
+            currentDate.setDate(currentDate.getDate() - 7);
+        }
         const currentWeekStart = new Date(currentDate.setDate(currentDate.getDate() - currentDate.getDay()));
         const assistantColors: { [key: number]: string } = {};
         let colorIndex = 0;
@@ -240,6 +238,9 @@ export class ScheduleComponent implements OnInit {
     public generateEventsForCustomWeek() {
         const events: any = [];
         const currentDate = new Date();
+        if (currentDate.getDay() === 0) {
+            currentDate.setDate(currentDate.getDate() - 7);
+        }
         const currentWeekStart = new Date(currentDate.setDate(currentDate.getDate() - currentDate.getDay()));
         const assistantColors: { [key: number]: string } = {};
         let colorIndex = 0;
@@ -262,8 +263,10 @@ export class ScheduleComponent implements OnInit {
                 endMinute,
                 0);
 
-
-            const assistant = this.assistants.sort((a, b) => a.assistantId - b.assistantId).find(assistant => assistant.scheduleIds.includes(schedule.scheduleId));
+            const assistant = this.assistants.sort((
+                a,
+                b
+            ) => a.assistantId - b.assistantId).find(assistant => assistant.scheduleIds.includes(schedule.scheduleId));
             if (assistant) {
                 if (!assistantColors[assistant.assistantId]) {
                     assistantColors[assistant.assistantId] = this.colors[colorIndex % this.colors.length];
@@ -319,7 +322,7 @@ export class ScheduleComponent implements OnInit {
             return;
         }
         this.selectedSchedule = Number(e.event.id);
-        const assistant = this.assistantsSchedule.find(assistant => assistant.schedules.some(s => s.scheduleId === this.selectedSchedule));
+        const assistant = this.assistants.find(assistant => assistant.scheduleIds.includes(this.selectedSchedule));
         this.showAssistantDialog = true;
         this.schedule = this.schedules.find(schedule => schedule.scheduleId === this.selectedSchedule);
         this.selectedAssistant = (assistant) ? assistant.assistantId : 0;
@@ -340,7 +343,13 @@ export class ScheduleComponent implements OnInit {
         let calendarApi = this.calendarComponent.getApi();
         calendarApi.removeAllEvents();
         calendarApi.addEventSource(events);
-        this.showAssistantDialog = false;
+        this.cancelAssistant();
+    }
+
+    public cancelAssistant() {
+        this.showAssistantDialog = false
+        this.selectedAssistant = 0;
+        this.selectedSchedule = 0;
     }
 
     public saveSchedule() {
@@ -351,7 +360,7 @@ export class ScheduleComponent implements OnInit {
                 this.messageService.add({
                     severity: 'success',
                     summary: 'Horarios actualizados',
-                    detail: 'Se han actualizado los horarios de los asistentes'
+                    detail: 'Se han guardado los horarios de forma exitosa'
                 });
             }, error: (error) => {
                 console.error(error);

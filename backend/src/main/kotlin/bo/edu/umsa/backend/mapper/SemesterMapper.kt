@@ -5,7 +5,7 @@ import bo.edu.umsa.backend.entity.Semester
 
 class SemesterMapper {
     companion object {
-        fun entityToDto(semester:Semester):SemesterDto{
+        fun entityToDto(semester: Semester): SemesterDto {
             return SemesterDto(
                 semesterId = semester.semesterId,
                 semesterName = semester.semesterName,

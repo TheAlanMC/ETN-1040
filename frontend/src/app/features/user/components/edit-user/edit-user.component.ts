@@ -5,7 +5,6 @@ import {FileUpload} from "primeng/fileupload";
 import {ActivatedRoute, Router} from "@angular/router";
 import {MessageService} from "primeng/api";
 import {UserService} from "../../../../core/services/user.service";
-import {RoleService} from "../../../../core/services/role.service";
 import {Location} from "@angular/common";
 
 @Component({

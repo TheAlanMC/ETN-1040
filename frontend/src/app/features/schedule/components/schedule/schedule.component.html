@@ -14,19 +14,19 @@
         </p-floatLabel>
                 </span>
         <div *ngIf="canManageSchedule" class="flex flex-wrap gap-2 align-items-center justify-content-between">
-            <button *ngIf="assistantsSchedule.length > 0 && !enableSaveButton" (click)="editSchedule()"
+            <button (click)="editSchedule()" *ngIf="assistantsSchedule.length > 0 && !enableSaveButton"
                     class="p-button-outlined w-full sm:w-auto flex-order-1 sm:flex-order-1" icon="pi pi-pencil"
                     label="Editar Horarios" pButton></button>
-            <button *ngIf="assistantsSchedule.length === 0 && !enableSaveButton" (click)="editSchedule()"
+            <button (click)="editSchedule()" *ngIf="assistantsSchedule.length === 0 && !enableSaveButton"
                     class="p-button-outlined w-full sm:w-auto flex-order-1 sm:flex-order-1" icon="pi pi-palette"
                     label="Crear Horarios Personalizados" pButton></button>
-            <button *ngIf="assistantsSchedule.length === 0 && !enableSaveButton" (click)="createRandomSchedule()"
+            <button (click)="createRandomSchedule()" *ngIf="assistantsSchedule.length === 0 && !enableSaveButton"
                     class="p-button-outlined w-full sm:w-auto flex-order-1 sm:flex-order-1" icon="pi pi-objects-column"
                     label="Crear Horarios Aleatorios" pButton></button>
-            <button *ngIf="enableSaveButton" (click)="saveSchedule()"
+            <button (click)="saveSchedule()" *ngIf="enableSaveButton"
                     class="p-button-outlined w-full sm:w-auto" icon="pi pi-save"
                     label="Guardar Horarios" pButton></button>
-            <button *ngIf="enableSaveButton"  (click)="cancelSchedule()"
+            <button (click)="cancelSchedule()" *ngIf="enableSaveButton"
                     class="p-button-outlined w-full sm:w-auto" icon="pi pi-times"
                     label="Cancelar" pButton></button>
         </div>
@@ -42,26 +42,26 @@
           [closable]="true" [draggable]="false" [modal]="true" [resizable]="false" [style]="{width: '32rem'}">
     <ng-template pTemplate="header">
         <div class="flex justify-content-between align-items-center w-full">
-            <span class="text-900 font-semibold">{{ schedule?.dayOfWeek }} ({{ schedule?.hourFrom }} - {{ schedule?.hourTo }})</span>        </div>
+            <span class="text-900 font-semibold">{{ schedule?.dayOfWeek }} ({{ schedule?.hourFrom }} - {{ schedule?.hourTo }})</span></div>
     </ng-template>
     <ng-template pTemplate="content">
         <div class="flex flex-wrap gap-2 align-items-center justify-content-between mb-3">
             <div class="w-full">
                 <p-floatLabel>
-                    <p-dropdown [(ngModel)]="selectedAssistant" [options]="assistantItems" [showClear]="false"
+                    <p-dropdown [(ngModel)]="selectedAssistant" [appendTo]="body" [options]="assistantItems"
+                                [showClear]="false"
                                 [style]="{'width':'100%'}"
-                                [appendTo]="body"
                                 id="assistant"
-                                placeholder="Seleccione un Asistente"
+                                placeholder="Seleccione un Auxiliar"
                     ></p-dropdown>
-                    <label for="assistant">Seleccione un Asistente</label>
+                    <label for="assistant">Seleccione un Auxiliar</label>
                 </p-floatLabel>
             </div>
         </div>
         <div class="flex justify-content-between align-items-center w-full">
-            <button class="p-button-outlined w-full sm:w-auto" icon="pi pi-save" (click)="saveAssistant()"
+            <button (click)="saveAssistant()" class="p-button-outlined w-full sm:w-auto" icon="pi pi-save"
                     label="Guardar" pButton></button>
-            <button class="p-button-outlined w-full sm:w-auto" icon="pi pi-times" (click)="showAssistantDialog = false"
+            <button (click)="cancelAssistant()" class="p-button-outlined w-full sm:w-auto" icon="pi pi-times"
                     label="Cancelar" pButton></button>
         </div>
     </ng-template>

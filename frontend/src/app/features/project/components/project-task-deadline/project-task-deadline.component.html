@@ -15,8 +15,8 @@
             <p-multiSelect (onChange)="onPriorityChange($event)" [(ngModel)]="selectedPriority"
                            [filter]="false"
                            [options]="priorityItems"
-                           class="multiselect-custom" display="chip" optionLabel="label"
-                           placeholder="Seleccionar Prioridad" id="priority">
+                           class="multiselect-custom" display="chip" id="priority"
+                           optionLabel="label" placeholder="Seleccionar Prioridad">
             </p-multiSelect>
             <label for="priority">Seleccionar Prioridad</label>
         </p-floatLabel>
@@ -26,7 +26,7 @@
             <p-multiSelect (onChange)="onStatusChange($event)" [(ngModel)]="selectedStatus"
                            [filter]="false"
                            [options]="statusItems"
-                           class="multiselect-custom" display="chip" optionLabel="label" id="status"
+                           class="multiselect-custom" display="chip" id="status" optionLabel="label"
                            placeholder="Seleccionar Estado">
             </p-multiSelect>
             <label for="status">Seleccionar Estado</label>

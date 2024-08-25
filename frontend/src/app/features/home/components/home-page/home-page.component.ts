@@ -7,7 +7,7 @@ import {jwtDecode} from "jwt-decode";
 @Component({
     selector: 'app-home-page', templateUrl: './home-page.component.html', styleUrl: './home-page.component.scss',
 })
-export class HomePageComponent implements  OnInit{
+export class HomePageComponent implements OnInit {
 
 
     darkMode: boolean = false;
