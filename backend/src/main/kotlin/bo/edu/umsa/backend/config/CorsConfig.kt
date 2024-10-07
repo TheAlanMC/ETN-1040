@@ -1,5 +1,6 @@
 package bo.edu.umsa.backend.config
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.cors.CorsConfiguration
@@ -9,8 +10,13 @@ import org.springframework.web.filter.CorsFilter
 @Configuration
 class CorsConfig {
 
+    @Value("\${frontend.url}")
+    private val frontendUrl: String = "https://localhost:4200"
+
     @Bean
     fun corsFilter(): CorsFilter {
+        val frontendUrlWww = if (frontendUrl.contains("www")) frontendUrl else frontendUrl.replace("https://", "https://www.")
+        val frontendUrlNonWww = if (frontendUrl.contains("www")) frontendUrl.replace("https://www.", "https://") else frontendUrl
         val corsConfiguration = CorsConfiguration()
         corsConfiguration.allowCredentials = false
         corsConfiguration.allowedOrigins = listOf(
@@ -25,7 +31,9 @@ class CorsConfig {
             // Reverse Proxy
             "https://laboratoriomultimedia.xyz", "https://www.laboratoriomultimedia.xyz",
             // Mobile App
-            "capacitor://localhost")
+            "capacitor://localhost",
+            // Custom Domain
+            frontendUrlWww, frontendUrlNonWww)
         corsConfiguration.allowedHeaders = listOf(
             "Origin",
             "Access-Control-Allow-Origin",
