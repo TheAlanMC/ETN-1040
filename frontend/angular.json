@@ -81,6 +81,18 @@
                   "with": "src/environments/environment.docker.ts"
                 }
               ]
+            },
+            "android": {
+              "optimization": true,
+              "extractLicenses": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.android.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -96,6 +108,9 @@
             },
             "docker": {
               "buildTarget": "frontend:build:docker"
+            },
+            "android": {
+              "buildTarget": "frontend:build:android"
             }
           },
           "defaultConfiguration": "development"

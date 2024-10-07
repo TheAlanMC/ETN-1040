@@ -1,5 +1,5 @@
 export const environment = {
-  API_URL: 'https://www.laboratoriomultimedia.xyz/backend',
+  API_URL: '/backend',
   firebase:{
     apiKey: "AIzaSyA6vP_lILs4xOGDK0FAXKcfpw3-Em75J7s",
     authDomain: "laboratorio-multimedia.firebaseapp.com",

@@ -44,7 +44,7 @@ class UserProfileService @Autowired constructor(
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Firstname and lastname cannot be blank", "Nombre y apellido no pueden estar en blanco")
         }
         // Phone must be a number
-        if (profileDto.phone.isNotBlank() && !profileDto.phone.matches(Regex("\\AssistantScheduleDto+"))) {
+        if (profileDto.phone.isNotBlank() && !profileDto.phone.matches(Regex("^\\d+\$"))) {
             throw EtnException(HttpStatus.BAD_REQUEST, "Error: Phone must be a number", "El teléfono debe ser un número")
         }
         // Validate that the profileId is the same as the user's id

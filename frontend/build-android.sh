@@ -11,6 +11,12 @@ if [ -z "$version_name" ]; then
     version_name="1.0.0"
 fi
 
+# Package the angular application, with the name frontend
+ng build --configuration android --output-path dist/frontend
+
+# Generate the Assets:
+npx capacitor-assets generate
+
 npx cap sync android
 cd android
 ./gradlew assembleRelease -PversionCode=1 -PversionName=$version_name
