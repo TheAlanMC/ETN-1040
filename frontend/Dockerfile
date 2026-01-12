@@ -1,4 +1,4 @@
-FROM --platform=linux/x86_64 nginx:1.17-alpine
+FROM --platform=linux/x86_64 nginx:1.29.4-alpine
 #FROM nginx:1.17-alpine
 
 EXPOSE 80
